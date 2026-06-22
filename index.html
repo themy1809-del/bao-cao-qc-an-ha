@@ -108,7 +108,7 @@ body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg
 #tqLatest{overflow-x:auto}
 .card h3{font-size:10.5px;font-weight:700;letter-spacing:.01em;display:inline-flex;align-items:center;gap:6px;background:var(--acc);color:#fff;padding:3px 11px;border-radius:999px;margin-bottom:3px;box-shadow:var(--sh)}
 .card .q{font-size:11px;color:var(--mut);margin:2px 0 6px;line-height:1.4}
-.ch{width:100%;height:clamp(138px,16vh,205px)}.ch.tall{height:clamp(180px,21vh,265px)}.ch.short{height:clamp(120px,13.5vh,165px)}
+.ch{width:100%;height:clamp(150px,22vh,300px)}.ch.tall{height:clamp(190px,27vh,360px)}.ch.short{height:clamp(130px,17vh,230px)}
 
 /* ---------- TABLE ---------- */
 table{width:100%;border-collapse:collapse;font-size:12px}
@@ -388,7 +388,7 @@ function ch(id){if(!CH[id]&&typeof echarts!=='undefined')CH[id]=echarts.init(doc
 function setOpt(id,opt,onClick){const c=ch(id);if(!c)return;opt.backgroundColor='transparent';opt.textStyle={fontFamily:'Be Vietnam Pro,Inter,sans-serif'};c.setOption(opt,true);c.off('click');if(onClick)c.on('click',onClick);c.resize();}
 function _syncSb(){var sb=document.querySelector('.sidebar');if(sb){if(window.innerWidth<=820)sb.classList.add('hide');else sb.classList.remove('hide');}for(const k in CH){try{CH[k].resize();}catch(e){}}}
 window.addEventListener('resize',_syncSb);
-const TT={trigger:'axis',axisPointer:{type:'shadow'},valueFormatter:v=>fm1(v)+' t'};
+const TT={trigger:'axis',confine:true,axisPointer:{type:'shadow'},valueFormatter:v=>fm1(v)+' t'};
 const GRID={left:8,right:14,top:30,bottom:8,containLabel:true};
 function grad(c1,c2){return (typeof echarts!=='undefined'&&echarts.graphic)?new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:c1},{offset:1,color:c2}]):c1;}
 
@@ -592,7 +592,7 @@ function rTQ(){
     const _q=document.getElementById('tqMixQ');if(_q)_q.textContent=(_lm?'Tháng '+moVN(_lm)+' · ':'')+'mỗi công đoạn so mục tiêu '+CAP_MONTH.toLocaleString('vi-VN')+' t/tháng · vạch cam 100% · bấm để lọc';
     const _ord=[STG[2],STG[1],STG[0]];
     const _data=_ord.map(([k,n,c])=>({value:+_mS[k].toFixed(1),_k:k,_pct:(_mS[k]/CAP_MONTH*100).toFixed(1).replace('.',','),itemStyle:{color:c,borderRadius:[0,6,6,0]}}));
-    setOpt('cMix',{tooltip:{trigger:'item',formatter:p=>p.marker+' '+p.name+': <b>'+fm1(p.value)+' t</b> · <b>'+p.data._pct+'%</b> của '+CAP_MONTH.toLocaleString('vi-VN')+' t'+(_lm?' (tháng '+moVN(_lm)+')':'')},
+    setOpt('cMix',{tooltip:{trigger:'item',confine:true,formatter:p=>p.marker+' '+p.name+': <b>'+fm1(p.value)+' t</b> · <b>'+p.data._pct+'%</b> của '+CAP_MONTH.toLocaleString('vi-VN')+' t'+(_lm?' (tháng '+moVN(_lm)+')':'')},
       grid:{left:8,right:72,top:14,bottom:6,containLabel:true},
       xAxis:{type:'value',max:CAP_MONTH,min:0,axisLabel:{formatter:v=>v>=1000?(v/1000)+'k':v},splitLine:{lineStyle:{type:'dashed',opacity:.5}}},
       yAxis:{type:'category',data:_ord.map(x=>x[1]),axisLabel:{fontSize:12.5,fontWeight:700},axisTick:{show:false}},
@@ -613,7 +613,7 @@ function rTQ(){
   const fpyData=ta.keys.map(k=>{const o=QFPY?(ta.mode==='d'?QFPY.byDay[k]:QFPY.byMonth[k]):null;if(o&&(o.a+o.j))return +(o.a/(o.a+o.j)*100).toFixed(1);const pr=sxBy[k]||0;return pr?+(((sxAcc[k]||0)/pr)*100).toFixed(1):null;});
   const hasReal=fpyData.some(v=>v!=null);
   const _lc=document.documentElement.dataset.theme==='dark'?'#cbd5e1':'#334155';
-  setOpt('cTime',{tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:function(ps){let s='<b>'+ps[0].axisValue+'</b><br>';ps.forEach(p=>{if(p.value==null)return;const v=(p.seriesName==='FPY %')?p.value+'% (đạt/đã kiểm)':((p.seriesName.indexOf('% ')===0)?p.value+'% (đm '+capTgt+' t)':fm1(p.value)+' t');s+=p.marker+p.seriesName+': <b>'+v+'</b><br>';});return s;}},grid:GRID,legend:{top:0,left:'center',itemWidth:11,itemHeight:11},
+  setOpt('cTime',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){let s='<b>'+ps[0].axisValue+'</b><br>';ps.forEach(p=>{if(p.value==null)return;const v=(p.seriesName==='FPY %')?p.value+'% (đạt/đã kiểm)':((p.seriesName.indexOf('% ')===0)?p.value+'% (đm '+capTgt+' t)':fm1(p.value)+' t');s+=p.marker+p.seriesName+': <b>'+v+'</b><br>';});return s;}},grid:GRID,legend:{top:0,left:'center',itemWidth:11,itemHeight:11},
     xAxis:{type:'category',data:ta.keys.map(k=>ta.mode==='d'?dayVN(k):moVN(k))},
     yAxis:hasFpy?[{type:'value',name:'tấn',max:axTon,min:0},{type:'value',name:'',max:axPctMax,min:0,position:'right',axisLabel:{formatter:'{value}%'}}]:{type:'value',name:'tấn'},
     series:selStg.map(([k,n,c],i)=>({name:n,type:'bar',barMaxWidth:26,itemStyle:{color:grad(c,c+'99'),borderRadius:[4,4,0,0],shadowBlur:9,shadowColor:c+'40',shadowOffsetY:3},emphasis:{focus:'series',itemStyle:{shadowBlur:16,shadowColor:c+'80'}},data:ta.keys.map(x=>+ta.map[x][k].toFixed(1))})).concat(selStg.map(([k,n,c],i)=>({name:'% '+n,type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:6,connectNulls:true,z:5,lineStyle:{width:2.4,color:_lc},itemStyle:{color:_lc,borderColor:'#fff',borderWidth:1.5},label:{show:ta.keys.length<=31,position:'top',distance:6,formatter:p=>p.value+'%',fontSize:9,fontWeight:700,color:_lc},emphasis:{focus:'series',lineStyle:{width:3.6}},markLine:i===0?{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#b4690e'},data:[{yAxis:100,label:{formatter:'100% · định mức',color:'#b4690e',fontSize:9,position:'insideEndTop'}}]}:undefined,data:ta.keys.map(x=>capTgt?+(((ta.map[x][k]||0)/capTgt)*100).toFixed(1):null)}))).concat(hasReal?[{name:'FPY %',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:5,connectNulls:true,z:6,lineStyle:{width:2.2,color:'#16a34a',type:'dashed'},itemStyle:{color:'#16a34a'},emphasis:{focus:'series',lineStyle:{width:3}},data:fpyData}]:[])
