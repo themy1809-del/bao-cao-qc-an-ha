@@ -47,8 +47,8 @@ body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg
 .main{flex:1;display:flex;flex-direction:column;padding:clamp(10px,1.2vw,18px);gap:14px;min-width:0}
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
 .pl{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--acc);text-transform:uppercase}
-.top h2{font-size:clamp(16px,1.55vw,21px);margin-top:1px;font-weight:700;letter-spacing:-.02em}
-.meta{font-size:11px;color:var(--mut);margin-top:1px}
+.top h2{font-size:clamp(13.5px,1.15vw,17px);margin-top:1px;font-weight:700;letter-spacing:-.02em}
+.meta{font-size:9.5px;color:var(--mut);margin-top:1px}
 .tools{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card);box-shadow:var(--sh)}
 .seg button{background:none;border:none;padding:8px 13px;font-size:12px;font-weight:700;color:var(--mut);cursor:pointer;font-family:inherit;transition:.15s}
@@ -87,28 +87,28 @@ body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg
 .fresh.bad{background:#fdecec;color:#b3261e;border:1px solid #f0b4b0}
 
 /* ---------- VIEWS / KPI ---------- */
-.view{display:none;flex-direction:column;gap:14px}.view.active{display:flex;animation:fade .25s ease}
+.view{display:none;flex-direction:column;gap:9px}.view.active{display:flex;animation:fade .25s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:14px}
-.kpi{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:var(--rad);box-shadow:var(--sh);padding:13px 16px;transition:transform .15s,box-shadow .15s}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px}
+.kpi{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:var(--rad);box-shadow:var(--sh);padding:8px 12px;transition:transform .15s,box-shadow .15s}
 .kpi:hover{transform:translateY(-2px);box-shadow:var(--shLg)}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--line)}
-.kpi .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.11em;color:var(--mut);font-weight:700}
-.kpi .v{font-size:clamp(20px,1.5vw,26px);font-weight:800;line-height:1.02;margin-top:6px;letter-spacing:-.02em}
-.kpi .sub{font-size:10.5px;color:var(--mut);margin-top:7px;min-height:13px}
+.kpi .lbl{font-size:9px;text-transform:uppercase;letter-spacing:.09em;color:var(--mut);font-weight:700}
+.kpi .v{font-size:clamp(16px,1.1vw,20px);font-weight:800;line-height:1.02;margin-top:3px;letter-spacing:-.02em}
+.kpi .sub{font-size:9.5px;color:var(--mut);margin-top:4px;min-height:11px}
 .kpi.f .v{color:var(--f)}.kpi.w .v{color:var(--w)}.kpi.p .v{color:var(--p)}.kpi.a .v{color:var(--warn)}.kpi.g .v{color:var(--good)}.kpi.b .v{color:var(--acc)}
 .kpi.f::before{background:var(--f)}.kpi.w::before{background:var(--w)}.kpi.p::before{background:var(--p)}.kpi.a::before{background:var(--warn)}.kpi.g::before{background:var(--good)}.kpi.b::before{background:var(--acc)}
 
 /* ---------- GRID / CARD ---------- */
-.r2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.r23{display:grid;grid-template-columns:1.8fr 1fr;gap:14px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.r23{display:grid;grid-template-columns:1.8fr 1fr;gap:10px}
 @media(max-width:1000px){.r2,.r23{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);box-shadow:var(--sh);padding:14px 17px;transition:box-shadow .15s}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);box-shadow:var(--sh);padding:11px 15px;transition:box-shadow .15s}
 .card:hover{box-shadow:var(--shLg)}
 #tqLatest{overflow-x:auto}
-.card h3{font-size:12.5px;font-weight:700;letter-spacing:.01em;display:inline-flex;align-items:center;gap:7px;background:var(--acc);color:#fff;padding:6px 15px;border-radius:999px;margin-bottom:4px;box-shadow:var(--sh)}
-.card .q{font-size:11px;color:var(--mut);margin:3px 0 9px;line-height:1.45}
-.ch{width:100%;height:clamp(220px,27vh,300px)}.ch.tall{height:clamp(280px,36vh,400px)}.ch.short{height:clamp(180px,22vh,240px)}
+.card h3{font-size:10.5px;font-weight:700;letter-spacing:.01em;display:inline-flex;align-items:center;gap:6px;background:var(--acc);color:#fff;padding:3px 11px;border-radius:999px;margin-bottom:3px;box-shadow:var(--sh)}
+.card .q{font-size:11px;color:var(--mut);margin:2px 0 6px;line-height:1.4}
+.ch{width:100%;height:clamp(138px,16vh,205px)}.ch.tall{height:clamp(180px,21vh,265px)}.ch.short{height:clamp(120px,13.5vh,165px)}
 
 /* ---------- TABLE ---------- */
 table{width:100%;border-collapse:collapse;font-size:12px}
@@ -135,7 +135,7 @@ td.n,th.n{border-left:1px solid var(--line)}
 .muted{color:var(--mut);font-size:12px}
 
 /* ---------- PANEL / DRILL ---------- */
-.panel{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:var(--rad);box-shadow:var(--shLg);padding:18px 20px}
+.panel{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:var(--rad);box-shadow:var(--shLg);padding:13px 16px}
 .panel .close{float:right;cursor:pointer;color:var(--mut);font-weight:700;border:none;background:none;font-size:16px;line-height:1}
 .panel .close:hover{color:var(--bad)}
 .tw{border:1px solid var(--line);border-radius:12px;overflow:auto;max-height:440px;background:var(--cardSolid)}
@@ -226,7 +226,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
         <button data-db="q" class="on">Ngày nghiệm thu</button>
         <button data-db="w">Ngày gia công</button>
       </div>
-      <span class="cg-lbl">Kỳ</span><button class="qf" id="qr3" onclick="setQR('3m')">3 tháng</button><button class="qf" id="qrm" onclick="setQR('m')">Tháng mới nhất</button><button class="qf" id="qra" onclick="setQR('all')">Tất cả</button><button class="qf" id="fitBtn" onclick="toggleFit()" title="Tự thu/phóng cho vừa 1 màn hình (thấy hết không cuộn)">⛶ Vừa màn hình</button>
+      <span class="cg-lbl">Kỳ</span><button class="qf" id="qr3" onclick="setQR('3m')">3 tháng</button><button class="qf" id="qrm" onclick="setQR('m')">Tháng mới nhất</button><button class="qf" id="qra" onclick="setQR('all')">Tất cả</button>
       <span class="drbox"><span class="cg-lbl">Từ</span><input type="date" id="drFrom" class="drin"><span class="cg-lbl">đến</span><input type="date" id="drTo" class="drin"></span>
     </div>
   </div>
@@ -423,26 +423,8 @@ function renderCtrls(){
 function renderAll(){renderChips();renderCtrls();
   document.getElementById('meta').textContent=(DB==='q'?'Theo ngày nghiệm thu (QCDate)':'Theo ngày gia công (WorkDate)')+' · nguồn SPM '+D.updated;
   render(CUR);}
-function render(k){({tq:rTQ,xt:rXT,qc:rQC,du:rDU,nd:rND,dl:rDL})[k]();scheduleFit();}
-/* ===== Vua man hinh: tu thu/phong tab dang xem cho vua 1 man hinh ===== */
-var FIT=false;try{FIT=localStorage.getItem('qcfit')==='1';}catch(e){}
-var _fitT;
-function scheduleFit(){clearTimeout(_fitT);_fitT=setTimeout(applyFit,150);}
-function toggleFit(){FIT=!FIT;try{localStorage.setItem('qcfit',FIT?'1':'0');}catch(e){}applyFit();}
-function applyFit(){
-  var b=document.getElementById('fitBtn');if(b)b.classList.toggle('on',FIT);
-  var vs=document.querySelectorAll('.view');
-  if(!FIT){vs.forEach(function(v){v.style.zoom='';});return;}
-  var t=document.querySelector('.view.active');if(!t)return;
-  t.style.zoom='1';
-  var nat=t.scrollHeight;if(!nat)return;
-  var se=document.scrollingElement||document.documentElement;
-  var avail=window.innerHeight-(se.scrollHeight-nat)-8;
-  var z=avail/nat;if(z>1)z=1;if(z<0.4)z=0.4;
-  t.style.zoom=(z>=0.999?'':z);
-  try{window.scrollTo(0,0);}catch(e){}
-}
-window.addEventListener('resize',scheduleFit);
+function render(k){({tq:rTQ,xt:rXT,qc:rQC,du:rDU,nd:rND,dl:rDL})[k]();}
+
 
 function kpi(cls,v,lbl,sub,click){return'<div class="kpi '+cls+'"'+(click?' style="cursor:pointer" onclick="'+click+'"':'')+'><div class="lbl">'+lbl+'</div><div class="v num">'+v+'</div><div class="sub">'+(sub||'')+'</div></div>';}
 function hideP(id){document.getElementById(id).style.display='none';}
@@ -575,17 +557,17 @@ function rTQ(){
     const qcTot=cardStg.reduce((a,[k])=>a+ls[k],0),qcPcs=cardStg.reduce((a,[k])=>a+lq[k],0);
     const sxTo=cardStg.reduce((a,[k])=>a+sxs[k],0),sxPc=cardStg.reduce((a,[k])=>a+sq[k],0);
     box.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'+
-      '<div><span class="cg-lbl">📅 Nghiệm thu ngày gần nhất</span> &nbsp;<b style="font-size:15px">'+dayVN(ld)+' · '+wd+'</b> <span class="muted">· '+dr.length+' lượt · '+new Set(dr.map(r=>r[1])).size+' xưởng · '+new Set(dr.map(r=>r[0])).size+' dự án · '+new Set(dr.map(r=>D.Q[r[5]]).filter(q=>q!=='—')).size+' QC viên</span></div>'+
+      '<div><span class="cg-lbl">📅 Nghiệm thu ngày gần nhất</span> &nbsp;<b style="font-size:12.5px">'+dayVN(ld)+' · '+wd+'</b> <span class="muted">· '+dr.length+' lượt · '+new Set(dr.map(r=>r[1])).size+' xưởng · '+new Set(dr.map(r=>r[0])).size+' dự án · '+new Set(dr.map(r=>D.Q[r[5]]).filter(q=>q!=='—')).size+' QC viên</span></div>'+
       '<button class="btn sec" onclick="goDay(\''+ld+'\')">Xem báo cáo đầy đủ ▸</button></div>'+
-      '<div style="display:grid;grid-template-columns:104px repeat('+(cardStg.length+1)+',minmax(54px,1fr));gap:12px;align-items:baseline;margin-top:10px;padding:4px 2px">'+
+      '<div style="display:grid;grid-template-columns:104px repeat('+(cardStg.length+1)+',minmax(54px,1fr));gap:10px;align-items:baseline;margin-top:6px;padding:2px 2px">'+
         '<span class="cg-lbl" style="color:var(--acc);align-self:center">QC nghiệm thu</span>'+
-        cardStg.map(([k,n])=>'<span><b style="color:var(--'+k+');font-size:19px">'+fm1(ls[k])+'</b>'+_dl(ls[k],_ps[k])+' <span class="muted">'+n+' t · '+lq[k].toLocaleString('vi-VN')+' pcs</span></span>').join('')+
-        '<span style="border-left:1px solid var(--line);padding-left:16px"><b style="color:var(--acc);font-size:19px">'+fm1(qcTot)+'</b>'+_dl(qcTot,_ps.f+_ps.w+_ps.p)+' <span class="muted">Tổng t · '+qcPcs.toLocaleString('vi-VN')+' pcs</span></span>'+
+        cardStg.map(([k,n])=>'<span><b style="color:var(--'+k+');font-size:15px">'+fm1(ls[k])+'</b>'+_dl(ls[k],_ps[k])+' <span class="muted">'+n+' t · '+lq[k].toLocaleString('vi-VN')+' pcs</span></span>').join('')+
+        '<span style="border-left:1px solid var(--line);padding-left:16px"><b style="color:var(--acc);font-size:15px">'+fm1(qcTot)+'</b>'+_dl(qcTot,_ps.f+_ps.w+_ps.p)+' <span class="muted">Tổng t · '+qcPcs.toLocaleString('vi-VN')+' pcs</span></span>'+
       '</div>'+
       '<div style="display:grid;grid-template-columns:104px repeat('+(cardStg.length+1)+',minmax(54px,1fr));gap:12px;align-items:baseline;margin-top:6px;padding:7px 2px 2px;border-top:1px dashed var(--line)">'+
         '<span class="cg-lbl" style="align-self:center">SX gia công</span>'+
-        cardStg.map(([k,n])=>'<span><b style="color:var(--'+k+');font-size:19px">'+fm1(sxs[k])+'</b> <span class="muted">'+n+' t · '+sq[k].toLocaleString('vi-VN')+' pcs</span></span>').join('')+
-        '<span style="border-left:1px solid var(--line);padding-left:16px"><b style="font-size:19px">'+fm1(sxTo)+'</b> <span class="muted">Tổng t · '+sxPc.toLocaleString('vi-VN')+' pcs</span></span>'+
+        cardStg.map(([k,n])=>'<span><b style="color:var(--'+k+');font-size:15px">'+fm1(sxs[k])+'</b> <span class="muted">'+n+' t · '+sq[k].toLocaleString('vi-VN')+' pcs</span></span>').join('')+
+        '<span style="border-left:1px solid var(--line);padding-left:16px"><b style="font-size:15px">'+fm1(sxTo)+'</b> <span class="muted">Tổng t · '+sxPc.toLocaleString('vi-VN')+' pcs</span></span>'+
       '</div>';
   })();
   const ta=timeAgg(done);
