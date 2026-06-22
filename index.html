@@ -237,6 +237,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
   <!-- 01 TỔNG QUAN -->
   <section id="v_tq" class="view active">
     <div class="kpis" id="tqKpis"></div>
+    <div class="card" id="tqAlert" style="display:none"></div>
     <div class="card" id="tqLatest" style="border-left:4px solid var(--acc)"></div>
     <div class="panel" id="pendPanel" style="display:none">
       <button class="close" onclick="hideP('pendPanel')">✕</button>
@@ -300,6 +301,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
         <div><div class="cg-lbl" style="margin-bottom:4px">Theo xưởng</div><div class="tw" style="max-height:240px"><table id="ndByX"></table></div></div>
         <div><div class="cg-lbl" style="margin-bottom:4px">Theo dự án</div><div class="tw" style="max-height:240px"><table id="ndByP"></table></div></div>
       </div>
+      <div style="margin-top:10px"><div class="cg-lbl" style="margin-bottom:4px">Theo tổ</div><div class="tw" style="max-height:240px"><table id="ndByTo"></table></div></div>
       <div style="margin-top:10px"><div class="cg-lbl" style="margin-bottom:4px">Theo QC viên</div><div class="tw" style="max-height:240px"><table id="ndByQ"></table></div></div>
     </div>
     <div class="card"><h3>Bảng theo dõi theo ngày</h3><div class="q">Mới nhất ở trên · cột Δ = biến động so ngày trước · bấm dòng để xem báo cáo đầy đủ ngày đó</div><div class="tw" style="max-height:460px"><table id="tNd"></table></div></div>
@@ -498,6 +500,29 @@ function rTQ(){
   document.getElementById('tqKpis').innerHTML=
     kpi('f',fm1(s.f),'Fitup (t)','đã QC accept')+kpi('w',fm1(s.w),'Welding (t)','đã QC accept')+kpi('p',fm1(s.p),'Painting (t)','đã QC accept')+
     kpi(pT>1?'a':'g',fm1(pT),'Waiting (t)',(pT>1?'đang chờ nghiệm thu (toàn bộ) · bấm xem ▸':'không có tồn chờ'),'openPend()');
+  (function(){ /* #3 Canh bao + phan bo QC */
+    var box=document.getElementById('tqAlert');if(!box)return;
+    var allF=Fnodate();
+    var rej=rows.filter(function(r){return D.PL[r[6]]==='Rớt';});
+    var rejT=0;rej.forEach(function(r){rejT+=r[7]+r[8]+r[9];});
+    var accT=s.f+s.w+s.p, rejRate=(accT+rejT)>0?(rejT/(accT+rejT)*100):0;
+    var maxWD='',maxQD='';
+    allF.forEach(function(r){if(r[4]&&r[4]>maxWD)maxWD=r[4];if(r[3]&&r[3]>maxQD)maxQD=r[3];});
+    var lagDays=(maxWD&&maxQD&&maxWD>maxQD)?Math.round((new Date(maxWD)-new Date(maxQD))/864e5):0;
+    var _t=new Date();_t.setHours(0,0,0,0);var old30=0;
+    pend.forEach(function(r){var v=r[7]+r[8]+r[9];if(r[4]&&Math.floor((_t-new Date(r[4]))/864e5)>30)old30+=v;});
+    var QL={};done.forEach(function(r){var u=D.Q[r[5]];if(u&&u!=='—'){var o=QL[u]||(QL[u]={t:0});o.t+=r[7]+r[8]+r[9];}});
+    var ql=Object.keys(QL).map(function(u){return [u,QL[u].t];}).sort(function(a,b){return b[1]-a[1];});
+    var chips='';
+    if(rejT>0.05)chips+='<span class="tag r">⚠ Rớt: '+fm1(rejT)+' t · '+rej.length+' món · tỉ lệ '+rejRate.toFixed(1)+'%</span>';
+    if(lagDays>0)chips+='<span class="tag o">⏱ QC chậm hơn SX '+lagDays+' ngày (SX '+dayVN(maxWD)+' › NT '+dayVN(maxQD)+') · '+fmTon(pT)+' chờ NT</span>';
+    if(old30>0.05)chips+='<span class="tag r">📦 Tồn &gt;30 ngày: '+fmTon(old30)+'</span>';
+    if(ql.length)chips+='<span class="tag b">👷 '+ql.length+' QC viên · tải cao nhất: '+ql.slice(0,3).map(function(e){return e[0]+' ('+fm1(e[1])+'t)';}).join(' · ')+'</span>';
+    if(!chips){box.style.display='none';return;}
+    box.style.display='block';box.style.borderLeft='4px solid var(--warn)';
+    box.innerHTML='<div class="cg-lbl" style="margin-bottom:6px">⚠️ Cảnh báo &amp; phân bổ QC</div><div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">'+chips+'</div>'+(lagDays>0?'<div class="muted" style="margin-top:7px;font-size:11.5px">→ Nghiệm thu đang chậm hơn sản xuất '+lagDays+' ngày. Kéo dài thì cân nhắc thêm QC viên hoặc ưu tiên nghiệm thu hàng tồn.</div>':'');
+  })();
+
   (function(){
     let ld='';for(const r of done){const d=dateOf(r);if(d&&d>ld)ld=d;}
     const box=document.getElementById('tqLatest');if(!box)return;
@@ -554,7 +579,7 @@ function rTQ(){
   const capTgt=(ta.mode==='d'?CAP_DAY:CAP_MONTH);
   const perMax=Math.max.apply(null,[0].concat(ta.keys.map(x=>Math.max.apply(null,[0].concat(selStg.map(([k])=>ta.map[x][k]||0))))));
   const hasFpy=ta.keys.length>0;
-  const axTon=Math.max(capTgt*2,Math.ceil(perMax*1.12/(capTgt/2))*(capTgt/2));
+  const axTon=Math.max(ta.mode==='d'?250:capTgt*2,Math.ceil(perMax*1.12/(capTgt/2))*(capTgt/2));
   const axPctMax=Math.round(axTon/capTgt*100);
   const fpyData=ta.keys.map(k=>{const o=QFPY?(ta.mode==='d'?QFPY.byDay[k]:QFPY.byMonth[k]):null;if(o&&(o.a+o.j))return +(o.a/(o.a+o.j)*100).toFixed(1);const pr=sxBy[k]||0;return pr?+(((sxAcc[k]||0)/pr)*100).toFixed(1):null;});
   const hasReal=fpyData.some(v=>v!=null);
@@ -808,6 +833,10 @@ function renderDay(){
   const pk=Object.entries(P).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
   document.getElementById('ndByP').innerHTML='<thead><tr><th>Dự án'+(_dayX?' — '+_dayX:'')+'</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">pcs</th></tr></thead><tbody>'+
     pk.map(([pi,o])=>'<tr class="clickable" onclick="tog(\'pj\','+pi+')"><td class="pjn" title="'+D.P[pi].replace(/"/g,'&quot;')+'">'+pName(+pi)+'</td><td class="n">'+(o.f?fm1(o.f):'')+'</td><td class="n">'+(o.w?fm1(o.w):'')+'</td><td class="n">'+(o.p?fm1(o.p):'')+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td></tr>').join('')+'</tbody>';
+  const TO={};for(const r of rows){const k=toKey(r);const o=TO[k]=TO[k]||{f:0,w:0,p:0,q:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=r[10]+r[11]+r[12];}
+  const tok=Object.entries(TO).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
+  document.getElementById('ndByTo').innerHTML='<thead><tr><th>Tổ (bấm để lọc)</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">pcs</th></tr></thead><tbody>'+
+    tok.map(([k,o])=>'<tr class="clickable" onclick="tog(\'to\',\''+k+'\')"><td><b>'+k+'</b></td><td class="n">'+(o.f?fm1(o.f):'')+'</td><td class="n">'+(o.w?fm1(o.w):'')+'</td><td class="n">'+(o.p?fm1(o.p):'')+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td></tr>').join('')+'</tbody>';
   const Q={};for(const r of rows){const u=D.Q[r[5]];if(u==='—')continue;const o=Q[u]=Q[u]||{f:0,w:0,p:0,q:0,n:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=r[10]+r[11]+r[12];o.n++;}
   const qk=Object.entries(Q).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
   document.getElementById('ndByQ').innerHTML='<thead><tr><th>QC viên</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">pcs</th><th class="n">Lượt</th></tr></thead><tbody>'+
