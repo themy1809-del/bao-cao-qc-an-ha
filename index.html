@@ -251,7 +251,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
     </div>
     <div class="r23"><div class="card"><h3 id="tqTimeTtl">Sản lượng nghiệm thu theo ngày</h3><div class="q" id="tqTimeQ">Bấm cột để lọc theo kỳ</div><div id="cTime" class="ch"></div></div><div class="card"><h3>Sản lượng theo công đoạn</h3><div class="q" id="tqMixQ">Cùng khối lượng đi Fitup → Welding → Painting · % so mục tiêu 4.500 t/tháng · bấm để lọc</div><div id="cMix" class="ch"></div></div></div>
     <div class="r23" style="grid-template-columns:1fr 1.4fr">
-      <div class="card"><h3>Sản lượng theo xưởng</h3><div class="q" id="tqXQ">Bấm cột xưởng để lọc</div><div id="cX" class="ch"></div></div>
+      <div class="card" style="display:flex;flex-direction:column"><h3>Sản lượng theo xưởng</h3><div class="q" id="tqXQ">Bấm cột xưởng để lọc</div><div id="cX" class="ch" style="flex:1 1 auto;height:auto;min-height:170px"></div></div>
       <div class="card"><h3>🏗️ Top dự án đang hoạt động</h3><div class="q">KL đã nghiệm thu trong kỳ (tấn) · <b>Chờ NT</b> = đã làm chưa nghiệm thu · <b>Còn lại BOM</b> = tổng thiết kế − đã hoàn thành · bấm để lọc</div><div id="tqIns"></div></div>
     </div>
   </section>
@@ -630,7 +630,7 @@ function rTQ(){
   setOpt('cX',{tooltip:TT,grid:GRID,legend:{top:0,right:10,itemWidth:11,itemHeight:11},
     xAxis:{type:'category',data:xs},yAxis:{type:'value',name:'tấn'},
     series:selStgX.map(([k,n,c])=>({name:n,type:'bar',barGap:'18%',barMaxWidth:20,itemStyle:{color:grad(c,c+'99'),borderRadius:[4,4,0,0],shadowBlur:8,shadowColor:c+'40',shadowOffsetY:3},emphasis:{focus:'series',itemStyle:{shadowBlur:14,shadowColor:c+'80'}},label:{show:true,position:'top',formatter:p=>p.value>=1?fm1(p.value):'',fontSize:8.5,fontWeight:600,color:_lblC,distance:3},labelLayout:{hideOverlap:true},data:xs.map(x=>+XX[x][k].toFixed(1))}))
-  },p=>{if(p.componentType==='series')tog('x',xs[p.dataIndex]);});
+  },p=>{if(p.componentType==='series')tog('x',xs[p.dataIndex]);});setTimeout(function(){try{CH.cX&&CH.cX.resize();}catch(e){}},60);
   // Top du an dang hoat dong (theo KL nghiem thu trong ky)
   if(!rows.length){document.getElementById('tqIns').innerHTML='<div class="muted">Không có dữ liệu trong phạm vi lọc.</div>';}
   else{
