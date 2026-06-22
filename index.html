@@ -226,7 +226,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
         <button data-db="q" class="on">Ngày nghiệm thu</button>
         <button data-db="w">Ngày gia công</button>
       </div>
-      <span class="cg-lbl">Kỳ</span><button class="qf" id="qr3" onclick="setQR('3m')">3 tháng</button><button class="qf" id="qrm" onclick="setQR('m')">Tháng mới nhất</button><button class="qf" id="qra" onclick="setQR('all')">Tất cả</button>
+      <span class="cg-lbl">Kỳ</span><button class="qf" id="qr3" onclick="setQR('3m')">3 tháng</button><button class="qf" id="qrm" onclick="setQR('m')">Tháng mới nhất</button><button class="qf" id="qra" onclick="setQR('all')">Tất cả</button><button class="qf" id="fitBtn" onclick="toggleFit()" title="Tự thu/phóng cho vừa 1 màn hình (thấy hết không cuộn)">⛶ Vừa màn hình</button>
       <span class="drbox"><span class="cg-lbl">Từ</span><input type="date" id="drFrom" class="drin"><span class="cg-lbl">đến</span><input type="date" id="drTo" class="drin"></span>
     </div>
   </div>
@@ -241,8 +241,9 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
     <div class="card" id="tqLatest" style="border-left:4px solid var(--acc)"></div>
     <div class="panel" id="pendPanel" style="display:none">
       <button class="close" onclick="hideP('pendPanel')">✕</button>
-      <h3>⏳ Chờ nghiệm thu theo Tổ — bấm tổ để xem dự án</h3>
+      <h3>⏳ Chờ nghiệm thu (Waiting) — công đoạn · xưởng · tổ · dự án</h3>
       <div class="q" id="pendSub"></div>
+      <div id="pendBk" style="margin:6px 0 2px"></div>
       <div class="cg-lbl" style="margin:8px 0 2px">📉 Xu hướng tồn theo ngày (dựng lại từ dữ liệu) — đường đi xuống = đang dọn được</div>
       <div id="cPendTrend" class="ch short" style="margin:0 0 6px"></div>
       <div class="tw" style="max-height:440px" id="pendWrap"></div>
@@ -422,7 +423,26 @@ function renderCtrls(){
 function renderAll(){renderChips();renderCtrls();
   document.getElementById('meta').textContent=(DB==='q'?'Theo ngày nghiệm thu (QCDate)':'Theo ngày gia công (WorkDate)')+' · nguồn SPM '+D.updated;
   render(CUR);}
-function render(k){({tq:rTQ,xt:rXT,qc:rQC,du:rDU,nd:rND,dl:rDL})[k]();}
+function render(k){({tq:rTQ,xt:rXT,qc:rQC,du:rDU,nd:rND,dl:rDL})[k]();scheduleFit();}
+/* ===== Vua man hinh: tu thu/phong tab dang xem cho vua 1 man hinh ===== */
+var FIT=false;try{FIT=localStorage.getItem('qcfit')==='1';}catch(e){}
+var _fitT;
+function scheduleFit(){clearTimeout(_fitT);_fitT=setTimeout(applyFit,150);}
+function toggleFit(){FIT=!FIT;try{localStorage.setItem('qcfit',FIT?'1':'0');}catch(e){}applyFit();}
+function applyFit(){
+  var b=document.getElementById('fitBtn');if(b)b.classList.toggle('on',FIT);
+  var vs=document.querySelectorAll('.view');
+  if(!FIT){vs.forEach(function(v){v.style.zoom='';});return;}
+  var t=document.querySelector('.view.active');if(!t)return;
+  t.style.zoom='1';
+  var nat=t.scrollHeight;if(!nat)return;
+  var top=t.getBoundingClientRect().top;
+  var avail=window.innerHeight-top-12;
+  var z=avail/nat;if(z>1)z=1;if(z<0.5)z=0.5;
+  t.style.zoom=(z>=0.999?'':z);
+}
+window.addEventListener('resize',scheduleFit);
+
 function kpi(cls,v,lbl,sub,click){return'<div class="kpi '+cls+'"'+(click?' style="cursor:pointer" onclick="'+click+'"':'')+'><div class="lbl">'+lbl+'</div><div class="v num">'+v+'</div><div class="sub">'+(sub||'')+'</div></div>';}
 function hideP(id){document.getElementById(id).style.display='none';}
 let pendOpen=new Set();
@@ -435,6 +455,19 @@ function renderPend(){
   let _clr=0;const _allR=Fnodate();for(const r of _allR){const qd=r[3],wd=r[4];if(qd&&wd){const aq=Math.floor((_tdy-new Date(qd))/864e5),lag=Math.floor((new Date(qd)-new Date(wd))/864e5);if(aq>=0&&aq<=7&&lag>30)_clr+=r[7]+r[8]+r[9];}}
   const _ageHtml='<div style="margin-top:7px;display:flex;gap:7px;flex-wrap:wrap;align-items:center"><span class="cg-lbl">Tuổi tồn (từ ngày gia công):</span><span class="tag g" title="chờ kiểm bình thường">≤7 ngày · '+fmTon(_a7)+'</span><span class="tag o">8–30 ngày · '+fmTon(_a30)+'</span><span class="tag r" title="tồn cũ cần rà soát">&gt;30 ngày · '+fmTon(_aO)+'</span>'+(_clr>0?'<span class="tag g" title="hàng gia công >30 ngày trước, vừa nghiệm thu trong 7 ngày qua">✔ clear tồn cũ (7 ngày): '+fmTon(_clr)+' t</span>':'')+(_aN>0?'<span class="tag">không có ngày · '+fmTon(_aN)+'</span>':'')+'</div>';
   document.getElementById('pendSub').innerHTML='<b>'+fmTon(T)+'</b> · '+TQ.toLocaleString('vi-VN')+' pcs chờ QC accept · '+rows.length+' dòng · bấm một tổ để xem dự án'+_ageHtml;
+  (function(){ /* breakdown Waiting: cong doan + xuong */
+    var bx=document.getElementById('pendBk');if(!bx)return;
+    var sf=0,sw=0,sp=0,X={};
+    for(var i=0;i<rows.length;i++){var r=rows[i];sf+=r[7];sw+=r[8];sp+=r[9];var xn=D.X[r[1]];X[xn]=(X[xn]||0)+r[7]+r[8]+r[9];}
+    var stg='<span class="cg-lbl">Công đoạn chờ:</span>'
+      +'<span class="tag clickable" onclick="tog(\'st\',\'f\')" style="background:#eaf1fb;color:#2d5aa0;margin:2px">Fitup '+fmTon(sf)+'</span>'
+      +'<span class="tag clickable" onclick="tog(\'st\',\'w\')" style="background:#fdf3e3;color:#9a6310;margin:2px">Welding '+fmTon(sw)+'</span>'
+      +'<span class="tag clickable" onclick="tog(\'st\',\'p\')" style="background:#e9f7ef;color:#1c7a4d;margin:2px">Painting '+fmTon(sp)+'</span>';
+    var xk=Object.keys(X).sort(function(a,b){return X[b]-X[a];});
+    var xs='<span class="cg-lbl" style="margin-left:10px">Xưởng chờ:</span>'+xk.map(function(x){return '<span class="tag b clickable" onclick="tog(\'x\',\''+x+'\')" style="margin:2px">'+x+' '+fmTon(X[x])+'</span>';}).join('');
+    bx.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:3px;align-items:center;line-height:1.9">'+stg+xs+'</div>';
+  })();
+
   (function(){var tn=document.getElementById('cPendTrend');if(!tn)return;
     let _mx='';for(const r of _allR){if(r[3]&&r[3]>_mx)_mx=r[3];if(r[4]&&r[4]>_mx)_mx=r[4];}
     if(!_mx)return;
