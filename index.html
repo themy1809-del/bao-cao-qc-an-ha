@@ -322,6 +322,15 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
 if(typeof echarts==='undefined')document.getElementById('errE').style.display='block';
 if(typeof echarts!=='undefined'){echarts.registerTheme('qclight',{color:['#4f80c9','#dd9a33','#2fa07c','#0d7a52','#9b8cce','#d97a7a'],textStyle:{fontFamily:'Be Vietnam Pro,Inter,sans-serif',color:'#13231a'},title:{textStyle:{color:'#13231a',fontWeight:700}},categoryAxis:{axisLine:{show:false},axisTick:{show:false},axisLabel:{color:'#697c70'},splitLine:{show:false}},valueAxis:{axisLine:{show:false},axisTick:{show:false},axisLabel:{color:'#697c70'},splitLine:{lineStyle:{color:'#edf2ef'}},nameTextStyle:{color:'#9aa89f'}},legend:{textStyle:{color:'#697c70'},itemWidth:11,itemHeight:11},tooltip:{backgroundColor:'#fff',borderColor:'#e7edea',borderWidth:1,textStyle:{color:'#13231a'},extraCssText:'box-shadow:0 8px 26px rgba(16,40,28,.14);border-radius:11px;padding:9px 12px'}});}
 const D=window.QCDATA;
+/* Tu dong lam moi: dinh ky tai qcdata.js (chong cache), neu du lieu doi -> reload. Chay tren ban web https; ban local file:// tu bo qua. */
+(function(){
+  function _sig(o){return (o&&o.rows?o.rows.length:0)+'|'+(o&&o.check?o.check.f+'_'+o.check.w+'_'+o.check.p:'')+'|'+((o&&o.updated)||'');}
+  var _base=null;
+  function _fs(cb){try{fetch('qcdata.js?_cb='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){var i=t.indexOf('{'),j=t.lastIndexOf('}');if(i<0||j<=i){cb(null);return;}try{cb(_sig(JSON.parse(t.slice(i,j+1))));}catch(e){cb(null);}}).catch(function(){cb(null);});}catch(e){cb(null);}}
+  _fs(function(s){_base=s;});
+  setInterval(function(){_fs(function(s){if(s&&_base&&s!==_base)location.reload();});},180000);
+})();
+
 document.getElementById('srcd').textContent=D.updated;var _ls=document.getElementById('liveSt');if(_ls)_ls.textContent=(window.__QCSRC==='live'?'\u25CF Google \u00b7 LIVE':'\u25CF SPM n\u1ed9i b\u1ed9');
 const STG=[['f','Fitup','#4f80c9'],['w','Welding','#dd9a33'],['p','Painting','#2fa07c']];
 const fmt=v=>Math.abs(v)>=1000?(v/1000).toFixed(1).replace('.',',')+'k':(Math.round(v*10)/10).toLocaleString('vi-VN');
