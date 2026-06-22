@@ -436,10 +436,11 @@ function applyFit(){
   var t=document.querySelector('.view.active');if(!t)return;
   t.style.zoom='1';
   var nat=t.scrollHeight;if(!nat)return;
-  var top=t.getBoundingClientRect().top;
-  var avail=window.innerHeight-top-12;
-  var z=avail/nat;if(z>1)z=1;if(z<0.5)z=0.5;
+  var se=document.scrollingElement||document.documentElement;
+  var avail=window.innerHeight-(se.scrollHeight-nat)-8;
+  var z=avail/nat;if(z>1)z=1;if(z<0.4)z=0.4;
   t.style.zoom=(z>=0.999?'':z);
+  try{window.scrollTo(0,0);}catch(e){}
 }
 window.addEventListener('resize',scheduleFit);
 
