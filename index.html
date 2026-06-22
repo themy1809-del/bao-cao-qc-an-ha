@@ -87,10 +87,10 @@ body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg
 .fresh.bad{background:#fdecec;color:#b3261e;border:1px solid #f0b4b0}
 
 /* ---------- VIEWS / KPI ---------- */
-.view{display:none;flex-direction:column;gap:14px}.view.active{display:flex;animation:fade .25s ease}
+.view{display:none;flex-direction:column;gap:9px}.view.active{display:flex;animation:fade .25s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:14px}
-.kpi{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:var(--rad);box-shadow:var(--sh);padding:13px 16px;transition:transform .15s,box-shadow .15s}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px}
+.kpi{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:var(--rad);box-shadow:var(--sh);padding:10px 14px;transition:transform .15s,box-shadow .15s}
 .kpi:hover{transform:translateY(-2px);box-shadow:var(--shLg)}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--line)}
 .kpi .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.11em;color:var(--mut);font-weight:700}
@@ -100,15 +100,15 @@ body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg
 .kpi.f::before{background:var(--f)}.kpi.w::before{background:var(--w)}.kpi.p::before{background:var(--p)}.kpi.a::before{background:var(--warn)}.kpi.g::before{background:var(--good)}.kpi.b::before{background:var(--acc)}
 
 /* ---------- GRID / CARD ---------- */
-.r2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.r23{display:grid;grid-template-columns:1.8fr 1fr;gap:14px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.r23{display:grid;grid-template-columns:1.8fr 1fr;gap:10px}
 @media(max-width:1000px){.r2,.r23{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);box-shadow:var(--sh);padding:14px 17px;transition:box-shadow .15s}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);box-shadow:var(--sh);padding:11px 15px;transition:box-shadow .15s}
 .card:hover{box-shadow:var(--shLg)}
 #tqLatest{overflow-x:auto}
 .card h3{font-size:12.5px;font-weight:700;letter-spacing:.01em;display:inline-flex;align-items:center;gap:7px;background:var(--acc);color:#fff;padding:6px 15px;border-radius:999px;margin-bottom:4px;box-shadow:var(--sh)}
-.card .q{font-size:11px;color:var(--mut);margin:3px 0 9px;line-height:1.45}
-.ch{width:100%;height:clamp(220px,27vh,300px)}.ch.tall{height:clamp(280px,36vh,400px)}.ch.short{height:clamp(180px,22vh,240px)}
+.card .q{font-size:11px;color:var(--mut);margin:2px 0 6px;line-height:1.4}
+.ch{width:100%;height:clamp(160px,19.5vh,235px)}.ch.tall{height:clamp(205px,25vh,295px)}.ch.short{height:clamp(140px,16vh,190px)}
 
 /* ---------- TABLE ---------- */
 table{width:100%;border-collapse:collapse;font-size:12px}
@@ -135,7 +135,7 @@ td.n,th.n{border-left:1px solid var(--line)}
 .muted{color:var(--mut);font-size:12px}
 
 /* ---------- PANEL / DRILL ---------- */
-.panel{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:var(--rad);box-shadow:var(--shLg);padding:18px 20px}
+.panel{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:var(--rad);box-shadow:var(--shLg);padding:13px 16px}
 .panel .close{float:right;cursor:pointer;color:var(--mut);font-weight:700;border:none;background:none;font-size:16px;line-height:1}
 .panel .close:hover{color:var(--bad)}
 .tw{border:1px solid var(--line);border-radius:12px;overflow:auto;max-height:440px;background:var(--cardSolid)}
@@ -226,7 +226,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
         <button data-db="q" class="on">Ngày nghiệm thu</button>
         <button data-db="w">Ngày gia công</button>
       </div>
-      <span class="cg-lbl">Kỳ</span><button class="qf" id="qr3" onclick="setQR('3m')">3 tháng</button><button class="qf" id="qrm" onclick="setQR('m')">Tháng mới nhất</button><button class="qf" id="qra" onclick="setQR('all')">Tất cả</button><button class="qf" id="fitBtn" onclick="toggleFit()" title="Tự thu/phóng cho vừa 1 màn hình (thấy hết không cuộn)">⛶ Vừa màn hình</button>
+      <span class="cg-lbl">Kỳ</span><button class="qf" id="qr3" onclick="setQR('3m')">3 tháng</button><button class="qf" id="qrm" onclick="setQR('m')">Tháng mới nhất</button><button class="qf" id="qra" onclick="setQR('all')">Tất cả</button>
       <span class="drbox"><span class="cg-lbl">Từ</span><input type="date" id="drFrom" class="drin"><span class="cg-lbl">đến</span><input type="date" id="drTo" class="drin"></span>
     </div>
   </div>
@@ -423,26 +423,8 @@ function renderCtrls(){
 function renderAll(){renderChips();renderCtrls();
   document.getElementById('meta').textContent=(DB==='q'?'Theo ngày nghiệm thu (QCDate)':'Theo ngày gia công (WorkDate)')+' · nguồn SPM '+D.updated;
   render(CUR);}
-function render(k){({tq:rTQ,xt:rXT,qc:rQC,du:rDU,nd:rND,dl:rDL})[k]();scheduleFit();}
-/* ===== Vua man hinh: tu thu/phong tab dang xem cho vua 1 man hinh ===== */
-var FIT=false;try{FIT=localStorage.getItem('qcfit')==='1';}catch(e){}
-var _fitT;
-function scheduleFit(){clearTimeout(_fitT);_fitT=setTimeout(applyFit,150);}
-function toggleFit(){FIT=!FIT;try{localStorage.setItem('qcfit',FIT?'1':'0');}catch(e){}applyFit();}
-function applyFit(){
-  var b=document.getElementById('fitBtn');if(b)b.classList.toggle('on',FIT);
-  var vs=document.querySelectorAll('.view');
-  if(!FIT){vs.forEach(function(v){v.style.zoom='';});return;}
-  var t=document.querySelector('.view.active');if(!t)return;
-  t.style.zoom='1';
-  var nat=t.scrollHeight;if(!nat)return;
-  var se=document.scrollingElement||document.documentElement;
-  var avail=window.innerHeight-(se.scrollHeight-nat)-8;
-  var z=avail/nat;if(z>1)z=1;if(z<0.4)z=0.4;
-  t.style.zoom=(z>=0.999?'':z);
-  try{window.scrollTo(0,0);}catch(e){}
-}
-window.addEventListener('resize',scheduleFit);
+function render(k){({tq:rTQ,xt:rXT,qc:rQC,du:rDU,nd:rND,dl:rDL})[k]();}
+
 
 function kpi(cls,v,lbl,sub,click){return'<div class="kpi '+cls+'"'+(click?' style="cursor:pointer" onclick="'+click+'"':'')+'><div class="lbl">'+lbl+'</div><div class="v num">'+v+'</div><div class="sub">'+(sub||'')+'</div></div>';}
 function hideP(id){document.getElementById(id).style.display='none';}
