@@ -226,7 +226,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
         <button data-db="q" class="on">Ngày nghiệm thu</button>
         <button data-db="w">Ngày gia công</button>
       </div>
-      <span class="cg-lbl">Kỳ</span><button class="qf" id="qr3" onclick="setQR('3m')">3 tháng</button><button class="qf" id="qrm" onclick="setQR('m')">Tháng mới nhất</button><button class="qf" id="qra" onclick="setQR('all')">Tất cả</button>
+      <span class="cg-lbl">Kỳ</span><button class="qf" id="qr3" onclick="setQR('3m')">3 tháng</button><button class="qf" id="qrm" onclick="setQR('m')">Tháng mới nhất</button><button class="qf" id="qra" onclick="setQR('all')">Tất cả</button><span class="cg-lbl" style="margin-left:6px">Cỡ</span><button class="qf" onclick="uiScale(-1)" title="Thu nhỏ toàn bộ">A−</button><button class="qf" onclick="uiScale(1)" title="Phóng to toàn bộ">A+</button>
       <span class="drbox"><span class="cg-lbl">Từ</span><input type="date" id="drFrom" class="drin"><span class="cg-lbl">đến</span><input type="date" id="drTo" class="drin"></span>
     </div>
   </div>
@@ -322,6 +322,10 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
 if(typeof echarts==='undefined')document.getElementById('errE').style.display='block';
 if(typeof echarts!=='undefined'){echarts.registerTheme('qclight',{color:['#4f80c9','#dd9a33','#2fa07c','#0d7a52','#9b8cce','#d97a7a'],textStyle:{fontFamily:'Be Vietnam Pro,Inter,sans-serif',color:'#13231a'},title:{textStyle:{color:'#13231a',fontWeight:700}},categoryAxis:{axisLine:{show:false},axisTick:{show:false},axisLabel:{color:'#697c70'},splitLine:{show:false}},valueAxis:{axisLine:{show:false},axisTick:{show:false},axisLabel:{color:'#697c70'},splitLine:{lineStyle:{color:'#edf2ef'}},nameTextStyle:{color:'#9aa89f'}},legend:{textStyle:{color:'#697c70'},itemWidth:11,itemHeight:11},tooltip:{backgroundColor:'#fff',borderColor:'#e7edea',borderWidth:1,textStyle:{color:'#13231a'},extraCssText:'box-shadow:0 8px 26px rgba(16,40,28,.14);border-radius:11px;padding:9px 12px'}});}
 const D=window.QCDATA;
+var _UIK='qcui',_ui=1;try{var _s=parseFloat(localStorage.getItem(_UIK));if(_s>=0.6&&_s<=1.6)_ui=_s;}catch(e){}
+function _applyUi(){var m=document.querySelector('.main');if(m)m.style.zoom=(Math.abs(_ui-1)<0.001?'':_ui);}
+function uiScale(d){_ui=Math.max(0.8,Math.min(1.35,Math.round((_ui+d*0.05)*100)/100));try{localStorage.setItem(_UIK,_ui);}catch(e){}_applyUi();}
+setTimeout(_applyUi,0);
 /* Tu dong lam moi: dinh ky tai qcdata.js (chong cache), neu du lieu doi -> reload. Chay tren ban web https; ban local file:// tu bo qua. */
 (function(){
   function _sig(o){return (o&&o.rows?o.rows.length:0)+'|'+(o&&o.check?o.check.f+'_'+o.check.w+'_'+o.check.p:'')+'|'+((o&&o.updated)||'');}
