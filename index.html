@@ -629,7 +629,7 @@ function rTQ(){
   const _lblC=document.documentElement.dataset.theme==='dark'?'#e6ece8':'#16261c';
   setOpt('cX',{tooltip:TT,grid:GRID,legend:{top:0,right:10,itemWidth:11,itemHeight:11},
     xAxis:{type:'category',data:xs},yAxis:{type:'value',name:'tấn'},
-    series:selStgX.map(([k,n,c])=>({name:n,type:'bar',barGap:'18%',barMaxWidth:20,itemStyle:{color:grad(c,c+'99'),borderRadius:[4,4,0,0],shadowBlur:8,shadowColor:c+'40',shadowOffsetY:3},emphasis:{focus:'series',itemStyle:{shadowBlur:14,shadowColor:c+'80'}},label:{show:true,position:'top',formatter:p=>p.value>=1?fm1(p.value):'',fontSize:9,fontWeight:600,color:_lblC},data:xs.map(x=>+XX[x][k].toFixed(1))}))
+    series:selStgX.map(([k,n,c])=>({name:n,type:'bar',barGap:'18%',barMaxWidth:20,itemStyle:{color:grad(c,c+'99'),borderRadius:[4,4,0,0],shadowBlur:8,shadowColor:c+'40',shadowOffsetY:3},emphasis:{focus:'series',itemStyle:{shadowBlur:14,shadowColor:c+'80'}},label:{show:true,position:'top',formatter:p=>p.value>=1?fm1(p.value):'',fontSize:8.5,fontWeight:600,color:_lblC,distance:3},labelLayout:{hideOverlap:true},data:xs.map(x=>+XX[x][k].toFixed(1))}))
   },p=>{if(p.componentType==='series')tog('x',xs[p.dataIndex]);});
   // Top du an dang hoat dong (theo KL nghiem thu trong ky)
   if(!rows.length){document.getElementById('tqIns').innerHTML='<div class="muted">Không có dữ liệu trong phạm vi lọc.</div>';}
