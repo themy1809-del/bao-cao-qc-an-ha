@@ -990,6 +990,7 @@ function renderFresh(){
 }
 renderChips();renderCtrls();renderFresh();
 if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1].slice(0,7)+'-01';DR.to='';}})();qrMark();setupDR();document.getElementById('drFrom').addEventListener('change',e=>{DR.from=e.target.value;renderAll();});document.getElementById('drTo').addEventListener('change',e=>{DR.to=e.target.value;renderAll();});setView('tq');try{_syncSb();}catch(e){}if(typeof fetch!=='undefined'){try{loadFPY();}catch(e){}}}
+(function(){try{var m=location.search.match(/[?&]qc=([^&]+)/);if(m){var qc=decodeURIComponent(m[1]).trim();if(qc&&typeof D!=='undefined'&&D.Q&&D.Q.indexOf(qc)>=0){S.q.add(qc);if(typeof renderAll==='function')renderAll();}}}catch(e){}})();
 </script>
 <div id="repView" style="display:none;position:fixed;left:-99999px;top:0;width:1060px;background:#eef3f1;font-family:'Be Vietnam Pro',Inter,sans-serif;color:#13231a">
   <div style="background:linear-gradient(120deg,#0f2419,#0d7a52);color:#fff;padding:24px 32px">
