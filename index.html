@@ -13,14 +13,14 @@
 <style>
 html{font-size:clamp(10px,0.25vw + 7px,13px);scroll-behavior:smooth}
 :root{--f:#4f80c9;--w:#dd9a33;--p:#2fa07c;--rad:16px;--rad-sm:11px}
-[data-theme=light]{--bg:#eef3f1;--card:#ffffff;--cardSolid:#ffffff;--ink:#13231a;--mut:#697c70;--line:#e7edea;
---acc:#0d7a52;--acc2:#11a06c;--good:#15803d;--warn:#b4690e;--bad:#c0392b;--chipBg:#eaf5ef;--chipBd:#cfe8db;--chipInk:#0c6e4a;--rowH:#f4f8f6;
---sh:0 1px 2px rgba(16,40,28,.05),0 8px 22px rgba(16,40,28,.06);--shLg:0 6px 16px rgba(16,40,28,.08),0 20px 48px rgba(16,40,28,.10)}
+[data-theme=light]{--bg:#e7edea;--card:#ffffff;--cardSolid:#ffffff;--ink:#0f1d14;--mut:#5c6e65;--line:#d2ddd6;
+--acc:#0d7a52;--acc2:#11a06c;--good:#15803d;--warn:#b4690e;--bad:#c0392b;--chipBg:#e7f4ee;--chipBd:#c2e1d1;--chipInk:#0a6043;--rowH:#f0f5f2;
+--sh:0 1px 2px rgba(13,40,28,.08),0 4px 10px rgba(13,40,28,.09),0 14px 30px rgba(13,40,28,.11);--shLg:0 10px 24px rgba(13,40,28,.14),0 28px 56px rgba(13,40,28,.17)}
 [data-theme=dark]{--bg:#0c1310;--card:#161f1a;--cardSolid:#161f1a;--ink:#e6ece8;--mut:#8ba093;--line:#27352d;
 --acc:#34cf90;--acc2:#3ee0a0;--good:#3ecf94;--warn:#e8b33e;--bad:#ef7b7b;--chipBg:#15261e;--chipBd:#2c4a3a;--chipInk:#7adcb4;--rowH:#1b2620;
 --sh:0 1px 2px rgba(0,0,0,.25),0 8px 22px rgba(0,0,0,.3);--shLg:0 12px 40px rgba(0,0,0,.45)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;font-size:13.5px;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;font-size:13.5px;letter-spacing:0;text-rendering:optimizeLegibility}
 .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
 
 /* ---------- SIDEBAR ---------- */
@@ -1023,7 +1023,4 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
       </div>
     </div>
     <div style="text-align:center;color:#697c70;font-size:11.5px;margin-top:16px;padding-bottom:10px">Tự động từ SPM · cập nhật <span id="repUpd"></span> · Dashboard QC An Hạ</div>
-  </div>
-</div>
-</body>
-</html>
+  </di
