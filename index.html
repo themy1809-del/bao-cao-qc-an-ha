@@ -575,17 +575,18 @@ function rTQ(){
     const lq={f:lqf,w:lqw,p:lqp},sq={f:sqf,w:sqw,p:sqp};
     const qcTot=cardStg.reduce((a,[k])=>a+ls[k],0),qcPcs=cardStg.reduce((a,[k])=>a+lq[k],0);
     const sxTo=cardStg.reduce((a,[k])=>a+sxs[k],0),sxPc=cardStg.reduce((a,[k])=>a+sq[k],0);
+    var lfd=0,lfdq=0;for(var _li=0;_li<dr.length;_li++){var _lr=dr[_li];if(_lr[8]>0&&_lr[13]&&/acc/i.test(''+_lr[13])){lfd+=_lr[8];lfdq+=(_lr[11]||0);}}
     box.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'+
       '<div><span class="cg-lbl">📅 Nghiệm thu ngày gần nhất</span> &nbsp;<b style="font-size:12.5px">'+dayVN(ld)+' · '+wd+'</b> <span class="muted">· '+dr.length+' lượt · '+new Set(dr.map(r=>r[1])).size+' xưởng · '+new Set(dr.map(r=>r[0])).size+' dự án · '+new Set(dr.map(r=>D.Q[r[5]]).filter(q=>q!=='—')).size+' QC viên</span></div>'+
       '<button class="btn sec" onclick="goDay(\''+ld+'\')">Xem báo cáo đầy đủ ▸</button></div>'+
-      '<div style="display:grid;grid-template-columns:104px repeat('+(cardStg.length+1)+',minmax(54px,1fr));gap:10px;align-items:baseline;margin-top:6px;padding:2px 2px">'+
+      '<div style="display:grid;grid-template-columns:104px repeat('+(cardStg.length+2)+',minmax(54px,1fr));gap:10px;align-items:baseline;margin-top:6px;padding:2px 2px">'+
         '<span class="cg-lbl" style="color:var(--acc);align-self:center">QC nghiệm thu</span>'+
-        cardStg.map(([k,n])=>'<span><b style="color:var(--'+k+');font-size:15px">'+fm1(ls[k])+'</b>'+_dl(ls[k],_ps[k])+' <span class="muted">'+n+' t · '+lq[k].toLocaleString('vi-VN')+' pcs</span></span>').join('')+
+        cardStg.map(([k,n])=>'<span><b style="color:var(--'+k+');font-size:15px">'+fm1(ls[k])+'</b>'+_dl(ls[k],_ps[k])+' <span class="muted">'+n+' t · '+lq[k].toLocaleString('vi-VN')+' pcs</span></span>').join('')+'<span><b style="color:var(--fd);font-size:15px">'+fm1(lfd)+'</b> <span class="muted">Final DIM t · '+lfdq.toLocaleString('vi-VN')+' pcs</span></span>'+
         '<span style="border-left:1px solid var(--line);padding-left:16px"><b style="color:var(--acc);font-size:15px">'+fm1(qcTot)+'</b>'+_dl(qcTot,_ps.f+_ps.w+_ps.p)+' <span class="muted">Tổng t · '+qcPcs.toLocaleString('vi-VN')+' pcs</span></span>'+
       '</div>'+
-      '<div style="display:grid;grid-template-columns:104px repeat('+(cardStg.length+1)+',minmax(54px,1fr));gap:12px;align-items:baseline;margin-top:6px;padding:7px 2px 2px;border-top:1px dashed var(--line)">'+
+      '<div style="display:grid;grid-template-columns:104px repeat('+(cardStg.length+2)+',minmax(54px,1fr));gap:12px;align-items:baseline;margin-top:6px;padding:7px 2px 2px;border-top:1px dashed var(--line)">'+
         '<span class="cg-lbl" style="align-self:center">SX gia công</span>'+
-        cardStg.map(([k,n])=>'<span><b style="color:var(--'+k+');font-size:15px">'+fm1(sxs[k])+'</b> <span class="muted">'+n+' t · '+sq[k].toLocaleString('vi-VN')+' pcs</span></span>').join('')+
+        cardStg.map(([k,n])=>'<span><b style="color:var(--'+k+');font-size:15px">'+fm1(sxs[k])+'</b> <span class="muted">'+n+' t · '+sq[k].toLocaleString('vi-VN')+' pcs</span></span>').join('')+'<span class="muted" style="align-self:center">—</span>'+
         '<span style="border-left:1px solid var(--line);padding-left:16px"><b style="font-size:15px">'+fm1(sxTo)+'</b> <span class="muted">Tổng t · '+sxPc.toLocaleString('vi-VN')+' pcs</span></span>'+
       '</div>';
   })();
@@ -633,9 +634,9 @@ function rTQ(){
   const _mkeep=new Set([...new Set(_doneM.map(r=>r[3]).filter(Boolean))].sort().slice(-30));
   _doneM=_doneM.filter(r=>_mkeep.has(r[3]));
   {const _qx=document.getElementById('tqXQ');if(_qx)_qx.textContent=(_lmX?'Tháng '+moVN(_lmX)+' (mới nhất) · ':'')+'cut-off 30 ngày/tháng · bấm cột xưởng để lọc';}
-  const XX={};for(const r of _doneM){const x=D.X[r[1]];(XX[x]=XX[x]||{f:0,w:0,p:0});XX[x].f+=r[7];XX[x].w+=r[8];XX[x].p+=r[9];}
+  const XX={};for(const r of _doneM){const x=D.X[r[1]];(XX[x]=XX[x]||{f:0,w:0,p:0,fd:0});XX[x].f+=r[7];XX[x].w+=r[8];XX[x].p+=r[9];if(r[8]>0&&r[13]&&/acc/i.test(''+r[13]))XX[x].fd+=r[8];}
   const xs=Object.keys(XX).sort();
-  const selStgX=S.st.size?STG.filter(([k])=>S.st.has(k)):STG;
+  const selStgX=(S.st.size?STG.filter(([k])=>S.st.has(k)):STG).concat([['fd','Final DIM','#7c5cd0']]);
   const _lblC=document.documentElement.dataset.theme==='dark'?'#e6ece8':'#16261c';
   setOpt('cX',{tooltip:TT,grid:GRID,legend:{top:0,right:10,itemWidth:11,itemHeight:11},
     xAxis:{type:'category',data:xs},yAxis:{type:'value',name:'tấn'},
