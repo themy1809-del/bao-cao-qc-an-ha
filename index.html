@@ -473,7 +473,7 @@ function renderPend(){
     const end=new Date(_mx),dd=[];for(let i=44;i>=0;i--){const d=new Date(end);d.setDate(d.getDate()-i);dd.push(d.toISOString().slice(0,10));}
     const totT=[],oldT=[];
     for(const D of dd){let sm=0,o=0;const Dt=new Date(D);for(const r of _allR){const wd=r[4];if(!wd||wd>D)continue;const qd=r[3];if(qd&&qd<=D)continue;const v=r[7]+r[8]+r[9];sm+=v;if(Math.floor((Dt-new Date(wd))/864e5)>30)o+=v;}totT.push(+sm.toFixed(1));oldT.push(+o.toFixed(1));}
-    setOpt('cPendTrend',{tooltip:{trigger:'axis',valueFormatter:v=>fm1(v)+' t'},legend:{top:0,right:4,itemWidth:11,itemHeight:11},grid:{left:8,right:14,top:22,bottom:6,containLabel:true},xAxis:{type:'category',data:dd.map(dayVN)},yAxis:{type:'value',name:'t'},series:[{name:'Tổng tồn',type:'line',smooth:true,symbol:'none',areaStyle:{opacity:.08,color:'#b4690e'},lineStyle:{width:2.4,color:'#b4690e'},itemStyle:{color:'#b4690e'},data:totT},{name:'Tồn >30 ngày',type:'line',smooth:true,symbol:'none',lineStyle:{width:2,color:'#c0392b',type:'dashed'},itemStyle:{color:'#c0392b'},data:oldT}]});
+    setOpt('cPendTrend',{tooltip:{trigger:'axis',valueFormatter:v=>fm1(v)+' t'},legend:{top:0,right:4,itemWidth:11,itemHeight:11},grid:{left:8,right:14,top:22,bottom:6,containLabel:true},xAxis:{type:'category',data:dd.map(dayVN)},yAxis:{type:'value',name:'t'},series:[{name:'Tổng tồn',type:'line',smooth:true,symbol:'none',areaStyle:{color:grad('rgba(62,120,196,.30)','rgba(62,120,196,0)')},lineStyle:{width:2.6,color:'#3E78C4'},itemStyle:{color:'#3E78C4'},data:totT},{name:'Tồn >30 ngày',type:'line',smooth:true,symbol:'none',lineStyle:{width:2,color:'#c0392b',type:'dashed'},itemStyle:{color:'#c0392b'},data:oldT}]});
   })();
   const g={};
   for(const r of rows){const v=val(r),qn=qval(r);if(v<=0&&qn<=0)continue;const tk=toKey(r);
@@ -815,10 +815,10 @@ function showQc(u){
   document.getElementById('qcKp2').innerHTML=kpi('b',fm1(tot),'Tổng tấn','')+kpi('',rows.length,'Lượt','')+kpi('',days,'Ngày làm','')+kpi('a',fm1(tot/days),'T/ngày','năng suất');
   const W={};for(const r of rows){const wk=weekKey(dateOf(r));if(!wk)continue;W[wk]=(W[wk]||0)+r[7]+r[8]+r[9];}
   const wks=Object.keys(W).sort().slice(-12);
-  setOpt('cQcWeek',{tooltip:{trigger:'axis',valueFormatter:v=>fm1(v)+' t'},grid:{left:8,right:10,top:10,bottom:8,containLabel:true},xAxis:{type:'category',data:wks.map(w=>dayVN(w))},yAxis:{type:'value'},series:[{type:'bar',barMaxWidth:16,itemStyle:{color:'#4f80c9',borderRadius:[3,3,0,0]},data:wks.map(w=>+W[w].toFixed(1))}]});
+  setOpt('cQcWeek',{tooltip:{trigger:'axis',valueFormatter:v=>fm1(v)+' t'},grid:{left:8,right:10,top:10,bottom:8,containLabel:true},xAxis:{type:'category',data:wks.map(w=>dayVN(w))},yAxis:{type:'value'},series:[{type:'line',smooth:true,symbol:'circle',symbolSize:5,lineStyle:{width:2.6,color:'#3B82F6'},itemStyle:{color:'#3B82F6'},areaStyle:{color:grad('rgba(59,130,246,.32)','rgba(59,130,246,0)')},data:wks.map(w=>+W[w].toFixed(1))}]});
   const M={};for(const r of rows){const mm=mo(r);if(!mm)continue;M[mm]=(M[mm]||0)+r[7]+r[8]+r[9];}
   const mks=Object.keys(M).sort();
-  setOpt('cQcMonth',{tooltip:{trigger:'axis',valueFormatter:v=>fm1(v)+' t'},grid:{left:8,right:10,top:10,bottom:8,containLabel:true},xAxis:{type:'category',data:mks.map(moVN)},yAxis:{type:'value'},series:[{type:'bar',barMaxWidth:22,itemStyle:{color:'#0d7a52',borderRadius:[3,3,0,0]},data:mks.map(mm=>+M[mm].toFixed(1))}]});
+  setOpt('cQcMonth',{tooltip:{trigger:'axis',valueFormatter:v=>fm1(v)+' t'},grid:{left:8,right:10,top:10,bottom:8,containLabel:true},xAxis:{type:'category',data:mks.map(moVN)},yAxis:{type:'value'},series:[{type:'line',smooth:true,symbol:'circle',symbolSize:5,lineStyle:{width:2.6,color:'#2456C6'},itemStyle:{color:'#2456C6'},areaStyle:{color:grad('rgba(36,86,198,.30)','rgba(36,86,198,0)')},data:mks.map(mm=>+M[mm].toFixed(1))}]});
   const PJ={};for(const r of rows){const o=PJ[r[0]]=PJ[r[0]]||{f:0,w:0,p:0,q:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=qval(r);}
   const pjs=Object.entries(PJ).map(([pi,o])=>[+pi,o,o.f+o.w+o.p]).sort((a,b)=>b[2]-a[2]);
   const TO={};for(const r of rows){const o=TO[toKey(r)]=TO[toKey(r)]||{t:0,q:0};o.t+=val(r);o.q+=qval(r);}
