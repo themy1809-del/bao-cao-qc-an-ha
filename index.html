@@ -606,12 +606,10 @@ function rTQ(){
         label:{show:true,position:'right',formatter:p=>fm1(p.value)+' t · '+p.data._pct+'%',fontSize:11,fontWeight:700,color:_dk?'#e6ece8':'#16261c'},
         markLine:{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#b4690e'},data:[{xAxis:CAP_MONTH,label:{formatter:'ĐM',color:'#b4690e',fontSize:9,position:'insideEndTop'}}]}}]
     },p=>{const k=p.data&&p.data._k;if(k)tog('st',k);});
-    var _xw={};for(var _xi=0;_xi<done.length;_xi++){var _xr=done[_xi];if((_xr[3]||'').slice(0,7)===_lm){var _xq=D.Q[_xr[5]];if(!_xq||_xq==='—')continue;_xw[_xq]=(_xw[_xq]||0)+_xr[7]+_xr[8]+_xr[9];}}
+    var _xw={};for(var _xi=0;_xi<done.length;_xi++){var _xr=done[_xi];if((_xr[3]||'').slice(0,7)===_lm){var _xn=D.X[_xr[1]];_xw[_xn]=(_xw[_xn]||0)+_xr[7]+_xr[8]+_xr[9];}}
     var _xwc=['#4f80c9','#e0921a','#2fa07c','#7c5cd0','#d9637a','#5aa9c9','#b4690e','#3aa6a0','#9b8cce'];
-    var _xwS=Object.keys(_xw).sort(function(a,b){return _xw[b]-_xw[a];});
-    var _xwData=_xwS.slice(0,8).map(function(x,i){return {value:+_xw[x].toFixed(1),name:x,itemStyle:{color:_xwc[i%_xwc.length]}};});
-    var _xwO=_xwS.slice(8).reduce(function(s,k){return s+_xw[k];},0);if(_xwO>0)_xwData.push({value:+_xwO.toFixed(1),name:'Khác',itemStyle:{color:'#aab4be'}});
-    setOpt('cMixDonut',{title:{text:'Tỉ trọng theo QC',left:'center',top:2,textStyle:{fontSize:10,color:'#9aa89f',fontWeight:700}},tooltip:{trigger:'item',formatter:p=>p.marker+' '+p.name+': <b>'+fm1(p.value)+' t</b> · '+p.percent+'%'},legend:{show:false},series:[{type:'pie',radius:['42%','70%'],center:['50%','54%'],itemStyle:{borderColor:_dk?'#1b2620':'#fff',borderWidth:2},label:{fontSize:10,color:_dk?'#cfe3d8':'#46564d',formatter:'{b}\n{d}%'},data:_xwData}]});})();
+    var _xwData=Object.keys(_xw).sort(function(a,b){return _xw[b]-_xw[a];}).map(function(x,i){return {value:+_xw[x].toFixed(1),name:x,itemStyle:{color:_xwc[i%_xwc.length]}};});
+    setOpt('cMixDonut',{title:{text:'Tỉ trọng theo xưởng',left:'center',top:2,textStyle:{fontSize:10,color:'#9aa89f',fontWeight:700}},tooltip:{trigger:'item',formatter:p=>p.marker+' '+p.name+': <b>'+fm1(p.value)+' t</b> · '+p.percent+'%'},legend:{show:false},series:[{type:'pie',radius:['42%','70%'],center:['50%','54%'],itemStyle:{borderColor:_dk?'#1b2620':'#fff',borderWidth:2},label:{fontSize:10,color:_dk?'#cfe3d8':'#46564d',formatter:'{b}\n{d}%'},data:_xwData}]});})();
   document.getElementById('tqTimeTtl').textContent='Sản lượng '+(DB==='q'?'nghiệm thu':'gia công')+' '+(S.st.size?STG.filter(([k])=>S.st.has(k)):[STG[0]]).map(x=>x[1]).join(' + ')+' theo '+(ta.mode==='d'?'ngày · '+ta.keys.length+' ngày gần nhất':'tháng');
   document.getElementById('tqTimeQ').textContent=(DB==='q'?'Theo ngày QC nghiệm thu':'Theo ngày gia công')+' · cột = sản lượng nghiệm thu (tấn) · đường = % đạt năng lực từng công đoạn ('+CAP_DAY+' t/ngày · '+CAP_MONTH.toLocaleString('vi-VN')+' t/tháng = 100%) · nét đứt xanh = FPY (đạt/đã kiểm) · vạch cam 100% · bấm cột lọc kỳ';
   const selStg=S.st.size?STG.filter(([k])=>S.st.has(k)):[STG[0]];
