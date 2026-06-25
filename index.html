@@ -254,6 +254,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
       <div class="card" style="display:flex;flex-direction:column"><h3>Sản lượng theo xưởng</h3><div class="q" id="tqXQ">Bấm cột xưởng để lọc</div><div id="cX" class="ch" style="flex:1 1 auto;height:auto;min-height:170px"></div></div>
       <div class="card"><h3>🏗️ Top dự án đang hoạt động</h3><div class="q">KL đã nghiệm thu trong kỳ (tấn) · <b>Chờ NT</b> = đã làm chưa nghiệm thu · <b>Còn lại BOM</b> = tổng thiết kế − đã hoàn thành · bấm để lọc</div><div id="tqIns"></div></div>
     </div>
+    <div class="card"><h3>📐 Final DIM — kiểm cuối (QC fitup ghi acc)</h3><div class="q">QC fitup kiểm DIM cuối ghi "tên: acc" trên hạng mục <b>hàn</b> · tổng hợp theo người kiểm (đã chuẩn hoá tên) · theo bộ lọc hiện tại</div><div class="tw" style="max-height:440px" id="fdBodyTQ"></div></div>
   </section>
 
   <!-- 02 XƯỞNG & TỔ -->
@@ -527,9 +528,12 @@ function rTQ(){
   const done=rows.filter(isAcc),s=stSums(done);
   const pend=Fnodate().filter(isTon),pS=stSums(pend),pT=pS.f+pS.w+pS.p;
   const nPj=new Set(done.map(r=>r[0])).size,nTo=new Set(done.map(r=>toKey(r))).size;
+  var _fdT=0;for(var _i=0;_i<rows.length;_i++){var _r=rows[_i];if(_r[8]>0&&_r[13]&&/acc/i.test(''+_r[13]))_fdT+=_r[8];}
   document.getElementById('tqKpis').innerHTML=
     kpi('f',fm1(s.f),'Fitup (t)','đã QC accept')+kpi('w',fm1(s.w),'Welding (t)','đã QC accept')+kpi('p',fm1(s.p),'Painting (t)','đã QC accept')+
+    kpi('b',fm1(_fdT),'Final DIM (t)','QC fitup kiểm cuối · acc')+
     kpi(pT>1?'a':'g',fm1(pT),'Waiting (t)',(pT>1?'đang chờ nghiệm thu (toàn bộ) · bấm xem ▸':'không có tồn chờ'),'openPend()');
+  try{renderFinalDim();}catch(e){}
   (function(){ /* #3 Canh bao + phan bo QC */
     var box=document.getElementById('tqAlert');if(!box)return;
     var allF=Fnodate();
@@ -758,14 +762,16 @@ function renderFinalDim(){
   function dn(m){var x=(''+m).toLowerCase().replace(/[:：]/g,' ').replace(/\bacc\b/g,' ').replace(/\s+/g,' ').trim();return x?(AL[x]||x):'';}
   var M={},tot=0,totp=0,totn=0;
   for(var i=0;i<rows.length;i++){var r=rows[i];if(!(r[8]>0))continue;var m=r[13];if(!m||!/acc/i.test(''+m))continue;var nm=dn(m);if(!nm)continue;var o=M[nm]||(M[nm]={q:nm,kl:0,pcs:0,n:0});o.kl+=r[8];o.pcs+=(+r[11]||0);o.n++;tot+=r[8];totp+=(+r[11]||0);totn++;}
-  var el=document.getElementById('fdBody');if(!el)return;
   var arr=[];for(var k in M)arr.push(M[k]);arr.sort(function(a,b){return b.kl-a.kl;});
-  if(!arr.length){el.innerHTML='<div class="muted" style="padding:10px">Chưa có dữ liệu final DIM (memo "tên: acc" trên hạng mục hàn) theo bộ lọc hiện tại.</div>';return;}
-  var mx=arr[0].kl||1;
-  el.innerHTML='<div class="kpis" style="margin:2px 0 8px">'+kpi('b',fm1(tot),'Tổng Final DIM (t)','')+kpi('a',totn,'Hạng mục','đã acc')+kpi('',(totp||0).toLocaleString('vi-VN'),'pcs','')+kpi('g',arr[0].q,'Dẫn đầu',fm1(arr[0].kl)+' t')+'</div>'
+  var html;
+  if(!arr.length){html='<div class="muted" style="padding:10px">Chưa có dữ liệu final DIM (memo "tên: acc" trên hạng mục hàn) theo bộ lọc hiện tại.</div>';}
+  else{var mx=arr[0].kl||1;
+    html='<div class="kpis" style="margin:2px 0 8px">'+kpi('b',fm1(tot),'Tổng Final DIM (t)','')+kpi('a',totn,'Hạng mục','đã acc')+kpi('',(totp||0).toLocaleString('vi-VN'),'pcs','')+kpi('g',arr[0].q,'Dẫn đầu',fm1(arr[0].kl)+' t')+'</div>'
     +'<table><thead><tr><th>#</th><th>QC (final DIM)</th><th class="n">Final DIM (t)</th><th style="min-width:60px"></th><th class="n">Hạng mục</th><th class="n">pcs</th></tr></thead><tbody>'
     +arr.map(function(u,i){return '<tr><td>'+(i+1)+'</td><td><b>'+u.q+'</b></td><td class="n"><b>'+fm1(u.kl)+'</b></td><td><div class="bar"><i style="width:'+(u.kl/mx*100)+'%;background:#4f80c9"></i></div></td><td class="n">'+u.n+'</td><td class="n">'+(u.pcs||0).toLocaleString('vi-VN')+'</td></tr>';}).join('')
-    +'</tbody></table>';
+    +'</tbody></table>';}
+  var _a=document.getElementById('fdBody');if(_a)_a.innerHTML=html;
+  var _b=document.getElementById('fdBodyTQ');if(_b)_b.innerHTML=html;
 }
 function rQC(){
   try{renderFinalDim();}catch(e){}
