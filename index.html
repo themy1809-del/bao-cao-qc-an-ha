@@ -275,6 +275,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
     <div class="card"><h3>Bảng năng suất QC — đánh giá</h3><div class="q">Tổng tấn · Lượt · Ngày làm · T/ngày · F/W/P · Tổ · Dự án — bấm 1 QC để xem hồ sơ theo tuần & tháng</div><div class="tw" style="max-height:460px"><table id="tQc"></table></div></div>
     <div class="card"><h3>Ma trận QC × Tháng (tấn)</h3><div class="q">Sản lượng nghiệm thu mỗi QC theo từng tháng — cho báo cáo & đánh giá năm</div><div class="tw" style="max-height:440px;overflow:auto"><table id="tQcMx"></table></div></div>
     <div class="card"><h3>Nhịp làm việc QC viên theo ngày</h3><div class="q">Mỗi ô = tấn nghiệm thu/ngày · 🟩 nhiều · 🟨 TB · 🟥 ít · ⬜ nghỉ · rê chuột xem số · 15 ngày gần nhất</div><div class="tw" style="max-height:440px;overflow:auto"><table id="qcHeat"></table></div></div>
+    <div class="card"><h3>📐 Final DIM — kiểm cuối (QC fitup ghi acc)</h3><div class="q">QC fitup kiểm DIM cuối, ghi "tên: acc" trên hạng mục <b>hàn</b> · tổng hợp theo người kiểm (đã chuẩn hoá tên lệch) · theo bộ lọc hiện tại</div><div class="tw" style="max-height:480px" id="fdBody"></div></div>
     <div class="panel" id="qcPanel" style="display:none">
       <button class="close" onclick="hideP('qcPanel')">✕</button>
       <h3 id="qcTtl"></h3><div class="q" id="qcSub"></div>
@@ -752,7 +753,22 @@ function qcStats(rows){
     u.f+=r[7];u.w+=r[8];u.p+=r[9];u.n++;const d=dateOf(r);if(d)u.days.add(d);u.tos.add(toKey(r));u.pjs.add(r[0]);}
   return Object.entries(U).map(([q,u])=>({q,...u,kl:u.f+u.w+u.p,nd:u.days.size||1,tpd:(u.f+u.w+u.p)/(u.days.size||1),npd:u.n/(u.days.size||1)}));
 }
+function renderFinalDim(){
+  var rows=F();var AL={kienv:'kiennv',kien:'kiennv',cuongkt:'cuongtk',vutpt:'vupt',hieunnv:'hieunv',hienv:'hieunv'};
+  function dn(m){var x=(''+m).toLowerCase().replace(/[:：]/g,' ').replace(/\bacc\b/g,' ').replace(/\s+/g,' ').trim();return x?(AL[x]||x):'';}
+  var M={},tot=0,totp=0,totn=0;
+  for(var i=0;i<rows.length;i++){var r=rows[i];if(!(r[8]>0))continue;var m=r[13];if(!m||!/acc/i.test(''+m))continue;var nm=dn(m);if(!nm)continue;var o=M[nm]||(M[nm]={q:nm,kl:0,pcs:0,n:0});o.kl+=r[8];o.pcs+=(+r[11]||0);o.n++;tot+=r[8];totp+=(+r[11]||0);totn++;}
+  var el=document.getElementById('fdBody');if(!el)return;
+  var arr=[];for(var k in M)arr.push(M[k]);arr.sort(function(a,b){return b.kl-a.kl;});
+  if(!arr.length){el.innerHTML='<div class="muted" style="padding:10px">Chưa có dữ liệu final DIM (memo "tên: acc" trên hạng mục hàn) theo bộ lọc hiện tại.</div>';return;}
+  var mx=arr[0].kl||1;
+  el.innerHTML='<div class="kpis" style="margin:2px 0 8px">'+kpi('b',fm1(tot),'Tổng Final DIM (t)','')+kpi('a',totn,'Hạng mục','đã acc')+kpi('',(totp||0).toLocaleString('vi-VN'),'pcs','')+kpi('g',arr[0].q,'Dẫn đầu',fm1(arr[0].kl)+' t')+'</div>'
+    +'<table><thead><tr><th>#</th><th>QC (final DIM)</th><th class="n">Final DIM (t)</th><th style="min-width:60px"></th><th class="n">Hạng mục</th><th class="n">pcs</th></tr></thead><tbody>'
+    +arr.map(function(u,i){return '<tr><td>'+(i+1)+'</td><td><b>'+u.q+'</b></td><td class="n"><b>'+fm1(u.kl)+'</b></td><td><div class="bar"><i style="width:'+(u.kl/mx*100)+'%;background:#4f80c9"></i></div></td><td class="n">'+u.n+'</td><td class="n">'+(u.pcs||0).toLocaleString('vi-VN')+'</td></tr>';}).join('')
+    +'</tbody></table>';
+}
 function rQC(){
+  try{renderFinalDim();}catch(e){}
   const rows=Fnodate(),st=qcStats(rows);
   if(!st.length){const m='<div class="it" style="border-left:3px solid var(--warn);padding:10px 12px;background:var(--rowH);border-radius:10px">⚠ File SPM hiện <b>không có cột Người kiểm (QCUser)</b> — không tách được theo QC viên.</div>';document.getElementById('qcKpis').innerHTML=kpi('a','0','QC viên','thiếu cột người kiểm');const e=document.getElementById('cQc');if(e)e.innerHTML='';document.getElementById('tQc').innerHTML='<tbody><tr><td>'+m+'</td></tr></tbody>';const mx=document.getElementById('tQcMx');if(mx)mx.innerHTML='';hideP('qcPanel');return;}
   const totKl=st.reduce((a,u)=>a+u.kl,0),totN=st.reduce((a,u)=>a+u.n,0);
