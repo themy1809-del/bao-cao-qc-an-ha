@@ -115,15 +115,16 @@ body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg
 /* ---------- TABLE ---------- */
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead{position:sticky;top:0;background:var(--cardSolid);z-index:2}
-th{text-align:left;padding:10px 10px;border-bottom:2px solid var(--chipBd);font-size:11px;color:var(--ink);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;font-weight:800}
+th{text-align:left;padding:9px 10px;border-bottom:2px solid var(--chipBd);font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;font-weight:800;background:var(--rowH)}
 td{padding:8px 10px;border-bottom:1px solid var(--line)}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+td.c,th.c{text-align:center}
 tbody tr{transition:background .12s}
 tbody tr:nth-child(even){background:var(--rowH)}
 tbody tr:hover{background:var(--chipBg)}
 td.n,th.n{border-left:1px solid var(--line)}
 .clickable{cursor:pointer}
-.pjn{white-space:normal;min-width:210px;max-width:360px;line-height:1.35}
+.pjn{white-space:normal;min-width:210px;max-width:360px;line-height:1.35;font-weight:600;color:var(--ink)}
 .tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:10.5px;font-weight:700;background:var(--rowH);color:var(--mut)}
 .tag.g{color:var(--good);background:var(--chipBg)}.tag.o{color:var(--warn);background:#fdf2e2}.tag.r{color:var(--bad);background:#fdecec}.tag.b{color:var(--chipInk);background:var(--chipBg)}
 .bar{height:7px;background:var(--rowH);border:1px solid var(--line);border-radius:99px;overflow:hidden}
@@ -301,12 +302,12 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
     <div class="panel" id="ndPanel" style="display:none">
       <h3 id="ndTtl"></h3><div class="q" id="ndSub"></div>
       <div class="kpis" id="ndStg" style="margin:6px 0 4px"></div>
-      <div class="r2">
+      <div class="r2" style="grid-template-columns:2fr 3fr">
         <div><div class="cg-lbl" style="margin-bottom:4px">Theo xưởng</div><div class="tw" style="max-height:240px"><table id="ndByX"></table></div></div>
         <div><div class="cg-lbl" style="margin-bottom:4px">Theo dự án</div><div class="tw" style="max-height:240px"><table id="ndByP"></table></div></div>
       </div>
-      <div style="margin-top:10px"><div class="cg-lbl" style="margin-bottom:4px">Theo tổ</div><div class="tw" style="max-height:240px"><table id="ndByTo"></table></div></div>
-      <div style="margin-top:10px"><div class="cg-lbl" style="margin-bottom:4px">Theo QC viên</div><div class="tw" style="max-height:240px"><table id="ndByQ"></table></div></div>
+      <div style="margin-top:22px;padding-top:14px;border-top:1px solid var(--line)"><div class="cg-lbl" style="margin-bottom:4px">Theo tổ</div><div class="tw" style="max-height:240px"><table id="ndByTo"></table></div></div>
+      <div style="margin-top:22px;padding-top:14px;border-top:1px solid var(--line)"><div class="cg-lbl" style="margin-bottom:4px">Theo QC viên</div><div class="tw" style="max-height:240px"><table id="ndByQ"></table></div></div>
     </div>
     <div class="card"><h3>Bảng theo dõi theo ngày</h3><div class="q">Mới nhất ở trên · cột Δ = biến động so ngày trước · bấm dòng để xem báo cáo đầy đủ ngày đó</div><div class="tw" style="max-height:460px"><table id="tNd"></table></div></div>
   </section>
@@ -578,7 +579,7 @@ function rTQ(){
     const sxTo=cardStg.reduce((a,[k])=>a+sxs[k],0),sxPc=cardStg.reduce((a,[k])=>a+sq[k],0);
     var lfd=0,lfdq=0;for(var _li=0;_li<dr.length;_li++){var _lr=dr[_li];if(_lr[8]>0&&_lr[13]&&/acc/i.test(''+_lr[13])){lfd+=_lr[8];lfdq+=(_lr[11]||0);}}
     box.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'+
-      '<div><span class="cg-lbl">📅 Nghiệm thu ngày gần nhất</span> &nbsp;<b style="font-size:12.5px">'+dayVN(ld)+' · '+wd+'</b> <span class="muted">· '+dr.length+' lượt · '+new Set(dr.map(r=>r[1])).size+' xưởng · '+new Set(dr.map(r=>r[0])).size+' dự án · '+new Set(dr.map(r=>D.Q[r[5]]).filter(q=>q!=='—')).size+' QC viên</span></div>'+
+      '<div><span class="cg-lbl" style="color:#1E3A8A;font-size:12.5px">📅 Nghiệm thu ngày gần nhất</span> &nbsp;<b style="font-size:12.5px">'+dayVN(ld)+' · '+wd+'</b> <span class="muted">· '+dr.length+' lượt · '+new Set(dr.map(r=>r[1])).size+' xưởng · '+new Set(dr.map(r=>r[0])).size+' dự án · '+new Set(dr.map(r=>D.Q[r[5]]).filter(q=>q!=='—')).size+' QC viên</span></div>'+
       '<button class="btn sec" onclick="goDay(\''+ld+'\')">Xem báo cáo đầy đủ ▸</button></div>'+
       '<div style="display:grid;grid-template-columns:104px repeat('+(cardStg.length+2)+',minmax(54px,1fr));gap:10px;align-items:baseline;margin-top:6px;padding:2px 2px">'+
         '<span class="cg-lbl" style="color:var(--acc);align-self:center">QC nghiệm thu</span>'+
@@ -853,14 +854,14 @@ function rND(){
   const days=Object.keys(M).sort();
   const tot=d=>M[d].f+M[d].w+M[d].p;
   const desc=[...days].reverse();const wd=['CN','T2','T3','T4','T5','T6','T7'];
-  document.getElementById('tNd').innerHTML='<thead><tr><th>Ngày</th><th>Thứ</th><th class="n">Đã QC (t)</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">pcs</th><th class="n">Lượt</th><th class="n">QC</th><th class="n">Δ vs trước</th></tr></thead><tbody>'+
+  document.getElementById('tNd').innerHTML='<thead><tr><th>Ngày</th><th>Thứ</th><th class="n">Đã QC (t)</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">pcs</th><th class="n">Lượt</th><th class="n">QC</th><th class="c">Δ vs trước</th></tr></thead><tbody>'+
     desc.map((d,i)=>{const o=M[d],t=tot(d),prevD=desc[i+1],pv=prevD?tot(prevD):null,delta=pv?((t-pv)/pv*100):null;
-      const dl=delta===null?'<span class="muted">—</span>':(delta>=0?'<span style="color:var(--good)">▲ '+Math.round(delta)+'%</span>':'<span style="color:var(--bad)">▼ '+Math.round(Math.abs(delta))+'%</span>');
+      const dl=delta===null?'<span class="muted">—</span>':(delta>=0?'<span style="color:var(--good);font-weight:700"><span style="font-size:13.5px">▲</span> '+Math.round(delta)+'%</span>':'<span style="color:var(--bad);font-weight:700"><span style="font-size:13.5px">▼</span> '+Math.round(Math.abs(delta))+'%</span>');
       const th=wd[new Date(d).getDay()];
-      return '<tr class="clickable" onclick="showDay(\''+d+'\')"><td>'+dayVN(d)+'</td><td>'+th+'</td><td class="n"><b>'+fm1(t)+'</b></td><td class="n">'+(o.f?fm1(o.f):'')+'</td><td class="n">'+(o.w?fm1(o.w):'')+'</td><td class="n">'+(o.p?fm1(o.p):'')+'</td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td><td class="n">'+o.n+'</td><td class="n">'+o.qc.size+'</td><td class="n">'+dl+'</td></tr>';}).join('')+'</tbody>';
+      return '<tr class="clickable" onclick="showDay(\''+d+'\')"><td>'+dayVN(d)+'</td><td>'+th+'</td><td class="n"><b>'+fm1(t)+'</b></td><td class="n">'+(o.f?fm1(o.f):_dz)+'</td><td class="n">'+(o.w?fm1(o.w):_dz)+'</td><td class="n">'+(o.p?fm1(o.p):_dz)+'</td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td><td class="n">'+o.n+'</td><td class="n">'+o.qc.size+'</td><td class="c">'+dl+'</td></tr>';}).join('')+'</tbody>';
   if(days.length){_dayD=days[days.length-1];_dayX=null;document.getElementById('ndPanel').style.display='block';renderDay();}
 }
-let _dayD=null,_dayX=null;
+const _dz='<span style="color:#c7d0da">–</span>';let _dayD=null,_dayX=null;
 function showDay(d){_dayD=d;_dayX=null;document.getElementById('ndPanel').style.display='block';renderDay();document.getElementById('ndPanel').scrollIntoView({behavior:'smooth',block:'nearest'});}
 function dayStep(delta){const a=[...new Set(Fnodate().filter(isAcc).map(r=>dateOf(r)).filter(Boolean))].sort();const i=a.indexOf(_dayD),j=i+delta;if(j>=0&&j<a.length)showDay(a[j]);}
 function dayPickX(x){_dayX=(_dayX===x?null:x);renderDay();}
@@ -888,19 +889,19 @@ function renderDay(){
   const X={};for(const r of base){const o=X[D.X[r[1]]]=X[D.X[r[1]]]||{f:0,w:0,p:0,fd:0,q:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=r[10]+r[11]+r[12];if(r[8]>0&&r[13]&&/acc/i.test(''+r[13]))o.fd+=r[8];}
   const xk=Object.entries(X).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
   document.getElementById('ndByX').innerHTML='<thead><tr><th>Xưởng (bấm để lọc dự án)</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Final DIM</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">pcs</th></tr></thead><tbody>'+
-    xk.map(([x,o])=>'<tr class="clickable" style="'+(_dayX===x?'background:var(--chipBg)':'')+'" onclick="dayPickX(\''+x+'\')"><td><b>'+x+'</b>'+(_dayX===x?' ◀':'')+'</td><td class="n">'+(o.f?fm1(o.f):'')+'</td><td class="n">'+(o.w?fm1(o.w):'')+'</td><td class="n" style="color:#1E3A8A">'+(o.fd?fm1(o.fd):'')+'</td><td class="n">'+(o.p?fm1(o.p):'')+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td></tr>').join('')+'</tbody>';
+    xk.map(([x,o])=>'<tr class="clickable" style="'+(_dayX===x?'background:var(--chipBg)':'')+'" onclick="dayPickX(\''+x+'\')"><td><b>'+x+'</b>'+(_dayX===x?' ◀':'')+'</td><td class="n">'+(o.f?fm1(o.f):_dz)+'</td><td class="n">'+(o.w?fm1(o.w):_dz)+'</td><td class="n" style="color:#1E3A8A">'+(o.fd?fm1(o.fd):_dz)+'</td><td class="n">'+(o.p?fm1(o.p):_dz)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td></tr>').join('')+'</tbody>';
   const P={};for(const r of rows){const o=P[r[0]]=P[r[0]]||{f:0,w:0,p:0,fd:0,q:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=r[10]+r[11]+r[12];if(r[8]>0&&r[13]&&/acc/i.test(''+r[13]))o.fd+=r[8];}
   const pk=Object.entries(P).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
   document.getElementById('ndByP').innerHTML='<thead><tr><th>Dự án'+(_dayX?' — '+_dayX:'')+'</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Final DIM</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">pcs</th></tr></thead><tbody>'+
-    pk.map(([pi,o])=>'<tr class="clickable" onclick="tog(\'pj\','+pi+')"><td class="pjn" title="'+D.P[pi].replace(/"/g,'&quot;')+'">'+pName(+pi)+'</td><td class="n">'+(o.f?fm1(o.f):'')+'</td><td class="n">'+(o.w?fm1(o.w):'')+'</td><td class="n" style="color:#1E3A8A">'+(o.fd?fm1(o.fd):'')+'</td><td class="n">'+(o.p?fm1(o.p):'')+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td></tr>').join('')+'</tbody>';
+    pk.map(([pi,o])=>'<tr class="clickable" onclick="tog(\'pj\','+pi+')"><td class="pjn" title="'+D.P[pi].replace(/"/g,'&quot;')+'">'+pName(+pi)+'</td><td class="n">'+(o.f?fm1(o.f):_dz)+'</td><td class="n">'+(o.w?fm1(o.w):_dz)+'</td><td class="n" style="color:#1E3A8A">'+(o.fd?fm1(o.fd):_dz)+'</td><td class="n">'+(o.p?fm1(o.p):_dz)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td></tr>').join('')+'</tbody>';
   const TO={};for(const r of rows){const k=toKey(r);const o=TO[k]=TO[k]||{f:0,w:0,p:0,fd:0,q:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=r[10]+r[11]+r[12];if(r[8]>0&&r[13]&&/acc/i.test(''+r[13]))o.fd+=r[8];}
   const tok=Object.entries(TO).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
   document.getElementById('ndByTo').innerHTML='<thead><tr><th>Tổ (bấm để lọc)</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Final DIM</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">pcs</th></tr></thead><tbody>'+
-    tok.map(([k,o])=>'<tr class="clickable" onclick="tog(\'to\',\''+k+'\')"><td><b>'+k+'</b></td><td class="n">'+(o.f?fm1(o.f):'')+'</td><td class="n">'+(o.w?fm1(o.w):'')+'</td><td class="n" style="color:#1E3A8A">'+(o.fd?fm1(o.fd):'')+'</td><td class="n">'+(o.p?fm1(o.p):'')+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td></tr>').join('')+'</tbody>';
+    tok.map(([k,o])=>'<tr class="clickable" onclick="tog(\'to\',\''+k+'\')"><td><b>'+k+'</b></td><td class="n">'+(o.f?fm1(o.f):_dz)+'</td><td class="n">'+(o.w?fm1(o.w):_dz)+'</td><td class="n" style="color:#1E3A8A">'+(o.fd?fm1(o.fd):_dz)+'</td><td class="n">'+(o.p?fm1(o.p):_dz)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td></tr>').join('')+'</tbody>';
   const Q={};for(const r of rows){const u=D.Q[r[5]];if(u==='—')continue;const o=Q[u]=Q[u]||{f:0,w:0,p:0,fd:0,q:0,n:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=r[10]+r[11]+r[12];o.n++;if(r[8]>0&&r[13]&&/acc/i.test(''+r[13]))o.fd+=r[8];}
   const qk=Object.entries(Q).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
   document.getElementById('ndByQ').innerHTML='<thead><tr><th>QC viên</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Final DIM</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">pcs</th><th class="n">Lượt</th></tr></thead><tbody>'+
-    qk.map(([u,o])=>'<tr class="clickable" onclick="tog(\'q\',\''+u+'\')"><td><b>'+u+'</b></td><td class="n">'+(o.f?fm1(o.f):'')+'</td><td class="n">'+(o.w?fm1(o.w):'')+'</td><td class="n" style="color:#1E3A8A">'+(o.fd?fm1(o.fd):'')+'</td><td class="n">'+(o.p?fm1(o.p):'')+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td><td class="n">'+o.n+'</td></tr>').join('')+'</tbody>';
+    qk.map(([u,o])=>'<tr class="clickable" onclick="tog(\'q\',\''+u+'\')"><td><b>'+u+'</b></td><td class="n">'+(o.f?fm1(o.f):_dz)+'</td><td class="n">'+(o.w?fm1(o.w):_dz)+'</td><td class="n" style="color:#1E3A8A">'+(o.fd?fm1(o.fd):_dz)+'</td><td class="n">'+(o.p?fm1(o.p):_dz)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td><td class="n">'+o.n+'</td></tr>').join('')+'</tbody>';
 }
 function rDL(){
   const rows=F();
@@ -944,7 +945,7 @@ function _fillRep(){
   var dk=function(lbl,v,col){return '<div style="background:#f6faf8;border-radius:12px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#697c70;font-weight:700">'+lbl+'</div><div style="font-size:19px;font-weight:800;color:'+col+';margin-top:3px">'+v+'</div></div>';};
   document.getElementById('repDayKpi').innerHTML=dk('Fitup',fm1(ds.f)+' t','#4f80c9')+dk('Welding',fm1(ds.w)+' t','#dd9a33')+dk('Painting',fm1(ds.p)+' t','#122A5E')+dk('Tổng',fm1(dTot)+' t','#0d7a52');
   var grp=function(keyFn,lblFn,skip){var M={};dRows.forEach(function(r){var k=keyFn(r);var lb=lblFn(k);if(skip&&lb==='—')return;var o=M[k]=M[k]||{f:0,w:0,p:0,q:0,n:0,lb:lb};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=r[10]+r[11]+r[12];o.n++;});return Object.keys(M).map(function(k){return M[k];}).sort(function(a,b){return (b.f+b.w+b.p)-(a.f+a.w+a.p);});};
-  var dTbl=function(arr,head,showN){var h='<tr style="color:#697c70;font-size:10.5px"><th style="text-align:left;padding:3px 4px">'+head+'</th><th style="text-align:right;padding:3px 4px">Fitup</th><th style="text-align:right;padding:3px 4px">Welding</th><th style="text-align:right;padding:3px 4px">Painting</th><th style="text-align:right;padding:3px 4px">Tổng</th><th style="text-align:right;padding:3px 4px">pcs</th>'+(showN?'<th style="text-align:right;padding:3px 4px">Lượt</th>':'')+'</tr>';return h+arr.map(function(o){return '<tr style="border-top:1px solid #eef;font-size:11.5px"><td style="padding:4px;font-weight:700">'+o.lb+'</td><td style="padding:4px;text-align:right">'+(o.f?fm1(o.f):'')+'</td><td style="padding:4px;text-align:right">'+(o.w?fm1(o.w):'')+'</td><td style="padding:4px;text-align:right">'+(o.p?fm1(o.p):'')+'</td><td style="padding:4px;text-align:right;font-weight:700">'+fm1(o.f+o.w+o.p)+'</td><td style="padding:4px;text-align:right">'+o.q.toLocaleString('vi-VN')+'</td>'+(showN?'<td style="padding:4px;text-align:right">'+o.n+'</td>':'')+'</tr>';}).join('');};
+  var dTbl=function(arr,head,showN){var h='<tr style="color:#697c70;font-size:10.5px"><th style="text-align:left;padding:3px 4px">'+head+'</th><th style="text-align:right;padding:3px 4px">Fitup</th><th style="text-align:right;padding:3px 4px">Welding</th><th style="text-align:right;padding:3px 4px">Painting</th><th style="text-align:right;padding:3px 4px">Tổng</th><th style="text-align:right;padding:3px 4px">pcs</th>'+(showN?'<th style="text-align:right;padding:3px 4px">Lượt</th>':'')+'</tr>';return h+arr.map(function(o){return '<tr style="border-top:1px solid #eef;font-size:11.5px"><td style="padding:4px;font-weight:700">'+o.lb+'</td><td style="padding:4px;text-align:right">'+(o.f?fm1(o.f):_dz)+'</td><td style="padding:4px;text-align:right">'+(o.w?fm1(o.w):_dz)+'</td><td style="padding:4px;text-align:right">'+(o.p?fm1(o.p):_dz)+'</td><td style="padding:4px;text-align:right;font-weight:700">'+fm1(o.f+o.w+o.p)+'</td><td style="padding:4px;text-align:right">'+o.q.toLocaleString('vi-VN')+'</td>'+(showN?'<td style="padding:4px;text-align:right">'+o.n+'</td>':'')+'</tr>';}).join('');};
   document.getElementById('repDayX').innerHTML=dTbl(grp(function(r){return r[1];},function(k){return D.X[+k];}),'Xưởng',false);
   document.getElementById('repDayP').innerHTML=dTbl(grp(function(r){return r[0];},function(k){return pName(+k);}),'Dự án',false);
   document.getElementById('repDayTo').innerHTML=dTbl(grp(function(r){return toKey(r);},function(k){return k;}),'Tổ',false);
