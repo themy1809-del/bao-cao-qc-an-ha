@@ -171,6 +171,7 @@ td.n,th.n{border-left:1px solid var(--line)}
 .pend-pnm{flex:1;font-size:12px}
 .pend-pbar{width:120px;height:8px;background:var(--card);border:1px solid var(--line);border-radius:99px;overflow:hidden}
 .pend-pbar i{display:block;height:100%;background:var(--p);border-radius:99px}
+@media print{body *{visibility:hidden}#ndPanel,#ndPanel *{visibility:visible}#ndPanel{position:absolute;left:0;top:0;width:100%;box-shadow:none!important;border:none!important}#ndPanel .tw{max-height:none!important;overflow:visible!important}#ndPanel button,#ndPanel .dnav,#ndPanel .daySel{display:none!important}@page{margin:10mm}}
 .pend-pval{font-variant-numeric:tabular-nums;font-size:12px;min-width:62px;text-align:right;font-weight:700;color:var(--warn)}
 .pend-pqty{font-variant-numeric:tabular-nums;font-size:11.5px;color:var(--mut);min-width:64px;text-align:right}
 details.dt summary{cursor:pointer;list-style:none;display:inline-flex;gap:6px;font-size:12px;font-weight:700;color:var(--acc);padding:6px 0}
@@ -304,6 +305,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
   <!-- 05 DỮ LIỆU -->
   <section id="v_nd" class="view">
     <div class="panel" id="ndPanel" style="display:none">
+      <button class="qf" onclick="window.print()" style="float:right;margin:0 0 6px 8px" title="In / lưu PDF báo cáo ngày của xưởng này">🖨️ In / Lưu PDF</button>
       <h3 id="ndTtl"></h3><div class="q" id="ndSub"></div>
       <div class="kpis" id="ndStg" style="margin:6px 0 4px"></div>
       <div class="r2" style="grid-template-columns:2fr 3fr;gap:22px">
@@ -312,6 +314,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
       </div>
       <div style="margin-top:22px;padding-top:14px;border-top:1px solid var(--line)"><div class="cg-lbl" style="margin-bottom:4px">Theo tổ</div><div class="tw" style="max-height:240px"><table id="ndByTo"></table></div></div>
       <div style="margin-top:22px;padding-top:14px;border-top:1px solid var(--line)"><div class="cg-lbl" style="margin-bottom:4px">Theo QC viên</div><div class="tw" style="max-height:240px"><table id="ndByQ"></table></div></div>
+      <div id="ndExtra"></div>
     </div>
     <div class="card"><h3>Bảng theo dõi theo ngày</h3><div class="q">Mới nhất ở trên · cột Δ = biến động so ngày trước · bấm dòng để xem báo cáo đầy đủ ngày đó</div><div class="tw" style="max-height:460px"><table id="tNd"></table></div></div>
   </section>
@@ -906,6 +909,17 @@ function renderDay(){
   const qk=Object.entries(Q).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
   document.getElementById('ndByQ').innerHTML='<thead><tr><th>QC viên</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Final DIM</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">pcs</th><th class="n">Lượt</th></tr></thead><tbody>'+
     qk.map(([u,o])=>'<tr class="clickable" onclick="tog(\'q\',\''+u+'\')"><td><b>'+u+'</b></td><td class="n">'+(o.f?fm1(o.f):_dz)+'</td><td class="n">'+(o.w?fm1(o.w):_dz)+'</td><td class="n" style="color:#1E3A8A">'+(o.fd?fm1(o.fd):_dz)+'</td><td class="n">'+(o.p?fm1(o.p):_dz)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td><td class="n">'+o.n+'</td></tr>').join('')+'</tbody>';
+  var _nx=document.getElementById('ndExtra');
+  if(_nx){ if(_dayX){
+    var _pen=Fnodate().filter(isTon).filter(r=>D.X[r[1]]===_dayX),_wTo={},_wPj={},_wT=0;
+    for(const r of _pen){var tn=r[7]+r[8]+r[9];_wT+=tn;var tk=toKey(r);_wTo[tk]=(_wTo[tk]||0)+tn;_wPj[r[0]]=(_wPj[r[0]]||0)+tn;}
+    var _wToA=Object.entries(_wTo).sort((a,b)=>b[1]-a[1]).slice(0,8),_wPjA=Object.entries(_wPj).sort((a,b)=>b[1]-a[1]).slice(0,8),_wmx=Math.max(1,..._wToA.concat(_wPjA).map(x=>x[1]));
+    var _wbar=(arr,pj)=>arr.map(([k,v])=>{var w=Math.max(7,Math.round(v/_wmx*100)),nm=pj?pName(+k):k;return '<tr><td style="padding:3px 8px 3px 0;font-size:11.5px;text-align:right;white-space:nowrap;max-width:170px;overflow:hidden;text-overflow:ellipsis">'+nm+'</td><td><div style="background:#f1eadf;border-radius:5px"><div style="width:'+w+'%;min-width:44px;background:#EA580C;border-radius:5px;text-align:right"><span style="color:#fff;font-size:10.5px;font-weight:700;padding:0 7px;line-height:18px;display:inline-block">'+fm1(v)+' t</span></div></div></td></tr>';}).join('');
+    var _byD={};for(const r of Fnodate().filter(isAcc).filter(r=>D.X[r[1]]===_dayX)){var dd=dateOf(r);if(dd)_byD[dd]=(_byD[dd]||0)+r[7]+r[8]+r[9];}
+    var _dks=Object.keys(_byD).sort().slice(-12),_tmx=Math.max(1,..._dks.map(x=>_byD[x]));
+    var _tr=_dks.map((dd,ii)=>{var v=_byD[dd],pv=ii>0?_byD[_dks[ii-1]]:null,dl=pv?((v-pv)/pv*100):null,w=Math.max(5,Math.round(v/_tmx*100)),ds=dl===null?'':(dl>=0?'<span style="color:#15803d;font-weight:700">▲'+Math.round(dl)+'%</span>':'<span style="color:#dc2626;font-weight:700">▼'+Math.round(Math.abs(dl))+'%</span>');return '<tr><td style="padding:2px 8px 2px 0;font-size:11px;text-align:right;white-space:nowrap">'+dayVN(dd)+'</td><td><div class="pend-pbar" style="max-width:320px"><i style="width:'+w+'%;background:var(--f)"></i></div></td><td style="padding:2px 0 2px 8px;font-size:11.5px;font-weight:700;white-space:nowrap">'+fm1(v)+' t</td><td style="padding:2px 0 2px 10px;font-size:11px;white-space:nowrap">'+ds+'</td></tr>';}).join('');
+    _nx.innerHTML='<div style="margin-top:22px;padding-top:14px;border-top:1px solid var(--line)"><div class="cg-lbl" style="margin-bottom:6px;color:#EA580C">⏳ Chờ nghiệm thu — Xưởng '+_dayX+' · tổng '+fm1(_wT)+' t</div><div class="r2" style="grid-template-columns:1fr 1fr;gap:22px"><div><div class="muted" style="font-size:10.5px;margin-bottom:3px;font-weight:700">Theo tổ</div><table>'+(_wToA.length?_wbar(_wToA,false):'<tr><td class="muted" style="font-size:11.5px">— không có —</td></tr>')+'</table></div><div><div class="muted" style="font-size:10.5px;margin-bottom:3px;font-weight:700">Theo dự án</div><table>'+(_wPjA.length?_wbar(_wPjA,true):'<tr><td class="muted" style="font-size:11.5px">— không có —</td></tr>')+'</table></div></div></div><div style="margin-top:22px;padding-top:14px;border-top:1px solid var(--line)"><div class="cg-lbl" style="margin-bottom:6px">📈 Xu hướng KL nghiệm thu theo ngày — Xưởng '+_dayX+'</div><table>'+_tr+'</table></div>';
+  } else { _nx.innerHTML='<div class="muted" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px">💡 Bấm 1 <b>xưởng</b> ở bảng "Theo xưởng" phía trên để xem <b>báo cáo ngày riêng cho xưởng đó</b> (chờ NT theo tổ/dự án + xu hướng) rồi bấm <b>🖨️ In / Lưu PDF</b>.</div>'; } }
 }
 function rDL(){
   const rows=F();
