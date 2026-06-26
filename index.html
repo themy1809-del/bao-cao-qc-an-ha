@@ -27,7 +27,7 @@ body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg
 .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
 
 /* ---------- SIDEBAR ---------- */
-.sidebar{width:clamp(136px,11vw,170px);background:linear-gradient(180deg,#0f2419 0%,#0b1c13 100%);color:#dfeee6;display:flex;flex-direction:column;padding:20px 14px 16px;position:sticky;top:0;height:100vh;flex-shrink:0;border-right:1px solid rgba(255,255,255,.04)}
+.sidebar{width:clamp(124px,10vw,158px);background:linear-gradient(180deg,#0f2419 0%,#0b1c13 100%);color:#dfeee6;display:flex;flex-direction:column;padding:20px 14px 16px;position:sticky;top:0;height:100vh;flex-shrink:0;border-right:1px solid rgba(255,255,255,.04)}
 [data-theme=dark] .sidebar{background:linear-gradient(180deg,#0a120e,#070d0a);border-right:1px solid var(--line)}
 .brand{font-size:11px;font-weight:800;letter-spacing:.08em;color:#fff;display:flex;align-items:center;gap:7px}
 .brand::before{content:'';width:9px;height:9px;border-radius:3px;background:linear-gradient(135deg,#34cf90,#0d7a52);box-shadow:0 0 0 3px rgba(52,207,144,.18)}
@@ -306,7 +306,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
     <div class="panel" id="ndPanel" style="display:none">
       <h3 id="ndTtl"></h3><div class="q" id="ndSub"></div>
       <div class="kpis" id="ndStg" style="margin:6px 0 4px"></div>
-      <div class="r2" style="grid-template-columns:2fr 3fr">
+      <div class="r2" style="grid-template-columns:2fr 3fr;gap:22px">
         <div><div class="cg-lbl" style="margin-bottom:4px">Theo xưởng</div><div class="tw" style="max-height:240px"><table id="ndByX"></table></div></div>
         <div><div class="cg-lbl" style="margin-bottom:4px">Theo dự án</div><div class="tw" style="max-height:240px"><table id="ndByP"></table></div></div>
       </div>
@@ -700,8 +700,8 @@ function rXT(){
     const arr=xs.map(x=>({x,acc:X[x].acc,wait:X[x].wait,comp:+(X[x].acc/((X[x].acc+X[x].wait)||1)*100).toFixed(1)}));
     const n=arr.length||1;const dk=document.documentElement.dataset.theme==='dark';
     const lbl=document.getElementById('xtGaugeLbl');
-    if(lbl)lbl.innerHTML=arr.map(e=>`<div class="clickable" onclick="xtSel('${e.x}')" style="flex:1;text-align:center;cursor:pointer;padding:0 2px"><div style="font-weight:800;font-size:14px;color:${xtFocus===e.x?'#0d7a52':'var(--ink)'}">${e.x}</div><div class="muted" style="font-size:10.5px">đã ${fm1(e.acc)} · chờ ${fm1(e.wait)} t</div></div>`).join('');
-    if(typeof echarts!=='undefined')setOpt('cXt',{series:arr.map((e,i)=>({type:'gauge',startAngle:205,endAngle:-25,center:[((i+0.5)/n*100)+'%','78%'],radius:'82%',min:0,max:100,splitNumber:1,progress:{show:true,width:13,roundCap:true,itemStyle:{color:(xtFocus===e.x?'#0d7a52':XCOL[i%XCOL.length])}},axisLine:{lineStyle:{width:13,color:[[1,dk?'#26352d':'#e9eeec']]}},pointer:{show:false},anchor:{show:false},axisTick:{show:false},splitLine:{show:false},axisLabel:{show:false},title:{show:false},detail:{show:true,offsetCenter:[0,'-6%'],fontSize:18,fontWeight:800,color:(dk?'#e6ece8':'#13231a'),formatter:v=>v+'%'},data:[{value:e.comp}]}))},p=>{if(arr[p.seriesIndex])xtSel(arr[p.seriesIndex].x);});
+    if(lbl)lbl.innerHTML=arr.map(e=>`<div class="clickable" onclick="xtSel('${e.x}')" style="flex:1;text-align:center;cursor:pointer;padding:0 2px"><div style="font-weight:800;font-size:14px;color:${xtFocus===e.x?'#1E3A8A':'var(--ink)'}">${e.x}</div><div class="muted" style="font-size:10.5px">đã ${fm1(e.acc)} · chờ ${fm1(e.wait)} t</div></div>`).join('');
+    if(typeof echarts!=='undefined')setOpt('cXt',{series:arr.map((e,i)=>{var low=e.comp<70,on=(xtFocus===e.x),c0=low?'#FBA94C':'#7FB0E8',c1=low?'#EA580C':'#1E3A8A';return {type:'gauge',startAngle:180,endAngle:0,center:[((i+0.5)/n*100)+'%','80%'],radius:'84%',min:0,max:100,splitNumber:1,progress:{show:true,width:on?16:13,roundCap:true,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:c0},{offset:1,color:c1}])}},axisLine:{lineStyle:{width:on?16:13,color:[[1,dk?'#26352d':'#e9eef5']]}},pointer:{show:false},anchor:{show:false},axisTick:{show:false},splitLine:{show:false},axisLabel:{show:false},title:{show:false},detail:{show:true,offsetCenter:[0,'-20%'],fontSize:on?19:17,fontWeight:800,color:(low?'#EA580C':(dk?'#e6ece8':'#1E3A8A')),formatter:v=>v+'%'},data:[{value:e.comp}]};})},p=>{if(arr[p.seriesIndex])xtSel(arr[p.seriesIndex].x);});
   })();
   let h='';
   for(const x of (xtFocus?xs.filter(v=>v===xtFocus):xs)){const o=X[x];const openX=xtX.has(x);
@@ -860,7 +860,7 @@ function rND(){
   const desc=[...days].reverse();const wd=['CN','T2','T3','T4','T5','T6','T7'];
   document.getElementById('tNd').innerHTML='<thead><tr><th>Ngày</th><th>Thứ</th><th class="n">Đã QC (t)</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">pcs</th><th class="n">Lượt</th><th class="n">QC</th><th class="c">Δ vs trước</th></tr></thead><tbody>'+
     desc.map((d,i)=>{const o=M[d],t=tot(d),prevD=desc[i+1],pv=prevD?tot(prevD):null,delta=pv?((t-pv)/pv*100):null;
-      const dl=delta===null?'<span class="muted">—</span>':(delta>=0?'<span style="color:var(--good);font-weight:700"><span style="font-size:13.5px">▲</span> '+Math.round(delta)+'%</span>':'<span style="color:var(--bad);font-weight:700"><span style="font-size:13.5px">▼</span> '+Math.round(Math.abs(delta))+'%</span>');
+      const dl=delta===null?'<span class="muted">—</span>':'<span style="color:'+(delta>=0?(delta>=25?'#15803d':'#2e9e63'):(Math.abs(delta)>=25?'#b91c1c':'#dc2626'))+';font-weight:800"><span style="font-size:14px">'+(delta>=0?'▲':'▼')+'</span> '+Math.round(Math.abs(delta))+'%</span>';
       const th=wd[new Date(d).getDay()];
       return '<tr class="clickable" onclick="showDay(\''+d+'\')"><td>'+dayVN(d)+'</td><td>'+th+'</td><td class="n"><b>'+fm1(t)+'</b></td><td class="n">'+(o.f?fm1(o.f):_dz)+'</td><td class="n">'+(o.w?fm1(o.w):_dz)+'</td><td class="n">'+(o.p?fm1(o.p):_dz)+'</td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td><td class="n">'+o.n+'</td><td class="n">'+o.qc.size+'</td><td class="c">'+dl+'</td></tr>';}).join('')+'</tbody>';
   if(days.length){_dayD=days[days.length-1];_dayX=null;document.getElementById('ndPanel').style.display='block';renderDay();}
