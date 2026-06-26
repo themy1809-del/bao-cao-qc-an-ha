@@ -165,7 +165,7 @@ td.n,th.n{border-left:1px solid var(--line)}
 .pend-prow{display:flex;align-items:center;gap:10px;padding:6px 7px;cursor:pointer;border-radius:8px}
 .pend-prow:hover{background:var(--card)}
 .pend-pnm{flex:1;font-size:12px}
-.pend-pbar{width:120px;height:6px;background:var(--card);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.pend-pbar{width:120px;height:8px;background:var(--card);border:1px solid var(--line);border-radius:99px;overflow:hidden}
 .pend-pbar i{display:block;height:100%;background:var(--p);border-radius:99px}
 .pend-pval{font-variant-numeric:tabular-nums;font-size:12px;min-width:62px;text-align:right;font-weight:700;color:var(--warn)}
 .pend-pqty{font-variant-numeric:tabular-nums;font-size:11.5px;color:var(--mut);min-width:64px;text-align:right}
@@ -687,13 +687,13 @@ function rXT(){
   const nPj=new Set(accR.concat(penR).map(r=>r[0])).size;
   const sm=document.getElementById('xtSum');if(sm)sm.textContent=xs.length+' xưởng · '+nTo+' tổ · '+nPj+' dự án (theo bộ lọc hiện tại)';
   const cd=document.getElementById('xtCards');if(cd)cd.innerHTML=xs.map(x=>{const o=X[x];const on=(xtFocus===x);
-    return `<div class="clickable" onclick="xtSel('${x}')" style="border:1.5px solid ${on?'var(--acc)':'var(--line)'};background:${on?'var(--chipBg)':'var(--card)'};border-radius:12px;padding:10px 12px;box-shadow:var(--sh);transition:.15s"><div style="font-size:15px;font-weight:800;color:var(--acc)">${x}</div><div class="muted" style="font-size:10.5px;margin-top:2px">${Object.keys(o.tos).length} tổ · ${o.pjs.size} dự án</div><div style="font-size:19px;font-weight:800;margin-top:7px;letter-spacing:-.01em">${fm1(o.acc)} <span style="font-size:11px;font-weight:600;color:var(--mut)">t đã NT</span></div><div style="font-size:14px;font-weight:700;color:var(--warn);margin-top:2px">${fm1(o.wait)} <span style="font-size:10.5px;font-weight:600">t chờ NT</span></div></div>`;
+    return `<div class="clickable" onclick="xtSel('${x}')" style="border:1.5px solid ${on?'var(--acc)':'var(--line)'};background:${on?'var(--chipBg)':'var(--card)'};border-radius:12px;padding:11px 13px 15px;box-shadow:var(--sh);transition:.15s"><div style="font-size:15px;font-weight:800;color:var(--acc)">${x}</div><div class="muted" style="font-size:10.5px;margin-top:2px">${Object.keys(o.tos).length} tổ · ${o.pjs.size} dự án</div><div style="font-size:19px;font-weight:800;margin-top:7px;letter-spacing:-.01em">${fm1(o.acc)} <span style="font-size:11px;font-weight:600;color:var(--mut)">t đã NT</span></div><div style="font-size:14px;font-weight:700;color:var(--warn);margin-top:2px">${fm1(o.wait)} <span style="font-size:10.5px;font-weight:600">t chờ NT</span></div></div>`;
   }).join('');
   (function(){
     const tt=document.getElementById('xtChTtl');
     if(tt)tt.textContent='Tỉ lệ nghiệm thu theo Xưởng = Đã NT / (Đã NT + Chờ NT) · bấm 1 đồng hồ để chọn xưởng';
     const XCOL=['#3B82F6','#1E3A8A','#60A5FA','#2456C6','#0F2557','#7EA8E0'];
-    const arr=xs.map(x=>({x,acc:X[x].acc,wait:X[x].wait,comp:+(X[x].acc/((X[x].acc+X[x].wait)||1)*100).toFixed(1)})).sort((a,b)=>b.acc-a.acc);
+    const arr=xs.map(x=>({x,acc:X[x].acc,wait:X[x].wait,comp:+(X[x].acc/((X[x].acc+X[x].wait)||1)*100).toFixed(1)}));
     const n=arr.length||1;const dk=document.documentElement.dataset.theme==='dark';
     const lbl=document.getElementById('xtGaugeLbl');
     if(lbl)lbl.innerHTML=arr.map(e=>`<div class="clickable" onclick="xtSel('${e.x}')" style="flex:1;text-align:center;cursor:pointer;padding:0 2px"><div style="font-weight:800;font-size:14px;color:${xtFocus===e.x?'#0d7a52':'var(--ink)'}">${e.x}</div><div class="muted" style="font-size:10.5px">đã ${fm1(e.acc)} · chờ ${fm1(e.wait)} t</div></div>`).join('');
@@ -708,12 +708,12 @@ function rXT(){
         if(openT){
           let d=`<div style="padding:6px 12px 12px 48px;background:var(--rowH);font-size:12px">`;
           const pjs=Object.entries(to.pjs).sort((a,b)=>b[1].acc-a[1].acc);
-          d+=`<div class="cg-lbl" style="margin:4px 0 4px">Dự án tổ gia công</div>`;
-          d+=pjs.map(([pi,pp])=>`<div class="clickable" onclick="event.stopPropagation();tog('pj',${pi})" style="display:flex;gap:8px;padding:3px 0"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pName(+pi)}</span><span class="num" style="min-width:66px;text-align:right;font-weight:600">${fm1(pp.acc)} t</span><span class="num" style="min-width:60px;text-align:right;color:var(--warn)">${pp.wait?fm1(pp.wait):'·'}</span></div>`).join('');
+          d+=`<div style="display:flex;gap:8px;padding:1px 0 4px;margin:2px 0 3px;border-bottom:1px solid var(--line)"><span class="cg-lbl" style="flex:1">Dự án tổ gia công</span><span class="cg-lbl" style="min-width:66px;text-align:right">Đã NT (t)</span><span class="cg-lbl" style="min-width:60px;text-align:right">Chờ NT</span></div>`;
+          d+=pjs.map(([pi,pp])=>`<div class="clickable" onclick="event.stopPropagation();tog('pj',${pi})" style="display:flex;gap:8px;padding:3px 0"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink);font-size:13px;font-weight:500">${pName(+pi)}</span><span class="num" style="min-width:66px;text-align:right;font-weight:700;color:var(--ink)">${fm1(pp.acc)} t</span><span class="num" style="min-width:60px;text-align:right;color:var(--warn)">${pp.wait?fm1(pp.wait):'·'}</span></div>`).join('');
           const qcs=Object.entries(to.qcs).sort((a,b)=>b[1]-a[1]);
           if(qcs.length){d+=`<div class="cg-lbl" style="margin:9px 0 4px">QC nghiệm thu</div><div style="display:flex;flex-wrap:wrap;gap:6px">`+qcs.map(([q,v])=>`<span class="tag b">${q} · ${fm1(v)}t</span>`).join('')+`</div>`;}
           const dys=Object.keys(to.days).sort().slice(-10);const mxd=Math.max(1,...dys.map(dd=>to.days[dd]));
-          if(dys.length){d+=`<div class="cg-lbl" style="margin:9px 0 4px">KL nghiệm thu theo ngày (gần nhất)</div>`+dys.map(dd=>`<div style="display:flex;align-items:center;gap:8px;padding:2px 0"><span class="num muted" style="min-width:46px">${dayVN(dd)}</span><div class="pend-pbar" style="flex:1;max-width:220px"><i style="width:${Math.round(to.days[dd]/mxd*100)}%;background:var(--acc)"></i></div><span class="num" style="min-width:54px;text-align:right;font-weight:600">${fm1(to.days[dd])} t</span></div>`).join('');}
+          if(dys.length){d+=`<div class="cg-lbl" style="margin:9px 0 4px">KL nghiệm thu theo ngày (gần nhất)</div>`+dys.map(dd=>`<div style="display:flex;align-items:center;gap:8px;padding:2px 0"><span class="num muted" style="min-width:46px">${dayVN(dd)}</span><div class="pend-pbar" style="flex:1;max-width:420px"><i style="width:${Math.round(to.days[dd]/mxd*100)}%;background:var(--acc)"></i></div><span class="num" style="min-width:54px;text-align:right;font-weight:600">${fm1(to.days[dd])} t</span></div>`).join('');}
           d+=`</div>`;h+=d;
         }
       }
