@@ -308,6 +308,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
       <button class="qf" onclick="window.print()" style="float:right;margin:0 0 6px 8px" title="In / lưu PDF báo cáo ngày của xưởng này">🖨️ In / Lưu PDF</button>
       <h3 id="ndTtl"></h3><div class="q" id="ndSub"></div>
       <div class="kpis" id="ndStg" style="margin:6px 0 4px"></div>
+      <div id="ndReject"></div>
       <div class="r2" style="grid-template-columns:2fr 3fr;gap:22px">
         <div><div class="cg-lbl" style="margin-bottom:4px">Theo xưởng</div><div class="tw" style="max-height:240px"><table id="ndByX"></table></div></div>
         <div><div class="cg-lbl" style="margin-bottom:4px">Theo dự án</div><div class="tw" style="max-height:240px"><table id="ndByP"></table></div></div>
@@ -379,7 +380,7 @@ function val(r){if(!S.st.size)return r[7]+r[8]+r[9];let v=0;if(S.st.has('f'))v+=
 function qval(r){if(!S.st.size)return r[10]+r[11]+r[12];let v=0;if(S.st.has('f'))v+=r[10];if(S.st.has('w'))v+=r[11];if(S.st.has('p'))v+=r[12];return v;}
 function sums(rows){let f=0,w=0,p=0;for(const r of rows){f+=r[7];w+=r[8];p+=r[9];}return{f,w,p};}
 function stSums(rows){const s=sums(rows);return{f:S.st.size&&!S.st.has('f')?0:s.f,w:S.st.size&&!S.st.has('w')?0:s.w,p:S.st.size&&!S.st.has('p')?0:s.p};}
-const isAcc=r=>!!r[3]&&D.PL[r[6]]!=='Rớt';const isTon=r=>D.PL[r[6]]==='Chưa QC';const plLabel=v=>({'Đã QC (AH)':'Accept','Chưa QC':'Waiting','Rớt':'Reject'}[v]||v);/* Waiting = lay thang status tu SPM */
+const isReject=r=>D.PL[r[6]]==='Rớt'||(r[13]&&(/\b(reject|fail)\b/i.test(''+r[13])||/rớt|không đạt/i.test(''+r[13])));const isAcc=r=>!!r[3]&&!isReject(r);const isTon=r=>D.PL[r[6]]==='Chưa QC';const plLabel=v=>({'Đã QC (AH)':'Accept','Chưa QC':'Waiting','Rớt':'Reject'}[v]||v);/* Waiting = lay thang status tu SPM */
 
 function renderChips(){
   const box=document.getElementById('chips');box.innerHTML='';let n=0;
@@ -909,6 +910,8 @@ function renderDay(){
   const qk=Object.entries(Q).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
   document.getElementById('ndByQ').innerHTML='<thead><tr><th>QC viên</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Final DIM</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">pcs</th><th class="n">Lượt</th></tr></thead><tbody>'+
     qk.map(([u,o])=>'<tr class="clickable" onclick="tog(\'q\',\''+u+'\')"><td><b>'+u+'</b></td><td class="n">'+(o.f?fm1(o.f):_dz)+'</td><td class="n">'+(o.w?fm1(o.w):_dz)+'</td><td class="n" style="color:#1E3A8A">'+(o.fd?fm1(o.fd):_dz)+'</td><td class="n">'+(o.p?fm1(o.p):_dz)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td><td class="n">'+o.n+'</td></tr>').join('')+'</tbody>';
+  var _rj=Fnodate().filter(r=>isReject(r)&&dateOf(r)===d&&(!_dayX||D.X[r[1]]===_dayX)),_rjEl=document.getElementById('ndReject');
+  if(_rjEl){ _rjEl.innerHTML=_rj.length?'<div style="margin:10px 0;padding:10px 14px;border:1px solid #f1c4bd;border-left:5px solid #c0392b;border-radius:9px;background:rgba(192,57,43,.05)"><div style="font-weight:800;color:#c0392b;font-size:12.5px;margin-bottom:6px">⚠ CẤU KIỆN REJECT — '+_rj.length+' món · '+fm1(_rj.reduce((a,r)=>a+r[7]+r[8]+r[9],0))+' t</div><div class="tw" style="max-height:240px"><table><thead><tr><th>Dự án</th><th>Tổ</th><th>QC</th><th class="n">KL (t)</th><th>Lý do / memo</th></tr></thead><tbody>'+_rj.map(r=>'<tr><td>'+pName(r[0])+'</td><td>'+toKey(r)+'</td><td>'+D.Q[r[5]]+'</td><td class="n">'+fm1(r[7]+r[8]+r[9])+'</td><td style="white-space:normal;color:#8a2020;font-size:11.5px">'+(''+(r[13]||'')).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</td></tr>').join('')+'</tbody></table></div></div>':''; }
   var _nx=document.getElementById('ndExtra');
   if(_nx){ if(_dayX){
     var _pen=Fnodate().filter(isTon).filter(r=>D.X[r[1]]===_dayX),_wTo={},_wPj={},_wT=0;
