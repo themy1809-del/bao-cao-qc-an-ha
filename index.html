@@ -16,8 +16,8 @@
 <style>
 html{font-size:clamp(10px,0.25vw + 7px,13px);scroll-behavior:smooth}
 :root{--f:#3B82F6;--w:#2456C6;--p:#122A5E;--fd:#1E3A8A;--rad:16px;--rad-sm:11px}
-[data-theme=light]{--bg:#e7edea;--card:#ffffff;--cardSolid:#ffffff;--ink:#0f1d14;--mut:#5c6e65;--line:#d2ddd6;
---acc:#0d7a52;--acc2:#11a06c;--good:#15803d;--warn:#b4690e;--bad:#c0392b;--chipBg:#e7f4ee;--chipBd:#c2e1d1;--chipInk:#0a6043;--rowH:#f0f5f2;
+[data-theme=light]{--bg:#f4f6f9;--card:#ffffff;--cardSolid:#ffffff;--ink:#1a1d21;--mut:#6b7280;--line:#e5e8ec;
+--acc:#E2231A;--acc2:#F2483A;--good:#15803d;--warn:#b4690e;--bad:#c0392b;--chipBg:#fdeaec;--chipBd:#f6c6cd;--chipInk:#C2160C;--rowH:#f7f8fa;
 --sh:0 1px 2px rgba(13,40,28,.08),0 4px 10px rgba(13,40,28,.09),0 14px 30px rgba(13,40,28,.11);--shLg:0 10px 24px rgba(13,40,28,.14),0 28px 56px rgba(13,40,28,.17)}
 [data-theme=dark]{--bg:#0c1310;--card:#161f1a;--cardSolid:#161f1a;--ink:#e6ece8;--mut:#8ba093;--line:#27352d;
 --acc:#34cf90;--acc2:#3ee0a0;--good:#3ecf94;--warn:#e8b33e;--bad:#ef7b7b;--chipBg:#15261e;--chipBd:#2c4a3a;--chipInk:#7adcb4;--rowH:#1b2620;
@@ -27,22 +27,22 @@ body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg
 .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
 
 /* ---------- SIDEBAR ---------- */
-.sidebar{width:clamp(124px,10vw,158px);background:linear-gradient(180deg,#0f2419 0%,#0b1c13 100%);color:#dfeee6;display:flex;flex-direction:column;padding:20px 14px 16px;position:sticky;top:0;height:100vh;flex-shrink:0;border-right:1px solid rgba(255,255,255,.04)}
+.sidebar{width:clamp(124px,10vw,158px);background:linear-gradient(180deg,#E2231A 0%,#BD160E 100%);color:#fde8ea;display:flex;flex-direction:column;padding:20px 14px 16px;position:sticky;top:0;height:100vh;flex-shrink:0;border-right:1px solid rgba(255,255,255,.04)}
 [data-theme=dark] .sidebar{background:linear-gradient(180deg,#0a120e,#070d0a);border-right:1px solid var(--line)}
 .brand{font-size:11px;font-weight:800;letter-spacing:.08em;color:#fff;display:flex;align-items:center;gap:7px}
-.brand::before{content:'';width:9px;height:9px;border-radius:3px;background:linear-gradient(135deg,#34cf90,#0d7a52);box-shadow:0 0 0 3px rgba(52,207,144,.18)}
-.brand-sub{font-size:8.5px;color:#7fa492;margin:6px 0 11px;line-height:1.6;letter-spacing:.04em;font-weight:500}
-#liveSt{display:inline-flex;align-items:center;font-size:10px;padding:4px 10px;border-radius:999px;font-weight:700;background:rgba(52,207,144,.16);color:#9be9c4;margin-bottom:16px;border:1px solid rgba(52,207,144,.22);letter-spacing:.02em}
-.nav-item{padding:6px 10px;border-radius:9px;cursor:pointer;font-size:11px;color:#b3ccbe;margin-bottom:3px;line-height:1.3;font-weight:600;position:relative;transition:background .15s,color .15s}
-.nav-item small{display:block;font-size:9px;color:#6b8779;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px;font-weight:700}
+.brand::before{content:'';width:9px;height:9px;border-radius:3px;background:linear-gradient(135deg,#FFD24A,#F5A623);box-shadow:0 0 0 3px rgba(255,255,255,.18)}
+.brand-sub{font-size:8.5px;color:#f0c4ca;margin:6px 0 11px;line-height:1.6;letter-spacing:.04em;font-weight:500}
+#liveSt{display:inline-flex;align-items:center;font-size:10px;padding:4px 10px;border-radius:999px;font-weight:700;background:rgba(255,255,255,.16);color:#9be9c4;margin-bottom:16px;border:1px solid rgba(255,255,255,.22);letter-spacing:.02em}
+.nav-item{padding:6px 10px;border-radius:9px;cursor:pointer;font-size:11px;color:#f5d8dc;margin-bottom:3px;line-height:1.3;font-weight:600;position:relative;transition:background .15s,color .15s}
+.nav-item small{display:block;font-size:9px;color:#e0a0a8;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px;font-weight:700}
 .nav-item:hover{background:rgba(255,255,255,.06);color:#eafff5}
-.nav-item.active{background:rgba(52,207,144,.14);color:#fff}
-.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;border-radius:0 3px 3px 0;background:#34cf90}
-.nav-item.active small{color:#7adcb4}
-.nav-item.hot{color:#eafff5;background:rgba(52,207,144,.08)}
-.nav-item.hot::after{content:'';position:absolute;right:10px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#34cf90;box-shadow:0 0 7px #34cf90;animation:pulseDot 1.8s ease-in-out infinite}
+.nav-item.active{background:rgba(255,255,255,.14);color:#fff}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;border-radius:0 3px 3px 0;background:#FFD24A}
+.nav-item.active small{color:#ffe0a0}
+.nav-item.hot{color:#eafff5;background:rgba(255,255,255,.08)}
+.nav-item.hot::after{content:'';position:absolute;right:10px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#FFD24A;box-shadow:0 0 7px #FFD24A;animation:pulseDot 1.8s ease-in-out infinite}
 @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.35}}
-.nav-foot{margin-top:auto;font-size:10px;color:#6b8779;line-height:1.7;letter-spacing:.02em}
+.nav-foot{margin-top:auto;font-size:10px;color:#e0a0a8;line-height:1.7;letter-spacing:.02em}
 .sb-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#cfe3d8;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;margin-top:8px;font-family:inherit;transition:.15s}
 .sb-btn:hover{background:rgba(255,255,255,.13)}
 
@@ -110,7 +110,7 @@ body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg
 .card{background:var(--card);border:1px solid transparent;border-radius:var(--rad);box-shadow:0 1px 3px rgba(15,40,80,.05),0 6px 18px rgba(15,40,80,.07);padding:11px 15px;transition:box-shadow .15s,transform .15s}
 .card:hover{box-shadow:var(--shLg)}
 #tqLatest{overflow-x:auto}
-.card h3{font-size:11.5px;font-weight:800;letter-spacing:.01em;display:inline-flex;align-items:center;gap:6px;color:#2F6B4F;padding:0;margin-bottom:6px}
+.card h3{font-size:11.5px;font-weight:800;letter-spacing:.01em;display:inline-flex;align-items:center;gap:6px;color:#E2231A;padding:0;margin-bottom:6px}
 [data-theme=dark] .card h3{color:#7adcb4}
 .card .q{font-size:11px;color:var(--mut);margin:2px 0 6px;line-height:1.4}
 .ch{width:100%;height:clamp(150px,22vh,300px)}.ch.tall{height:clamp(190px,27vh,360px)}.ch.short{height:clamp(130px,17vh,230px)}
@@ -118,7 +118,7 @@ body{font-family:'Be Vietnam Pro',Inter,system-ui,sans-serif;background:var(--bg
 /* ---------- TABLE ---------- */
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead{position:sticky;top:0;background:var(--cardSolid);z-index:2}
-th{text-align:left;padding:9px 10px;border-bottom:2px solid var(--chipBd);font-size:10.5px;color:#2a4673;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;font-weight:800;background:rgba(30,58,138,.12)}
+th{text-align:left;padding:9px 10px;border-bottom:2px solid var(--chipBd);font-size:10.5px;color:#C2160C;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;font-weight:800;background:rgba(226,35,26,.10)}
 [data-theme=dark] th{color:#aac3e6;background:rgba(255,255,255,.06)}
 td{padding:8px 10px;border-bottom:1px solid var(--line)}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
@@ -215,7 +215,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
   <div id="navBox"></div>
   <div class="nav-foot">
     Nguồn: SPM · <b id="srcd"></b><div id="integ" style="margin:5px 0;line-height:1.5"></div>Đơn vị: tấn
-    <button class="sb-btn" style="background:rgba(52,207,144,.2);border-color:rgba(52,207,144,.45);color:#cdf5e0;font-weight:700" onclick="buildReportPDF()">📄 Xuất báo cáo PDF</button>
+    <button class="sb-btn" style="background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.45);color:#cdf5e0;font-weight:700" onclick="buildReportPDF()">📄 Xuất báo cáo PDF</button>
     <button class="sb-btn" style="background:rgba(255,255,255,.08);color:#cfe3d8" onclick="buildReportImg()">🖼️ Ảnh PNG</button>
     <button class="sb-btn" onclick="togTheme()">🌓 Đổi nền</button>
   </div>
@@ -941,7 +941,7 @@ function _fillRep(){
   var acc=F().filter(isAcc),pend=Fnodate().filter(isTon),tw=function(r){return r[7]+r[8]+r[9];};
   var s={f:0,w:0,p:0};acc.forEach(function(r){s.f+=r[7];s.w+=r[8];s.p+=r[9];});var tot=s.f+s.w+s.p;
   var pT=pend.reduce(function(a,r){return a+tw(r);},0);
-  var kc=function(lbl,v,sub,col){return '<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#697c70;font-weight:700">'+lbl+'</div><div style="font-size:23px;font-weight:800;color:'+col+';margin-top:4px">'+v+'</div><div style="font-size:10.5px;color:#697c70;margin-top:3px">'+(sub||'')+'</div></div>';};
+  var kc=function(lbl,v,sub,col){return '<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;font-weight:700">'+lbl+'</div><div style="font-size:23px;font-weight:800;color:'+col+';margin-top:4px">'+v+'</div><div style="font-size:10.5px;color:#6b7280;margin-top:3px">'+(sub||'')+'</div></div>';};
   document.getElementById('repKpi').innerHTML=kc('Fitup',fm1(s.f)+' t','','#4f80c9')+kc('Welding',fm1(s.w)+' t','','#dd9a33')+kc('Painting',fm1(s.p)+' t','','#122A5E')+kc('Chờ NT',fm1(pT)+' t','tồn','#b4690e');
   document.getElementById('repImg1').src=di('cMix');document.getElementById('repImg2').src=di('cTime');document.getElementById('repImg3').src=di('cX');
   document.getElementById('repRange').textContent=(DR.from?dayVN(DR.from):'đầu kỳ')+' → '+(DR.to?dayVN(DR.to):'mới nhất');
@@ -949,13 +949,13 @@ function _fillRep(){
   document.getElementById('repUpd').textContent=D.updated||'';
   var PJ={};acc.forEach(function(r){PJ[r[0]]=(PJ[r[0]]||0)+tw(r);});
   var tp=Object.keys(PJ).sort(function(a,b){return PJ[b]-PJ[a];}).slice(0,8);
-  document.getElementById('repProj').innerHTML='<tr style="color:#697c70;font-size:11px"><th style="text-align:left;padding:4px 4px 6px">Dự án</th><th style="text-align:right;padding:4px 4px 6px">Đã NT (t)</th></tr>'+tp.map(function(pi){return '<tr style="border-top:1px solid #eef"><td style="padding:5px 4px;font-size:12px">'+pName(+pi)+'</td><td style="padding:5px 4px;text-align:right;font-weight:700">'+fm1(PJ[pi])+'</td></tr>';}).join('');
+  document.getElementById('repProj').innerHTML='<tr style="color:#6b7280;font-size:11px"><th style="text-align:left;padding:4px 4px 6px">Dự án</th><th style="text-align:right;padding:4px 4px 6px">Đã NT (t)</th></tr>'+tp.map(function(pi){return '<tr style="border-top:1px solid #eef"><td style="padding:5px 4px;font-size:12px">'+pName(+pi)+'</td><td style="padding:5px 4px;text-align:right;font-weight:700">'+fm1(PJ[pi])+'</td></tr>';}).join('');
   var XW={};acc.forEach(function(r){var x=D.X[r[1]];var o=XW[x]=XW[x]||{f:0,w:0,p:0,tos:new Set(),pjs:new Set(),qc:{}};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.tos.add(toKey(r));o.pjs.add(r[0]);var q=D.Q[r[5]];if(q!=='—')o.qc[q]=(o.qc[q]||0)+r[7]+r[8]+r[9];});
   var XP2={};pend.forEach(function(r){var x=D.X[r[1]];XP2[x]=(XP2[x]||0)+tw(r);});
   var xks=Object.keys(XW).sort(function(a,b){return (XW[b].f+XW[b].w+XW[b].p)-(XW[a].f+XW[a].w+XW[a].p);});
-  document.getElementById('repXuong').innerHTML='<tr style="color:#697c70;font-size:11px"><th style="text-align:left;padding:5px 4px">Xưởng</th><th style="text-align:right;padding:5px 4px">Đã NT (t)</th><th style="text-align:right;padding:5px 4px">Chờ NT (t)</th><th style="text-align:right;padding:5px 4px">Tổ</th><th style="text-align:right;padding:5px 4px">Dự án</th><th style="text-align:right;padding:5px 4px">Số QC</th><th style="text-align:right;padding:5px 4px">T/QC</th><th style="text-align:left;padding:5px 4px">QC viên phụ trách (tấn)</th></tr>'+xks.map(function(x){var o=XW[x];var kl=o.f+o.w+o.p;var ch=XP2[x]||0;var nq=Object.keys(o.qc).length;var tq=nq?kl/nq:0;var ql=Object.keys(o.qc).sort(function(a,b){return o.qc[b]-o.qc[a];}).map(function(q){return q+' '+fm1(o.qc[q]);}).join(' · ');var wn=(ch>kl*0.5||tq>200)?' ⚠':'';return '<tr style="border-top:1px solid #eef;font-size:12px"><td style="padding:6px 4px;font-weight:800;color:#0d7a52">'+x+wn+'</td><td style="padding:6px 4px;text-align:right;font-weight:700">'+fm1(kl)+'</td><td style="padding:6px 4px;text-align:right;color:#b4690e;font-weight:700">'+fm1(ch)+'</td><td style="padding:6px 4px;text-align:right">'+o.tos.size+'</td><td style="padding:6px 4px;text-align:right">'+o.pjs.size+'</td><td style="padding:6px 4px;text-align:right;font-weight:700">'+nq+'</td><td style="padding:6px 4px;text-align:right;font-weight:700">'+fm1(tq)+'</td><td style="padding:6px 4px;font-size:11px;color:#444">'+(ql||'—')+'</td></tr>';}).join('');
+  document.getElementById('repXuong').innerHTML='<tr style="color:#6b7280;font-size:11px"><th style="text-align:left;padding:5px 4px">Xưởng</th><th style="text-align:right;padding:5px 4px">Đã NT (t)</th><th style="text-align:right;padding:5px 4px">Chờ NT (t)</th><th style="text-align:right;padding:5px 4px">Tổ</th><th style="text-align:right;padding:5px 4px">Dự án</th><th style="text-align:right;padding:5px 4px">Số QC</th><th style="text-align:right;padding:5px 4px">T/QC</th><th style="text-align:left;padding:5px 4px">QC viên phụ trách (tấn)</th></tr>'+xks.map(function(x){var o=XW[x];var kl=o.f+o.w+o.p;var ch=XP2[x]||0;var nq=Object.keys(o.qc).length;var tq=nq?kl/nq:0;var ql=Object.keys(o.qc).sort(function(a,b){return o.qc[b]-o.qc[a];}).map(function(q){return q+' '+fm1(o.qc[q]);}).join(' · ');var wn=(ch>kl*0.5||tq>200)?' ⚠':'';return '<tr style="border-top:1px solid #eef;font-size:12px"><td style="padding:6px 4px;font-weight:800;color:#E2231A">'+x+wn+'</td><td style="padding:6px 4px;text-align:right;font-weight:700">'+fm1(kl)+'</td><td style="padding:6px 4px;text-align:right;color:#b4690e;font-weight:700">'+fm1(ch)+'</td><td style="padding:6px 4px;text-align:right">'+o.tos.size+'</td><td style="padding:6px 4px;text-align:right">'+o.pjs.size+'</td><td style="padding:6px 4px;text-align:right;font-weight:700">'+nq+'</td><td style="padding:6px 4px;text-align:right;font-weight:700">'+fm1(tq)+'</td><td style="padding:6px 4px;font-size:11px;color:#444">'+(ql||'—')+'</td></tr>';}).join('');
   var st=qcStats(F()).sort(function(a,b){return b.kl-a.kl;});
-  document.getElementById('repQc').innerHTML='<tr style="color:#697c70;font-size:11px"><th style="text-align:left;padding:4px">#</th><th style="text-align:left;padding:4px">QC viên</th><th style="text-align:right;padding:4px">Tấn</th><th style="text-align:right;padding:4px">Lượt</th><th style="text-align:right;padding:4px">Ngày</th><th style="text-align:right;padding:4px">T/ngày</th><th style="text-align:right;padding:4px">Tổ</th><th style="text-align:right;padding:4px">Dự án</th></tr>'+st.map(function(u,i){return '<tr style="border-top:1px solid #eef;font-size:12px"><td style="padding:5px 4px">'+(i+1)+'</td><td style="padding:5px 4px;font-weight:700">'+u.q+'</td><td style="padding:5px 4px;text-align:right;font-weight:700">'+fm1(u.kl)+'</td><td style="padding:5px 4px;text-align:right">'+u.n+'</td><td style="padding:5px 4px;text-align:right">'+u.nd+'</td><td style="padding:5px 4px;text-align:right">'+fm1(u.tpd)+'</td><td style="padding:5px 4px;text-align:right">'+u.tos.size+'</td><td style="padding:5px 4px;text-align:right">'+u.pjs.size+'</td></tr>';}).join('');
+  document.getElementById('repQc').innerHTML='<tr style="color:#6b7280;font-size:11px"><th style="text-align:left;padding:4px">#</th><th style="text-align:left;padding:4px">QC viên</th><th style="text-align:right;padding:4px">Tấn</th><th style="text-align:right;padding:4px">Lượt</th><th style="text-align:right;padding:4px">Ngày</th><th style="text-align:right;padding:4px">T/ngày</th><th style="text-align:right;padding:4px">Tổ</th><th style="text-align:right;padding:4px">Dự án</th></tr>'+st.map(function(u,i){return '<tr style="border-top:1px solid #eef;font-size:12px"><td style="padding:5px 4px">'+(i+1)+'</td><td style="padding:5px 4px;font-weight:700">'+u.q+'</td><td style="padding:5px 4px;text-align:right;font-weight:700">'+fm1(u.kl)+'</td><td style="padding:5px 4px;text-align:right">'+u.n+'</td><td style="padding:5px 4px;text-align:right">'+u.nd+'</td><td style="padding:5px 4px;text-align:right">'+fm1(u.tpd)+'</td><td style="padding:5px 4px;text-align:right">'+u.tos.size+'</td><td style="padding:5px 4px;text-align:right">'+u.pjs.size+'</td></tr>';}).join('');
   // ----- Báo cáo QC ngày mới nhất (trong kỳ) -----
   var dd='';acc.forEach(function(r){var x=dateOf(r);if(x&&x>dd)dd=x;});
   var dRows=acc.filter(function(r){return dateOf(r)===dd;});
@@ -963,10 +963,10 @@ function _fillRep(){
   var dTot=ds.f+ds.w+ds.p;
   document.getElementById('repDayD').textContent=dd?dayVN(dd):'—';
   document.getElementById('repDaySub').textContent=dd?('Đã QC accept: '+fm1(dTot)+' t · '+ds.q.toLocaleString('vi-VN')+' pcs · '+dRows.length+' lượt · '+new Set(dRows.map(function(r){return r[1];})).size+' xưởng · '+new Set(dRows.map(function(r){return r[0];})).size+' dự án · '+new Set(dRows.map(function(r){return D.Q[r[5]];}).filter(function(q){return q!=='—';})).size+' QC viên'):'Không có nghiệm thu trong kỳ.';
-  var dk=function(lbl,v,col){return '<div style="background:#f6faf8;border-radius:12px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#697c70;font-weight:700">'+lbl+'</div><div style="font-size:19px;font-weight:800;color:'+col+';margin-top:3px">'+v+'</div></div>';};
-  document.getElementById('repDayKpi').innerHTML=dk('Fitup',fm1(ds.f)+' t','#4f80c9')+dk('Welding',fm1(ds.w)+' t','#dd9a33')+dk('Painting',fm1(ds.p)+' t','#122A5E')+dk('Tổng',fm1(dTot)+' t','#0d7a52');
+  var dk=function(lbl,v,col){return '<div style="background:#f6faf8;border-radius:12px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;font-weight:700">'+lbl+'</div><div style="font-size:19px;font-weight:800;color:'+col+';margin-top:3px">'+v+'</div></div>';};
+  document.getElementById('repDayKpi').innerHTML=dk('Fitup',fm1(ds.f)+' t','#4f80c9')+dk('Welding',fm1(ds.w)+' t','#dd9a33')+dk('Painting',fm1(ds.p)+' t','#122A5E')+dk('Tổng',fm1(dTot)+' t','#E2231A');
   var grp=function(keyFn,lblFn,skip){var M={};dRows.forEach(function(r){var k=keyFn(r);var lb=lblFn(k);if(skip&&lb==='—')return;var o=M[k]=M[k]||{f:0,w:0,p:0,q:0,n:0,lb:lb};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=r[10]+r[11]+r[12];o.n++;});return Object.keys(M).map(function(k){return M[k];}).sort(function(a,b){return (b.f+b.w+b.p)-(a.f+a.w+a.p);});};
-  var dTbl=function(arr,head,showN){var h='<tr style="color:#697c70;font-size:10.5px"><th style="text-align:left;padding:3px 4px">'+head+'</th><th style="text-align:right;padding:3px 4px">Fitup</th><th style="text-align:right;padding:3px 4px">Welding</th><th style="text-align:right;padding:3px 4px">Painting</th><th style="text-align:right;padding:3px 4px">Tổng</th><th style="text-align:right;padding:3px 4px">pcs</th>'+(showN?'<th style="text-align:right;padding:3px 4px">Lượt</th>':'')+'</tr>';return h+arr.map(function(o){return '<tr style="border-top:1px solid #eef;font-size:11.5px"><td style="padding:4px;font-weight:700">'+o.lb+'</td><td style="padding:4px;text-align:right">'+(o.f?fm1(o.f):_dz)+'</td><td style="padding:4px;text-align:right">'+(o.w?fm1(o.w):_dz)+'</td><td style="padding:4px;text-align:right">'+(o.p?fm1(o.p):_dz)+'</td><td style="padding:4px;text-align:right;font-weight:700">'+fm1(o.f+o.w+o.p)+'</td><td style="padding:4px;text-align:right">'+o.q.toLocaleString('vi-VN')+'</td>'+(showN?'<td style="padding:4px;text-align:right">'+o.n+'</td>':'')+'</tr>';}).join('');};
+  var dTbl=function(arr,head,showN){var h='<tr style="color:#6b7280;font-size:10.5px"><th style="text-align:left;padding:3px 4px">'+head+'</th><th style="text-align:right;padding:3px 4px">Fitup</th><th style="text-align:right;padding:3px 4px">Welding</th><th style="text-align:right;padding:3px 4px">Painting</th><th style="text-align:right;padding:3px 4px">Tổng</th><th style="text-align:right;padding:3px 4px">pcs</th>'+(showN?'<th style="text-align:right;padding:3px 4px">Lượt</th>':'')+'</tr>';return h+arr.map(function(o){return '<tr style="border-top:1px solid #eef;font-size:11.5px"><td style="padding:4px;font-weight:700">'+o.lb+'</td><td style="padding:4px;text-align:right">'+(o.f?fm1(o.f):_dz)+'</td><td style="padding:4px;text-align:right">'+(o.w?fm1(o.w):_dz)+'</td><td style="padding:4px;text-align:right">'+(o.p?fm1(o.p):_dz)+'</td><td style="padding:4px;text-align:right;font-weight:700">'+fm1(o.f+o.w+o.p)+'</td><td style="padding:4px;text-align:right">'+o.q.toLocaleString('vi-VN')+'</td>'+(showN?'<td style="padding:4px;text-align:right">'+o.n+'</td>':'')+'</tr>';}).join('');};
   document.getElementById('repDayX').innerHTML=dTbl(grp(function(r){return r[1];},function(k){return D.X[+k];}),'Xưởng',false);
   document.getElementById('repDayP').innerHTML=dTbl(grp(function(r){return r[0];},function(k){return pName(+k);}),'Dự án',false);
   document.getElementById('repDayTo').innerHTML=dTbl(grp(function(r){return toKey(r);},function(k){return k;}),'Tổ',false);
@@ -1046,7 +1046,7 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
 (function(){try{var m=location.search.match(/[?&]qc=([^&]+)/);if(m){var qc=decodeURIComponent(m[1]).trim();if(qc&&typeof D!=='undefined'&&D.Q&&D.Q.indexOf(qc)>=0){S.q.add(qc);if(typeof renderAll==='function')renderAll();}}}catch(e){}})();
 </script>
 <div id="repView" style="display:none;position:fixed;left:-99999px;top:0;width:1060px;background:#eef3f1;font-family:'Be Vietnam Pro',Inter,sans-serif;color:#13231a">
-  <div style="background:linear-gradient(120deg,#0f2419,#0d7a52);color:#fff;padding:24px 32px">
+  <div style="background:linear-gradient(120deg,#BD160E,#E2231A);color:#fff;padding:24px 32px">
     <div style="font-size:12.5px;letter-spacing:.2em;font-weight:700;opacity:.85">DDC · NHÀ MÁY AN HẠ</div>
     <div style="font-size:27px;font-weight:800;margin-top:5px">BÁO CÁO HOẠT ĐỘNG QC</div>
     <div style="font-size:14px;opacity:.92;margin-top:7px">Kỳ: <b id="repRange"></b> · Xuất: <span id="repDate"></span></div>
@@ -1054,27 +1054,27 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
   <div style="padding:24px 32px">
     <div id="repKpi" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px">
-      <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="font-weight:800;font-size:13px;color:#0d7a52;margin-bottom:8px">SẢN LƯỢNG THEO CÔNG ĐOẠN</div><img id="repImg1" style="width:100%;display:block"></div>
-      <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="font-weight:800;font-size:13px;color:#0d7a52;margin-bottom:8px">NGHIỆM THU THEO NGÀY</div><img id="repImg2" style="width:100%;display:block"></div>
+      <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="font-weight:800;font-size:13px;color:#E2231A;margin-bottom:8px">SẢN LƯỢNG THEO CÔNG ĐOẠN</div><img id="repImg1" style="width:100%;display:block"></div>
+      <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="font-weight:800;font-size:13px;color:#E2231A;margin-bottom:8px">NGHIỆM THU THEO NGÀY</div><img id="repImg2" style="width:100%;display:block"></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px">
-      <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="font-weight:800;font-size:13px;color:#0d7a52;margin-bottom:8px">SẢN LƯỢNG THEO XƯỞNG</div><img id="repImg3" style="width:100%;display:block"></div>
-      <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="font-weight:800;font-size:13px;color:#0d7a52;margin-bottom:8px">TOP DỰ ÁN</div><table id="repProj" style="width:100%;border-collapse:collapse"></table></div>
+      <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="font-weight:800;font-size:13px;color:#E2231A;margin-bottom:8px">SẢN LƯỢNG THEO XƯỞNG</div><img id="repImg3" style="width:100%;display:block"></div>
+      <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="font-weight:800;font-size:13px;color:#E2231A;margin-bottom:8px">TOP DỰ ÁN</div><table id="repProj" style="width:100%;border-collapse:collapse"></table></div>
     </div>
-    <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-top:18px"><div style="font-weight:800;font-size:13px;color:#0d7a52;margin-bottom:3px">TÌNH HÌNH THEO XƯỞNG — QC PHỤ TRÁCH &amp; KHỐI LƯỢNG</div><div style="font-size:11px;color:#697c70;margin-bottom:8px">T/QC = tấn ÷ số QC (tải mỗi người) · ⚠ = Chờ NT cao hoặc T/QC cao ⇒ cân nhắc thêm QC</div><table id="repXuong" style="width:100%;border-collapse:collapse"></table></div>
-    <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-top:18px"><div style="font-weight:800;font-size:13px;color:#0d7a52;margin-bottom:8px">BẢNG NĂNG SUẤT QC VIÊN — TOP 10</div><table id="repQc" style="width:100%;border-collapse:collapse"></table></div>
+    <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-top:18px"><div style="font-weight:800;font-size:13px;color:#E2231A;margin-bottom:3px">TÌNH HÌNH THEO XƯỞNG — QC PHỤ TRÁCH &amp; KHỐI LƯỢNG</div><div style="font-size:11px;color:#6b7280;margin-bottom:8px">T/QC = tấn ÷ số QC (tải mỗi người) · ⚠ = Chờ NT cao hoặc T/QC cao ⇒ cân nhắc thêm QC</div><table id="repXuong" style="width:100%;border-collapse:collapse"></table></div>
+    <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-top:18px"><div style="font-weight:800;font-size:13px;color:#E2231A;margin-bottom:8px">BẢNG NĂNG SUẤT QC VIÊN — TOP 10</div><table id="repQc" style="width:100%;border-collapse:collapse"></table></div>
     <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-top:18px">
-      <div style="font-weight:800;font-size:14px;color:#0d7a52;margin-bottom:2px">BÁO CÁO QC NGÀY MỚI NHẤT — <span id="repDayD"></span></div>
-      <div id="repDaySub" style="font-size:11.5px;color:#697c70;margin-bottom:10px"></div>
+      <div style="font-weight:800;font-size:14px;color:#E2231A;margin-bottom:2px">BÁO CÁO QC NGÀY MỚI NHẤT — <span id="repDayD"></span></div>
+      <div id="repDaySub" style="font-size:11.5px;color:#6b7280;margin-bottom:10px"></div>
       <div id="repDayKpi" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div><div style="font-weight:700;font-size:12px;color:#0d7a52;margin-bottom:4px">Theo xưởng</div><table id="repDayX" style="width:100%;border-collapse:collapse"></table></div>
-        <div><div style="font-weight:700;font-size:12px;color:#0d7a52;margin-bottom:4px">Theo dự án</div><table id="repDayP" style="width:100%;border-collapse:collapse"></table></div>
+        <div><div style="font-weight:700;font-size:12px;color:#E2231A;margin-bottom:4px">Theo xưởng</div><table id="repDayX" style="width:100%;border-collapse:collapse"></table></div>
+        <div><div style="font-weight:700;font-size:12px;color:#E2231A;margin-bottom:4px">Theo dự án</div><table id="repDayP" style="width:100%;border-collapse:collapse"></table></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px">
-        <div><div style="font-weight:700;font-size:12px;color:#0d7a52;margin-bottom:4px">Theo tổ</div><table id="repDayTo" style="width:100%;border-collapse:collapse"></table></div>
-        <div><div style="font-weight:700;font-size:12px;color:#0d7a52;margin-bottom:4px">Theo QC viên</div><table id="repDayQ" style="width:100%;border-collapse:collapse"></table></div>
+        <div><div style="font-weight:700;font-size:12px;color:#E2231A;margin-bottom:4px">Theo tổ</div><table id="repDayTo" style="width:100%;border-collapse:collapse"></table></div>
+        <div><div style="font-weight:700;font-size:12px;color:#E2231A;margin-bottom:4px">Theo QC viên</div><table id="repDayQ" style="width:100%;border-collapse:collapse"></table></div>
       </div>
     </div>
-    <div style="text-align:center;color:#697c70;font-size:11.5px;margin-top:16px;padding-bottom:10px">Tự động từ SPM · cập nhật <span id="repUpd"></span> · Dashboard QC An Hạ</div>
+    <div style="text-align:center;color:#6b7280;font-size:11.5px;margin-top:16px;padding-bottom:10px">Tự động từ SPM · cập nhật <span id="repUpd"></span> · Dashboard QC An Hạ</div>
   </di
