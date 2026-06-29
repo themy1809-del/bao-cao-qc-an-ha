@@ -244,6 +244,7 @@ details.dt summary::before{content:'▸'}details.dt[open] summary::before{conten
 
   <!-- 01 TỔNG QUAN -->
   <section id="v_tq" class="view active">
+    <div id="tqPeriod" style="display:flex;align-items:center;gap:10px;margin:2px 0 11px;flex-wrap:wrap"></div>
     <div class="kpis" id="tqKpis"></div>
     <div class="card" id="tqLatest" style="border-left:4px solid var(--acc)"></div>
     <div class="panel" id="pendPanel" style="display:none">
@@ -535,6 +536,7 @@ function loadFPY(){if(typeof fetch==='undefined'||!FPY_CSV)return;fetch(FPY_CSV)
 }).catch(e=>{});}
 function rTQ(){
   const rows=F();
+  (function(){var pe=document.getElementById('tqPeriod');if(!pe)return;var lbl,sub='';if(!DR.from&&!DR.to){lbl='Tất cả các tháng';sub='gồm cả tháng cũ — số liệu bị gộp';}else if(DR.from&&!DR.to&&/-01$/.test(DR.from)){lbl='Tháng '+(+DR.from.slice(5,7))+'/'+DR.from.slice(0,4);}else{lbl=(DR.from||'…')+' → '+(DR.to||'nay');}pe.innerHTML='<span style="background:var(--chipBg);color:var(--chipInk);border:1px solid var(--chipBd);padding:4px 12px;border-radius:999px;font-weight:800">📅 Kỳ đang xem: '+lbl+'</span>'+(sub?' <span style="color:var(--warn);font-size:11.5px;font-weight:700">⚠ '+sub+'</span>':'')+' <span style="color:var(--mut);font-size:11px">· KPI đã NT tính theo kỳ · Waiting = toàn bộ tồn</span>';})();
   const done=rows.filter(isAcc),s=stSums(done);
   const pend=Fnodate().filter(isTon),pS=stSums(pend),pT=pS.f+pS.w+pS.p;
   const nPj=new Set(done.map(r=>r[0])).size,nTo=new Set(done.map(r=>toKey(r))).size;
