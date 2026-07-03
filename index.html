@@ -387,8 +387,11 @@ th{background:none;color:var(--mut);border-bottom:2px solid var(--line);font-wei
       <h3 id="ndTtl"></h3><div class="q" id="ndSub"></div>
       <div class="kpis" id="ndStg" style="margin:6px 0 4px"></div>
       <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu QC nghiệm thu — SX gia công theo công đoạn</div>
-      <div class="q" style="margin:0 0 4px">Cột đỏ = QC đã nghiệm thu · cột xám = SX làm ra cùng ngày · % = NT/SX · vạch cam = định mức ngày</div>
+      <div class="q" style="margin:0 0 4px">Cột đậm = QC nghiệm thu · cột nhạt = SX cùng ngày · màu theo công đoạn · % = NT/SX · vạch cam = định mức ngày</div>
       <div id="cNdCmp" class="ch short"></div>
+      <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu theo xưởng — công đoạn</div>
+      <div class="q" style="margin:0 0 4px">Mỗi xưởng 2 cột: đậm = QC nghiệm thu · nhạt = SX gia công · màu = công đoạn</div>
+      <div id="cNdCmpX" class="ch short"></div>
       <div id="ndReject"></div>
       <div class="r2" style="grid-template-columns:2fr 3fr;gap:22px">
         <div><div class="cg-lbl" style="margin-bottom:4px">Theo xưởng</div><div class="tw" style="max-height:240px"><table id="ndByX"></table></div></div>
@@ -1000,24 +1003,39 @@ function renderDay(){
     kpi('b',fm1(tot),'Tổng NT (t)',(qf+qw+qp).toLocaleString('vi-VN')+' pcs')+
     kpi(sxT>0&&tot/sxT>=1?'g':'a',fm1(sxT),'SX gia công (t)','F '+fm1(sxS.f)+' · W '+fm1(sxS.w)+' · P '+fm1(sxS.p)+(sxT>0?' · NT đạt '+Math.round(tot/sxT*100)+'%':''));
   (function(){
-    const cats=['Fitup','Welding','Painting','Tổng'];
-    const ntD=[s.f,s.w,s.p,tot].map(v=>+v.toFixed(1));
-    const sxD=[sxS.f,sxS.w,sxS.p,sxT].map(v=>+v.toFixed(1));
+    const cats=['Fitup','Welding','Final DIM','Painting','Tổng'];
+    const ntD=[s.f,s.w,_fdD,s.p,tot].map(v=>+v.toFixed(1));
+    const sxD=[sxS.f,sxS.w,0,sxS.p,sxT].map(v=>+v.toFixed(1));
     const mx=Math.max(CAP_DAY,...ntD,...sxD);
+    const CST=['#2563EB','#F59E0B','#0D9488','#16A34A','#475569'];
     setOpt('cNdCmp',{
       tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){let h='<b>'+ps[0].axisValue+'</b><br>';ps.forEach(p=>{h+=p.marker+p.seriesName+': <b>'+fm1(p.value)+' t</b><br>';});const i=ps[0].dataIndex;if(sxD[i]>0)h+='NT/SX: <b>'+Math.round(ntD[i]/sxD[i]*100)+'%</b>';return h;}},
-      legend:{top:0,itemWidth:11,itemHeight:11},
+      legend:{show:false},
       grid:{left:8,right:14,top:30,bottom:6,containLabel:true},
       xAxis:{type:'category',data:cats,axisLabel:{fontWeight:700,fontSize:12}},
       yAxis:{type:'value',name:'tấn',max:Math.ceil(mx*1.15)},
       series:[
-        {name:'QC nghiệm thu',type:'bar',barMaxWidth:38,itemStyle:{color:'#E2231A',borderRadius:[4,4,0,0]},
-         label:{show:true,position:'top',fontWeight:800,fontSize:11,color:'#E2231A',formatter:p=>{const sx=sxD[p.dataIndex];return fm1(p.value)+(sx>0?' · '+Math.round(p.value/sx*100)+'%':'');}},data:ntD},
-        {name:'SX gia công',type:'bar',barMaxWidth:38,itemStyle:{color:'#94A3B8',borderRadius:[4,4,0,0]},
-         label:{show:true,position:'top',fontSize:10.5,color:'#64748B',formatter:p=>fm1(p.value)},data:sxD,
+        {name:'QC nghiệm thu',type:'bar',barMaxWidth:38,
+         label:{show:true,position:'top',fontWeight:800,fontSize:11,color:'#334155',formatter:p=>{const sx=sxD[p.dataIndex];return fm1(p.value)+(sx>0?' · '+Math.round(p.value/sx*100)+'%':'');}},data:ntD.map((v,i)=>({value:v,itemStyle:{color:CST[i],borderRadius:[4,4,0,0]}}))},
+        {name:'SX gia công',type:'bar',barMaxWidth:38,
+         label:{show:true,position:'top',fontSize:10.5,color:'#64748B',formatter:p=>p.value>0?fm1(p.value):''},data:sxD.map((v,i)=>({value:v,itemStyle:{color:CST[i]+'55',borderRadius:[4,4,0,0]}})),
          markLine:{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#b4690e',width:1.6},
            data:[{yAxis:CAP_DAY,label:{formatter:'Định mức '+CAP_DAY+' t/ngày',position:'insideEndTop',color:'#b4690e',fontSize:10,fontWeight:700}}]}}
       ]});
+    const XC={};
+    for(const r of base){const x=D.X[r[1]];const o=XC[x]=XC[x]||{f:0,w:0,p:0,sf:0,sw:0,sp:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];}
+    for(const r of sxAll){const x=D.X[r[1]];const o=XC[x]=XC[x]||{f:0,w:0,p:0,sf:0,sw:0,sp:0};o.sf+=r[7];o.sw+=r[8];o.sp+=r[9];}
+    const xs2=Object.keys(XC).sort();
+    const SC=[['f','sf','Fitup','#2563EB'],['w','sw','Welding','#F59E0B'],['p','sp','Painting','#16A34A']];
+    setOpt('cNdCmpX',{
+      tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){const x=ps[0].axisValue,o=XC[x];const nt=o.f+o.w+o.p,sx=o.sf+o.sw+o.sp;let h='<b>'+x+'</b><br>NT: <b>'+fm1(nt)+' t</b> — F '+fm1(o.f)+' · W '+fm1(o.w)+' · P '+fm1(o.p)+'<br>SX: <b>'+fm1(sx)+' t</b> — F '+fm1(o.sf)+' · W '+fm1(o.sw)+' · P '+fm1(o.sp)+(sx>0?'<br>NT/SX: <b>'+Math.round(nt/sx*100)+'%</b>':'');return h;}},
+      legend:{top:0,itemWidth:11,itemHeight:11},
+      grid:{left:8,right:14,top:30,bottom:6,containLabel:true},
+      xAxis:{type:'category',data:xs2,axisLabel:{fontWeight:700,fontSize:12}},
+      yAxis:{type:'value',name:'tấn'},
+      series:SC.map(c=>({name:c[2],type:'bar',stack:'NT',barMaxWidth:26,itemStyle:{color:c[3]},data:xs2.map(x=>+XC[x][c[0]].toFixed(1))}))
+        .concat(SC.map(c=>({name:c[2]+' (SX)',type:'bar',stack:'SX',barMaxWidth:26,itemStyle:{color:c[3]+'66'},data:xs2.map(x=>+XC[x][c[1]].toFixed(1))})))
+    },p=>{if(p&&p.name)dayPickX(p.name);});
   })();
   const X={};for(const r of base){const o=X[D.X[r[1]]]=X[D.X[r[1]]]||{f:0,w:0,p:0,fd:0,q:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=r[10]+r[11]+r[12];if(r[8]>0&&r[13]&&/acc/i.test(''+r[13]))o.fd+=r[8];}
   const xk=Object.entries(X).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
