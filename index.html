@@ -408,6 +408,7 @@ th{background:none;color:var(--mut);border-bottom:2px solid var(--line);font-wei
   <!-- 06 CHẤT LƯỢNG -->
   <section id="v_cl" class="view">
     <div class="kpis" id="clKpis"></div>
+    <div id="clWarn" style="display:none"></div>
     <div class="r2">
       <div class="card"><h3>Xu hướng tỷ lệ rớt theo tháng</h3><div class="q">Cột = tấn rớt · đường = % rớt</div><div id="cRejTrend" class="ch"></div></div>
       <div class="card"><h3>Tỷ lệ rớt theo xưởng</h3><div class="q">Bấm cột để lọc xưởng</div><div id="cRejX" class="ch"></div></div>
@@ -507,7 +508,11 @@ function val(r){if(!S.st.size)return r[7]+r[8]+r[9];let v=0;if(S.st.has('f'))v+=
 function qval(r){if(!S.st.size)return r[10]+r[11]+r[12];let v=0;if(S.st.has('f'))v+=r[10];if(S.st.has('w'))v+=r[11];if(S.st.has('p'))v+=r[12];return v;}
 function sums(rows){let f=0,w=0,p=0;for(const r of rows){f+=r[7];w+=r[8];p+=r[9];}return{f,w,p};}
 function stSums(rows){const s=sums(rows);return{f:S.st.size&&!S.st.has('f')?0:s.f,w:S.st.size&&!S.st.has('w')?0:s.w,p:S.st.size&&!S.st.has('p')?0:s.p};}
-const isReject=r=>D.PL[r[6]]==='Rớt'||(r[13]&&(/\b(reject|fail)\b/i.test(''+r[13])||/rớt|không đạt/i.test(''+r[13])));const isAcc=r=>!!r[3]&&!isReject(r);const isTon=r=>D.PL[r[6]]==='Chưa QC';const plLabel=v=>({'Đã QC (AH)':'Accept','Chưa QC':'Waiting','Rớt':'Reject'}[v]||v);/* Waiting = lay thang status tu SPM */
+const isReject=r=>D.PL[r[6]]==='Rớt'||(r[13]&&(/\b(reject|fail)\b/i.test(''+r[13])||/rớt|không đạt/i.test(''+r[13])));const isAcc=r=>!!r[3]&&!isReject(r);const isTon=r=>D.PL[r[6]]==='Chưa QC';const plLabel=v=>({'Đã QC (AH)':'Accept','Chưa QC':'Waiting','Rớt':'Reject'}[v]||v);
+const ERRRE=/\b(MAT|PRE|FIT|DIM|WEL|GRI|BLA|PAI|PAC|DRW)\s*-\s*\d{1,2}\b/i;
+const isErr=r=>!!(r[13]&&ERRRE.test(''+r[13]));
+const errCode=r=>{const m=(''+(r[13]||'')).match(ERRRE);return m?m[0].toUpperCase().replace(/\s/g,''):'';};
+function fpyCalc(rows){let a=0,j=0,e=0,n=0;for(const r of rows){const t=r[7]+r[8]+r[9];if(isReject(r))j+=t;else if(isAcc(r)){a+=t;if(isErr(r)){e+=t;n++;}}}const d=a+j;return{a:a,j:j,e:e,n:n,fpy:d>0?(a-e)/d*100:null};}/* Waiting = lay thang status tu SPM */
 
 function renderChips(){
   const box=document.getElementById('chips');box.innerHTML='';let n=0;
@@ -688,6 +693,8 @@ function rTQ(){
     var QL={};done.forEach(function(r){var u=D.Q[r[5]];if(u&&u!=='—'){var o=QL[u]||(QL[u]={t:0});o.t+=r[7]+r[8]+r[9];}});
     var ql=Object.keys(QL).map(function(u){return [u,QL[u].t];}).sort(function(a,b){return b[1]-a[1];});
     var chips='';
+    var _fq=fpyCalc(rows);
+    if(_fq.fpy!=null&&_fq.fpy<98)chips+='<span class="tag r">CẢNH BÁO FPY '+_fq.fpy.toFixed(1).replace('.',',')+'% &lt; 98% · lỗi mã '+fm1(_fq.e)+' t · '+_fq.n+' món</span>';
     if(rejT>0.05)chips+='<span class="tag r">Rớt: '+fm1(rejT)+' t · '+rej.length+' món · tỉ lệ '+rejRate.toFixed(1)+'%</span>';
     if(lagDays>0)chips+='<span class="tag o">QC chậm hơn SX '+lagDays+' ngày (SX '+dayVN(maxWD)+' › NT '+dayVN(maxQD)+') · '+fmTon(pT)+' chờ NT</span>';
     if(old30>0.05)chips+='<span class="tag r">Tồn &gt;30 ngày: '+fmTon(old30)+'</span>';
@@ -1012,6 +1019,9 @@ function renderDay(){
   const sxRows=_dayX?sxAll.filter(r=>D.X[r[1]]===_dayX):sxAll;
   const sxS=sums(sxRows),sxT=sxS.f+sxS.w+sxS.p;
   const sxPcs=sxRows.reduce((a,r)=>a+r[10]+r[11]+r[12],0);
+  const dErr=rows.filter(isErr);let dET=0;dErr.forEach(r=>dET+=r[7]+r[8]+r[9]);
+  const _rjD=Fnodate().filter(r=>isReject(r)&&dateOf(r)===d&&(!_dayX||D.X[r[1]]===_dayX));let _rjT=0;_rjD.forEach(r=>_rjT+=r[7]+r[8]+r[9]);
+  const _fpyD=(tot+_rjT)>0?((tot-dET)/(tot+_rjT)*100):null;
   const SXX={},SXTO={},SXP={};
   for(const r of sxAll){SXX[D.X[r[1]]]=(SXX[D.X[r[1]]]||0)+r[7]+r[8]+r[9];}
   for(const r of sxRows){const tn=r[7]+r[8]+r[9];SXTO[toKey(r)]=(SXTO[toKey(r)]||0)+tn;SXP[r[0]]=(SXP[r[0]]||0)+tn;}
@@ -1031,7 +1041,8 @@ function renderDay(){
     kpi('fd',fm1(_fdD),'Final DIM (t)',_fdQ.toLocaleString('vi-VN')+' pcs')+
     kpi('p',fm1(s.p),'Painting (t)',qp.toLocaleString('vi-VN')+' pcs')+
     kpi('b',fm1(tot),'Tổng NT (t)',(qf+qw+qp).toLocaleString('vi-VN')+' pcs')+
-    kpi(sxT>0&&tot/sxT>=1?'g':'a',fm1(sxT),'SX gia công (t)','F '+fm1(sxS.f)+' · W '+fm1(sxS.w)+' · P '+fm1(sxS.p)+(sxT>0?' · NT đạt '+Math.round(tot/sxT*100)+'%':''));
+    kpi(sxT>0&&tot/sxT>=1?'g':'a',fm1(sxT),'SX gia công (t)','F '+fm1(sxS.f)+' · W '+fm1(sxS.w)+' · P '+fm1(sxS.p)+(sxT>0?' · NT đạt '+Math.round(tot/sxT*100)+'%':''))+
+    kpi(_fpyD==null?'a':(_fpyD>=98?'g':'b'),_fpyD==null?'—':_fpyD.toFixed(1).replace('.',',')+'%','FPY ngày',(dET>0?'lỗi mã '+fm1(dET)+' t · '+dErr.length+' món':'không có lỗi mã')+' · mốc 98%');
   (function(){
     const cats=['Fitup','Welding','Final DIM','Painting','Tổng'];
     const ntD=[s.f,s.w,_fdD,s.p,tot].map(v=>+v.toFixed(1));
@@ -1084,7 +1095,11 @@ function renderDay(){
   document.getElementById('ndByQ').innerHTML='<thead><tr><th>QC viên</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Final DIM</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">pcs</th><th class="n">Lượt</th></tr></thead><tbody>'+
     qk.map(([u,o])=>'<tr class="clickable" onclick="tog(\'q\',\''+u+'\')"><td><b>'+u+'</b></td><td class="n">'+(o.f?fm1(o.f):_dz)+'</td><td class="n">'+(o.w?fm1(o.w):_dz)+'</td><td class="n" style="color:#0D9488">'+(o.fd?fm1(o.fd):_dz)+'</td><td class="n">'+(o.p?fm1(o.p):_dz)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td><td class="n">'+o.n+'</td></tr>').join('')+'</tbody>';
   var _rj=Fnodate().filter(r=>isReject(r)&&dateOf(r)===d&&(!_dayX||D.X[r[1]]===_dayX)),_rjEl=document.getElementById('ndReject');
-  if(_rjEl){ _rjEl.innerHTML=_rj.length?'<div style="margin:10px 0;padding:10px 14px;border:1px solid #f1c4bd;border-left:5px solid #c0392b;border-radius:9px;background:rgba(192,57,43,.05)"><div style="font-weight:800;color:#c0392b;font-size:12.5px;margin-bottom:6px">CẤU KIỆN REJECT — '+_rj.length+' món · '+fm1(_rj.reduce((a,r)=>a+r[7]+r[8]+r[9],0))+' t</div><div class="tw" style="max-height:240px"><table><thead><tr><th>Dự án</th><th>Tổ</th><th>QC</th><th class="n">KL (t)</th><th>Lý do / memo</th></tr></thead><tbody>'+_rj.map(r=>'<tr><td>'+pName(r[0])+'</td><td>'+toKey(r)+'</td><td>'+D.Q[r[5]]+'</td><td class="n">'+fm1(r[7]+r[8]+r[9])+'</td><td style="white-space:normal;color:#8a2020;font-size:11.5px">'+(''+(r[13]||'')).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</td></tr>').join('')+'</tbody></table></div></div>':''; }
+  var _errHtml='';
+  if(dErr.length){
+    _errHtml='<div style="margin:10px 0;padding:10px 14px;border:1px solid #f0d9a8;border-left:5px solid #D97706;border-radius:9px;background:rgba(217,119,6,.05)"><div style="font-weight:800;color:#B45309;font-size:12.5px;margin-bottom:6px">CẤU KIỆN CÓ MÃ LỖI — không đạt ngay lần đầu · '+dErr.length+' món · '+fm1(dET)+' t'+(_fpyD!=null?' · FPY ngày '+_fpyD.toFixed(1).replace('.',',')+'%':'')+'</div><div class="tw" style="max-height:240px"><table><thead><tr><th>Dự án</th><th>Tổ</th><th>QC</th><th>Mã lỗi</th><th class="n">KL (t)</th><th>Memo</th></tr></thead><tbody>'+dErr.map(r=>'<tr><td>'+pName(r[0])+'</td><td>'+toKey(r)+'</td><td>'+D.Q[r[5]]+'</td><td><span class="tag r">'+errCode(r)+'</span></td><td class="n">'+fm1(r[7]+r[8]+r[9])+'</td><td style="white-space:normal;color:#7a5b17;font-size:11.5px">'+(''+(r[13]||'')).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</td></tr>').join('')+'</tbody></table></div></div>';
+  }
+  if(_rjEl){ _rjEl.innerHTML=_errHtml+(_rj.length?'<div style="margin:10px 0;padding:10px 14px;border:1px solid #f1c4bd;border-left:5px solid #c0392b;border-radius:9px;background:rgba(192,57,43,.05)"><div style="font-weight:800;color:#c0392b;font-size:12.5px;margin-bottom:6px">CẤU KIỆN REJECT — '+_rj.length+' món · '+fm1(_rj.reduce((a,r)=>a+r[7]+r[8]+r[9],0))+' t</div><div class="tw" style="max-height:240px"><table><thead><tr><th>Dự án</th><th>Tổ</th><th>QC</th><th class="n">KL (t)</th><th>Lý do / memo</th></tr></thead><tbody>'+_rj.map(r=>'<tr><td>'+pName(r[0])+'</td><td>'+toKey(r)+'</td><td>'+D.Q[r[5]]+'</td><td class="n">'+fm1(r[7]+r[8]+r[9])+'</td><td style="white-space:normal;color:#8a2020;font-size:11.5px">'+(''+(r[13]||'')).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</td></tr>').join('')+'</tbody></table></div></div>':''); }
   var _nx=document.getElementById('ndExtra');
   if(_nx){ if(_dayX){
     var _pen=Fnodate().filter(isTon).filter(r=>D.X[r[1]]===_dayX),_wTo={},_wPj={},_wT=0;
@@ -1222,13 +1237,30 @@ function rCL(){
   const acc=rows.filter(isAcc),rej=rows.filter(isReject);
   let aT=0;acc.forEach(r=>aT+=tw(r));let jT=0;rej.forEach(r=>jT+=tw(r));
   const tot=aT+jT,rate=tot?jT/tot*100:0;
+  const errs=acc.filter(isErr);let eT=0;errs.forEach(r=>eT+=tw(r));
+  const fpyV=tot?((aT-eT)/tot*100):null;
   const nQc=new Set(rej.map(r=>D.Q[r[5]]).filter(q=>q!=='—')).size;
+  (function(){var el=document.getElementById('clWarn');if(!el)return;
+    if(!errs.length&&(fpyV==null||fpyV>=98)){el.style.display='none';return;}
+    el.style.display='block';
+    var CD={};errs.forEach(r=>{var c=errCode(r);CD[c]=CD[c]||{n:0,t:0};CD[c].n++;CD[c].t+=tw(r);});
+    var cks=Object.keys(CD).sort((a,b)=>CD[b].t-CD[a].t);
+    var late=errs.slice().sort((a,b)=>(dateOf(b)||'').localeCompare(dateOf(a)||'')).slice(0,8);
+    var bad=(fpyV!=null&&fpyV<98);
+    el.innerHTML='<div class="panel" style="border-left-color:'+(bad?'var(--bad)':'var(--warn)')+';margin:4px 0 8px">'
+      +'<div style="font-weight:800;color:'+(bad?'var(--bad)':'var(--warn)')+';font-size:13px">'+(bad?'CẢNH BÁO: FPY '+fpyV.toFixed(1).replace('.',',')+'% — DƯỚI MỤC TIÊU 98%':'Lưu ý: có cấu kiện ghi mã lỗi trong kỳ')+'</div>'
+      +'<div style="margin:7px 0 4px;display:flex;gap:6px;flex-wrap:wrap">'+cks.map(c=>'<span class="tag r">'+c+' · '+CD[c].n+' món · '+fm1(CD[c].t)+' t</span>').join('')+'</div>'
+      +'<div class="tw" style="max-height:220px"><table><thead><tr><th>Ngày</th><th>Dự án</th><th>Xưởng.Tổ</th><th>Mã lỗi</th><th class="n">KL (t)</th></tr></thead><tbody>'
+      +late.map(r=>'<tr><td>'+(dateOf(r)?dayVN(dateOf(r)):'—')+'</td><td class="pjn">'+shortP(r[0])+'</td><td>'+toKey(r)+'</td><td><span class="tag r">'+errCode(r)+'</span></td><td class="n"><b>'+fm1(tw(r))+'</b></td></tr>').join('')
+      +'</tbody></table></div><div class="muted" style="margin-top:5px;font-size:11.5px">Nguồn: memo mã lỗi QC ghi trực tiếp trong SPM · FPY = (đạt − lỗi mã) ÷ (đạt + rớt), tính theo tấn.</div></div>';
+  })();
   const pf=v=>v.toFixed(2).replace('.',',');
   document.getElementById('clKpis').innerHTML=
     kpi('a',fm1(tot),'Đã kiểm (t)','accept + rớt · theo bộ lọc')+
     kpi(jT>0.05?'b':'g',fm1(jT),'Rớt (t)',rej.length+' lượt rớt')+
     kpi(rate>3?'b':'g',pf(rate)+'%','Tỷ lệ rớt','tấn rớt ÷ tấn đã kiểm')+
-    kpi('g',pf(100-rate)+'%','FPY (ước tính)','đạt ngay lần kiểm đầu')+
+    kpi(fpyV==null?'a':(fpyV>=98?'g':'b'),fpyV==null?'—':pf(fpyV)+'%','FPY','(đạt − lỗi mã) ÷ đã kiểm · mốc 98%')+
+    kpi(eT>0.05?'b':'g',fm1(eT),'Lỗi mã trong SPM (t)',errs.length+' món ghi mã lỗi')+
     kpi('p',nQc,'QC có lượt rớt','số QC viên ghi nhận rớt');
   const M={};
   for(const r of acc){const d=dateOf(r);if(!d)continue;const k=d.slice(0,7);(M[k]=M[k]||{a:0,j:0}).a+=tw(r);}
@@ -1403,8 +1435,8 @@ function _bscAuto(){
   D.rows.forEach(r=>{if(isAcc(r)&&(r[3]||'').slice(0,4)==='2026'){yNT+=r[7]+r[8]+r[9];if(r[3]>latest)latest=r[3];if(r[3]<minD)minD=r[3];}});
   var span=minD<'9999'?Math.max(1,Math.round((new Date(latest)-new Date(minD))/864e5)+1):1;
   var fc=yNT/span*365;
-  var mNT=0,mRJ=0;D.rows.forEach(r=>{var q=(r[3]||'').slice(0,7);if(q===lm){var t=r[7]+r[8]+r[9];if(isReject(r))mRJ+=t;else if(isAcc(r))mNT+=t;}});
-  var f32=(mNT+mRJ)>0?mNT/(mNT+mRJ)*100:null;
+  var mNT=0,mRJ=0,mER=0;D.rows.forEach(r=>{var q=(r[3]||'').slice(0,7);if(q===lm){var t=r[7]+r[8]+r[9];if(isReject(r))mRJ+=t;else if(isAcc(r)){mNT+=t;if(isErr(r))mER+=t;}}});
+  var f32=(mNT+mRJ)>0?(mNT-mER)/(mNT+mRJ)*100:null;
   return {
     'F-KR2.1':{pct:Math.min(120,fc/60000*100),note:'nhịp quy năm '+fm1(fc)+' t / 60.000 t'},
     'C-KR3.1#0':{pct:f32==null?null:Math.min(120,f32/98*100),note:'FPY '+(f32==null?'—':f32.toFixed(1).replace('.',',')+'%')+' / mốc 98%'},
@@ -1482,16 +1514,17 @@ function renderBSC(){
 function rKP(){
   const acc=F().filter(isAcc),rej=F().filter(isReject),sxR=FSX();
   const a=sums(acc),j=sums(rej),sx=sums(sxR);
+  const er={f:0,w:0,p:0};acc.forEach(r=>{if(isErr(r)){er.f+=r[7];er.w+=r[8];er.p+=r[9];}});const eT=er.f+er.w+er.p;
   const aT=a.f+a.w+a.p,jT=j.f+j.w+j.p,sxT=sx.f+sx.w+sx.p;
   const r31=sxT>0?aT/sxT*100:null;
-  const fpy=(x,y)=>(x+y)>0?x/(x+y)*100:null;
-  const f32=fpy(aT,jT);
+  const fpy=(x,y,e)=>(x+y)>0?(x-(e||0))/(x+y)*100:null;
+  const f32=fpy(aT,jT,eT);
   const pf=v=>v==null?'—':v.toFixed(1).replace('.',',')+'%';
   const st31=v=>v==null?'a':(v>=95?'g':'b');
   const st32=v=>v==null?'a':(v>=98?'g':'b');
   document.getElementById('kpKpis').innerHTML=
     kpi(st31(r31),pf(r31),'NT/SX công đoạn chính','mục tiêu ≥ 95% · '+(r31==null?'chưa có SX trong kỳ':(r31>=95?'ĐẠT':'CHƯA ĐẠT')))+
-    kpi(st32(f32),pf(f32),'FPY (đạt ngay lần đầu)','mục tiêu ≥ 98% · '+(f32==null?'chưa có dữ liệu':(f32>=98?'ĐẠT':'CHƯA ĐẠT')))+
+    kpi(st32(f32),pf(f32),'FPY (đạt ngay lần đầu)','mốc 98% · '+(f32==null?'chưa có dữ liệu':(f32>=98?'ĐẠT':'CHƯA ĐẠT'))+(eT>0.05?' · lỗi mã '+fm1(eT)+' t':''))+
     kpi('a',fm1(aT),'KL đã NT (t)','trong kỳ đang lọc')+
     kpi('a',fm1(sxT),'KL SX cùng kỳ (t)','theo ngày gia công')+
     kpi(jT>0.05?'b':'g',fm1(jT),'KL rớt (t)',rej.length+' lượt');
@@ -1510,12 +1543,12 @@ function rKP(){
   // --- chart KPI32 FPY ---
   (function(){
     const cats=['Fitup','Welding','Painting','Tổng'];
-    const vv=[fpy(a.f,j.f),fpy(a.w,j.w),fpy(a.p,j.p),f32];
+    const vv=[fpy(a.f,j.f,er.f),fpy(a.w,j.w,er.w),fpy(a.p,j.p,er.p),f32];
     const CST=['#2563EB','#F59E0B','#16A34A','#475569'];
     setOpt('cKp32',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},valueFormatter:v=>v==null?'—':v.toFixed(2)+'%'},
       legend:{show:false},grid:{left:8,right:14,top:28,bottom:6,containLabel:true},
       xAxis:{type:'category',data:cats,axisLabel:{fontWeight:700}},
-      yAxis:{type:'value',min:90,max:100,axisLabel:{formatter:'{value}%'}},
+      yAxis:{type:'value',min:80,max:100,axisLabel:{formatter:'{value}%'}},
       series:[{name:'FPY',type:'bar',barMaxWidth:40,label:{show:true,position:'top',fontWeight:800,fontSize:11,color:'#334155',formatter:p=>p.value==null?'':p.value.toFixed(1).replace('.',',')+'%'},
         data:vv.map((v,i)=>({value:v==null?null:+v.toFixed(2),itemStyle:{color:(v!=null&&v>=98?CST[i]:'#D97706'),borderRadius:[4,4,0,0]}})),
         markLine:{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#b4690e',width:1.6},data:[{yAxis:98,label:{formatter:'Mục tiêu 98%',position:'insideEndTop',color:'#b4690e',fontSize:10,fontWeight:700}}]}}]});
@@ -1528,8 +1561,8 @@ function rKP(){
     var doy=latest?Math.round((new Date(latest)-new Date('2026-01-01'))/864e5)+1:1;
     var span=minD<'9999'?Math.max(1,Math.round((new Date(latest)-new Date(minD))/864e5)+1):1;
     var fc=yNT/span*365;
-    var mNT=0,mSX=0,mRJ=0;D.rows.forEach(r=>{var t=r[7]+r[8]+r[9];if((r[4]||'').slice(0,7)===lm)mSX+=t;var q=(r[3]||'').slice(0,7);if(q===lm){if(isReject(r))mRJ+=t;else if(isAcc(r))mNT+=t;}});
-    var r31=mSX>0?mNT/mSX*100:null,f32=(mNT+mRJ)>0?mNT/(mNT+mRJ)*100:null;
+    var mNT=0,mSX=0,mRJ=0,mER=0;D.rows.forEach(r=>{var t=r[7]+r[8]+r[9];if((r[4]||'').slice(0,7)===lm)mSX+=t;var q=(r[3]||'').slice(0,7);if(q===lm){if(isReject(r))mRJ+=t;else if(isAcc(r)){mNT+=t;if(isErr(r))mER+=t;}}});
+    var r31=mSX>0?mNT/mSX*100:null,f32=(mNT+mRJ)>0?(mNT-mER)/(mNT+mRJ)*100:null;
     document.getElementById('scNote').textContent='dữ liệu SPM hiện có từ '+dayVN(minD)+'/'+minD.slice(2,4)+' → '+dayVN(latest)+'/'+latest.slice(2,4);
     var tg=(ok,txt)=>ok==null?'<span class="tag">chưa đo được</span>':(ok?'<span class="tag g">ĐẠT'+(txt?' · '+txt:'')+'</span>':'<span class="tag r">CHƯA ĐẠT'+(txt?' · '+txt:'')+'</span>');
     var pf=v=>v==null?'—':v.toFixed(1).replace('.',',')+'%';
