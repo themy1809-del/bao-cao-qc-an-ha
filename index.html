@@ -1668,7 +1668,7 @@ function rKP(){
 /* ================= /07 KPI ================= */
 
 renderChips();renderCtrls();renderFresh();
-<script>
+
 /* === Tab QUẢN LÝ DỰ ÁN (QLDA) — đọc kế hoạch từ Google Sheet chia sẻ (gviz JSONP) === */
 var QLDA_SHEET_ID='1hDz5QDbf4hEJAYJhq7JLlut9pMLK9wDXnAXaXt_1LCE';
 var _qldaLoaded=false,_qldaLoading=false;
@@ -1717,7 +1717,7 @@ function _renderQL(){
 }
 (function(){ if(typeof render==='function'){ var _rb=render; render=function(k){ if(k==='ql'){ try{rQL();}catch(e){} return; } return _rb(k); }; } })();
 
-</script>
+
 if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1].slice(0,7)+'-01';DR.to='';}})();try{_restoreState();}catch(e){}qrMark();setupDR();document.getElementById('drFrom').addEventListener('change',e=>{DR.from=e.target.value;renderAll();});document.getElementById('drTo').addEventListener('change',e=>{DR.to=e.target.value;renderAll();});setView('tq');try{_syncSb();}catch(e){}if(typeof fetch!=='undefined'){try{loadFPY();}catch(e){}}}
 (function(){var s=document.getElementById('splash');if(s)s.style.display='none';})();
 (function(){try{var m=location.search.match(/[?&]qc=([^&]+)/);if(m){var qc=decodeURIComponent(m[1]).trim();if(qc&&typeof D!=='undefined'&&D.Q&&D.Q.indexOf(qc)>=0){S.q.add(qc);if(typeof renderAll==='function')renderAll();}}}catch(e){}})();
