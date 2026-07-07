@@ -404,6 +404,7 @@ th{background:none;color:var(--mut);border-bottom:2px solid var(--line);font-wei
   <section id="v_du" class="view">
     <div class="card"><h3>Tiến độ hoàn thiện dự án</h3><div class="q">Xanh = đã sơn · xám = còn tồn (so BOM cả dự án) — bấm để lọc</div><div id="cProj" class="ch tall"></div></div>
     <div class="card"><h3>Bảng dự án</h3><div class="q">Bấm dòng để lọc · cột SX đổi theo bộ lọc</div><div class="tw"><table id="tProj"></table></div></div>
+    <div class="card"><h3>Khối lượng đã hoàn thành theo Xưởng — từng dự án</h3><div class="q">Đã nghiệm thu · <b>bấm một dự án ở bảng trên</b> để chỉ xem dự án đó · bấm dòng ở đây để lọc</div><div class="tw" style="max-height:460px"><table id="tProjX"></table></div></div>
   </section>
 
   <!-- 05 DỮ LIỆU -->
@@ -1014,6 +1015,25 @@ function rDU(){
     list.map(p=>{const fs=prS[p.i]||{f:0,w:0,p:0};const pc=Math.min(p.pct,100);
       return'<tr class="clickable" onclick="tog(\'pj\','+p.i+')"><td class="pjn" title="'+p.name.replace(/"/g,'&quot;')+'">'+pName(p.i)+'</td><td class="n"><b>'+fm1(p.bom)+'</b></td><td class="n">'+fm1(fs.f)+'</td><td class="n">'+fm1(fs.w)+'</td><td class="n">'+fm1(fs.p)+'</td><td class="n">'+fm1(p.tp)+'</td><td><div class="bar"><i style="width:'+pc+'%;background:'+(p.pct>=80?'var(--good)':p.pct>=40?'var(--acc)':'var(--warn)')+'"></i></div><span class="muted">'+p.pct+'%</span></td><td><span class="tag '+tg(p.status)+'">'+p.status+'</span></td></tr>';}).join('')+'</tbody>';
 }
+
+/* === Bảng "Khối lượng đã hoàn thành theo Xưởng — từng dự án" (tab Dự án) === */
+function _renderProjX(){
+  var el=document.getElementById('tProjX'); if(!el||typeof F!=='function') return;
+  var done=F().filter(isAcc), G={};
+  for(var i=0;i<done.length;i++){ var r=done[i], pj=r[0], x=D.X[r[1]], k=pj+'|'+x; var o=G[k]||(G[k]={pj:pj,x:x,f:0,w:0,p:0}); o.f+=r[7]; o.w+=r[8]; o.p+=r[9]; }
+  var byP={}; for(var kk in G){ var oo=G[kk]; (byP[oo.pj]=byP[oo.pj]||[]).push(oo); }
+  function ptot(pj){ var s=0; byP[pj].forEach(function(o){s+=o.f+o.w+o.p;}); return s; }
+  var pjs=Object.keys(byP).map(Number).sort(function(a,b){ return ptot(b)-ptot(a); });
+  var html='<thead><tr><th>Dự án</th><th>Xưởng</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">Tổng đã NT</th></tr></thead><tbody>';
+  if(!pjs.length) html+='<tr><td colspan="6" class="muted" style="padding:14px;text-align:center">Chưa có khối lượng nghiệm thu (theo bộ lọc).</td></tr>';
+  for(var pi=0;pi<pjs.length;pi++){ var P0=pjs[pi], xs=byP[P0].sort(function(a,b){return (b.f+b.w+b.p)-(a.f+a.w+a.p);});
+    var pt={f:0,w:0,p:0}; xs.forEach(function(o){pt.f+=o.f;pt.w+=o.w;pt.p+=o.p;});
+    html+='<tr class="clickable" onclick="tog(\'pj\','+P0+')" style="border-top:2px solid var(--line)"><td colspan="2"><b>'+pName(P0)+'</b></td><td class="n"><b>'+fm1(pt.f)+'</b></td><td class="n"><b>'+fm1(pt.w)+'</b></td><td class="n"><b>'+fm1(pt.p)+'</b></td><td class="n"><b>'+fm1(pt.f+pt.w+pt.p)+'</b></td></tr>';
+    for(var xi=0;xi<xs.length;xi++){ var o2=xs[xi]; html+='<tr class="clickable" onclick="tog(\'x\',\''+o2.x+'\')"><td></td><td>'+o2.x+'</td><td class="n">'+fm1(o2.f)+'</td><td class="n">'+fm1(o2.w)+'</td><td class="n">'+fm1(o2.p)+'</td><td class="n"><b>'+fm1(o2.f+o2.w+o2.p)+'</b></td></tr>'; }
+  }
+  html+='</tbody>'; el.innerHTML=html;
+}
+if(typeof rDU==='function'){ (function(){ var _base=rDU; rDU=function(){ _base.apply(this,arguments); try{ _renderProjX(); }catch(e){} }; })(); }
 
 // ===== 05 DỮ LIỆU =====
 function rND(){
