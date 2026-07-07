@@ -404,7 +404,7 @@ th{background:none;color:var(--mut);border-bottom:2px solid var(--line);font-wei
   <section id="v_du" class="view">
     <div class="card"><h3>Tiến độ hoàn thiện dự án</h3><div class="q">Xanh = đã sơn · xám = còn tồn (so BOM cả dự án) — bấm để lọc</div><div id="cProj" class="ch tall"></div></div>
     <div class="card"><h3>Bảng dự án</h3><div class="q">Bấm dòng để lọc · cột SX đổi theo bộ lọc</div><div class="tw"><table id="tProj"></table></div></div>
-    <div class="card"><h3>Khối lượng đã hoàn thành theo Xưởng — từng dự án</h3><div class="q">Đã nghiệm thu · <b>bấm một dự án ở bảng trên</b> để chỉ xem dự án đó · bấm dòng ở đây để lọc</div><div class="tw" style="max-height:460px"><table id="tProjX"></table></div></div>
+    <div class="card"><h3>Khối lượng đã hoàn thành theo Xưởng — từng dự án</h3><div class="q">Đã nghiệm thu · <b>cộng dồn tất cả các tháng</b> (không theo kỳ lọc) · bấm một dự án ở bảng trên để chỉ xem dự án đó</div><div class="tw" style="max-height:460px"><table id="tProjX"></table></div></div>
   </section>
 
   <!-- 05 DỮ LIỆU -->
@@ -1019,7 +1019,7 @@ function rDU(){
 /* === Bảng "Khối lượng đã hoàn thành theo Xưởng — từng dự án" (tab Dự án) === */
 function _renderProjX(){
   var el=document.getElementById('tProjX'); if(!el||typeof F!=='function') return;
-  var done=F().filter(isAcc), G={};
+  var done=Fnodate().filter(isAcc), G={};   /* Fnodate: cong don TAT CA cac thang, khong theo ky loc */
   for(var i=0;i<done.length;i++){ var r=done[i], pj=r[0], x=D.X[r[1]], k=pj+'|'+x; var o=G[k]||(G[k]={pj:pj,x:x,f:0,w:0,p:0}); o.f+=r[7]; o.w+=r[8]; o.p+=r[9]; }
   var byP={}; for(var kk in G){ var oo=G[kk]; (byP[oo.pj]=byP[oo.pj]||[]).push(oo); }
   function ptot(pj){ var s=0; byP[pj].forEach(function(o){s+=o.f+o.w+o.p;}); return s; }
