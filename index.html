@@ -485,6 +485,7 @@ th{background:none;color:var(--mut);border-bottom:2px solid var(--line);font-wei
     <div id="qlWrap"><div class="q" style="padding:16px">Đang tải kế hoạch…</div></div>
   </section>
 
+
 </div>
 
 <script>
@@ -1669,9 +1670,9 @@ function rKP(){
 
 renderChips();renderCtrls();renderFresh();
 
-/* === Tab QUẢN LÝ DỰ ÁN (QLDA) — đọc kế hoạch từ Google Sheet chia sẻ (gviz JSONP) === */
+/* === Tab QUẢN LÝ DỰ ÁN (QLDA) — click dự án -> báo cáo dự án đó === */
 var QLDA_SHEET_ID='1hDz5QDbf4hEJAYJhq7JLlut9pMLK9wDXnAXaXt_1LCE';
-var _qldaLoaded=false,_qldaLoading=false;
+var _qldaLoaded=false,_qldaLoading=false,_qlSel=0,_qlSecCache={};
 function _loadQLDA(cb){
   if(_qldaLoaded){ cb&&cb(); return; }
   if(_qldaLoading) return; _qldaLoading=true;
@@ -1682,41 +1683,71 @@ function _loadQLDA(cb){
   };
   var s=document.createElement('script');
   s.src='https://docs.google.com/spreadsheets/d/'+QLDA_SHEET_ID+'/gviz/tq?tqx=out:json;responseHandler:__qldaCB&headers=1&t='+Date.now();
-  s.onerror=function(){ _qldaLoading=false; var el=document.getElementById('qlWrap'); if(el) el.innerHTML='<div class="card"><div class="q" style="padding:12px;color:var(--warn)">Không đọc được Google Sheet kế hoạch. Kiểm tra: Sheet đã chia sẻ <b>"Bất kỳ ai có đường liên kết → Người xem"</b> chưa.</div></div>'; };
+  s.onerror=function(){ _qldaLoading=false; var el=document.getElementById('qlWrap'); if(el) el.innerHTML='<div class="card"><div class="q" style="padding:12px;color:var(--warn)">Không đọc được Google Sheet. Chia sẻ "Bất kỳ ai có link → Người xem" chưa?</div></div>'; };
   document.body.appendChild(s);
 }
-function rQL(){ var w=document.getElementById('qlWrap'); if(w&&!_qldaLoaded) w.innerHTML='<div class="q" style="padding:16px">Đang tải kế hoạch từ Google Sheet…</div>'; if(_qldaLoaded){ _renderQL(); } else { _loadQLDA(function(){ if(CUR==='ql') _renderQL(); }); } }
+function rQL(){ var w=document.getElementById('qlWrap'); if(w&&!_qldaLoaded) w.innerHTML='<div class="q" style="padding:16px">Đang tải danh sách dự án…</div>'; if(_qldaLoaded){ _renderQL(); } else { _loadQLDA(function(){ if(CUR==='ql') _renderQL(); }); } }
+function _qlPick(i){ _qlSel=i; _renderQL(); }
+function _qlTracked(){ return (window.__QLDA||[]).filter(function(r){ var v=String(r[1]==null?'':r[1]).trim().toLowerCase(); return v==='1'||v==='x'||v==='có'||v==='co'||v==='true'; }); }
+function _secBuildQ(rows){ var m={};
+  rows.forEach(function(r){ var nm=String(r[1]==null?'':r[1]).trim(); if(!nm)return; var s=m[nm]||(m[nm]={name:nm,pieces:0,fin:0,lt:0,fu:0,prio:0,to:{},ms:{}}); s.pieces++; if(r[4])s.fin++; if(r[3])s.lt++; if(r[2])s.fu++; var _pv=String(r[6]==null?'':r[6]).trim(); if(_pv&&!/^(thường|thuong|thấp|thap|bình thường|binh thuong|-|không|khong)$/i.test(_pv))s.prio++; var t=String(r[5]==null?'':r[5]).trim()||'(chưa gán tổ)'; s.to[t]=(s.to[t]||0)+1; var mi=String(r[7]==null?'':r[7]).trim(); if(mi)s.ms[mi]=(s.ms[mi]||0)+1; });
+  return Object.keys(m).map(function(k){ var s=m[k]; s.toMain=Object.keys(s.to).sort(function(a,b){return s.to[b]-s.to[a];})[0]||'(chưa gán tổ)'; s.msMain=Object.keys(s.ms).sort(function(a,b){return s.ms[b]-s.ms[a];})[0]||''; s.status=s.fin>=s.pieces?'Xong':(((s.fin+s.lt+s.fu)>0)?'Đang':'Chưa'); return s; });
+}
+function _qlLoadSec(tab){
+  if(_qlSecCache[tab]){ _qlRenderSec(tab); return; }
+  window.__qlSecCB=function(resp){ try{ var rows=((resp.table||{}).rows||[]).map(function(r){return (r.c||[]).map(function(c){return c?(c.f!=null?c.f:(c.v==null?'':c.v)):'';});}); _qlSecCache[tab]=rows; _qlRenderSec(tab); }catch(e){ var el=document.getElementById('qlSecGrp'); if(el)el.innerHTML='<div class="q" style="color:var(--warn)">Lỗi đọc tab section.</div>'; } };
+  var s=document.createElement('script'); s.src='https://docs.google.com/spreadsheets/d/'+QLDA_SHEET_ID+'/gviz/tq?tqx=out:json;responseHandler:__qlSecCB&headers=1&sheet='+encodeURIComponent(tab)+'&t='+Date.now();
+  s.onerror=function(){ var el=document.getElementById('qlSecGrp'); if(el)el.innerHTML='<div class="q" style="color:var(--warn)">Không đọc được tab section "'+tab+'" (đúng tên tab? đã chia sẻ?).</div>'; };
+  document.body.appendChild(s);
+}
+function _qlRenderSec(tab){
+  var el=document.getElementById('qlSecGrp'); if(!el) return;
+  var SEC=_secBuildQ(_qlSecCache[tab]||[]); var STC={'Xong':'#16a34a','Đang':'#2563eb','Chưa':'#9ca3af'};
+  if(!SEC.length){ el.innerHTML='<div class="q">Tab section "'+tab+'" chưa có dòng nào.</div>'; return; }
+  var tot=SEC.length,done=0; SEC.forEach(function(s){ if(s.status==='Xong')done++; }); var pc=tot?Math.round(done/tot*100):0;
+  var G={}; SEC.forEach(function(s){ (G[s.toMain]=G[s.toMain]||[]).push(s); });
+  var tk=Object.keys(G).sort(function(a,b){return G[b].length-G[a].length;});
+  var prioN=SEC.filter(function(s){return s.prio>0;}).length; var h='<div class="q" style="margin-bottom:6px">'+done+'/'+tot+' section xong ('+pc+'%)'+(prioN?' · <span style="color:#e8a400">★ '+prioN+' ưu tiên</span>':'')+'</div>';
+  tk.forEach(function(t){ var list=G[t].slice().sort(function(a,b){return a.name.localeCompare(b.name,'vi',{numeric:true});}); var d=list.filter(function(s){return s.status==='Xong';}).length;
+    h+='<div style="border:1px solid var(--line);border-radius:10px;margin-bottom:10px"><div style="padding:8px 12px;background:#fafafa;font-weight:700;display:flex;justify-content:space-between"><span>'+t+'</span><span style="color:#6b7280;font-weight:400;font-size:12.5px">'+d+'/'+list.length+' xong</span></div><table><thead><tr><th>Section / cấu kiện</th><th class="n">SL</th><th class="n">Fitup</th><th class="n">Lắp thử</th><th class="n">Final</th><th>Trạng thái</th><th>Milestone</th></tr></thead><tbody>'+list.map(function(s){return '<tr><td>'+(s.prio>0?'<span title="Ưu tiên" style="color:#e8a400">★</span> ':'')+s.name+'</td><td class="n">'+s.pieces+'</td><td class="n">'+s.fu+'/'+s.pieces+'</td><td class="n">'+s.lt+'/'+s.pieces+'</td><td class="n"><b>'+s.fin+'/'+s.pieces+'</b></td><td><span class="tag" style="background:'+STC[s.status]+';color:#fff">'+s.status+'</span></td><td style="color:#6b7280">'+s.msMain+'</td></tr>';}).join('')+'</tbody></table></div>';
+  });
+  el.innerHTML=h;
+}
+function _qlDetail(row){
+  var nm=String(row[0]==null?'':row[0]).trim();
+  var kh={f:+row[2]||0,w:+row[3]||0,p:+row[4]||0,fd:+row[5]||0}, due=row[6]?String(row[6]):'', note=row[7]?String(row[7]):'', secTab=String(row[8]==null?'':row[8]).trim();
+  var idx=D.P.indexOf(nm); var disp=idx>=0?pName(idx):nm;
+  if(idx<0){ return '<div class="card"><h3>'+nm+'</h3><div class="q" style="color:var(--warn)">Không thấy dự án này trong dữ liệu QC (tên phải khớp cột Dự án).</div></div>'; }
+  var done=Fnodate().filter(isAcc); var st={f:0,w:0,p:0,fd:0},X={},T={};
+  for(var i=0;i<done.length;i++){ var r=done[i]; if(D.P[r[0]]!==nm) continue; st.f+=r[7]; st.w+=r[8]; st.p+=r[9]; if(r[8]>0&&r[13]&&/acc/i.test(String(r[13]))) st.fd+=r[8]; var x=D.X[r[1]],o=X[x]||(X[x]={f:0,w:0,p:0}); o.f+=r[7]; o.w+=r[8]; o.p+=r[9]; var tk2=x+' · '+D.T[r[2]],to=T[tk2]||(T[tk2]={f:0,w:0,p:0,n:0}); to.f+=r[7]; to.w+=r[8]; to.p+=r[9]; to.n++; }
+  var ntAll=st.f+st.w+st.p, khTot=kh.f+kh.w+kh.p;
+  var pct=khTot>0?Math.min(100,Math.round(ntAll/khTot*100)):null;
+  var status=pct==null?'Chưa nhập KH':(pct>=100?'Đã hoàn thành':((st.f+st.w+st.p)>0?'Đang thực hiện':'Chưa bắt đầu'));
+  var col=pct==null?'#888':(pct>=100?'var(--good)':(pct>=40?'var(--acc)':'var(--warn)'));
+  function r3(l,k,n){ var p=k>0?Math.round(n/k*100):null,rem=Math.max(0,k-n); return '<tr><td>'+l+'</td><td class="n">'+(k>0?fm1(k):'—')+'</td><td class="n"><b>'+fm1(n)+'</b></td><td class="n">'+(p==null?'—':p+'%')+'</td><td class="n" style="color:var(--warn)">'+(k>0?fm1(rem):'—')+'</td></tr>'; }
+  var stg='<table><thead><tr><th>Công đoạn</th><th class="n">KH</th><th class="n">Đã NT</th><th class="n">%</th><th class="n">Còn lại</th></tr></thead><tbody>'+r3('Fitup',kh.f,st.f)+r3('Welding',kh.w,st.w)+r3('Painting',kh.p,st.p)+r3('Final DIM (thuộc Welding)',kh.fd,st.fd)+'<tr style="border-top:2px solid var(--line)"><td><b>Tổng</b></td><td class="n"><b>'+(khTot>0?fm1(khTot):'—')+'</b></td><td class="n"><b>'+fm1(ntAll)+'</b></td><td class="n"><b>'+(pct==null?'—':pct+'%')+'</b></td><td class="n" style="color:var(--warn)"><b>'+(khTot>0?fm1(Math.max(0,khTot-ntAll)):'—')+'</b></td></tr></tbody></table>';
+  var xk=Object.keys(X).sort(function(a,b){ return (X[b].f+X[b].w+X[b].p)-(X[a].f+X[a].w+X[a].p); });
+  var xt=xk.length?('<table><thead><tr><th>Xưởng</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">Tổng</th></tr></thead><tbody>'+xk.map(function(x){ var o=X[x]; return '<tr><td>'+x+'</td><td class="n">'+fm1(o.f)+'</td><td class="n">'+fm1(o.w)+'</td><td class="n">'+fm1(o.p)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td></tr>'; }).join('')+'</tbody></table>'):'<div class="q">Chưa có nghiệm thu theo xưởng.</div>';
+  var _tks=Object.keys(T).sort(function(a,b){ return (T[b].f+T[b].w+T[b].p)-(T[a].f+T[a].w+T[a].p); }); var tt=_tks.length?('<table><thead><tr><th>Xưởng · Tổ gia công</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">Lượt</th></tr></thead><tbody>'+_tks.map(function(k){ var o=T[k]; return '<tr><td>'+k+'</td><td class="n">'+fm1(o.f)+'</td><td class="n">'+fm1(o.w)+'</td><td class="n">'+fm1(o.p)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.n+'</td></tr>'; }).join('')+'</tbody></table>'):'<div class="q">—</div>';
+  var bar=pct==null?'':'<div class="bar" style="margin:6px 0 10px"><i style="width:'+pct+'%;background:'+col+'"></i></div>';
+  var secBox='<div class="cg-lbl" style="margin:14px 0 4px">Section theo tổ gia công'+(secTab?' — tab: '+secTab:'')+'</div><div id="qlSecGrp">'+(secTab?'<div class="q">Đang tải section…</div>':'<div class="q" style="color:#8a6d3b">Chưa gán tab section. Điền TÊN TAB section vào cột thứ 9 ("Tab Section") của QLDA cho dự án này để xem chi tiết section.</div>')+'</div>';
+  return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h3 style="margin:0">'+disp+'</h3><div><span class="tag" style="background:'+col+';color:#fff">'+status+(pct!=null?' · '+pct+'%':'')+'</span>'+(due?' <span class="muted">· mục tiêu '+due+'</span>':'')+'</div></div>'+bar+(note?'<div class="q" style="margin:0 0 8px">Ghi chú: '+note+'</div>':'')+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div><div class="cg-lbl" style="margin-bottom:4px">Tiến độ theo công đoạn (KH vs đã NT)</div>'+stg+'</div><div><div class="cg-lbl" style="margin-bottom:4px">Đã hoàn thành theo xưởng</div>'+xt+'</div></div><div class="cg-lbl" style="margin:12px 0 4px">Theo tổ gia công (đã nghiệm thu QC)</div>'+tt+secBox+'</div>';
+}
 function _renderQL(){
   var wrap=document.getElementById('qlWrap'); if(!wrap) return;
   var plan=window.__QLDA||[];
-  var tracked=plan.filter(function(r){ var v=String(r[1]==null?'':r[1]).trim().toLowerCase(); return v==='1'||v==='x'||v==='có'||v==='co'||v==='true'; });
-  if(!plan.length){ wrap.innerHTML='<div class="card"><div class="q" style="padding:10px">Chưa đọc được dòng kế hoạch nào. Trong Google Sheet, tab đầu điền hàng tiêu đề: <b>Dự án · Theo dõi · KH Fitup · KH Welding · KH Painting · KH Final · Ngày mục tiêu · Ghi chú</b>, rồi nhập dự án. Bấm Tải lại.</div></div>'; return; }
-  if(!tracked.length){ wrap.innerHTML='<div class="card"><div class="q" style="padding:10px">Có '+plan.length+' dòng kế hoạch, nhưng chưa dự án nào bật <b>Theo dõi = 1</b>. Điền 1 vào cột "Theo dõi" cho 1–3 dự án rồi Tải lại.</div></div>'; return; }
-  var done=Fnodate().filter(isAcc);
-  function actual(nm){ var st={f:0,w:0,p:0,fd:0},X={},T={},idx=D.P.indexOf(nm);
-    for(var i=0;i<done.length;i++){ var r=done[i]; if(D.P[r[0]]!==nm) continue; st.f+=r[7]; st.w+=r[8]; st.p+=r[9]; if(r[8]>0&&r[13]&&/acc/i.test(String(r[13]))) st.fd+=r[8]; var x=D.X[r[1]],o=X[x]||(X[x]={f:0,w:0,p:0}); o.f+=r[7]; o.w+=r[8]; o.p+=r[9]; var _tk=x+' · '+D.T[r[2]],_to=T[_tk]||(T[_tk]={f:0,w:0,p:0,n:0}); _to.f+=r[7]; _to.w+=r[8]; _to.p+=r[9]; _to.n++; }
-    return {st:st,X:X,T:T,idx:idx}; }
-  var html='';
-  tracked.forEach(function(row){
-    var nm=String(row[0]==null?'':row[0]).trim(); if(!nm) return;
-    var kh={f:+row[2]||0,w:+row[3]||0,p:+row[4]||0,fd:+row[5]||0}, due=row[6]?String(row[6]):'', note=row[7]?String(row[7]):'';
-    var A=actual(nm),st=A.st, disp=(A.idx>=0)?pName(A.idx):nm;
-    if(A.idx<0){ html+='<div class="card"><h3>'+nm+'</h3><div class="q" style="color:var(--warn)">Không thấy dự án này trong dữ liệu QC — kiểm tra tên khớp đúng cột Dự án.</div></div>'; return; }
-    var ntAll=st.f+st.w+st.p, khTot=kh.f+kh.w+kh.p;   /* Final DIM la tap con cua Welding -> khong cong vao tong */
-    var pct=khTot>0?Math.min(100,Math.round(ntAll/khTot*100)):null;
-    var status=pct==null?'Chưa nhập kế hoạch':(pct>=100?'Đã hoàn thành':((st.f+st.w+st.p)>0?'Đang thực hiện':'Chưa bắt đầu'));
-    var col=pct==null?'#888':(pct>=100?'var(--good)':(pct>=40?'var(--acc)':'var(--warn)'));
-    function r3(l,k,n){ var pc=k>0?Math.round(n/k*100):null,rem=Math.max(0,k-n); return '<tr><td>'+l+'</td><td class="n">'+(k>0?fm1(k):'—')+'</td><td class="n"><b>'+fm1(n)+'</b></td><td class="n">'+(pc==null?'—':pc+'%')+'</td><td class="n" style="color:var(--warn)">'+(k>0?fm1(rem):'—')+'</td></tr>'; }
-    var stg='<table><thead><tr><th>Công đoạn</th><th class="n">Kế hoạch</th><th class="n">Đã NT</th><th class="n">%</th><th class="n">Còn lại</th></tr></thead><tbody>'+r3('Fitup',kh.f,st.f)+r3('Welding',kh.w,st.w)+r3('Painting',kh.p,st.p)+r3('Final DIM (thuộc Welding)',kh.fd,st.fd)+'<tr style="border-top:2px solid var(--line)"><td><b>Tổng</b></td><td class="n"><b>'+(khTot>0?fm1(khTot):'—')+'</b></td><td class="n"><b>'+fm1(ntAll)+'</b></td><td class="n"><b>'+(pct==null?'—':pct+'%')+'</b></td><td class="n" style="color:var(--warn)"><b>'+(khTot>0?fm1(Math.max(0,khTot-ntAll)):'—')+'</b></td></tr></tbody></table>';
-    var xk=Object.keys(A.X).sort(function(a,b){ return (A.X[b].f+A.X[b].w+A.X[b].p)-(A.X[a].f+A.X[a].w+A.X[a].p); });
-    var xt=xk.length?('<table><thead><tr><th>Xưởng</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">Tổng</th></tr></thead><tbody>'+xk.map(function(x){ var o=A.X[x]; return '<tr><td>'+x+'</td><td class="n">'+fm1(o.f)+'</td><td class="n">'+fm1(o.w)+'</td><td class="n">'+fm1(o.p)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td></tr>'; }).join('')+'</tbody></table>'):'<div class="q">Chưa có nghiệm thu theo xưởng.</div>';
-    var _tks=Object.keys(A.T||{}).sort(function(a,b){ return (A.T[b].f+A.T[b].w+A.T[b].p)-(A.T[a].f+A.T[a].w+A.T[a].p); }); var tt=_tks.length?('<table><thead><tr><th>Xưởng · Tổ gia công</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">Lượt</th></tr></thead><tbody>'+_tks.map(function(k){ var o=A.T[k]; return '<tr><td>'+k+'</td><td class="n">'+fm1(o.f)+'</td><td class="n">'+fm1(o.w)+'</td><td class="n">'+fm1(o.p)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.n+'</td></tr>'; }).join('')+'</tbody></table>'):'<div class="q">—</div>';
-    var bar=pct==null?'':'<div class="bar" style="margin:6px 0 10px"><i style="width:'+pct+'%;background:'+col+'"></i></div>';
-    html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h3 style="margin:0">'+disp+'</h3><div><span class="tag" style="background:'+col+';color:#fff">'+status+(pct!=null?' · '+pct+'%':'')+'</span>'+(due?' <span class="muted">· mục tiêu '+due+'</span>':'')+'</div></div>'+bar+(note?'<div class="q" style="margin:0 0 8px">Ghi chú: '+note+'</div>':'')+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div><div class="cg-lbl" style="margin-bottom:4px">Tiến độ theo công đoạn (KH vs đã NT)</div>'+stg+'</div><div><div class="cg-lbl" style="margin-bottom:4px">Đã hoàn thành theo xưởng</div>'+xt+'</div></div><div class="cg-lbl" style="margin:12px 0 4px">Kiểm soát theo tổ gia công (đã nghiệm thu)</div>'+tt+'</div>';
-  });
-  wrap.innerHTML=html;
+  if(!plan.length){ wrap.innerHTML='<div class="card"><div class="q" style="padding:10px">Chưa đọc được dòng nào từ tab QLDA. Điền hàng tiêu đề + dự án, rồi Tải lại.</div></div>'; return; }
+  var tracked=_qlTracked();
+  if(!tracked.length){ wrap.innerHTML='<div class="card"><div class="q" style="padding:10px">Có '+plan.length+' dòng, nhưng chưa dự án nào bật <b>Theo dõi = 1</b>. Điền 1 vào cột "Theo dõi" rồi Tải lại.</div></div>'; return; }
+  if(_qlSel>=tracked.length||_qlSel<0) _qlSel=0;
+  var btns=tracked.map(function(row,i){ var nm=String(row[0]==null?'':row[0]).trim(); var idx=D.P.indexOf(nm); var disp=idx>=0?pName(idx):nm; return '<button class="qf'+(_qlSel===i?' on':'')+'" style="margin:3px" onclick="_qlPick('+i+')">'+disp+'</button>'; }).join('');
+  wrap.innerHTML='<div class="card"><div class="cg-lbl" style="margin-bottom:6px">Chọn dự án để xem báo cáo ('+tracked.length+' dự án theo dõi):</div>'+btns+'</div>'+_qlDetail(tracked[_qlSel]);
+  var secTab=String(tracked[_qlSel][8]==null?'':tracked[_qlSel][8]).trim();
+  if(secTab) _qlLoadSec(secTab);
 }
 (function(){ if(typeof render==='function'){ var _rb=render; render=function(k){ if(k==='ql'){ try{rQL();}catch(e){} return; } return _rb(k); }; } })();
+
+
 
 
 if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1].slice(0,7)+'-01';DR.to='';}})();try{_restoreState();}catch(e){}qrMark();setupDR();document.getElementById('drFrom').addEventListener('change',e=>{DR.from=e.target.value;renderAll();});document.getElementById('drTo').addEventListener('change',e=>{DR.to=e.target.value;renderAll();});setView('tq');try{_syncSb();}catch(e){}if(typeof fetch!=='undefined'){try{loadFPY();}catch(e){}}}
