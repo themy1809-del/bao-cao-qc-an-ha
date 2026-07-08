@@ -1,0 +1,76 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kiểm soát Section theo tổ gia công</title>
+<style>
+:root{--good:#16a34a;--acc:#2563eb;--warn:#dc2626;--mut:#6b7280;--line:#e5e7eb}
+*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;margin:0;background:#f3f4f6;color:#111827}
+.wrap{max-width:1080px;margin:0 auto;padding:20px}
+h1{font-size:21px;margin:0}.sub{color:var(--mut);font-size:13px;margin:2px 0 16px}
+.bar{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:13px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input,select{font:inherit;padding:6px 8px;border:1px solid #d1d5db;border-radius:7px}
+button{font:inherit;background:#E2231A;color:#fff;border:0;border-radius:8px;padding:8px 16px;font-weight:700;cursor:pointer}
+.hero{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+.hero .big{font-size:34px;font-weight:800}.hbar{height:14px;border-radius:8px;background:#eef;overflow:hidden;margin:8px 0}.hbar i{display:block;height:100%;background:var(--good)}
+.chips{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px;font-size:13px}.chips b{font-size:17px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+.panel h2{margin:0 0 10px;font-size:16px;color:#C3170F}
+.togrp{border:1px solid var(--line);border-radius:11px;margin-bottom:12px;overflow:hidden}
+.tohd{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 14px;background:#fafafa;flex-wrap:wrap}
+.tohd .nm{font-weight:800;font-size:15px}.pbar{height:9px;width:150px;background:#eef;border-radius:5px;overflow:hidden;display:inline-block;vertical-align:middle}.pbar i{display:block;height:100%}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 10px;border-top:1px solid #f1f1f1;text-align:left}td.n,th.n{text-align:right}
+th{color:var(--mut);font-size:11px;text-transform:uppercase;font-weight:700;border-top:0}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;color:#fff}
+</style></head><body><div class="wrap">
+<h1>Kiểm soát Section theo tổ gia công</h1>
+<div class="sub" id="sub">Đang đọc Google Sheet…</div>
+<div class="bar">Sheet ID <input id="sid" size="28"> · Tab <input id="tab" size="26"> <button onclick="load()">Tải lại</button>
+  · Lọc <select id="fst" onchange="render()"><option value="">Mọi trạng thái</option><option>Chưa</option><option>Đang</option><option>Xong</option></select>
+  <select id="fto" onchange="render()"><option value="">Mọi tổ</option></select> <span id="err" style="color:#c0392b"></span></div>
+<div class="hero" id="hero"></div>
+<div class="panel"><h2>Từng tổ gia công · section đang làm</h2><div id="grp"></div></div>
+</div>
+<script>
+var SID='1hDz5QDbf4hEJAYJhq7JLlut9pMLK9wDXnAXaXt_1LCE',TAB='Dự án Bison - Ducting - Ted',SECTIONS=[];
+var STC={'Xong':'#16a34a','Đang':'#2563eb','Chưa':'#9ca3af'};
+function _secMk(v){ if(v==null)return ''; if(Object.prototype.toString.call(v)==='[object Date]')return 'd'; var s=String(v).trim().toLowerCase(); if(!s)return ''; if(/on.?going|đang|dang|wip/.test(s))return 'g'; return 'd'; }
+function build(rows){ var m={};
+  rows.forEach(function(r){ var nm=String(r[1]==null?'':r[1]).trim(); if(!nm)return;
+    var s=m[nm]||(m[nm]={name:nm,pieces:0,fin:0,lt:0,fu:0,reach:0,to:{},ms:{},prio:''});
+    s.pieces++; var _mf=_secMk(r[4]),_md=_secMk(r[3]),_mc=_secMk(r[2]); if(_mf==='d')s.fin++; if(_md==='d')s.lt++; if(_mc==='d')s.fu++; if(_mf||_md||_mc)s.reach++;
+    var t=String(r[5]==null?'':r[5]).trim()||'(chưa gán tổ)'; s.to[t]=(s.to[t]||0)+1;
+    var mi=String(r[7]==null?'':r[7]).trim()||''; if(mi)s.ms[mi]=(s.ms[mi]||0)+1;
+    if(r[6] && !s.prio){ var _p=String(r[6]).trim(); if(!/^(thường|thuong|thấp|thap|bình thường|binh thuong|-|không|khong)$/i.test(_p)) s.prio=_p; } });
+  return Object.keys(m).map(function(k){ var s=m[k];
+    s.toMain=Object.keys(s.to).sort(function(a,b){return s.to[b]-s.to[a];})[0]||'(chưa gán tổ)';
+    s.msMain=Object.keys(s.ms).sort(function(a,b){return s.ms[b]-s.ms[a];})[0]||'';
+    s.status = s.fin>=s.pieces ? 'Xong' : (s.reach>0 ? 'Đang' : 'Chưa'); return s; });
+}
+function load(){ SID=(document.getElementById('sid').value.trim())||SID; TAB=(document.getElementById('tab').value.trim())||TAB; document.getElementById('err').textContent='';
+  window.__cb=function(resp){ try{ var rows=((resp.table||{}).rows||[]).map(function(r){return (r.c||[]).map(function(c){return c?(c.f!=null?c.f:(c.v==null?'':c.v)):'';});}); SECTIONS=build(rows); fillTo(); render(); document.getElementById('sub').textContent='Tab "'+TAB+'" · '+SECTIONS.length+' section (đã gộp trùng tên)'; }catch(e){ document.getElementById('err').textContent='Lỗi: '+e.message; } };
+  var s=document.createElement('script'); s.src='https://docs.google.com/spreadsheets/d/'+SID+'/gviz/tq?tqx=out:json;responseHandler:__cb&headers=1&sheet='+encodeURIComponent(TAB)+'&t='+Date.now();
+  s.onerror=function(){ document.getElementById('err').textContent='Không đọc được Sheet — chia sẻ "ai có link → Người xem"? tên Tab đúng?'; }; document.body.appendChild(s);
+}
+function fillTo(){ var set={}; SECTIONS.forEach(function(s){set[s.toMain]=1;}); document.getElementById('fto').innerHTML='<option value="">Mọi tổ</option>'+Object.keys(set).sort().map(function(t){return '<option>'+t+'</option>';}).join(''); }
+function render(){
+  var fst=document.getElementById('fst').value, fto=document.getElementById('fto').value;
+  var tot=SECTIONS.length,done=0,ong=0,none=0; SECTIONS.forEach(function(s){ if(s.status==='Xong')done++; else if(s.status==='Đang')ong++; else none++; });
+  var pc=tot?Math.round(done/tot*100):0;
+  document.getElementById('hero').innerHTML='<div style="display:flex;justify-content:space-between;align-items:baseline"><div><div style="color:var(--mut);font-size:12px;font-weight:700;text-transform:uppercase">Tiến độ toàn dự án (theo section)</div><div class="big">'+pc+'% <span style="font-size:16px;font-weight:600;color:var(--mut)">· '+done+'/'+tot+' section xong</span></div></div></div><div class="hbar"><i style="width:'+pc+'%"></i></div><div class="chips"><span><span class="dot" style="background:#16a34a"></span>Xong <b>'+done+'</b></span><span><span class="dot" style="background:#2563eb"></span>Đang <b>'+ong+'</b></span><span><span class="dot" style="background:#9ca3af"></span>Chưa <b>'+none+'</b></span><span><span class="dot" style="background:#e8a400"></span>★ Ưu tiên <b>'+SECTIONS.filter(function(s){return s.prio;}).length+'</b></span></div>';
+  var G={}; SECTIONS.forEach(function(s){ (G[s.toMain]=G[s.toMain]||[]).push(s); });
+  var tk=Object.keys(G).sort(function(a,b){return G[b].length-G[a].length;});
+  if(fto)tk=tk.filter(function(t){return t===fto;});
+  var html='';
+  tk.forEach(function(t){
+    var list=G[t].slice().sort(function(a,b){return a.name.localeCompare(b.name,'vi',{numeric:true});});
+    var d=list.filter(function(s){return s.status==='Xong';}).length, tt=list.length, p=tt?Math.round(d/tt*100):0;
+    var rowsF=list.filter(function(s){return !fst||s.status===fst;});
+    if(fst && !rowsF.length) return;
+    html+='<div class="togrp"><div class="tohd"><span class="nm">'+t+'</span><span style="color:var(--mut);font-size:13px">'+d+'/'+tt+' section xong · <div class="pbar"><i style="width:'+p+'%;background:'+(p>=80?'#16a34a':p>=40?'#b4690e':'#dc2626')+'"></i></div> '+p+'%</span></div>'
+      +'<table><thead><tr><th>Section</th><th class="n">Cấu kiện</th><th class="n">Fitup</th><th class="n">Lắp thử</th><th class="n">Final</th><th>Trạng thái</th><th>Milestone</th></tr></thead><tbody>'
+      +rowsF.map(function(s){return '<tr><td>'+(s.prio?'<span title="Ưu tiên: '+s.prio+'" style="color:#e8a400">★</span> ':'')+'<b>'+s.name+'</b></td><td class="n">'+s.pieces+'</td><td class="n">'+s.fu+'/'+s.pieces+'</td><td class="n">'+s.lt+'/'+s.pieces+'</td><td class="n"><b>'+s.fin+'/'+s.pieces+'</b></td><td><span class="tag" style="background:'+STC[s.status]+'">'+s.status+'</span></td><td style="color:var(--mut)">'+s.msMain+'</td></tr>';}).join('')
+      +'</tbody></table></div>';
+  });
+  document.getElementById('grp').innerHTML=html||'<div style="color:var(--mut);padding:10px">Không có section khớp bộ lọc.</div>';
+}
+document.getElementById('sid').value=SID; document.getElementById('tab').value=TAB; load();
+</script></body></html>
