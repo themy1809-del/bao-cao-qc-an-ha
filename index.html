@@ -1693,7 +1693,7 @@ function _pd(v){ if(v==null||v==='')return null; if(Object.prototype.toString.ca
 function _fmtd(d){ if(!d)return ''; return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); }
 function _secMk(v){ if(v==null)return ''; if(Object.prototype.toString.call(v)==='[object Date]')return 'd'; var s=String(v).trim().toLowerCase(); if(!s)return ''; if(/on.?going|đang|dang|wip/.test(s))return 'g'; return 'd'; }
 function _secStatus(v){ var s=String(v==null?'':v).trim().toLowerCase(); if(!s)return 'Chưa'; if(/done|xong|hoàn thành|\bok\b|✓/.test(s))return 'Xong'; if(/on.?going|đang|dang|wip/.test(s))return 'Đang'; return 'Chưa'; }
-function _stgDone(v){ if(v==null||v==='')return false; if(Object.prototype.toString.call(v)==='[object Date]'){ var t=new Date();t.setHours(0,0,0,0); return v<=t; } var s=String(v).trim().toLowerCase(); if(/done|xong|hoàn thành|✓/.test(s)||s==='x'||s==='v'||s==='1'||s==='ok'||s==='y')return true; var d=_pd(v); if(d){ var t2=new Date();t2.setHours(0,0,0,0); return d<=t2; } return false; }
+function _stgDone(v){ if(v==null||v==='')return false; if(Object.prototype.toString.call(v)==='[object Date]')return false; var s=String(v).trim().toLowerCase(); return /done|xong|hoàn thành|✓/.test(s); }
 function _secBuildQ(rows){ var m={}, T0=new Date(); T0.setHours(0,0,0,0);
   rows.forEach(function(r){
     var nm=String(r[1]==null?'':r[1]).trim(); if(!nm)return;
@@ -1702,7 +1702,7 @@ function _secBuildQ(rows){ var m={}, T0=new Date(); T0.setHours(0,0,0,0);
     var st=_secStatus(r[8]); if(st==='Xong')s.cX++; else if(st==='Đang')s.cD++;
     if(_stgDone(r[2]))s.fuN++; if(_stgDone(r[3]))s.ltN++; if(_stgDone(r[4]))s.finN++;
     var pf=_pd(r[2]),pl=_pd(r[3]),pe=_pd(r[4]);
-    if(pf&&pf>T0&&(!s.pFu||pf>s.pFu))s.pFu=pf; if(pl&&pl>T0&&(!s.pLt||pl>s.pLt))s.pLt=pl; if(pe&&(!s.pFin||pe>s.pFin))s.pFin=pe;
+    if(pf&&(!s.pFu||pf>s.pFu))s.pFu=pf; if(pl&&(!s.pLt||pl>s.pLt))s.pLt=pl; if(pe&&(!s.pFin||pe>s.pFin))s.pFin=pe;
     var _pv=String(r[6]==null?'':r[6]).trim(); if(_pv&&!/^(thường|thuong|thấp|thap|bình thường|binh thuong|-|không|khong)$/i.test(_pv))s.prio++;
     var t=String(r[5]==null?'':r[5]).trim()||'(chưa gán tổ)'; s.to[t]=(s.to[t]||0)+1;
     var mi=String(r[7]==null?'':r[7]).trim(); if(mi)s.ms[mi]=(s.ms[mi]||0)+1;
@@ -1712,11 +1712,12 @@ function _secBuildQ(rows){ var m={}, T0=new Date(); T0.setHours(0,0,0,0);
     s.msMain=Object.keys(s.ms).sort(function(a,b){return s.ms[b]-s.ms[a];})[0]||'';
     s.fuDone=s.fuN>0; s.ltDone=s.ltN>0; s.finDone=(s.finN>0)||(s.cX>0);
     s.status=s.finDone?'Xong':((s.fuN>0||s.ltN>0||s.finN>0||s.cX>0||s.cD>0)?'Đang':'Chưa');
-    var arr=[]; if(s.pFu)arr.push(s.pFu); if(s.pLt)arr.push(s.pLt); if(s.pFin&&s.pFin>=T0)arr.push(s.pFin);
-    var nextD=null; arr.forEach(function(d){ if(!nextD||d<nextD)nextD=d; });
-    s.nextDue=nextD; s.nextStage= nextD?(nextD===s.pFu?'Fitup':(nextD===s.pLt?'Lắp thử':'Final')):'';
+    var pend=[]; if(!s.fuDone&&s.pFu)pend.push({st:'Fitup',d:s.pFu}); if(!s.ltDone&&s.pLt)pend.push({st:'Lắp thử',d:s.pLt}); if(!s.finDone&&s.pFin)pend.push({st:'Final',d:s.pFin});
+    pend.sort(function(a,b){return a.d-b.d;});
+    var nx=pend.length?pend[0]:null;
+    s.nextDue=nx?nx.d:null; s.nextStage=nx?nx.st:'';
     s.lastPlan=s.pFin||s.pLt||s.pFu||null;
-    s.overdue=(!s.finDone) && s.pFin && s.pFin<T0;
+    s.overdue=(s.status!=='Xong') && nx && nx.d<T0;
     s.waitFinal=s.ltDone && !s.finDone;
     return s;
   });
@@ -1746,7 +1747,10 @@ function _qlRenderSec(tab){
   function _gchip(list,c,bg){ if(!list.length)return '<span style="color:#9ca3af;font-size:12px">— chưa có —</span>'; return list.slice().sort(function(a,b){return (b.prio-a.prio)||a.name.localeCompare(b.name,'vi',{numeric:true});}).map(function(s){ return '<span style="display:inline-block;background:'+bg+';color:'+c+';border:1px solid '+c+'44;border-radius:6px;padding:2px 8px;margin:2px;font-size:12px">'+(s.prio>0?'★ ':'')+s.name+'</span>'; }).join(''); }
   var _grp=function(label,c,bg,list){ var op=(list.length>0&&list.length<=8)?' open':''; return '<details'+op+' style="margin:2px 0"><summary style="cursor:pointer;font-size:12.5px;font-weight:700;color:'+c+';padding:4px 8px;user-select:none;background:'+bg+';border-radius:6px">'+label+' ('+list.length+')</summary><div style="padding:5px 2px 3px">'+_gchip(list,c,bg)+'</div></details>'; };
   var statusBlock='<div style="margin-top:10px"><div class="cg-lbl" style="margin-bottom:4px">Section theo trạng thái</div>'+_grp('✅ Đã hoàn thành','#16a34a','#eefaf1',_byS['Xong'])+_grp('🔵 Đang gia công','#2563eb','#eff4fe',_byS['Đang'])+_grp('⚪ Chưa bắt đầu','#6b7280','#f3f4f6',_byS['Chưa'])+'</div>';
-  var h='<div style="border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fff"><div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center"><div style="text-align:center">'+_don(done,doing,none)+'</div><div style="min-width:190px">'+_leg('#16a34a','Đã hoàn thành',done)+_leg('#2563eb','Đang gia công',doing)+_leg('#d1d5db','Chưa bắt đầu',none)+'<div style="border-top:1px solid #eee;margin-top:5px;padding-top:5px;font-size:13px">Tổng <b>'+tot+' section</b>'+(prioN?' · <span style="color:#e8a400">★ '+prioN+' ưu tiên</span>':'')+'</div></div><div style="flex:1;min-width:240px"><div class="cg-lbl" style="margin-bottom:2px">Khối lượng theo tổ (số section)</div>'+barsHtml+'</div></div><div style="margin-top:10px"><div class="cg-lbl" style="margin-bottom:2px">Theo mốc (Milestone) — số section</div>'+msBars+'</div>'+statusBlock+'</div>';
+  var _wf=SEC.filter(function(s){return s.waitFinal;}).length, _od=SEC.filter(function(s){return s.overdue;}).length, _d7=SEC.filter(function(s){return !s.overdue&&s.status!=='Xong'&&s.nextDue&&(s.nextDue-T0)/DAY<=7;}).length;
+  function _kpi(label,val,color){ return '<div style="flex:1 1 118px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:0 1px 2px rgba(16,24,40,.05)"><div style="font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:#8a94a6;font-weight:700">'+label+'</div><div style="font-size:27px;font-weight:800;color:'+color+';line-height:1.15;margin-top:3px">'+val+'</div></div>'; }
+  var kpiStrip='<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">'+_kpi('Hoàn thành',pc+'%','#16a34a')+_kpi('Tổng section',tot,'#0f172a')+_kpi('Đã xong',done,'#16a34a')+_kpi('Đang gia công',doing,'#2563eb')+_kpi('Chờ Final DIM',_wf,'#7c3aed')+_kpi('Quá hạn KH',_od,_od>0?'#dc2626':'#94a3b8')+_kpi('Đến hạn 7 ngày',_d7,_d7>0?'#b45309':'#94a3b8')+'</div>';
+  var h=kpiStrip+'<div style="border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fff"><div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center"><div style="text-align:center">'+_don(done,doing,none)+'</div><div style="min-width:190px">'+_leg('#16a34a','Đã hoàn thành',done)+_leg('#2563eb','Đang gia công',doing)+_leg('#d1d5db','Chưa bắt đầu',none)+'<div style="border-top:1px solid #eee;margin-top:5px;padding-top:5px;font-size:13px">Tổng <b>'+tot+' section</b>'+(prioN?' · <span style="color:#e8a400">★ '+prioN+' ưu tiên</span>':'')+'</div></div><div style="flex:1;min-width:240px"><div class="cg-lbl" style="margin-bottom:2px">Khối lượng theo tổ (số section)</div>'+barsHtml+'</div></div><div style="margin-top:10px"><div class="cg-lbl" style="margin-bottom:2px">Theo mốc (Milestone) — số section</div>'+msBars+'</div>'+statusBlock+'</div>';
   var waitFin=SEC.filter(function(s){return s.waitFinal;}).sort(function(a,b){ return (a.pLt&&b.pLt)?(a.pLt-b.pLt):(a.name.localeCompare(b.name,'vi',{numeric:true})); });
   var wfBlock='<div style="border:1px solid #dbe6fb;border-left:4px solid #2563eb;border-radius:12px;padding:12px 14px;margin-bottom:12px;background:#fff"><div class="cg-lbl" style="color:#2563eb;margin-bottom:6px">Đã lắp thử xong — chờ Final DIM ('+waitFin.length+')</div>'+(waitFin.length?('<table><thead><tr><th>Section</th><th>Lắp thử (ngày)</th><th>KH Final</th><th>Tổ</th><th>Trạng thái</th></tr></thead><tbody>'+waitFin.map(function(s){ return '<tr><td>'+(s.prio>0?'<span style="color:#e8a400">★</span> ':'')+s.name+'</td><td>'+(s.pLt?_fmtd(s.pLt):'<span style="color:#16a34a">✓ Done</span>')+'</td><td>'+(s.pFin?_fmtd(s.pFin):'—')+'</td><td style="color:#6b7280">'+s.toMain+'</td><td><span class="tag" style="background:'+STC[s.status]+';color:#fff">'+s.status+'</span></td></tr>'; }).join('')+'</tbody></table>'):'<div class="q">Chưa có section nào đã lắp thử xong mà chưa Final.</div>')+'</div>';
   h+=wfBlock;
