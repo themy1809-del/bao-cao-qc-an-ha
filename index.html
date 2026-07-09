@@ -279,7 +279,7 @@ th{background:none;color:var(--mut);border-bottom:2px solid var(--line);font-wei
 </head>
 <body>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
-<script src="qcdata.js"></script>
+<script>document.write('<scr'+'ipt src="qcdata.js?v='+Date.now()+'"><\/scr'+'ipt>');</script>
 <script src="ncr_data.js"></script>
 <script src="aop_data.js"></script>
 <script>window.__LQ=window.QCDATA;</script>
@@ -299,11 +299,11 @@ th{background:none;color:var(--mut);border-bottom:2px solid var(--line);font-wei
     var b=document.getElementById('qc_retry'); if(b) b.onclick=function(){ try{ location.reload(true); }catch(e){ location.reload(); } };
   }
   setTimeout(function(){ if(_sp && _sp.offsetParent!==null && !document.getElementById('qc_retry')) _fail('Tải dữ liệu quá lâu — có thể do mạng hoặc dữ liệu đang cập nhật.'); }, 12000);
-  if(_ok(window.QCDATA)) return;
+  if(_ok(window.QCDATA)){ try{sessionStorage.removeItem('qc_rl');}catch(e){} return; }
   var tries=0;
   (function _rescue(){ tries++;
     fetch('qcdata.js',{cache:'reload'}).then(function(r){ if(!r.ok) throw 0; return r.text(); })
-      .then(function(t){ var i=t.indexOf('{'),j=t.lastIndexOf('}'); if(i<0||j<=i) throw 0; var D=JSON.parse(t.slice(i,j+1)); if(!_ok(D)) throw 0; location.reload(); })
+      .then(function(t){ var i=t.indexOf('{'),j=t.lastIndexOf('}'); if(i<0||j<=i) throw 0; var D=JSON.parse(t.slice(i,j+1)); if(!_ok(D)) throw 0; if(sessionStorage.getItem('qc_rl')){ _fail('Trình duyệt đang giữ bản cũ — bấm THỬ LẠI, hoặc nhấn Ctrl+Shift+R.'); return; } try{sessionStorage.setItem('qc_rl','1');}catch(e){} location.reload(); })
       .catch(function(){ if(tries<3) setTimeout(_rescue,1500); else _fail(); });
   })();
 })();
@@ -503,7 +503,7 @@ setTimeout(_applyUi,0);
   var _base=null;
   function _fs(cb){try{fetch('qcdata.js?_cb='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){var i=t.indexOf('{'),j=t.lastIndexOf('}');if(i<0||j<=i){cb(null);return;}try{cb(_sig(JSON.parse(t.slice(i,j+1))));}catch(e){cb(null);}}).catch(function(){cb(null);});}catch(e){cb(null);}}
   _fs(function(s){_base=s;});
-  setInterval(function(){_fs(function(s){if(s&&_base&&s!==_base)location.reload();});},180000);
+  setInterval(function(){_fs(function(s){if(s&&_base&&s!==_base){ if(!sessionStorage.getItem('qc_rl')){ try{sessionStorage.setItem('qc_rl','1');}catch(e){} location.reload(); } }});},180000);
 })();
 
 document.getElementById('srcd').textContent=D.updated;var _ls=document.getElementById('liveSt');if(_ls)_ls.textContent=(window.__QCSRC==='live'?'\u25CF Google \u00b7 LIVE':'\u25CF SPM n\u1ed9i b\u1ed9');
