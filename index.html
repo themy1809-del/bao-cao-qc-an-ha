@@ -1772,7 +1772,7 @@ function _qlDetail(row){
   var nm=String(row[0]==null?'':row[0]).trim();
   var kh={f:+row[2]||0,w:+row[3]||0,p:+row[4]||0,fd:+row[5]||0}, due=row[6]?String(row[6]):'', note=row[7]?String(row[7]):'', secTab=String(row[8]==null?'':row[8]).trim();
   var idx=D.P.indexOf(nm); var disp=idx>=0?pName(idx):nm;
-  if(idx<0){ return '<div class="card"><h3>'+nm+'</h3><div class="q" style="color:var(--warn)">Không thấy dự án này trong dữ liệu QC (tên phải khớp cột Dự án).</div></div>'; }
+  if(idx<0){ var _sb='<div class="cg-lbl" style="margin:14px 0 4px">Section theo tổ gia công'+(secTab?' — tab: '+secTab:'')+'</div><div id="qlSecGrp">'+(secTab?'<div class="q">Đang tải section…</div>':'<div class="q" style="color:#8a6d3b">Chưa gán tab section (cột 9 QLDA) cho dự án này.</div>')+'</div>'; return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h3 style="margin:0">'+nm+'</h3><span class="tag" style="background:#94a3b8;color:#fff">Chưa có dữ liệu QC</span></div><div class="q" style="color:#8a6d3b;margin:6px 0">Dự án chưa có trong dữ liệu nghiệm thu SPM (chưa ghi công đoạn/xưởng/tổ) — có thể là dự án mới, hoặc tên chưa khớp cột Dự án. Vẫn theo dõi được qua Section bên dưới.</div>'+_sb+'</div>'; }
   var done=Fnodate().filter(isAcc); var st={f:0,w:0,p:0,fd:0},X={},T={};
   for(var i=0;i<done.length;i++){ var r=done[i]; if(D.P[r[0]]!==nm) continue; st.f+=r[7]; st.w+=r[8]; st.p+=r[9]; if(r[8]>0&&r[13]&&/acc/i.test(String(r[13]))) st.fd+=r[8]; var x=D.X[r[1]],o=X[x]||(X[x]={f:0,w:0,p:0}); o.f+=r[7]; o.w+=r[8]; o.p+=r[9]; var tk2=x+' · '+D.T[r[2]],to=T[tk2]||(T[tk2]={f:0,w:0,p:0,n:0}); to.f+=r[7]; to.w+=r[8]; to.p+=r[9]; to.n++; }
   var ntAll=st.f+st.w+st.p, khTot=kh.f+kh.w+kh.p;
