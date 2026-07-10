@@ -294,6 +294,26 @@ body.tvmode{font-size:15px}
 #tvExit:hover{opacity:1}
 #tvBar{display:none;position:fixed;left:0;top:0;height:3px;width:0;background:#E2231A;z-index:99997;transition:width .4s linear}
 body.tvmode #tvBar{display:block}
+/* ==== SIDEBAR v5 ==== */
+.nav-item{font-size:13px;font-weight:800;padding:8px 11px}
+.nav-item small{font-size:10.5px;font-weight:800}
+.brand{font-size:12px}
+.brand-sub{font-size:10.5px;font-weight:700}
+#liveSt{font-size:11px}
+.nav-foot{font-size:11px;font-weight:600}
+.sb-btn{font-size:12px;font-weight:700}
+.nav-item:hover{transform:translateX(3px)}
+.nav-item.active::before{display:none}
+.nav-item.active{box-shadow:0 5px 14px rgba(0,0,0,.22)}
+.nav-item small{letter-spacing:.14em}
+[data-theme=light] .nav-item.active{background:linear-gradient(135deg,#E2231A,#AF130A);color:#fff;box-shadow:0 5px 14px rgba(226,35,26,.32)}
+[data-theme=light] .nav-item.active small{color:#FFD24A}
+#sbClock{margin:-4px 0 12px}
+#sbTime{font-size:19px;font-weight:800;letter-spacing:.04em;line-height:1;font-variant-numeric:tabular-nums}
+#sbDate{font-size:9.8px;font-weight:600;opacity:.78;margin-top:3px}
+[data-theme=light] #sbTime{color:#1a1d21}
+#sbToday{margin-top:10px;padding:9px 11px;border-radius:11px;background:rgba(255,210,74,.14);border:1px solid rgba(255,210,74,.35)}
+[data-theme=light] #sbToday{background:linear-gradient(135deg,#fff7e0,#fdeaec);border:1px solid #f2d9a0;color:#1a1d21}
 </style>
 </head>
 <body>
@@ -332,7 +352,9 @@ body.tvmode #tvBar{display:block}
   <div class="brand">DDC · AN HẠ</div>
   <div class="brand-sub">BÁO CÁO QC<br>SẢN LƯỢNG NGHIỆM THU</div>
   <div id="liveSt">● SPM nội bộ</div>
+  <div id="sbClock"><div id="sbTime"></div><div id="sbDate"></div></div>
   <div id="navBox"></div>
+  <div id="sbToday" style="display:none"></div>
   <div class="nav-foot">
     Nguồn: SPM · <b id="srcd"></b><div id="integ" style="margin:5px 0;line-height:1.5"></div>Đơn vị: tấn
     <button class="sb-btn pri" onclick="buildReportPDF()">Xuất báo cáo PDF</button>
@@ -754,6 +776,8 @@ function togTV(){
   _tvTick=setInterval(function(){_tvEl+=0.5;var pb=document.getElementById('tvBar');if(pb)pb.style.width=Math.min(100,_tvEl/20*100)+'%';},500);
 }
 document.addEventListener('fullscreenchange',function(){if(!document.fullscreenElement&&_tvT){clearInterval(_tvT);clearInterval(_tvTick);_tvT=_tvTick=null;document.body.classList.remove('tvmode');}});
+function updSbToday(){try{var el=document.getElementById('sbToday');if(!el||typeof D==='undefined'||!D.rows)return;var last='';D.rows.forEach(function(r){if(r[3]&&isAcc(r)&&r[3]>last)last=r[3];});if(!last)return;var t=0,n=0;D.rows.forEach(function(r){if(r[3]===last&&isAcc(r)){t+=r[7]+r[8]+r[9];n++;}});el.style.display='block';el.innerHTML='<div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;opacity:.75">Nghiệm thu mới nhất · '+dayVN(last)+'</div><div style="font-size:16px;font-weight:800;margin-top:2px" class="num">'+fm1(t)+' t <span style="font-size:9.5px;font-weight:600;opacity:.8">· '+n+' lượt</span></div>';}catch(e){}}
+(function(){var el=document.getElementById('sbTime');if(!el)return;var DW=['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];function p(x){return (x<10?'0':'')+x;}function tk(){var n=new Date();el.textContent=p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());var d=document.getElementById('sbDate');if(d)d.textContent=DW[n.getDay()]+', '+p(n.getDate())+'/'+p(n.getMonth()+1)+'/'+n.getFullYear();}tk();setInterval(tk,1000);try{updSbToday();}catch(e){}})();
 function openFpy(){const el=document.getElementById('fpyPanel');el.style.display='block';renderFpy();el.scrollIntoView({behavior:'smooth',block:'nearest'});}
 function renderFpy(){
   const rows=F();
