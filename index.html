@@ -413,12 +413,18 @@ th{background:none;color:var(--mut);border-bottom:2px solid var(--line);font-wei
       <button class="qf" onclick="window.print()" style="float:right;margin:0 0 6px 8px" title="In / lưu PDF báo cáo ngày của xưởng này">In / Lưu PDF</button>
       <h3 id="ndTtl"></h3><div class="q" id="ndSub"></div>
       <div class="kpis" id="ndStg" style="margin:6px 0 4px"></div>
-      <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu QC nghiệm thu — SX gia công theo công đoạn</div>
-      <div class="q" style="margin:0 0 4px">Cột đậm = QC nghiệm thu · cột nhạt = SX cùng ngày · màu theo công đoạn · % = NT/SX · vạch cam = định mức ngày</div>
-      <div id="cNdCmp" class="ch short"></div>
-      <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu theo xưởng — công đoạn</div>
-      <div class="q" style="margin:0 0 4px">Mỗi xưởng 2 cột: đậm = QC nghiệm thu · nhạt = SX gia công · màu = công đoạn</div>
-      <div id="cNdCmpX" class="ch short"></div>
+      <div class="r2" style="gap:22px;align-items:start">
+        <div>
+          <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu QC nghiệm thu — SX gia công theo công đoạn</div>
+          <div class="q" style="margin:0 0 4px">Cột đậm = QC nghiệm thu · cột nhạt = SX cùng ngày · màu theo công đoạn · % = NT/SX · vạch cam = định mức ngày</div>
+          <div id="cNdCmp" class="ch short"></div>
+        </div>
+        <div>
+          <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu theo xưởng — công đoạn</div>
+          <div class="q" style="margin:0 0 4px">Mỗi xưởng 2 cột: đậm = QC nghiệm thu · nhạt = SX gia công · màu = công đoạn</div>
+          <div id="cNdCmpX" class="ch short"></div>
+        </div>
+      </div>
       <div id="ndReject"></div>
       <div class="r2" style="grid-template-columns:2fr 3fr;gap:22px">
         <div><div class="cg-lbl" style="margin-bottom:4px">Theo xưởng</div><div class="tw" style="max-height:240px"><table id="ndByX"></table></div></div>
