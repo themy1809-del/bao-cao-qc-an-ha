@@ -279,7 +279,7 @@ th{background:none;color:var(--mut);border-bottom:2px solid var(--line);font-wei
 </head>
 <body>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
-<script>document.write('<scr'+'ipt src="qcdata.js?v='+Date.now()+'"><\/scr'+'ipt>');</script>
+<script>document.write('<scr'+'ipt src="qcdata.js'+(location.protocol==='file:'?'':'?v='+Date.now())+'"><\/scr'+'ipt>');</script>
 <script src="ncr_data.js"></script>
 <script src="aop_data.js"></script>
 <script>window.__LQ=window.QCDATA;</script>
@@ -296,9 +296,9 @@ th{background:none;color:var(--mut);border-bottom:2px solid var(--line);font-wei
       +'<div style="font-size:15px;font-weight:700;margin:10px 0 4px;color:#c0392b">Không tải được dữ liệu QC</div>'
       +'<div style="font-size:13px;color:#6b7280;line-height:1.5;margin-bottom:16px">'+(msg||'Dữ liệu có thể đang cập nhật, hoặc trình duyệt đang giữ bản cũ.')+'<br>Bấm để tải lại (đã xoá bộ nhớ đệm).</div>'
       +'<button id="qc_retry" style="background:#E2231A;color:#fff;border:0;border-radius:8px;padding:11px 22px;font-size:14px;font-weight:700;cursor:pointer">THỬ LẠI</button></div>';
-    var b=document.getElementById('qc_retry'); if(b) b.onclick=function(){ try{ location.reload(true); }catch(e){ location.reload(); } };
+    var b=document.getElementById('qc_retry'); if(b) b.onclick=function(){ try{ location.replace(location.pathname.split('?')[0]+'?nc='+Date.now()); }catch(e){ location.reload(); } };
   }
-  setTimeout(function(){ if(_sp && _sp.offsetParent!==null && !document.getElementById('qc_retry')) _fail('Tải dữ liệu quá lâu — có thể do mạng hoặc dữ liệu đang cập nhật.'); }, 12000);
+  setTimeout(function(){ if(_sp && _sp.offsetParent!==null && !document.getElementById('qc_retry')) _fail('Tải dữ liệu quá lâu — có thể do mạng hoặc dữ liệu đang cập nhật.'); }, 7000);
   if(_ok(window.QCDATA)){ try{sessionStorage.removeItem('qc_rl');}catch(e){} return; }
   var tries=0;
   (function _rescue(){ tries++;
