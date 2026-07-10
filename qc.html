@@ -316,7 +316,7 @@ body.tvmode #tvBar{display:block}
 [data-theme=light] #sbToday{background:linear-gradient(135deg,#fff7e0,#fdeaec);border:1px solid #f2d9a0;color:#1a1d21}
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 10/7 v8 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 10/7 v9 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="ncr_data.js"></script>
@@ -356,7 +356,7 @@ body.tvmode #tvBar{display:block}
   <div id="navBox"></div>
   <div id="sbToday" style="display:none"></div>
   <div class="nav-foot">
-    Nguồn: SPM · <b id="srcd"></b><div id="integ" style="margin:5px 0;line-height:1.5"></div>Đơn vị: tấn
+    <div id="sbSrc" style="margin-bottom:4px">Nguồn SPM · <b id="srcd"></b> · tấn</div><div id="integ" style="display:none"></div>
     <button class="sb-btn pri" onclick="buildReportPDF()">Xuất báo cáo PDF</button>
     <button class="sb-btn" onclick="buildReportImg()">Ảnh PNG</button>
     <button class="sb-btn" onclick="togTheme()">Đổi nền sáng / tối</button>
@@ -401,7 +401,7 @@ body.tvmode #tvBar{display:block}
       <div class="cg-lbl" style="margin:8px 0 2px">Xu hướng tồn theo ngày (dựng lại từ dữ liệu) — đường đi xuống = đang dọn được</div>
       <div id="cPendTrend" class="ch short" style="margin:0 0 6px"></div>
       <div class="tw" style="max-height:440px" id="pendWrap"></div>
-      <div class="muted" style="margin-top:6px">Bấm một <b>tổ</b> để xem dự án bên trong · bấm dự án để lọc toàn báo cáo.</div>
+      <div class="muted" style="margin-top:6px">Bấm <b>tổ</b> để xem dự án · bấm dự án để lọc.</div>
     </div>
     <div class="panel" id="fpyPanel" style="display:none">
       <button class="close" onclick="hideP('fpyPanel')">✕</button>
@@ -457,7 +457,7 @@ body.tvmode #tvBar{display:block}
   <section id="v_du" class="view">
     <div class="card"><h3>Tiến độ hoàn thiện dự án</h3><div class="q">Xanh = đã sơn · xám = còn tồn (so BOM cả dự án) — bấm để lọc</div><div id="cProj" class="ch tall"></div></div>
     <div class="card"><h3>Bảng dự án</h3><div class="q">Bấm dòng để lọc · cột SX đổi theo bộ lọc</div><div class="tw"><table id="tProj"></table></div></div>
-    <div class="card"><h3>Khối lượng đã hoàn thành theo Xưởng — từng dự án</h3><div class="q">Đã nghiệm thu · <b>cộng dồn tất cả các tháng</b> (không theo kỳ lọc) · bấm một dự án ở bảng trên để chỉ xem dự án đó</div><div class="tw" style="max-height:460px"><table id="tProjX"></table></div></div>
+    <div class="card"><h3>Khối lượng đã hoàn thành theo Xưởng — từng dự án</h3><div class="q">Đã NT · <b>cộng dồn mọi tháng</b> · bấm dự án ở bảng trên để lọc</div><div class="tw" style="max-height:460px"><table id="tProjX"></table></div></div>
   </section>
 
   <!-- 05 DỮ LIỆU -->
@@ -469,12 +469,12 @@ body.tvmode #tvBar{display:block}
       <div class="r2" style="gap:22px;align-items:start">
         <div>
           <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu QC nghiệm thu — SX gia công theo công đoạn</div>
-          <div class="q" style="margin:0 0 4px">Cột đậm = QC nghiệm thu · cột nhạt = SX cùng ngày · màu theo công đoạn · % = phần SX cùng ngày ĐÃ được NT · vạch cam = định mức ngày</div>
+          <div class="q" style="margin:0 0 4px">Đậm = NT · nhạt = SX cùng ngày · % = SX đã NT · vạch cam = định mức</div>
           <div id="cNdCmp" class="ch short"></div>
         </div>
         <div>
           <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu theo xưởng — công đoạn</div>
-          <div class="q" style="margin:0 0 4px">Mỗi xưởng 2 cột: đậm = QC nghiệm thu · nhạt = SX gia công · màu = công đoạn</div>
+          <div class="q" style="margin:0 0 4px">Đậm = NT · nhạt = SX · màu = công đoạn</div>
           <div id="cNdCmpX" class="ch short"></div>
         </div>
       </div>
@@ -493,7 +493,7 @@ body.tvmode #tvBar{display:block}
   <section id="v_cl" class="view">
     <div class="kpis" id="clKpis"></div>
     <div class="card"><h3>Giải nghĩa mã lỗi</h3>
-      <div class="q">Mã lỗi = <b>CÔNG ĐOẠN</b>-<b>số thứ tự</b> (ví dụ <b>WEL-03</b> = lỗi công đoạn hàn, mã số 03) · danh mục chi tiết của từng số tra tại <b>Sổ tay QC — NCR link</b> (Google Sheet) · nguyên nhân gốc rễ 8M xem mục NCR bên dưới</div>
+      <div class="q">Mã = <b>CÔNG ĐOẠN</b>-<b>số</b> (vd <b>WEL-03</b> = lỗi hàn số 03) · chi tiết tra <b>Sổ tay QC — NCR link</b> · nguyên nhân 8M xem mục NCR</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:5px"><span class="tag">MAT · Vật liệu</span><span class="tag">PRE · Sơ chế</span><span class="tag">FIT · Ráp thô</span><span class="tag">DIM · Kích thước</span><span class="tag">WEL · Hàn</span><span class="tag">GRI · Vệ sinh–mài chà</span><span class="tag">BLA · Bắn bi</span><span class="tag">PAI · Sơn</span><span class="tag">PAC · Đóng gói</span><span class="tag">DRW · Bản vẽ</span></div>
     </div>
 
@@ -507,7 +507,7 @@ body.tvmode #tvBar{display:block}
       <div class="card"><h3>Chất lượng theo dự án</h3><div class="q">Sắp theo tấn rớt · bấm dòng để lọc</div><div class="tw" style="max-height:420px"><table id="tRejPj"></table></div></div>
     </div>
     <div class="card"><h3>Danh sách lượt rớt (mới nhất trước)</h3><div class="q" id="rejCnt"></div><div class="tw" style="max-height:460px"><table id="tRejList"></table></div></div>
-    <div class="card" id="ncrCard"><h3>NCR theo bộ mã lỗi (10/2025 → nay)</h3><div class="q">Nguồn: Sổ tay QC — NCR link · mã lỗi = công đoạn-số · nguyên nhân 8M · KL tính bằng kg · dữ liệu toàn kỳ, không theo bộ lọc</div>
+    <div class="card" id="ncrCard"><h3>NCR theo bộ mã lỗi (10/2025 → nay)</h3><div class="q">Nguồn: Sổ tay QC (NCR link) · KL: kg · toàn kỳ, không theo bộ lọc</div>
       <div id="ncrSum" style="display:flex;gap:7px;flex-wrap:wrap;margin:2px 0 10px"></div>
       <div class="r2"><div><div class="cg-lbl">Pareto theo công đoạn lỗi</div><div id="cNcrStage" class="ch short"></div></div><div><div class="cg-lbl">Nguyên nhân gốc rễ (8M)</div><div id="cNcrNN" class="ch short"></div></div></div>
       <div class="r2" style="margin-top:10px">
@@ -521,10 +521,10 @@ body.tvmode #tvBar{display:block}
   <section id="v_kp" class="view">
     <div class="kpis" id="kpKpis"></div>
     <div class="r2">
-      <div class="card"><h3>Sản lượng — QC nghiệm thu so với SX (mục tiêu ≥ 95%)</h3><div class="q">Cột đậm = NT · cột nhạt = SX cùng kỳ · nhãn % = phần SX trong kỳ ĐÃ được NT · vạch cam = mục tiêu 95%</div><div id="cKp31" class="ch"></div></div>
+      <div class="card"><h3>Sản lượng — QC nghiệm thu so với SX (mục tiêu ≥ 95%)</h3><div class="q">Đậm = NT · nhạt = SX cùng kỳ · % = SX đã NT · vạch cam = mục tiêu 95%</div><div id="cKp31" class="ch"></div></div>
       <div class="card"><h3>Chất lượng — FPY công đoạn chính (mục tiêu ≥ 98%)</h3><div class="q">FPY = đạt ngay lần đầu ÷ đã kiểm (theo tấn) · vạch cam = 98%</div><div id="cKp32" class="ch"></div></div>
     </div>
-    <div class="card"><h3>Phân tích theo loại hình dự án (8 mức Dễ → Phức tạp)</h3><div class="q">Phân loại tạm theo từ khóa tên dự án · hệ số K = độ khó · sẽ thay bằng danh mục 8 loại hình chính thức của DDC khi có file</div><div id="cPjType" class="ch"></div><div class="tw" style="max-height:380px"><table id="tPjType"></table></div></div>
+    <div class="card"><h3>Phân tích theo loại hình dự án (8 mức Dễ → Phức tạp)</h3><div class="q">Hệ số K = độ khó · phân loại theo tên dự án</div><div id="cPjType" class="ch"></div><div class="tw" style="max-height:380px"><table id="tPjType"></table></div></div>
     <div class="card"><h3>Scorecard AOP 2026 — tự chấm theo dữ liệu</h3><div class="q">Các chỉ tiêu đo tự động từ SPM · chỉ tiêu chưa đo được ghi rõ nguồn cần bổ sung · <span id="scNote"></span></div><div class="tw"><table id="tScore"></table></div></div>
     <div class="card" id="bscCard"><h3>BSC 2026 — chấm điểm theo trọng số AOP</h3><div class="q">Trọng số Tài chính 45% · Khách hàng 30% · Quy trình 15% · Học tập 10% · KR đo được máy tự chấm · KR khác nhập % hoàn thành (0–120), máy quy đổi và <b>lưu lại trên máy</b></div>
       <div id="bscTot" style="display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 10px"></div>
@@ -1426,7 +1426,7 @@ function exportCSV(){
 function renderFresh(){
   var nR=D.rows.length, tot=(D.check?(D.check.f+D.check.w+D.check.p):0);
   var src=(window.__QCSRC==='live'?'Google \u00b7 LIVE':'file n\u1ed9i b\u1ed9');
-  var ig=document.getElementById('integ'); if(ig) ig.innerHTML='<b style="color:inherit">'+nR.toLocaleString('vi-VN')+' d\u00f2ng</b> \u00b7 \u03a3 '+fm1(tot)+' t<br>'+src;
+  var ig=document.getElementById('integ'); if(ig) ig.innerHTML='<b style="color:inherit">'+nR.toLocaleString('vi-VN')+' d\u00f2ng</b> \u00b7 \u03a3 '+fm1(tot)+' t<br>'+src;var _sb=document.getElementById('sbSrc');if(_sb&&ig)_sb.title=ig.textContent;
   var box=document.getElementById('freshBar'); if(!box) return;
   var acc=D.rows.filter(function(r){return isAcc(r);});
   var ld=''; for(var k=0;k<acc.length;k++){var d=acc[k][3]; if(d&&d>ld) ld=d;}
