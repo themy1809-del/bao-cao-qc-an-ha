@@ -287,9 +287,16 @@ table td.pjn{font-weight:700;color:var(--ink)}
 .kpi{box-shadow:0 1px 3px rgba(13,40,28,.10)}
 .card{box-shadow:0 1px 3px rgba(16,24,40,.08)}
 .card h3{font-size:12px}
+/* ==== TV MODE v4 ==== */
+body.tvmode .sidebar{display:none}
+body.tvmode{font-size:15px}
+#tvExit{display:none;position:fixed;right:14px;bottom:14px;z-index:99997;background:#E2231A;color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:800;font-size:13px;cursor:pointer;opacity:.85;font-family:inherit}
+#tvExit:hover{opacity:1}
+#tvBar{display:none;position:fixed;left:0;top:0;height:3px;width:0;background:#E2231A;z-index:99997;transition:width .4s linear}
+body.tvmode #tvBar{display:block}
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 10/7 v3 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 10/7 v4 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="ncr_data.js"></script>
@@ -331,6 +338,7 @@ table td.pjn{font-weight:700;color:var(--ink)}
     <button class="sb-btn pri" onclick="buildReportPDF()">Xuất báo cáo PDF</button>
     <button class="sb-btn" onclick="buildReportImg()">Ảnh PNG</button>
     <button class="sb-btn" onclick="togTheme()">Đổi nền sáng / tối</button>
+    <button class="sb-btn" onclick="togTV()">▶ Chế độ TV / họp</button>
   </div>
 </aside>
 <div class="main">
@@ -358,6 +366,7 @@ table td.pjn{font-weight:700;color:var(--ink)}
   <!-- 01 TỔNG QUAN -->
   <section id="v_tq" class="view active">
     <div id="tqPeriod" style="display:flex;align-items:center;gap:10px;margin:2px 0 11px;flex-wrap:wrap"></div>
+    <div class="card" id="tqBrief" style="display:none;border-left:4px solid var(--acc)"></div>
     <div class="kpis" id="tqKpis"></div>
     <div class="card" id="tqTarget" style="display:none;border-left:4px solid var(--warn)"></div>
     <div class="card" id="tqLatest" style="border-left:4px solid var(--acc)"></div>
@@ -696,6 +705,55 @@ function renderPend(){
   wrap.innerHTML=h;
 }
 function openPend(){const el=document.getElementById('pendPanel');el.style.display='block';renderPend();el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+function renderBrief(){
+  var el=document.getElementById('tqBrief');if(!el)return;
+  try{
+  const rows=F(),done=rows.filter(isAcc),s=stSums(done);const tot=s.f+s.w+s.p;
+  const all=Fnodate();
+  let from=DR.from,to=DR.to;
+  const ds=all.filter(isAcc).map(dateOf).filter(Boolean).sort();
+  if(!to)to=ds[ds.length-1]||'';if(!from)from=ds[0]||'';
+  const li=[];
+  if(from&&to){
+    const span=Math.max(1,Math.round((new Date(to)-new Date(from))/864e5)+1);
+    const iso=d=>d.toISOString().slice(0,10);
+    const pTo=iso(new Date(new Date(from)-864e5)),pFrom=iso(new Date(new Date(from)-span*864e5));
+    let prev=0;all.forEach(r=>{const d=dateOf(r);if(d&&isAcc(r)&&d>=pFrom&&d<=pTo)prev+=r[7]+r[8]+r[9];});
+    const dl=prev>0?((tot-prev)/prev*100):null;
+    li.push('Sản lượng nghiệm thu kỳ này <b>'+fm1(tot)+' t</b>'+(dl==null?'':' — <b style="color:'+(dl>=0?'var(--good)':'var(--bad)')+'">'+(dl>=0?'▲ tăng ':'▼ giảm ')+Math.abs(dl).toFixed(0)+'%</b> so với '+span+' ngày liền trước ('+fm1(prev)+' t)'));
+  }
+  const XW={};done.forEach(r=>{const x=D.X[r[1]];XW[x]=(XW[x]||0)+r[7]+r[8]+r[9];});
+  const xs=Object.entries(XW).sort((a,b)=>b[1]-a[1]);
+  if(xs.length)li.push('Xưởng dẫn đầu: <b>'+xs[0][0]+'</b> ('+fm1(xs[0][1])+' t'+(tot>0?' · '+Math.round(xs[0][1]/tot*100)+'% toàn nhà máy':'')+')'+(xs.length>1?' · thấp nhất: <b>'+xs[xs.length-1][0]+'</b> ('+fm1(xs[xs.length-1][1])+' t)':''));
+  const fq=fpyCalc(rows);
+  if(fq.fpy!=null){
+    const byX={};rows.forEach(r=>{const x=D.X[r[1]];(byX[x]=byX[x]||[]).push(r);});
+    let worst=null;Object.keys(byX).forEach(x=>{const q=fpyCalc(byX[x]);if(q.fpy!=null&&(!worst||q.fpy<worst.f))worst={x:x,f:q.fpy};});
+    li.push('Chất lượng: FPY toàn nhà máy <b style="color:'+(fq.fpy>=98?'var(--good)':'var(--bad)')+'">'+fq.fpy.toFixed(1).replace('.',',')+'%</b>'+(fq.fpy>=98?' — đạt mốc 98%':' — <b style="color:var(--bad)">DƯỚI mốc 98%</b>')+(worst&&worst.f<98?' · cần chú ý <b>'+worst.x+'</b> ('+worst.f.toFixed(1).replace('.',',')+'%)':''));
+  }
+  const pend=all.filter(isTon);const PX={};let pT=0;pend.forEach(r=>{const t=r[7]+r[8]+r[9];pT+=t;const x=D.X[r[1]];PX[x]=(PX[x]||0)+t;});
+  const px=Object.entries(PX).sort((a,b)=>b[1]-a[1]);
+  if(pT>1)li.push('Tồn chờ nghiệm thu <b style="color:var(--warn)">'+fm1(pT)+' t</b>'+(px.length?' — nhiều nhất tại <b>'+px[0][0]+'</b> ('+fm1(px[0][1])+' t)':''));
+  window.__BRIEF=li;
+  if(!li.length){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><b style="font-size:13px;letter-spacing:.05em;color:var(--acc)">NHẬN ĐỊNH ĐIỀU HÀNH</b><span class="tag" style="font-size:10px">máy tự tổng hợp theo bộ lọc</span></div>'+li.map(t=>'<div style="padding:3px 0 3px 15px;position:relative;font-size:12.5px;line-height:1.6"><span style="position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%;background:var(--acc)"></span>'+t+'</div>').join('');
+  }catch(e){el.style.display='none';}
+}
+var _tvT=null,_tvTick=null,_tvI=0,_tvEl=0;
+function togTV(){
+  var b=document.getElementById('tvExit');
+  if(!b){b=document.createElement('button');b.id='tvExit';b.textContent='✕ Thoát TV (Esc)';b.onclick=togTV;document.body.appendChild(b);
+    var pb=document.createElement('div');pb.id='tvBar';document.body.appendChild(pb);}
+  if(_tvT){clearInterval(_tvT);clearInterval(_tvTick);_tvT=_tvTick=null;document.body.classList.remove('tvmode');if(document.fullscreenElement){try{document.exitFullscreen();}catch(e){}}try{setView('tq');}catch(e){}return;}
+  var views=[];document.querySelectorAll('section.view').forEach(function(v){views.push(v.id.slice(2));});
+  try{document.documentElement.requestFullscreen();}catch(e){}
+  document.body.classList.add('tvmode');
+  _tvI=Math.max(0,views.indexOf(CUR));_tvEl=0;
+  _tvT=setInterval(function(){_tvI=(_tvI+1)%views.length;_tvEl=0;try{setView(views[_tvI]);window.scrollTo(0,0);}catch(e){}},20000);
+  _tvTick=setInterval(function(){_tvEl+=0.5;var pb=document.getElementById('tvBar');if(pb)pb.style.width=Math.min(100,_tvEl/20*100)+'%';},500);
+}
+document.addEventListener('fullscreenchange',function(){if(!document.fullscreenElement&&_tvT){clearInterval(_tvT);clearInterval(_tvTick);_tvT=_tvTick=null;document.body.classList.remove('tvmode');}});
 function openFpy(){const el=document.getElementById('fpyPanel');el.style.display='block';renderFpy();el.scrollIntoView({behavior:'smooth',block:'nearest'});}
 function renderFpy(){
   const rows=F();
@@ -772,6 +830,7 @@ function rTQ(){
     kpi(_fqA.fpy==null?'a':(_fqA.fpy>=98?'g':'b'),_fqA.fpy==null?'—':_fqA.fpy.toFixed(1).replace('.',',')+'%','FPY TB xưởng',(_fqA.n?'lỗi mã '+fm1(_fqA.e)+' t · '+_fqA.n+' món':'không có lỗi mã')+' · bấm xem ▸','openFpy()');
   try{renderFinalDim();}catch(e){}
   try{renderTarget(done);}catch(e){}
+  try{renderBrief();}catch(e){}
   (function(){ /* #3 Canh bao + phan bo QC */
     var box=document.getElementById('tqAlert');if(!box)return;
     var allF=Fnodate();
@@ -1248,6 +1307,9 @@ function _fillRep(){
   document.getElementById('repImg1').src=di('cMix');document.getElementById('repImg2').src=di('cTime');document.getElementById('repImg3').src=di('cX');
   document.getElementById('repRange').textContent=(DR.from?dayVN(DR.from):'đầu kỳ')+' → '+(DR.to?dayVN(DR.to):'mới nhất');
   document.getElementById('repDate').textContent=new Date().toLocaleString('vi-VN');
+  (function(){var bb=document.getElementById('repBrief');if(!bb)return;var li=window.__BRIEF||[];if(!li.length){bb.innerHTML='';return;}
+    var fix=function(t){return t.replace(/var\(--good\)/g,'#15803d').replace(/var\(--bad\)/g,'#c0392b').replace(/var\(--warn\)/g,'#b4690e');};
+    bb.innerHTML='<div style="background:#fff;border-radius:14px;padding:14px 18px;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-weight:800;font-size:13px;color:#E2231A;margin-bottom:6px">NHẬN ĐỊNH ĐIỀU HÀNH</div>'+li.map(function(t){return '<div style="font-size:12px;line-height:1.65;color:#13231a;padding:2px 0 2px 13px;position:relative"><span style="position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:#E2231A"></span>'+fix(t)+'</div>';}).join('')+'</div>';})();
   document.getElementById('repUpd').textContent=D.updated||'';
   var PJ={};acc.forEach(function(r){PJ[r[0]]=(PJ[r[0]]||0)+tw(r);});
   var tp=Object.keys(PJ).sort(function(a,b){return PJ[b]-PJ[a];}).slice(0,8);
@@ -1884,6 +1946,7 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
   </div>
   <div style="padding:24px 32px">
     <div id="repKpi" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px"></div>
+    <div id="repBrief" style="margin-top:18px"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px">
       <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="font-weight:800;font-size:13px;color:#E2231A;margin-bottom:8px">SẢN LƯỢNG THEO CÔNG ĐOẠN</div><img id="repImg1" style="width:100%;display:block"></div>
       <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="font-weight:800;font-size:13px;color:#E2231A;margin-bottom:8px">NGHIỆM THU THEO NGÀY</div><img id="repImg2" style="width:100%;display:block"></div>
@@ -1906,6 +1969,10 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
         <div><div style="font-weight:700;font-size:12px;color:#E2231A;margin-bottom:4px">Theo tổ</div><table id="repDayTo" style="width:100%;border-collapse:collapse"></table></div>
         <div><div style="font-weight:700;font-size:12px;color:#E2231A;margin-bottom:4px">Theo QC viên</div><table id="repDayQ" style="width:100%;border-collapse:collapse"></table></div>
       </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;margin-top:30px;padding:0 40px">
+      <div style="text-align:center;font-size:12.5px;color:#13231a"><b>NGƯỜI LẬP BÁO CÁO</b><br><span style="color:#6b7280;font-size:10.5px">(ký, ghi rõ họ tên)</span><div style="height:70px"></div><b>The My</b> — Tổ trưởng QC</div>
+      <div style="text-align:center;font-size:12.5px;color:#13231a"><b>PHỤ TRÁCH QC NHÀ MÁY</b><br><span style="color:#6b7280;font-size:10.5px">(ký, ghi rõ họ tên)</span><div style="height:70px"></div></div>
     </div>
     <div style="text-align:center;color:#6b7280;font-size:11.5px;margin-top:16px;padding-bottom:10px">Tự động từ SPM · cập nhật <span id="repUpd"></span> · Dashboard QC An Hạ</div>
   </div>
