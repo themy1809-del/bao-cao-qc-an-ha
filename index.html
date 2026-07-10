@@ -419,7 +419,6 @@ body.tvmode #tvBar{display:block}
       <div class="card" style="display:flex;flex-direction:column"><h3>Sản lượng theo xưởng</h3><div class="q" id="tqXQ">Bấm cột xưởng để lọc</div><div id="cX" class="ch" style="flex:1 1 auto;height:auto;min-height:170px"></div></div>
       <div class="card"><h3>Top dự án đang hoạt động</h3><div class="q">Đã NT trong kỳ · <b>Chờ NT</b> · <b>Còn lại BOM</b> · bấm để lọc</div><div id="tqIns"></div></div>
     </div>
-    <div class="card"><h3>Final DIM — kiểm cuối (QC fitup ghi acc)</h3><div class="q">Tổng hợp theo người kiểm DIM cuối · theo bộ lọc hiện tại</div><div class="tw" style="max-height:440px" id="fdBodyTQ"></div></div>
   </section>
 
   <!-- 02 XƯỞNG & TỔ -->
@@ -493,6 +492,11 @@ body.tvmode #tvBar{display:block}
   <!-- 06 CHẤT LƯỢNG -->
   <section id="v_cl" class="view">
     <div class="kpis" id="clKpis"></div>
+    <div class="card"><h3>Giải nghĩa mã lỗi</h3>
+      <div class="q">Mã lỗi = <b>CÔNG ĐOẠN</b>-<b>số thứ tự</b> (ví dụ <b>WEL-03</b> = lỗi công đoạn hàn, mã số 03) · danh mục chi tiết của từng số tra tại <b>Sổ tay QC — NCR link</b> (Google Sheet) · nguyên nhân gốc rễ 8M xem mục NCR bên dưới</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:5px"><span class="tag">MAT · Vật liệu</span><span class="tag">PRE · Sơ chế</span><span class="tag">FIT · Ráp thô</span><span class="tag">DIM · Kích thước</span><span class="tag">WEL · Hàn</span><span class="tag">GRI · Vệ sinh–mài chà</span><span class="tag">BLA · Bắn bi</span><span class="tag">PAI · Sơn</span><span class="tag">PAC · Đóng gói</span><span class="tag">DRW · Bản vẽ</span></div>
+    </div>
+
     <div id="clWarn" style="display:none"></div>
     <div class="r2">
       <div class="card"><h3>Xu hướng tỷ lệ rớt theo tháng</h3><div class="q">Cột = tấn rớt · đường = % rớt</div><div id="cRejTrend" class="ch"></div></div>
@@ -603,6 +607,10 @@ const isReject=r=>D.PL[r[6]]==='Rớt'||(r[13]&&(/\b(reject|fail)\b/i.test(''+r[
 const ERRRE=/\b(MAT|PRE|FIT|DIM|WEL|GRI|BLA|PAI|PAC|DRW)\s*-\s*\d{1,2}\b/i;
 const isErr=r=>!!(r[13]&&ERRRE.test(''+r[13]));
 const errCode=r=>{const m=(''+(r[13]||'')).match(ERRRE);return m?m[0].toUpperCase().replace(/\s/g,''):'';};
+const ERRNM={MAT:'Vật liệu',PRE:'Sơ chế',FIT:'Ráp thô',DIM:'Kích thước',WEL:'Hàn',GRI:'Vệ sinh–mài chà',BLA:'Bắn bi',PAI:'Sơn',PAC:'Đóng gói',DRW:'Bản vẽ'};
+const errName=c=>{const m=String(c||'').toUpperCase().match(/^([A-Z]{3})/);return (m&&ERRNM[m[1]])||'';};
+const errTag=c=>{if(!c)return'';const n=errName(c);return '<span class="tag r" title="'+(n?n+' — ':'')+'số chi tiết tra Sổ tay QC (NCR link)">'+c+(n?' · '+n:'')+'</span>';};
+
 function fpyCalc(rows){let a=0,j=0,e=0,n=0;for(const r of rows){const t=r[7]+r[8]+r[9];if(isReject(r))j+=t;else if(isAcc(r)){a+=t;if(isErr(r)){e+=t;n++;}}}const d=a+j;return{a:a,j:j,e:e,n:n,fpy:d>0?(a-e)/d*100:null};}/* Waiting = lay thang status tu SPM */
 
 function renderChips(){
@@ -806,7 +814,7 @@ function renderFpy(){
   }
   const errs=rows.filter(r=>isErr(r)||isReject(r)).sort((a,b)=>(dateOf(b)||'').localeCompare(dateOf(a)||'')).slice(0,300);
   document.getElementById('fpyErrWrap').innerHTML='<table><thead><tr><th>Ngày</th><th>Xưởng</th><th>Dự án</th><th>Tổ</th><th>QC</th><th>Loại</th><th class="n">KL (t)</th><th>Memo</th></tr></thead><tbody>'+
-    (errs.length?errs.map(r=>{const rj=isReject(r);return '<tr><td>'+(dateOf(r)?dayVN(dateOf(r)):'—')+'</td><td><b>'+D.X[r[1]]+'</b></td><td class="pjn"><b>'+pName(r[0])+'</b></td><td>'+toKey(r)+'</td><td><b>'+D.Q[r[5]]+'</b></td><td><span class="tag r">'+(rj?'RỚT':errCode(r))+'</span></td><td class="n"><b>'+fm1(r[7]+r[8]+r[9])+'</b></td><td style="white-space:normal;font-size:11.5px;color:var(--mut)">'+(''+(r[13]||'')).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</td></tr>';}).join(''):'<tr><td colspan="8" class="muted" style="padding:12px">Không có lỗi trong phạm vi lọc.</td></tr>')+'</tbody></table>';
+    (errs.length?errs.map(r=>{const rj=isReject(r);return '<tr><td>'+(dateOf(r)?dayVN(dateOf(r)):'—')+'</td><td><b>'+D.X[r[1]]+'</b></td><td class="pjn"><b>'+pName(r[0])+'</b></td><td>'+toKey(r)+'</td><td><b>'+D.Q[r[5]]+'</b></td><td>'+(rj?'<span class="tag r">RỚT</span>':errTag(errCode(r)))+'</td><td class="n"><b>'+fm1(r[7]+r[8]+r[9])+'</b></td><td style="white-space:normal;font-size:11.5px;color:var(--mut)">'+(''+(r[13]||'')).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</td></tr>';}).join(''):'<tr><td colspan="8" class="muted" style="padding:12px">Không có lỗi trong phạm vi lọc.</td></tr>')+'</tbody></table>';
 }
 
 
@@ -1294,7 +1302,7 @@ function renderDay(){
   var _rj=Fnodate().filter(r=>isReject(r)&&dateOf(r)===d&&(!_dayX||D.X[r[1]]===_dayX)),_rjEl=document.getElementById('ndReject');
   var _errHtml='';
   if(dErr.length){
-    _errHtml='<div style="margin:10px 0;padding:10px 14px;border:1px solid #f0d9a8;border-left:5px solid #D97706;border-radius:9px;background:rgba(217,119,6,.05)"><div style="font-weight:800;color:#B45309;font-size:12.5px;margin-bottom:6px">CẤU KIỆN CÓ MÃ LỖI — không đạt ngay lần đầu · '+dErr.length+' món · '+fm1(dET)+' t'+(_fpyD!=null?' · FPY ngày '+_fpyD.toFixed(1).replace('.',',')+'%':'')+'</div><div class="tw" style="max-height:240px"><table><thead><tr><th>Dự án</th><th>Tổ</th><th>QC</th><th>Mã lỗi</th><th class="n">KL (t)</th><th>Memo</th></tr></thead><tbody>'+dErr.map(r=>'<tr><td>'+pName(r[0])+'</td><td>'+toKey(r)+'</td><td>'+D.Q[r[5]]+'</td><td><span class="tag r">'+errCode(r)+'</span></td><td class="n">'+fm1(r[7]+r[8]+r[9])+'</td><td style="white-space:normal;color:#7a5b17;font-size:11.5px">'+(''+(r[13]||'')).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</td></tr>').join('')+'</tbody></table></div></div>';
+    _errHtml='<div style="margin:10px 0;padding:10px 14px;border:1px solid #f0d9a8;border-left:5px solid #D97706;border-radius:9px;background:rgba(217,119,6,.05)"><div style="font-weight:800;color:#B45309;font-size:12.5px;margin-bottom:6px">CẤU KIỆN CÓ MÃ LỖI — không đạt ngay lần đầu · '+dErr.length+' món · '+fm1(dET)+' t'+(_fpyD!=null?' · FPY ngày '+_fpyD.toFixed(1).replace('.',',')+'%':'')+'</div><div class="tw" style="max-height:240px"><table><thead><tr><th>Dự án</th><th>Tổ</th><th>QC</th><th>Mã lỗi</th><th class="n">KL (t)</th><th>Memo</th></tr></thead><tbody>'+dErr.map(r=>'<tr><td>'+pName(r[0])+'</td><td>'+toKey(r)+'</td><td>'+D.Q[r[5]]+'</td><td>'+errTag(errCode(r))+'</td><td class="n">'+fm1(r[7]+r[8]+r[9])+'</td><td style="white-space:normal;color:#7a5b17;font-size:11.5px">'+(''+(r[13]||'')).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</td></tr>').join('')+'</tbody></table></div></div>';
   }
   if(_rjEl){ _rjEl.innerHTML=_errHtml+(_rj.length?'<div style="margin:10px 0;padding:10px 14px;border:1px solid #f1c4bd;border-left:5px solid #c0392b;border-radius:9px;background:rgba(192,57,43,.05)"><div style="font-weight:800;color:#c0392b;font-size:12.5px;margin-bottom:6px">CẤU KIỆN REJECT — '+_rj.length+' món · '+fm1(_rj.reduce((a,r)=>a+r[7]+r[8]+r[9],0))+' t</div><div class="tw" style="max-height:240px"><table><thead><tr><th>Dự án</th><th>Tổ</th><th>QC</th><th class="n">KL (t)</th><th>Lý do / memo</th></tr></thead><tbody>'+_rj.map(r=>'<tr><td>'+pName(r[0])+'</td><td>'+toKey(r)+'</td><td>'+D.Q[r[5]]+'</td><td class="n">'+fm1(r[7]+r[8]+r[9])+'</td><td style="white-space:normal;color:#8a2020;font-size:11.5px">'+(''+(r[13]||'')).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</td></tr>').join('')+'</tbody></table></div></div>':''); }
   var _nx=document.getElementById('ndExtra');
@@ -1449,9 +1457,9 @@ function rCL(){
     var bad=(fpyV!=null&&fpyV<98);
     el.innerHTML='<div class="panel" style="border-left-color:'+(bad?'var(--bad)':'var(--warn)')+';margin:4px 0 8px">'
       +'<div style="font-weight:800;color:'+(bad?'var(--bad)':'var(--warn)')+';font-size:13px">'+(bad?'CẢNH BÁO: FPY '+fpyV.toFixed(1).replace('.',',')+'% — DƯỚI MỤC TIÊU 98%':'Lưu ý: có cấu kiện ghi mã lỗi trong kỳ')+'</div>'
-      +'<div style="margin:7px 0 4px;display:flex;gap:6px;flex-wrap:wrap">'+cks.map(c=>'<span class="tag r">'+c+' · '+CD[c].n+' món · '+fm1(CD[c].t)+' t</span>').join('')+'</div>'
+      +'<div style="margin:7px 0 4px;display:flex;gap:6px;flex-wrap:wrap">'+cks.map(c=>'<span class="tag r">'+(errName(c)?c+' · '+errName(c):c)+' · '+CD[c].n+' món · '+fm1(CD[c].t)+' t</span>').join('')+'</div>'
       +'<div class="tw" style="max-height:220px"><table><thead><tr><th>Ngày</th><th>Dự án</th><th>Xưởng.Tổ</th><th>Mã lỗi</th><th class="n">KL (t)</th></tr></thead><tbody>'
-      +late.map(r=>'<tr><td>'+(dateOf(r)?dayVN(dateOf(r)):'—')+'</td><td class="pjn">'+shortP(r[0])+'</td><td>'+toKey(r)+'</td><td><span class="tag r">'+errCode(r)+'</span></td><td class="n"><b>'+fm1(tw(r))+'</b></td></tr>').join('')
+      +late.map(r=>'<tr><td>'+(dateOf(r)?dayVN(dateOf(r)):'—')+'</td><td class="pjn">'+shortP(r[0])+'</td><td>'+toKey(r)+'</td><td>'+errTag(errCode(r))+'</td><td class="n"><b>'+fm1(tw(r))+'</b></td></tr>').join('')
       +'</tbody></table></div><div class="muted" style="margin-top:5px;font-size:11.5px">Nguồn: memo mã lỗi QC ghi trực tiếp trong SPM · FPY = (đạt − lỗi mã) ÷ (đạt + rớt), tính theo tấn.</div></div>';
   })();
   const pf=v=>v.toFixed(2).replace('.',',');
