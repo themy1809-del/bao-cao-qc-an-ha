@@ -943,6 +943,7 @@ var KPI_BETA=0.02;  /* he so pcs trong SLQD = K x XK x (tan + beta x pcs) */
 var KPI_XK=1.1;     /* he so du an xuat khau */
 var KPI_XK_RE=null; /* vd: /PHU QUOC|EVAPCO/i — du an khop ten se nhan he so XK; null = chua bat */
 var KPI_DET=2; /* moc % PHAT HIEN LOI (loi ma + rot) / KL kiem — QC phat hien cang nhieu diem cang CAO */
+var QC_LUON_HIEN=['quankh','haont','trunglb','phattnd','dongpt']; /* QC LUON HIEN trong danh sach du chua co khoi luong — them/bot ten tai day */
 function _slqdK(pi){var K=1;try{K=pjType(pi).K||1;}catch(e){}var xk=(KPI_XK_RE&&KPI_XK_RE.test(D.P[pi]||''))?KPI_XK:1;return {K:K,xk:xk};}
 function renderQcKpi(){
   var el=document.getElementById('tQcKpi');if(!el)return;
@@ -981,6 +982,7 @@ function renderQcKpi(){
     var s4=15*Math.min(1,(o.kl>0?(o.hard/o.kl):0)+(o.kl>0?(o.fd/o.kl):0));
     return {q:q,o:o,kl:o.kl,pcs:o.pcs,slqd:o.slqd,nd:nd,spd:spd,tpd:tpd,moc:mocDay,fpy:fpy,det:det,deu:deu*100,s1:s1,s2:s2,s3:s3,s4:s4,tot:s1+s2+s3+s4,nPlant:nPlant};
   }).filter(function(x){return x.kl>0;}).sort(function(a,b){return b.tot-a.tot;});
+  try{QC_LUON_HIEN.forEach(function(q){if(!list.some(function(x){return x.q===q;}))list.push({q:q,o:{pj:{},err:0,errN:0,rej:0,fd:0,hard:0},kl:0,pcs:0,slqd:0,nd:0,spd:0,tpd:0,moc:mocDay,fpy:null,det:0,deu:0,s1:0,s2:0,s3:0,s4:0,tot:0,nPlant:nPlant});});}catch(e){}
   window.__QCKPI=list;
   var dv0=document.getElementById('qcKpiDet');if(dv0)dv0.innerHTML='';
   if(!list.length){el.innerHTML='<tbody><tr><td class="muted" style="padding:12px">Chưa có dữ liệu QC trong kỳ lọc.</td></tr></tbody>';return;}
@@ -988,7 +990,7 @@ function renderQcKpi(){
   var cl=function(v){return v>=85?'var(--good)':(v>=65?'var(--warn)':'var(--bad)');};
   el.innerHTML='<thead><tr><th>#</th><th>QC</th><th class="n">Tấn NT</th><th class="n">pcs</th><th class="n">SLQĐ</th><th class="n">Ngày</th><th class="n">T/ngày</th><th class="n">%KPI ngày</th><th class="n">SLQĐ/ngày</th><th class="n">Phát hiện lỗi</th><th class="n">Độ đều</th><th class="n">SL/40</th><th class="n">CL/30</th><th class="n">KL/15</th><th class="n">TN/15</th><th class="n">TỔNG/100</th></tr></thead><tbody>'
    +list.map(function(o,i){var pk=o.moc>0?Math.min(100,Math.round(o.tpd/o.moc*100)):0;
-     return '<tr class="clickable" onclick="_qcKpiPick('+i+')" title="Bấm để bóc tách tiêu chí"><td>'+rk(i)+'</td><td><b>'+o.q+'</b></td><td class="n">'+fm1(o.kl)+'</td><td class="n">'+o.pcs.toLocaleString('vi-VN')+'</td><td class="n"><b>'+fm1(o.slqd)+'</b></td><td class="n">'+o.nd+'</td><td class="n"><b>'+fm1(o.tpd)+'</b></td><td class="n"><b style="color:'+(pk>=100?'var(--good)':(pk>=70?'var(--warn)':'var(--bad)'))+'">'+pk+'%</b></td><td class="n">'+fm1(o.spd)+'</td><td class="n">'+(o.det>0?'<b style="color:'+(o.det>=KPI_DET?'var(--good)':'var(--warn)')+'">'+o.det.toFixed(1).replace('.',',')+'%</b>':'<b style="color:var(--bad)" title="Không ghi nhận lỗi nào — sạch bất thường, cần xem lại việc kiểm soát">⚠ 0%</b>')+'</td><td class="n">'+Math.round(o.deu)+'%</td><td class="n">'+o.s1.toFixed(0)+'</td><td class="n">'+o.s2.toFixed(0)+'</td><td class="n">'+o.s3.toFixed(0)+'</td><td class="n">'+o.s4.toFixed(0)+'</td><td class="n"><b style="color:'+cl(o.tot)+';font-size:13.5px">'+o.tot.toFixed(0)+'</b></td></tr>';}).join('')
+     return '<tr class="clickable" onclick="_qcKpiPick('+i+')" title="Bấm để bóc tách tiêu chí"><td>'+rk(i)+'</td><td><b>'+o.q+'</b></td><td class="n">'+fm1(o.kl)+'</td><td class="n">'+o.pcs.toLocaleString('vi-VN')+'</td><td class="n"><b>'+fm1(o.slqd)+'</b></td><td class="n">'+o.nd+'</td><td class="n"><b>'+fm1(o.tpd)+'</b></td><td class="n"><b style="color:'+(pk>=100?'var(--good)':(pk>=70?'var(--warn)':'var(--bad)'))+'">'+pk+'%</b></td><td class="n">'+fm1(o.spd)+'</td><td class="n">'+(o.kl<=0?'<span class="muted">chưa có KL</span>':(o.det>0?'<b style="color:'+(o.det>=KPI_DET?'var(--good)':'var(--warn)')+'">'+o.det.toFixed(1).replace('.',',')+'%</b>':'<b style="color:var(--bad)" title="Không ghi nhận lỗi nào — sạch bất thường, cần xem lại việc kiểm soát">⚠ 0%</b>'))+'</td><td class="n">'+Math.round(o.deu)+'%</td><td class="n">'+o.s1.toFixed(0)+'</td><td class="n">'+o.s2.toFixed(0)+'</td><td class="n">'+o.s3.toFixed(0)+'</td><td class="n">'+o.s4.toFixed(0)+'</td><td class="n"><b style="color:'+cl(o.tot)+';font-size:13.5px">'+o.tot.toFixed(0)+'</b></td></tr>';}).join('')
    +'</tbody>';
 }
 function _qcKpiPick(i){
@@ -1408,6 +1410,7 @@ function rQC(){
   try{renderFinalDim();}catch(e){}
   const rows=F(),rowsAll=Fnodate(),st=qcStats(rows);
   if(!st.length){const m='<div class="it" style="border-left:3px solid var(--warn);padding:10px 12px;background:var(--rowH);border-radius:10px">Lưu ý: file SPM hiện <b>không có cột Người kiểm (QCUser)</b> — không tách được theo QC viên.</div>';document.getElementById('qcKpis').innerHTML=kpi('a','0','QC viên','thiếu cột người kiểm');const e=document.getElementById('cQc');if(e)e.innerHTML='';document.getElementById('tQc').innerHTML='<tbody><tr><td>'+m+'</td></tr></tbody>';const mx=document.getElementById('tQcMx');if(mx)mx.innerHTML='';hideP('qcPanel');return;}
+  try{QC_LUON_HIEN.forEach(function(q){if(!st.some(function(u){return u.q===q;}))st.push({q:q,kl:0,n:0,nd:0,tpd:0,f:0,w:0,p:0,tos:new Set(),pjs:new Set()});});}catch(e){}
   const totKl=st.reduce((a,u)=>a+u.kl,0),totN=st.reduce((a,u)=>a+u.n,0);
   const totND=st.reduce((a,u)=>a+u.nd,0),avgTpd=totND?totKl/totND:0,topU=[...st].sort((a,b)=>b.kl-a.kl)[0];document.getElementById('qcKpis').innerHTML=kpi('',st.length,'QC viên','hoạt động')+kpi('b',fm1(totKl),'Tổng đã NT (t)','')+kpi('a',fm1(avgTpd),'T/ngày TB','năng suất chung')+kpi('g',topU?topU.q:'—','QC dẫn đầu',topU?fm1(topU.kl)+' t':'');
   const qs=[...st].sort((a,b)=>b.kl-a.kl).slice(0,15).sort((a,b)=>a.kl-b.kl);
