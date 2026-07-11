@@ -937,7 +937,7 @@ function _covData(all){
     o.sx+=t; if(r[3]&&!isReject(r))o.nt+=t;
   });
   var ks=Object.keys(G).sort();
-  if(!all){ if(_covMode==='d')ks=ks.slice(-30); else if(_covMode==='w')ks=ks.slice(-16); }
+  if(!all){ if(_covMode==='d')ks=ks.slice(-7); else if(_covMode==='w')ks=ks.slice(-8); }
   return {ks:ks,G:G};
 }
 function setCov(m){_covMode=m;['d','w','m'].forEach(function(k){var b=document.getElementById('cv'+k.toUpperCase());if(b)b.classList.toggle('on',k===m);});try{renderCov();}catch(e){}}
@@ -948,10 +948,10 @@ function renderCov(){
   var fpyOf=function(q){var dn=q?(q.a+q.j):0;return dn>0?+(((q.a-q.e)/dn)*100).toFixed(1):null;};
   if(typeof echarts!=='undefined')setOpt('cCov',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){var k=ks[ps[0].dataIndex],o=G[k];var p=o.sx>0?Math.round(o.nt/o.sx*100):null;return '<b>'+_covLbl(k)+'</b><br>SX: <b>'+fm1(o.sx)+' t</b><br>Đã NT: <b>'+fm1(o.nt)+' t</b>'+(p==null?'':'<br>Tỷ lệ: <b>'+p+'%</b>')+'<br>Chưa NT: '+fm1(Math.max(0,o.sx-o.nt))+' t'+(function(){var fv=fpyOf(FQ[k]);return fv==null?'':'<br>FPY: <b style="color:#16A34A">'+String(fv).replace('.',',')+'%</b>';})();}},
     legend:{top:0,itemWidth:11,itemHeight:11},grid:{left:8,right:44,top:28,bottom:6,containLabel:true},
-    xAxis:{type:'category',data:ks.map(_covLbl),axisLabel:{fontSize:10,fontWeight:700,rotate:_covMode==='d'?38:0}},
+    xAxis:{type:'category',data:ks.map(_covLbl),axisLabel:{fontSize:11,fontWeight:800}},
     yAxis:[{type:'value',name:'tấn'},{type:'value',min:0,max:130,axisLabel:{formatter:function(v){return v>100?'':v+'%';}},splitLine:{show:false}}],
     series:[{name:'SX gia công',type:'bar',barMaxWidth:26,itemStyle:{color:'#7FA8E0',shadowColor:'rgba(37,99,235,.5)',shadowBlur:16,shadowOffsetY:7,borderRadius:[3,3,0,0]},data:ks.map(function(k){return +G[k].sx.toFixed(1);})},
-      {name:'Đã nghiệm thu',type:'bar',barMaxWidth:26,itemStyle:{color:grad('#3B82F6','#1E40AF'),borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontSize:9,fontWeight:800,color:'#3F4A55',rotate:_covMode==='d'?90:0,distance:_covMode==='d'?8:4,formatter:function(p){var o=G[ks[p.dataIndex]];return o.sx>0?Math.round(o.nt/o.sx*100)+'%':'';}},data:ks.map(function(k){return +G[k].nt.toFixed(1);})},
+      {name:'Đã nghiệm thu',type:'bar',barMaxWidth:26,itemStyle:{color:grad('#3B82F6','#1E40AF'),borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontSize:9,fontWeight:800,color:'#3F4A55',rotate:0,distance:4,formatter:function(p){var o=G[ks[p.dataIndex]];return o.sx>0?Math.round(o.nt/o.sx*100)+'%':'';}},data:ks.map(function(k){return +G[k].nt.toFixed(1);})},
       {name:'Tỷ lệ %',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:4,lineStyle:{color:'#E11D48',width:3,shadowColor:'rgba(225,29,72,.5)',shadowBlur:14,shadowOffsetY:5},itemStyle:{color:'#E11D48',borderColor:'#fff',borderWidth:1.5},areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(225,29,72,.15)'},{offset:1,color:'rgba(225,29,72,0)'}]}},label:{show:false},markLine:{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#b4690e',width:1.4},data:[{yAxis:95,label:{formatter:'mục tiêu 95%',color:'#b4690e',fontWeight:700,fontSize:9}}]},data:ks.map(function(k){var o=G[k];return o.sx>0?+(o.nt/o.sx*100).toFixed(1):null;})},
       {name:'FPY %',type:'line',yAxisIndex:1,smooth:true,symbol:'diamond',symbolSize:6,connectNulls:true,lineStyle:{color:'#16A34A',width:3,shadowColor:'rgba(22,163,74,.45)',shadowBlur:14,shadowOffsetY:5},itemStyle:{color:'#16A34A'},markLine:{silent:true,symbol:'none',lineStyle:{type:'dotted',color:'#16A34A',width:1.2},data:[{yAxis:98,label:{formatter:'FPY 98%',color:'#16A34A',fontWeight:700,fontSize:9,position:'insideEndBottom'}}]},data:ks.map(function(k){return fpyOf(FQ[k]);})},
       {name:'Tỷ lệ %',type:'effectScatter',yAxisIndex:1,symbolSize:8,rippleEffect:{scale:3.4,brushType:'stroke',period:3},itemStyle:{color:'#E11D48'},tooltip:{show:false},z:7,data:(function(){for(var i=ks.length-1;i>=0;i--){var o=G[ks[i]];if(o&&o.sx>0)return [[i,+(o.nt/o.sx*100).toFixed(1)]];}return [];})()},
