@@ -1,0 +1,12 @@
+THU MUC NAY DE CAP NHAT DU LIEU QUA TRINH DUYET (may khong can Python/Git)
+
+Cach lam:
+1. Vao github.com, dang nhap tai khoan themy1809-del
+2. Mo repo bao-cao-qc-an-ha -> vao thu muc "Update spm"
+3. Bam "Add file" -> "Upload files" -> keo file spm.xlsx vao (dung ten spm.xlsx)
+4. Bam "Commit changes"
+5. May chu GitHub tu chay (~2 phut, xem tab Actions) -> qcdata.js moi -> dashboard tu cap nhat
+6. Mo dashboard, Ctrl+F5 kiem tra o "Nghiem thu moi nhat"
+
+Luu y: file spm.xlsx phai xuat DUNG MAU PIVOT (xem HUONG_DAN_VAN_HANH.md muc 4A).
+Xuat sai mau -> Actions bao loi do, du lieu cu giu nguyen, khong hong gi.

@@ -520,6 +520,10 @@ body.tvmode #tvBar{display:block}
 
     <div id="clWarn" style="display:none"></div>
     <div class="r2">
+      <div class="card"><h3>Pareto mã lỗi — quy tắc 80/20</h3><div class="q">Cột = tấn theo mã lỗi (nặng nhất trước) · đường = % cộng dồn · xử lý nhóm bên trái là hết phần lớn lỗi</div><div id="cErrPar" class="ch"></div></div>
+      <div class="card"><h3>Lỗi mã theo xưởng</h3><div class="q">Cột chồng theo nhóm lỗi · bấm cột để lọc xưởng</div><div id="cErrX" class="ch"></div></div>
+    </div>
+    <div class="r2">
       <div class="card"><h3>Xu hướng tỷ lệ rớt theo tháng</h3><div class="q">Cột = tấn rớt · đường = % rớt</div><div id="cRejTrend" class="ch"></div></div>
       <div class="card"><h3>Tỷ lệ rớt theo xưởng</h3><div class="q">Bấm cột để lọc xưởng</div><div id="cRejX" class="ch"></div></div>
     </div>
@@ -1492,6 +1496,26 @@ function rCL(){
     kpi(fpyV==null?'a':(fpyV>=98?'g':'b'),fpyV==null?'—':pf(fpyV)+'%','FPY','(đạt − lỗi mã) ÷ đã kiểm · mốc 98%')+
     kpi(eT>0.05?'b':'g',fm1(eT),'Lỗi mã trong SPM (t)',errs.length+' món ghi mã lỗi')+
     kpi('p',nQc,'QC có lượt rớt','số QC viên ghi nhận rớt');
+  (function(){
+    var CDM={};errs.forEach(function(r){var c=errCode(r)||'KHÁC';var o=CDM[c]=CDM[c]||{t:0,n:0};o.t+=tw(r);o.n++;});
+    var cks=Object.keys(CDM).sort(function(a,b){return CDM[b].t-CDM[a].t;}).slice(0,12);
+    var totE=0;cks.forEach(function(c){totE+=CDM[c].t;});
+    var cum=0,cumD=cks.map(function(c){cum+=CDM[c].t;return totE?+(cum/totE*100).toFixed(1):0;});
+    if(typeof echarts!=='undefined')setOpt('cErrPar',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){var c=cks[ps[0].dataIndex],o=CDM[c];return '<b>'+c+(errName(c)?' · '+errName(c):'')+'</b><br>'+fm1(o.t)+' t · '+o.n+' món<br>Cộng dồn: <b>'+cumD[ps[0].dataIndex]+'%</b>';}},
+      grid:{left:8,right:44,top:26,bottom:6,containLabel:true},
+      xAxis:{type:'category',data:cks,axisLabel:{fontWeight:700,fontSize:10.5,rotate:cks.length>7?28:0}},
+      yAxis:[{type:'value',name:'tấn'},{type:'value',max:100,axisLabel:{formatter:'{value}%'},splitLine:{show:false}}],
+      series:[{name:'Tấn lỗi',type:'bar',barMaxWidth:30,itemStyle:{color:grad('#DC2626','#7F1D1D'),borderRadius:[4,4,0,0]},label:{show:true,position:'top',fontWeight:800,fontSize:10,formatter:function(p){return fm1(p.value);}},data:cks.map(function(c){return +CDM[c].t.toFixed(1);})},
+        {name:'% cộng dồn',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:5,lineStyle:{color:'#b4690e',width:2.2},itemStyle:{color:'#b4690e'},label:{show:cks.length<=10,position:'top',fontSize:9,fontWeight:700,color:'#b4690e',formatter:function(p){return p.value+'%';}},data:cumD}]});
+    var GX={},GRPS={};errs.forEach(function(r){var x=D.X[r[1]];var g=errName(errCode(r))||'Khác';GRPS[g]=1;var o=GX[x]=GX[x]||{};o[g]=(o[g]||0)+tw(r);});
+    var xs2=Object.keys(GX).sort();var gl=Object.keys(GRPS).sort();
+    var GC={'Kích thước':'#2563EB','Hàn':'#F59E0B','Sơn':'#16A34A','Vật liệu':'#7C3AED','Sơ chế':'#0EA5E9','Ráp thô':'#EC4899','Vệ sinh–mài chà':'#8B5CF6','Bắn bi':'#64748B','Đóng gói':'#A16207','Bản vẽ':'#DC2626','Khác':'#9CA3AF'};
+    if(typeof echarts!=='undefined')setOpt('cErrX',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'}},legend:{top:0,itemWidth:11,itemHeight:11},
+      grid:{left:8,right:14,top:28,bottom:6,containLabel:true},
+      xAxis:{type:'category',data:xs2,axisLabel:{fontWeight:800,fontSize:12}},
+      yAxis:{type:'value',name:'tấn'},
+      series:gl.map(function(g){return {name:g,type:'bar',stack:'e',barMaxWidth:36,itemStyle:{color:GC[g]||'#9CA3AF'},data:xs2.map(function(x){return +(GX[x][g]||0).toFixed(1);})};})},function(p){if(p&&p.name)tog('x',p.name);});
+  })();
   const M={};
   for(const r of acc){const d=dateOf(r);if(!d)continue;const k=d.slice(0,7);(M[k]=M[k]||{a:0,j:0}).a+=tw(r);}
   for(const r of rej){const d=dateOf(r);if(!d)continue;const k=d.slice(0,7);(M[k]=M[k]||{a:0,j:0}).j+=tw(r);}

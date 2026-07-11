@@ -1,0 +1,41 @@
+name: Cap nhat du lieu QC tu spm.xlsx
+# Tu dong chay khi co file moi trong thu muc "Update spm" (upload qua trinh duyet github.com)
+on:
+  push:
+    paths:
+      - "Update spm/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: capnhat
+  cancel-in-progress: false
+
+jobs:
+  capnhat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cai thu vien
+        run: pip install openpyxl
+
+      - name: Chay script tao qcdata.js
+        run: |
+          mkdir -p _out
+          python spm_flatten.py "Update spm/spm.xlsx" _out
+          cp _out/qcdata.js qcdata.js
+
+      - name: Day ket qua len repo
+        run: |
+          git config user.name "auto-capnhat"
+          git config user.email "actions@users.noreply.github.com"
+          git add qcdata.js
+          git commit -m "Cap nhat qcdata.js tu spm.xlsx (upload web)" || echo "Khong co thay doi"
+          git push
