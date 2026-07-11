@@ -340,9 +340,12 @@ body.tvmode #tvBar{display:block}
 #hdrStick{position:sticky;top:0;z-index:80;background:var(--bg);padding:6px 0 6px;margin:-8px 0 0;box-shadow:0 8px 16px -12px rgba(16,24,40,.35)}
 #hdrStick .top{margin-bottom:8px}
 body.tvmode #hdrStick{position:static;box-shadow:none}
+/* ==== GHIM CARD KPI v47 ==== */
+.view>.kpis{position:sticky;top:var(--hdrH,84px);z-index:60;background:var(--bg);padding:6px 0 8px}
+body.tvmode .view>.kpis{position:static}
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 10/7 v45 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 10/7 v48 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="ncr_data.js"></script>
@@ -560,12 +563,13 @@ body.tvmode #hdrStick{position:static;box-shadow:none}
     <div class="kpis" id="kpKpis"></div>
     <div class="card"><h3>Xu hướng theo tháng — sản lượng &amp; FPY</h3><div class="q">Cột = tấn NT mỗi tháng · đường = FPY% · bảng dưới so tháng gần nhất với tháng trước · toàn bộ dữ liệu, không theo bộ lọc</div><div id="cTrendM" class="ch"></div><div class="tw" id="tTrendM" style="margin-top:6px"></div></div>
     <div class="card"><h3>Tỷ lệ nghiệm thu QC so với sản xuất — ngày · tuần · tháng</h3>
-      <div class="q">Mẫu số = tấn SX theo NGÀY GIA CÔNG trong kỳ · tử số = phần trong đó ĐÃ được QC accept (bất kể nghiệm thu ngày nào) · không vượt 100%, đối soát được từng dòng SPM · kỳ gần nhất thấp là bình thường (hàng chưa kịp NT)</div>
+      <div class="q">Mẫu số = tấn SX theo NGÀY GIA CÔNG trong kỳ · tử số = phần trong đó ĐÃ được QC accept (bất kể nghiệm thu ngày nào) · không vượt 100%, đối soát được từng dòng SPM · <b>bấm cột biểu đồ hoặc hàng bảng để lọc toàn dashboard theo kỳ đó</b> · kỳ gần nhất thấp là bình thường</div>
       <div style="display:flex;gap:6px;margin:6px 0;flex-wrap:wrap"><button class="qf on" id="cvD" onclick="setCov('d')">Ngày</button><button class="qf" id="cvW" onclick="setCov('w')">Tuần</button><button class="qf" id="cvM" onclick="setCov('m')">Tháng</button><button class="qf" style="margin-left:auto" onclick="covCSV()">⬇ Tải CSV (toàn bộ kỳ)</button></div>
       <div id="cCov" class="ch"></div>
-      <div class="tw" style="max-height:320px;margin-top:6px" id="tCov"></div>
-      <div class="cg-lbl" style="margin:12px 0 2px">Theo xưởng — cùng phương pháp, toàn kỳ dữ liệu đang lọc</div>
-      <div id="cCovX" class="ch short"></div></div>
+      <div class="r2" style="gap:18px;align-items:start;margin-top:8px">
+        <div><div class="cg-lbl" style="margin:0 0 4px">Bảng theo kỳ — mới nhất trước</div><div class="tw" style="max-height:340px" id="tCov"></div></div>
+        <div><div class="cg-lbl" style="margin:0 0 4px">Theo xưởng — cùng phương pháp, toàn kỳ đang lọc</div><div id="cCovX" class="ch" style="height:330px"></div></div>
+      </div></div>
     <div class="r2">
       <div class="card"><h3>Sản lượng — QC nghiệm thu so với SX (mục tiêu ≥ 95%)</h3><div class="q">Đậm = NT · nhạt = SX cùng kỳ · % = SX đã NT · vạch cam = mục tiêu 95%</div><div id="cKp31" class="ch"></div></div>
       <div class="card"><h3>Chất lượng — FPY công đoạn chính (mục tiêu ≥ 98%)</h3><div class="q">FPY = đạt ngay lần đầu ÷ đã kiểm (theo tấn) · vạch cam = 98%</div><div id="cKp32" class="ch"></div></div>
@@ -953,7 +957,7 @@ function renderQcRoster(){
    +(extra.length?'<div class="cg-lbl" style="margin:8px 0 3px">Có hoạt động nhưng NGOÀI danh sách mail</div><div style="display:flex;flex-wrap:wrap;gap:3px">'+extra.map(function(q){return '<span class="tag">'+q+'</span>';}).join('')+'</div>':'')
    +'<div class="muted" style="margin-top:6px">Nguồn danh sách: roster mail hằng ngày (biến QC_ROSTER) · đã gộp tài khoản trùng: hieunv2→hieunv, hieupt1→hieu.pt · hoanx ghi Final DIM qua memo nên không có dòng QCUser</div>';
 }
-(function(){try{var t=document.querySelector('.main>.top'),f=document.getElementById('fbar');if(!t)return;var w=document.createElement('div');w.id='hdrStick';t.parentNode.insertBefore(w,t);w.appendChild(t);if(f)w.appendChild(f);}catch(e){}})();
+(function(){try{var t=document.querySelector('.main>.top'),f=document.getElementById('fbar');if(!t)return;var w=document.createElement('div');w.id='hdrStick';t.parentNode.insertBefore(w,t);w.appendChild(t);if(f)w.appendChild(f);var upd=function(){document.documentElement.style.setProperty('--hdrH',(w.offsetHeight+4)+'px');};upd();window.addEventListener('resize',upd);if(window.ResizeObserver){new ResizeObserver(upd).observe(w);}}catch(e){}})();
 var KPI_QC_DAY=15; /* MOC KPI NGAY: SLQD (tan quy doi)/ngay — sua theo dinh muc */
 var KPI_BETA=0.02;  /* he so pcs trong SLQD = K x XK x (tan + beta x pcs) */
 var KPI_XK=1.1;     /* he so du an xuat khau */
@@ -1024,6 +1028,15 @@ function _qcKpiPick(i){
    +'</div>';
   dv.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+function covPick(k,mode){
+  mode=mode||_covMode;
+  try{
+    if(mode==='d'){DR={from:k,to:k};}
+    else if(mode==='m'){var y=+k.slice(0,4),m=+k.slice(5,7);var e=new Date(y,m,0).getDate();DR={from:k+'-01',to:k+'-'+('0'+e).slice(-2)};}
+    else{var y2=+k.slice(0,4),w=+k.slice(6);var d0=new Date(Date.UTC(y2,0,4));var dn=(d0.getUTCDay()+6)%7;var mon=new Date(Date.UTC(y2,0,4-dn+(w-1)*7));var sun=new Date(mon.getTime()+6*864e5);var iso=function(d){return d.toISOString().slice(0,10);};DR={from:iso(mon),to:iso(sun)};}
+    setupDR();qrMark();renderAll();
+  }catch(e){}
+}
 var _covMode='d';
 function _wkKey(d){var dt=new Date(d);var t=new Date(Date.UTC(dt.getFullYear(),dt.getMonth(),dt.getDate()));var dn=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-dn+3);var y=t.getUTCFullYear();var w1=new Date(Date.UTC(y,0,4));var w=1+Math.round(((t-w1)/864e5-3+((w1.getUTCDay()+6)%7))/7);return y+'-T'+('0'+w).slice(-2);}
 function _covLbl(k){return _covMode==='d'?dayVN(k):(_covMode==='m'?moVN(k):('T.'+k.slice(6)+'/'+k.slice(2,4)));}
@@ -1055,9 +1068,9 @@ function renderCov(){
       {name:'Tỷ lệ %',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:4,lineStyle:{color:'#C00000',width:2.2},itemStyle:{color:'#C00000'},label:{show:false},markLine:{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#b4690e',width:1.4},data:[{yAxis:95,label:{formatter:'mục tiêu 95%',color:'#b4690e',fontWeight:700,fontSize:9}}]},data:ks.map(function(k){var o=G[k];return o.sx>0?+(o.nt/o.sx*100).toFixed(1):null;})},
       {name:'FPY %',type:'line',yAxisIndex:1,smooth:true,symbol:'diamond',symbolSize:6,connectNulls:true,lineStyle:{color:'#548235',width:2.2},itemStyle:{color:'#548235'},markLine:{silent:true,symbol:'none',lineStyle:{type:'dotted',color:'#548235',width:1.2},data:[{yAxis:98,label:{formatter:'FPY 98%',color:'#548235',fontWeight:700,fontSize:9,position:'insideEndBottom'}}]},data:ks.map(function(k){return fpyOf(FQ[k]);})},
       {name:'Tỷ lệ %',type:'effectScatter',yAxisIndex:1,symbolSize:8,rippleEffect:{scale:2.2,brushType:'stroke',period:3},itemStyle:{color:'#C00000'},tooltip:{show:false},z:7,data:(function(){for(var i=ks.length-1;i>=0;i--){var o=G[ks[i]];if(o&&o.sx>0)return [[i,+(o.nt/o.sx*100).toFixed(1)]];}return [];})()},
-      {name:'FPY %',type:'effectScatter',yAxisIndex:1,symbolSize:8,rippleEffect:{scale:2.2,brushType:'stroke',period:3},itemStyle:{color:'#548235'},tooltip:{show:false},z:7,data:(function(){for(var i=ks.length-1;i>=0;i--){var fv=fpyOf(FQ[ks[i]]);if(fv!=null)return [[i,fv]];}return [];})()}]});
+      {name:'FPY %',type:'effectScatter',yAxisIndex:1,symbolSize:8,rippleEffect:{scale:2.2,brushType:'stroke',period:3},itemStyle:{color:'#548235'},tooltip:{show:false},z:7,data:(function(){for(var i=ks.length-1;i>=0;i--){var fv=fpyOf(FQ[ks[i]]);if(fv!=null)return [[i,fv]];}return [];})()}]},function(p){if(p&&p.dataIndex!=null&&ks[p.dataIndex])covPick(ks[p.dataIndex]);});
   var rev=ks.slice().reverse();
-  el.innerHTML='<table><thead><tr><th>Kỳ</th><th class="n">SX (t)</th><th class="n">Đã NT (t)</th><th class="n">Tỷ lệ</th><th class="n">Chưa NT (t)</th></tr></thead><tbody>'+rev.map(function(k){var o=G[k];var p=o.sx>0?o.nt/o.sx*100:null;var c=p==null?'':(p>=95?'var(--good)':(p>=70?'var(--warn)':'var(--bad)'));return '<tr><td><b>'+_covLbl(k)+'</b></td><td class="n">'+fm1(o.sx)+'</td><td class="n"><b>'+fm1(o.nt)+'</b></td><td class="n"><b style="color:'+c+'">'+(p==null?'—':p.toFixed(1).replace('.',',')+'%')+'</b></td><td class="n" style="color:var(--warn)">'+fm1(Math.max(0,o.sx-o.nt))+'</td></tr>';}).join('')+'</tbody></table>';
+  el.innerHTML='<table><thead><tr><th>Kỳ</th><th class="n">SX (t)</th><th class="n">Đã NT (t)</th><th class="n">Tỷ lệ</th><th class="n">Chưa NT (t)</th></tr></thead><tbody>'+rev.map(function(k){var o=G[k];var p=o.sx>0?o.nt/o.sx*100:null;var c=p==null?'':(p>=95?'var(--good)':(p>=70?'var(--warn)':'var(--bad)'));return '<tr class="clickable" title="Bấm để lọc toàn dashboard theo kỳ này" onclick="covPick(&quot;'+k+'&quot;)"><td><b>'+_covLbl(k)+'</b></td><td class="n">'+fm1(o.sx)+'</td><td class="n"><b>'+fm1(o.nt)+'</b></td><td class="n"><b style="color:'+c+'">'+(p==null?'—':p.toFixed(1).replace('.',',')+'%')+'</b></td><td class="n" style="color:var(--warn)">'+fm1(Math.max(0,o.sx-o.nt))+'</td></tr>';}).join('')+'</tbody></table>';
   var XG=_covX();var xk=Object.keys(XG).sort();
   var XFQ={};Fnodate().forEach(function(r){if(!r[3])return;var x=D.X[r[1]];var t=r[7]+r[8]+r[9];var o=XFQ[x]=XFQ[x]||{a:0,j:0,e:0};if(isReject(r))o.j+=t;else if(isAcc(r)){o.a+=t;if(isErr(r))o.e+=t;}});
   if(typeof echarts!=='undefined')setOpt('cCovX',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){var x=xk[ps[0].dataIndex],o=XG[x];var p=o.sx>0?Math.round(o.nt/o.sx*100):null;return '<b>'+x+'</b><br>SX: <b>'+fm1(o.sx)+' t</b><br>Đã NT: <b>'+fm1(o.nt)+' t</b>'+(p==null?'':'<br>Tỷ lệ: <b>'+p+'%</b>')+'<br>Chưa NT: '+fm1(Math.max(0,o.sx-o.nt))+' t'+(function(){var fv=fpyOf(XFQ[x]);return fv==null?'':'<br>FPY: <b style="color:#548235">'+String(fv).replace('.',',')+'%</b>';})();}},
@@ -2097,7 +2110,7 @@ function rKP(){
       xAxis:{type:'category',data:ks.map(moVN),axisLabel:{fontWeight:700}},
       yAxis:[{type:'value',name:'tấn'},{type:'value',min:80,max:100,axisLabel:{formatter:'{value}%'},splitLine:{show:false}}],
       series:[{name:'Sản lượng NT',type:'bar',barMaxWidth:34,itemStyle:{color:'#43A047',borderRadius:[4,4,0,0]},label:{show:true,position:'top',fontWeight:800,fontSize:10,formatter:function(p){return fm1(p.value);}},data:ks.map(function(k){return +M[k].nt.toFixed(1);})},
-        {name:'FPY %',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:6,lineStyle:{width:2.4,color:'#B45309'},itemStyle:{color:'#B45309'},label:{show:true,position:'top',fontSize:9.5,fontWeight:700,color:'#B45309',formatter:function(p){return p.value==null?'':p.value+'%';}},data:fp}]});
+        {name:'FPY %',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:6,lineStyle:{width:2.4,color:'#B45309'},itemStyle:{color:'#B45309'},label:{show:true,position:'top',fontSize:9.5,fontWeight:700,color:'#B45309',formatter:function(p){return p.value==null?'':p.value+'%';}},data:fp}]},function(p){if(p&&p.dataIndex!=null&&ks[p.dataIndex])covPick(ks[p.dataIndex],'m');});
     var el=document.getElementById('tTrendM');
     if(el&&ks.length>=2){
       var a=ks[ks.length-1],b=ks[ks.length-2],A=M[a],B=M[b];
