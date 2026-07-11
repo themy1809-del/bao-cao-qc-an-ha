@@ -336,9 +336,13 @@ body.tvmode #tvBar{display:block}
   #tqBrief div{font-size:12px}
   .top h2{font-size:15px}
 }
+/* ==== GHIM DAU TRANG v45 ==== */
+#hdrStick{position:sticky;top:0;z-index:80;background:var(--bg);padding:6px 0 6px;margin:-8px 0 0;box-shadow:0 8px 16px -12px rgba(16,24,40,.35)}
+#hdrStick .top{margin-bottom:8px}
+body.tvmode #hdrStick{position:static;box-shadow:none}
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 10/7 v40 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 10/7 v45 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="ncr_data.js"></script>
@@ -460,6 +464,10 @@ body.tvmode #tvBar{display:block}
     <div class="card" style="border-left:4px solid #B45309"><h3>Bảng chấm điểm KPI QC viên — thước đo ngày &amp; tổng KPI</h3>
       <div class="q">TỔNG 100 = Sản lượng 40 (<b>tấn/ngày</b> so mốc <b id="kpiDayLbl"></b> t/ngày — khớp số báo cáo hằng ngày; SLQĐ = K × XK × (tấn + β·pcs) dùng xếp hạng công bằng) + Phát hiện lỗi 30 ((lỗi mã + rớt) ÷ KL kiểm, mốc 2% — <b>phát hiện càng nhiều điểm càng cao, 0% = ⚠ sạch bất thường</b>) + Kỷ luật 15 (độ đều) + Trách nhiệm 15 (dự án khó + Final DIM) · theo kỳ đang lọc · <b>bấm dòng để bóc tách tiêu chí từng QC</b></div>
       <div class="tw" style="max-height:520px"><table id="tQcKpi"></table></div><div id="qcKpiDet"></div></div>
+    <div class="card" style="border-left:4px solid var(--bad)"><h3>Đối soát quân số QC — danh sách mail vs hoạt động thực tế</h3>
+      <div class="q">Theo kỳ đang lọc · thẻ đỏ = có tên trong danh sách nhưng KHÔNG có dòng nghiệm thu (thiếu quân / không nhập SPM) · bấm thẻ xanh để lọc</div>
+      <div id="qcRoster"></div></div>
+
 
     <div class="card"><h3>Khối lượng nghiệm thu theo QC</h3><div class="q">Top 15 · màu theo công đoạn chính · bấm thanh để xem hồ sơ</div><div id="cQc" class="ch tall"></div></div>
     <div class="card"><h3>Bảng năng suất QC — đánh giá</h3><div class="q">Bấm một QC để xem hồ sơ theo tuần & tháng</div><div class="tw" style="max-height:460px"><table id="tQc"></table></div></div>
@@ -928,6 +936,24 @@ function _qlRenderSP(tab,elId){
       return '<tr><td><b>'+it.z+'</b></td><td><b>'+it.t+'</b></td><td>'+it.sp+'</td><td class="n">'+(it.kl?Math.round(it.kl).toLocaleString('vi-VN'):'—')+'</td><td class="n">'+(it.sl||'—')+'</td><td class="n"><b>'+(it.done||0)+'</b></td><td class="n">'+(p==null?'—':'<b style="color:'+c+'">'+p+'%</b>')+'</td><td>'+fd2(it.last)+'</td></tr>';}).join('')+'</tbody></table></div>';
   el.innerHTML='<div style="margin-top:10px;border-top:1px dashed var(--line);padding-top:8px"><div class="cg-lbl" style="margin-bottom:4px">Phân rõ sản phẩm — tab '+tab+' · '+items.length+' dòng · %HT = đã gia công ÷ SL cấu kiện</div><div style="display:flex;flex-wrap:wrap;gap:2px">'+chips+'</div>'+tbl+'</div>';
 }
+var QC_ROSTER=['anhtp','cuongtk','diendq','diepbv','duongtv','haont','hieu.pt','hieunv','hoanx','khangnd','kiennv','linhhtt','linhnnt','loith','phattnd','phattx','phongvd','phuongntb','quangnpd','quankh','quantrinh','quoclv','sangvh','thaitq','thaonm','thinhpt1','thonhv','tientm','tinhnn','tinthn','trangntm','trinhnv','tronglv','trontv','trunglb','truongba','tuandh','tuanhn','tuanna1','tungnx','tuonghn','tuyennt','vupt']; /* tu roster mail — sua tai day khi doi quan so; quan ly (mydt,thangnh,quyetpd,tuan.nm) khong tinh */
+function renderQcRoster(){
+  var el=document.getElementById('qcRoster');if(!el)return;
+  var AL={'hieunv2':'hieunv','hieupt1':'hieu.pt'};
+  var rows=F();
+  var act={};rows.forEach(function(r){if(!isAcc(r))return;var q=(D.Q[r[5]]||'').toLowerCase();if(!q||q==='—')return;q=AL[q]||q;act[q]=(act[q]||0)+r[7]+r[8]+r[9];});
+  var lastAll={};D.rows.forEach(function(r){var q=(D.Q[r[5]]||'').toLowerCase();if(!q||q==='—'||!r[3])return;q=AL[q]||q;if(!lastAll[q]||r[3]>lastAll[q])lastAll[q]=r[3];});
+  var on=[],off=[];QC_ROSTER.forEach(function(q){ if(act[q]!=null)on.push({q:q,t:act[q]}); else off.push({q:q,last:lastAll[q]||''}); });
+  var extra=Object.keys(act).filter(function(q){return QC_ROSTER.indexOf(q)<0;});
+  on.sort(function(a,b){return b.t-a.t;});
+  off.sort(function(a,b){return (b.last||'').localeCompare(a.last||'');});
+  el.innerHTML='<div style="font-size:12.5px;margin-bottom:6px">Danh sách: <b>'+QC_ROSTER.length+'</b> · hoạt động trong kỳ: <b style="color:var(--good)">'+on.length+'</b> · KHÔNG hoạt động: <b style="color:var(--bad)">'+off.length+'</b>'+(extra.length?' · ngoài danh sách: <b>'+extra.length+'</b>':'')+'</div>'
+   +(off.length?'<div class="cg-lbl" style="margin:6px 0 3px;color:var(--bad)">Trong danh sách nhưng KHÔNG có nghiệm thu trong kỳ lọc ('+off.length+')</div><div style="display:flex;flex-wrap:wrap;gap:3px">'+off.map(function(o){return '<span class="tag r" title="'+(o.last?('Hoạt động gần nhất: '+o.last):'Chưa từng có dòng NT nào trong SPM')+'">'+o.q+' · '+(o.last?('gần nhất '+o.last.slice(5,7)+'/'+o.last.slice(2,4)):'chưa từng')+'</span>';}).join('')+'</div>':'')
+   +'<div class="cg-lbl" style="margin:8px 0 3px;color:var(--good)">Đang hoạt động ('+on.length+') — bấm để lọc</div><div style="display:flex;flex-wrap:wrap;gap:3px">'+on.map(function(o){return '<span class="tag g" style="cursor:pointer" onclick="tog(&quot;q&quot;,&quot;'+o.q+'&quot;)">'+o.q+' · '+fm1(o.t)+' t</span>';}).join('')+'</div>'
+   +(extra.length?'<div class="cg-lbl" style="margin:8px 0 3px">Có hoạt động nhưng NGOÀI danh sách mail</div><div style="display:flex;flex-wrap:wrap;gap:3px">'+extra.map(function(q){return '<span class="tag">'+q+'</span>';}).join('')+'</div>':'')
+   +'<div class="muted" style="margin-top:6px">Nguồn danh sách: roster mail hằng ngày (biến QC_ROSTER) · đã gộp tài khoản trùng: hieunv2→hieunv, hieupt1→hieu.pt · hoanx ghi Final DIM qua memo nên không có dòng QCUser</div>';
+}
+(function(){try{var t=document.querySelector('.main>.top'),f=document.getElementById('fbar');if(!t)return;var w=document.createElement('div');w.id='hdrStick';t.parentNode.insertBefore(w,t);w.appendChild(t);if(f)w.appendChild(f);}catch(e){}})();
 var KPI_QC_DAY=15; /* MOC KPI NGAY: SLQD (tan quy doi)/ngay — sua theo dinh muc */
 var KPI_BETA=0.02;  /* he so pcs trong SLQD = K x XK x (tan + beta x pcs) */
 var KPI_XK=1.1;     /* he so du an xuat khau */
@@ -1038,8 +1064,8 @@ function renderCov(){
     legend:{top:0,itemWidth:11,itemHeight:11},grid:{left:8,right:44,top:28,bottom:6,containLabel:true},
     xAxis:{type:'category',data:xk,axisLabel:{fontWeight:800,fontSize:12}},
     yAxis:[{type:'value',name:'tấn'},{type:'value',min:0,max:130,axisLabel:{formatter:function(v){return v>100?'':v+'%';}},splitLine:{show:false}}],
-    series:[{name:'SX gia công',type:'bar',barMaxWidth:34,barGap:'18%',itemStyle:{color:'#4A5468',borderRadius:[2,2,0,0]},data:xk.map(function(x){return +XG[x].sx.toFixed(1);})},
-      {name:'Đã nghiệm thu',type:'bar',barMaxWidth:34,barGap:'18%',itemStyle:{color:'#2C3B8A',borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontWeight:800,fontSize:11,color:'#3F4A55',formatter:function(p){var o=XG[xk[p.dataIndex]];return o.sx>0?Math.round(o.nt/o.sx*100)+'%':'';}},data:xk.map(function(x){return +XG[x].nt.toFixed(1);})},
+    series:[{name:'SX gia công',type:'bar',barMaxWidth:64,barGap:'12%',barCategoryGap:'32%',itemStyle:{color:'#93B5B3',borderRadius:[2,2,0,0]},data:xk.map(function(x){return +XG[x].sx.toFixed(1);})},
+      {name:'Đã nghiệm thu',type:'bar',barMaxWidth:64,barGap:'12%',barCategoryGap:'32%',itemStyle:{color:'#116466',borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontWeight:800,fontSize:11,color:'#3F4A55',formatter:function(p){var o=XG[xk[p.dataIndex]];return o.sx>0?Math.round(o.nt/o.sx*100)+'%':'';}},data:xk.map(function(x){return +XG[x].nt.toFixed(1);})},
       {name:'Tỷ lệ %',type:'line',yAxisIndex:1,symbol:'circle',symbolSize:5,lineStyle:{color:'#C00000',width:2.2},itemStyle:{color:'#C00000'},markLine:{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#b4690e',width:1.4},data:[{yAxis:95,label:{formatter:'95%',color:'#b4690e',fontWeight:700,fontSize:9}}]},data:xk.map(function(x){var o=XG[x];return o.sx>0?+(o.nt/o.sx*100).toFixed(1):null;})},
       {name:'FPY %',type:'line',yAxisIndex:1,symbol:'diamond',symbolSize:7,connectNulls:true,lineStyle:{color:'#548235',width:2.2},itemStyle:{color:'#548235'},label:{show:true,position:'bottom',fontSize:9.5,fontWeight:800,color:'#548235',formatter:function(p){return p.value==null?'':String(p.value).replace('.',',')+'%';}},data:xk.map(function(x){return fpyOf(XFQ[x]);})}]},function(p){if(p&&p.name&&/^AH/.test(p.name))tog('x',p.name);});
 }
@@ -1383,6 +1409,7 @@ function renderFinalDim(){
 }
 function rQC(){
   try{renderQcKpi();}catch(e){}
+  try{renderQcRoster();}catch(e){}
   try{renderFinalDim();}catch(e){}
   const rows=F(),rowsAll=Fnodate(),st=qcStats(rows);
   if(!st.length){const m='<div class="it" style="border-left:3px solid var(--warn);padding:10px 12px;background:var(--rowH);border-radius:10px">Lưu ý: file SPM hiện <b>không có cột Người kiểm (QCUser)</b> — không tách được theo QC viên.</div>';document.getElementById('qcKpis').innerHTML=kpi('a','0','QC viên','thiếu cột người kiểm');const e=document.getElementById('cQc');if(e)e.innerHTML='';document.getElementById('tQc').innerHTML='<tbody><tr><td>'+m+'</td></tr></tbody>';const mx=document.getElementById('tQcMx');if(mx)mx.innerHTML='';hideP('qcPanel');return;}
@@ -2069,8 +2096,8 @@ function rKP(){
     if(typeof echarts!=='undefined')setOpt('cTrendM',{tooltip:{trigger:'axis',confine:true},legend:{top:0,itemWidth:11,itemHeight:11},grid:{left:8,right:44,top:28,bottom:6,containLabel:true},
       xAxis:{type:'category',data:ks.map(moVN),axisLabel:{fontWeight:700}},
       yAxis:[{type:'value',name:'tấn'},{type:'value',min:80,max:100,axisLabel:{formatter:'{value}%'},splitLine:{show:false}}],
-      series:[{name:'Sản lượng NT',type:'bar',barMaxWidth:34,itemStyle:{color:'#2C3B8A',borderRadius:[4,4,0,0]},label:{show:true,position:'top',fontWeight:800,fontSize:10,formatter:function(p){return fm1(p.value);}},data:ks.map(function(k){return +M[k].nt.toFixed(1);})},
-        {name:'FPY %',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:6,lineStyle:{width:2.4,color:'#548235'},itemStyle:{color:'#548235'},label:{show:true,position:'top',fontSize:9.5,fontWeight:700,color:'#548235',formatter:function(p){return p.value==null?'':p.value+'%';}},data:fp}]});
+      series:[{name:'Sản lượng NT',type:'bar',barMaxWidth:34,itemStyle:{color:'#43A047',borderRadius:[4,4,0,0]},label:{show:true,position:'top',fontWeight:800,fontSize:10,formatter:function(p){return fm1(p.value);}},data:ks.map(function(k){return +M[k].nt.toFixed(1);})},
+        {name:'FPY %',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:6,lineStyle:{width:2.4,color:'#B45309'},itemStyle:{color:'#B45309'},label:{show:true,position:'top',fontSize:9.5,fontWeight:700,color:'#B45309',formatter:function(p){return p.value==null?'':p.value+'%';}},data:fp}]});
     var el=document.getElementById('tTrendM');
     if(el&&ks.length>=2){
       var a=ks[ks.length-1],b=ks[ks.length-2],A=M[a],B=M[b];
