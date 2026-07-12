@@ -1614,8 +1614,10 @@ function renderDay(){
   const tok=Object.entries(TO).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
   document.getElementById('ndByTo').innerHTML='<thead><tr><th>Tổ</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Final DIM</th><th class="n">Painting</th><th class="n">Tổng NT</th><th class="n">pcs</th><th class="n">SX (t)</th><th class="n">SX đã NT</th></tr></thead><tbody>'+
     tok.map(([k,o])=>'<tr class="clickable" onclick="tog(\'to\',\''+k+'\')"><td><b>'+k+'</b></td><td class="n">'+(o.f?fm1(o.f):_dz)+'</td><td class="n">'+(o.w?fm1(o.w):_dz)+'</td><td class="n" style="color:#0D9488">'+(o.fd?fm1(o.fd):_dz)+'</td><td class="n">'+(o.p?fm1(o.p):_dz)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td>'+_cmp(SXTOA[k]||0,SXTO[k]||0)+'</tr>').join('')+'</tbody>';
-  const Q={};for(const r of rows){const u=D.Q[r[5]];if(u==='—')continue;const o=Q[u]=Q[u]||{f:0,w:0,p:0,fd:0,q:0,n:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=r[10]+r[11]+r[12];o.n++;if(r[8]>0&&r[13]&&/acc/i.test(''+r[13]))o.fd+=r[8];}
-  const qk=Object.entries(Q).sort((a,b)=>(b[1].f+b[1].w+b[1].p)-(a[1].f+a[1].w+a[1].p));
+  const Q={};for(const r of rows){const u=D.Q[r[5]];if(u==='—')continue;const o=Q[u]=Q[u]||{f:0,w:0,p:0,fd:0,q:0,n:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=r[10]+r[11]+r[12];o.n++;}
+  /* Final DIM tinh cho NGUOI DUNG TEN trong memo (vd hoanx) — tu hien them dong neu chua co */
+  for(const r of rows){var _fn2=(typeof _fdName==='function')?_fdName(r):'';if(!_fn2)continue;const o=Q[_fn2]=Q[_fn2]||{f:0,w:0,p:0,fd:0,q:0,n:0};o.fd+=r[8];o.n++;}
+  const qk=Object.entries(Q).sort((a,b)=>(b[1].f+b[1].w+b[1].p+b[1].fd)-(a[1].f+a[1].w+a[1].p+a[1].fd));
   document.getElementById('ndByQ').innerHTML='<thead><tr><th>QC viên</th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Final DIM</th><th class="n">Painting</th><th class="n">Tổng</th><th class="n">pcs</th><th class="n">Lượt</th></tr></thead><tbody>'+
     qk.map(([u,o])=>'<tr class="clickable" onclick="tog(\'q\',\''+u+'\')"><td><b>'+u+'</b></td><td class="n">'+(o.f?fm1(o.f):_dz)+'</td><td class="n">'+(o.w?fm1(o.w):_dz)+'</td><td class="n" style="color:#0D9488">'+(o.fd?fm1(o.fd):_dz)+'</td><td class="n">'+(o.p?fm1(o.p):_dz)+'</td><td class="n"><b>'+fm1(o.f+o.w+o.p)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td><td class="n">'+o.n+'</td></tr>').join('')+'</tbody>';
   var _rj=Fnodate().filter(r=>isReject(r)&&dateOf(r)===d&&(!_dayX||D.X[r[1]]===_dayX)),_rjEl=document.getElementById('ndReject');
