@@ -345,7 +345,7 @@ body.tvmode #hdrStick{position:static;box-shadow:none}
 body.tvmode .view>.kpis{position:static}
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 10/7 v58 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 10/7 v59 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="ncr_data.js"></script>
@@ -2462,8 +2462,9 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
     el.innerHTML=hits.map(function(v){ return '<div class="acit" data-v="'+esc(v)+'" style="padding:5px 10px;cursor:pointer;border-bottom:1px solid #f1f1f1">'+esc(v)+'</div>'; }).join('');
     var r=inp.getBoundingClientRect(); el.style.left=(r.left+window.scrollX)+'px'; el.style.top=(r.bottom+window.scrollY+2)+'px'; el.style.minWidth=r.width+'px'; el.style.display='block'; }
   function acPick(v){ if(!acInput) return; var sep=acSep(acField), parts=acInput.value.split(sep);
-    parts[parts.length-1]=(parts.length>1?' ':'')+v; acInput.value=parts.join(sep)+sep+' '; acInput.focus(); acShow(acInput); }
-  document.addEventListener('input', function(e){ if(e.target&&e.target.classList&&e.target.classList.contains('asgI')) acShow(e.target); });
+    parts[parts.length-1]=(parts.length>1?' ':'')+v; acInput.value=parts.join(sep)+sep+' '; acInput.focus(); acShow(acInput); try{asgAutoSave();}catch(e){} }
+  var _asgT=null; function asgAutoSave(){ try{ localStorage.setItem(LSK, JSON.stringify(collect())); }catch(e){} }
+  document.addEventListener('input', function(e){ if(e.target&&e.target.classList&&e.target.classList.contains('asgI')){ acShow(e.target); clearTimeout(_asgT); _asgT=setTimeout(asgAutoSave,600); } });
   document.addEventListener('focusin', function(e){ if(e.target&&e.target.classList&&e.target.classList.contains('asgI')) acShow(e.target); });
   document.addEventListener('mousedown', function(e){ var el=acEl();
     if(e.target&&e.target.classList&&e.target.classList.contains('acit')){ e.preventDefault(); acPick(e.target.getAttribute('data-v')); return; }
@@ -2507,7 +2508,7 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
     var b=new Blob([txt],{type:'text/javascript'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='mailcfg.js';
     document.body.appendChild(a); a.click(); a.remove();
     var m=document.getElementById('asgMsg'); if(m){ m.textContent='Đã tải mailcfg.js — chép vào thư mục dự án rồi chạy DAY_LEN_GITHUB.bat'; setTimeout(function(){m.textContent='';},6000); } };
-  window.__asgCb=function(data){ if(data&&typeof data==='object'&&!Array.isArray(data)){ window.asgCfg=data; try{ localStorage.setItem(LSK,JSON.stringify(data)); }catch(e){} if(document.getElementById('tAsg')) window.renderAssign(); } };
+  window.__asgCb=function(data){ if(data&&typeof data==='object'&&!Array.isArray(data)&&Object.keys(data).length){ window.asgCfg=data; try{ localStorage.setItem(LSK,JSON.stringify(data)); }catch(e){} if(document.getElementById('tAsg')) window.renderAssign(); } };
   function serverLoad(){ if(!API) return; try{ var sc=document.createElement('script'); sc.src=API+(API.indexOf('?')>=0?'&':'?')+'cb=__asgCb&t='+Date.now(); document.body.appendChild(sc); }catch(e){} }
   function boot(){ if(window.QCDATA&&window.QCDATA.rows){ try{ window.renderAssign(); }catch(e){} serverLoad(); } else { setTimeout(boot,400); } }
   if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded',boot);

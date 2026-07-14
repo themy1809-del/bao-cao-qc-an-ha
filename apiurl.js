@@ -4,4 +4,4 @@
    bam Luu la moi may + mail dung chung.
    URL dang: https://script.google.com/macros/s/AKfy....../exec
 ============================================================== */
-window.QC_ASSIGN_API = "";
+window.QC_ASSIGN_API = "https://script.google.com/macros/s/AKfycbwXuNubSP2_0jbLfpQPQEpfFl0Dg0vrRaDUtKguPedtIFBYxeh8wDMmJYwC4pBTY_jx4g/exec";
