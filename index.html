@@ -587,7 +587,7 @@ body.tvmode .view>.kpis{position:static}
   <section id="v_dl" class="view">
     <div class="card" id="asgCard" style="margin-bottom:12px">
       <h3>Phân công QC — nhắc việc &amp; tồn waiting theo phụ trách</h3>
-      <div class="q">1 QC có thể nhiều tổ (cách nhau dấu phẩy) và nhiều dự án (cách nhau dấu ;). Cột "Ghi chú" = lời nhắc/cảnh báo, sẽ hiện ở ĐẦU mail của QC đó. Tồn chờ NT tự tính theo phần phụ trách. Bấm Lưu.</div>
+      <div class="q">1 QC có thể phụ trách NHIỀU xưởng và NHIỀU tổ — cách nhau dấu phẩy (vd Xưởng: AH2,AH3,AH6 · Tổ: AH2.TO1RH,AH3.TO2HA) và nhiều dự án (dấu ;). Cột "Ghi chú" = cảnh báo, hiện ở ĐẦU mail QC đó. Tồn chờ NT tự gộp tất cả xưởng/tổ/dự án phụ trách. Bấm Lưu.</div>
       <div style="margin:8px 0">
         <button class="btn" onclick="asgSave()">Lưu phân công</button>
         <button class="btn sec" onclick="asgAddRow()">+ Thêm người</button>
@@ -2419,9 +2419,11 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
     <div style="text-align:center;color:#6b7280;font-size:11.5px;margin-top:16px;padding-bottom:10px">Tự động từ SPM · cập nhật <span id="repUpd"></span> · Dashboard QC An Hạ</div>
   </div>
 </div>
+<script src="apiurl.js"></script>
 <script>
 /* ====== PHAN CONG QC (tab Du lieu) — waiting theo to/xuong/du an ====== */
 (function(){
+  var API=(window.QC_ASSIGN_API||"");var TOKEN="anha2026";  /* <-- dan URL Web App vao giua 2 dau nhay cua API roi push (ca 3 file) */
   function D(){ return window.QCDATA||{}; }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function fm(n){ n=+n||0; return n.toLocaleString('vi-VN',{maximumFractionDigits:1}); }
@@ -2434,17 +2436,38 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
     return {x:Object.keys(xs).sort(),to:Object.keys(tos).sort(),pj:Object.keys(pjs).sort()}; }
   function waitFor(c){ var d=D(),sx={},sto={},spj=(c.pj||[]);
     (c.x||[]).forEach(function(v){sx[String(v).toUpperCase()]=1;}); (c.to||[]).forEach(function(v){sto[String(v).toUpperCase()]=1;});
+    var hasX=(c.x||[]).length>0,hasTo=(c.to||[]).length>0,hasPj=spj.length>0;
+    if(!hasX&&!hasTo&&!hasPj) return 0;
     var w=0;
     (d.rows||[]).forEach(function(r){ if(d.PL[r[6]]!=='Chưa QC') return;
-      var xn=d.X[r[1]],to=(xn+'.'+d.T[r[2]]).toUpperCase(),pj=d.P[r[0]]||'',hit=false;
-      if(sx[String(xn).toUpperCase()])hit=true;
-      if(!hit&&sto[to])hit=true;
-      if(!hit&&spj.length){ for(var k=0;k<spj.length;k++){ if(spj[k]&&pj.indexOf(spj[k])>=0){hit=true;break;} } }
-      if(hit) w+=(+r[7]||0)+(+r[8]||0)+(+r[9]||0);
+      var xn=d.X[r[1]],to=(xn+'.'+d.T[r[2]]).toUpperCase(),pj=d.P[r[0]]||'';
+      if(hasX&&!sx[String(xn).toUpperCase()])return;
+      if(hasTo&&!sto[to])return;
+      if(hasPj){ var pm=false; for(var k=0;k<spj.length;k++){ if(spj[k]&&pj.indexOf(spj[k])>=0){pm=true;break;} } if(!pm)return; }
+      w+=(+r[7]||0)+(+r[8]||0)+(+r[9]||0);
     });
     return w; }
   function qcList(){ var d=D(),s={}; (d.Q||[]).forEach(function(q){ if(q&&q!=='—')s[q]=1; });
     Object.keys(window.asgCfg).forEach(function(q){ s[q]=1; }); return Object.keys(s).sort(); }
+  var _OPT=null; function optsC(){ if(!_OPT)_OPT=opts(); return _OPT; }
+  var AC=null,acInput=null,acField=null;
+  function acEl(){ if(!AC){ AC=document.createElement('div'); AC.style.cssText='position:absolute;z-index:99999;display:none;background:#fff;border:1px solid #bbb;border-radius:6px;max-height:210px;overflow:auto;font-size:12px;box-shadow:0 6px 16px rgba(0,0,0,.16)'; document.body.appendChild(AC); } return AC; }
+  function acSep(f){ return f==='pj'?';':','; }
+  function acShow(inp){ var f=inp.getAttribute('data-f'); if(f!=='x'&&f!=='to'&&f!=='pj'){ acEl().style.display='none'; return; }
+    acInput=inp; acField=f; var o=optsC(), list=f==='x'?o.x:(f==='to'?o.to:o.pj);
+    var sep=acSep(f), parts=inp.value.split(sep), frag=parts[parts.length-1].trim().toLowerCase();
+    var chosen={}; parts.slice(0,-1).forEach(function(p){ chosen[p.trim().toLowerCase()]=1; });
+    var hits=list.filter(function(v){ return v.toLowerCase().indexOf(frag)>=0 && !chosen[v.toLowerCase()]; }).slice(0,14);
+    var el=acEl(); if(!hits.length){ el.style.display='none'; return; }
+    el.innerHTML=hits.map(function(v){ return '<div class="acit" data-v="'+esc(v)+'" style="padding:5px 10px;cursor:pointer;border-bottom:1px solid #f1f1f1">'+esc(v)+'</div>'; }).join('');
+    var r=inp.getBoundingClientRect(); el.style.left=(r.left+window.scrollX)+'px'; el.style.top=(r.bottom+window.scrollY+2)+'px'; el.style.minWidth=r.width+'px'; el.style.display='block'; }
+  function acPick(v){ if(!acInput) return; var sep=acSep(acField), parts=acInput.value.split(sep);
+    parts[parts.length-1]=(parts.length>1?' ':'')+v; acInput.value=parts.join(sep)+sep+' '; acInput.focus(); acShow(acInput); }
+  document.addEventListener('input', function(e){ if(e.target&&e.target.classList&&e.target.classList.contains('asgI')) acShow(e.target); });
+  document.addEventListener('focusin', function(e){ if(e.target&&e.target.classList&&e.target.classList.contains('asgI')) acShow(e.target); });
+  document.addEventListener('mousedown', function(e){ var el=acEl();
+    if(e.target&&e.target.classList&&e.target.classList.contains('acit')){ e.preventDefault(); acPick(e.target.getAttribute('data-v')); return; }
+    if(e.target!==acInput && !el.contains(e.target)) el.style.display='none'; });
   window.renderAssign=function(){ var el=document.getElementById('tAsg'); if(!el) return; load(); var o=opts();
     var dx=document.getElementById('dlXuong'),dt=document.getElementById('dlTo'),dp=document.getElementById('dlPj');
     if(dx)dx.innerHTML=o.x.map(function(v){return '<option value="'+esc(v)+'">';}).join('');
@@ -2455,9 +2478,9 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
     qs.forEach(function(q){ var c=window.asgCfg[q]||{};
       h+='<tr data-q="'+esc(q)+'"><td style="font-weight:bold">'+esc(q)+'</td>'
         +'<td><input class="asgI" data-f="email" value="'+esc(c.email||'')+'" placeholder="'+esc(q)+'@daidung.vn" style="width:165px"></td>'
-        +'<td><input class="asgI" data-f="x" list="dlXuong" value="'+esc((c.x||[]).join(','))+'" placeholder="AH2,AH3" style="width:100px"></td>'
-        +'<td><input class="asgI" data-f="to" list="dlTo" value="'+esc((c.to||[]).join(','))+'" placeholder="AH9.TO1HA" style="width:145px"></td>'
-        +'<td><input class="asgI" data-f="pj" list="dlPj" value="'+esc((c.pj||[]).join(';'))+'" placeholder="BISON; GA T2" style="width:185px"></td>'
+        +'<td><input class="asgI" data-f="x" value="'+esc((c.x||[]).join(','))+'" placeholder="AH2,AH3" style="width:100px"></td>'
+        +'<td><input class="asgI" data-f="to" value="'+esc((c.to||[]).join(','))+'" placeholder="AH9.TO1HA" style="width:145px"></td>'
+        +'<td><input class="asgI" data-f="pj" value="'+esc((c.pj||[]).join(';'))+'" placeholder="BISON; GA T2" style="width:185px"></td>'
         +'<td><input class="asgI" data-f="note" value="'+esc(c.note||'')+'" placeholder="nhắc / cảnh báo tiến độ" style="width:205px"></td>'
         +'<td class="asgW" style="text-align:right;font-weight:bold">'+fm(waitFor(c))+'</td></tr>';
     });
@@ -2474,14 +2497,19 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
     try{ localStorage.setItem(LSK,JSON.stringify(window.asgCfg)); }catch(e){}
     document.querySelectorAll('#tAsg tr[data-q]').forEach(function(tr){ var q=tr.getAttribute('data-q'),c=window.asgCfg[q]||{};
       var wc=tr.querySelector('.asgW'); if(wc)wc.textContent=fm(waitFor(c)); });
-    var m=document.getElementById('asgMsg'); if(m){ m.textContent='Đã lưu ✓'; setTimeout(function(){m.textContent='';},2500); } };
+    var m=document.getElementById('asgMsg');
+    if(API){ try{ fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({key:TOKEN,cfg:window.asgCfg})}); if(m)m.textContent='Đã lưu lên máy chủ ✓ (mọi máy + mail sẽ dùng)'; }catch(e){ if(m)m.textContent='Đã lưu máy này; gửi máy chủ lỗi (kiểm tra mạng/URL).'; } }
+    else if(m){ m.textContent='Đã lưu (máy này). Chưa dán URL máy chủ.'; }
+    if(m) setTimeout(function(){m.textContent='';},4500); };
   window.asgAddRow=function(){ var q=prompt('Nhập tên SPM (mã QC) người mới:'); if(!q)return; q=q.trim().toLowerCase(); if(!q)return;
     window.asgCfg[q]=window.asgCfg[q]||{email:''}; try{ localStorage.setItem(LSK,JSON.stringify(window.asgCfg)); }catch(e){} window.renderAssign(); };
   window.asgDownload=function(){ var cfg=collect(); var txt='window.MAILCFG='+JSON.stringify(cfg,null,1)+';\n';
     var b=new Blob([txt],{type:'text/javascript'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='mailcfg.js';
     document.body.appendChild(a); a.click(); a.remove();
     var m=document.getElementById('asgMsg'); if(m){ m.textContent='Đã tải mailcfg.js — chép vào thư mục dự án rồi chạy DAY_LEN_GITHUB.bat'; setTimeout(function(){m.textContent='';},6000); } };
-  function boot(){ if(window.QCDATA&&window.QCDATA.rows){ try{ window.renderAssign(); }catch(e){} } else { setTimeout(boot,400); } }
+  window.__asgCb=function(data){ if(data&&typeof data==='object'&&!Array.isArray(data)){ window.asgCfg=data; try{ localStorage.setItem(LSK,JSON.stringify(data)); }catch(e){} if(document.getElementById('tAsg')) window.renderAssign(); } };
+  function serverLoad(){ if(!API) return; try{ var sc=document.createElement('script'); sc.src=API+(API.indexOf('?')>=0?'&':'?')+'cb=__asgCb&t='+Date.now(); document.body.appendChild(sc); }catch(e){} }
+  function boot(){ if(window.QCDATA&&window.QCDATA.rows){ try{ window.renderAssign(); }catch(e){} serverLoad(); } else { setTimeout(boot,400); } }
   if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded',boot);
 })();
 </script>
