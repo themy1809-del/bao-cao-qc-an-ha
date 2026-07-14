@@ -2451,13 +2451,13 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
     Object.keys(window.asgCfg).forEach(function(q){ s[q]=1; }); return Object.keys(s).sort(); }
   var _OPT=null; function optsC(){ if(!_OPT)_OPT=opts(); return _OPT; }
   var AC=null,acInput=null,acField=null;
-  function acEl(){ if(!AC){ AC=document.createElement('div'); AC.style.cssText='position:absolute;z-index:99999;display:none;background:#fff;border:1px solid #bbb;border-radius:6px;max-height:210px;overflow:auto;font-size:12px;box-shadow:0 6px 16px rgba(0,0,0,.16)'; document.body.appendChild(AC); } return AC; }
+  function acEl(){ if(!AC){ AC=document.createElement('div'); AC.style.cssText='position:absolute;z-index:99999;display:none;background:#fff;border:1px solid #bbb;border-radius:6px;max-height:300px;overflow:auto;font-size:12px;box-shadow:0 6px 16px rgba(0,0,0,.16)'; document.body.appendChild(AC); } return AC; }
   function acSep(f){ return f==='pj'?';':','; }
   function acShow(inp){ var f=inp.getAttribute('data-f'); if(f!=='x'&&f!=='to'&&f!=='pj'){ acEl().style.display='none'; return; }
     acInput=inp; acField=f; var o=optsC(), list=f==='x'?o.x:(f==='to'?o.to:o.pj);
     var sep=acSep(f), parts=inp.value.split(sep), frag=parts[parts.length-1].trim().toLowerCase();
     var chosen={}; parts.slice(0,-1).forEach(function(p){ chosen[p.trim().toLowerCase()]=1; });
-    var hits=list.filter(function(v){ return v.toLowerCase().indexOf(frag)>=0 && !chosen[v.toLowerCase()]; }).slice(0,14);
+    var hits=list.filter(function(v){ return v.toLowerCase().indexOf(frag)>=0 && !chosen[v.toLowerCase()]; }).slice(0,60);
     var el=acEl(); if(!hits.length){ el.style.display='none'; return; }
     el.innerHTML=hits.map(function(v){ return '<div class="acit" data-v="'+esc(v)+'" style="padding:5px 10px;cursor:pointer;border-bottom:1px solid #f1f1f1">'+esc(v)+'</div>'; }).join('');
     var r=inp.getBoundingClientRect(); el.style.left=(r.left+window.scrollX)+'px'; el.style.top=(r.bottom+window.scrollY+2)+'px'; el.style.minWidth=r.width+'px'; el.style.display='block'; }
