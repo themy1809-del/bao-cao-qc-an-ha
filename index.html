@@ -585,6 +585,18 @@ body.tvmode .view>.kpis{position:static}
     </div>
   </section>
   <section id="v_dl" class="view">
+    <div class="card" id="asgCard" style="margin-bottom:12px">
+      <h3>Phân công QC — nhắc việc &amp; tồn waiting theo phụ trách</h3>
+      <div class="q">1 QC có thể nhiều tổ (cách nhau dấu phẩy) và nhiều dự án (cách nhau dấu ;). Cột "Ghi chú" = lời nhắc/cảnh báo, sẽ hiện ở ĐẦU mail của QC đó. Tồn chờ NT tự tính theo phần phụ trách. Bấm Lưu.</div>
+      <div style="margin:8px 0">
+        <button class="btn" onclick="asgSave()">Lưu phân công</button>
+        <button class="btn sec" onclick="asgAddRow()">+ Thêm người</button>
+        <button class="btn sec" onclick="asgDownload()">Tải cấu hình mail (mailcfg.js)</button>
+        <span id="asgMsg" style="font-size:12px;color:#1f6b46;margin-left:8px"></span>
+      </div>
+      <div class="tw" style="max-height:460px"><table id="tAsg"></table></div>
+      <datalist id="dlXuong"></datalist><datalist id="dlTo"></datalist><datalist id="dlPj"></datalist>
+    </div>
     <div class="r23">
       <div class="card"><h3>Dữ liệu chi tiết (theo bộ lọc)</h3>
         <div class="q"><span id="dlCount"></span> · tối đa 400 dòng · <button class="btn" onclick="buildReportPDF()">Báo cáo PDF</button> <button class="btn sec" onclick="buildReportImg()">Ảnh PNG</button> <button class="btn sec" onclick="exportReport()">Excel (dữ liệu)</button> <button class="btn sec" onclick="exportCSV()">CSV</button></div>
@@ -2407,5 +2419,71 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
     <div style="text-align:center;color:#6b7280;font-size:11.5px;margin-top:16px;padding-bottom:10px">Tự động từ SPM · cập nhật <span id="repUpd"></span> · Dashboard QC An Hạ</div>
   </div>
 </div>
+<script>
+/* ====== PHAN CONG QC (tab Du lieu) — waiting theo to/xuong/du an ====== */
+(function(){
+  function D(){ return window.QCDATA||{}; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function fm(n){ n=+n||0; return n.toLocaleString('vi-VN',{maximumFractionDigits:1}); }
+  var LSK='qc_assign_v1';
+  window.asgCfg={};
+  function load(){ try{ window.asgCfg=JSON.parse(localStorage.getItem(LSK)||'{}'); }catch(e){ window.asgCfg={}; } }
+  function opts(){ var d=D(),xs={},tos={},pjs={};
+    (d.X||[]).forEach(function(x){ xs[x]=1; });
+    (d.rows||[]).forEach(function(r){ tos[d.X[r[1]]+'.'+d.T[r[2]]]=1; if(d.P[r[0]])pjs[d.P[r[0]]]=1; });
+    return {x:Object.keys(xs).sort(),to:Object.keys(tos).sort(),pj:Object.keys(pjs).sort()}; }
+  function waitFor(c){ var d=D(),sx={},sto={},spj=(c.pj||[]);
+    (c.x||[]).forEach(function(v){sx[String(v).toUpperCase()]=1;}); (c.to||[]).forEach(function(v){sto[String(v).toUpperCase()]=1;});
+    var w=0;
+    (d.rows||[]).forEach(function(r){ if(d.PL[r[6]]!=='Chưa QC') return;
+      var xn=d.X[r[1]],to=(xn+'.'+d.T[r[2]]).toUpperCase(),pj=d.P[r[0]]||'',hit=false;
+      if(sx[String(xn).toUpperCase()])hit=true;
+      if(!hit&&sto[to])hit=true;
+      if(!hit&&spj.length){ for(var k=0;k<spj.length;k++){ if(spj[k]&&pj.indexOf(spj[k])>=0){hit=true;break;} } }
+      if(hit) w+=(+r[7]||0)+(+r[8]||0)+(+r[9]||0);
+    });
+    return w; }
+  function qcList(){ var d=D(),s={}; (d.Q||[]).forEach(function(q){ if(q&&q!=='—')s[q]=1; });
+    Object.keys(window.asgCfg).forEach(function(q){ s[q]=1; }); return Object.keys(s).sort(); }
+  window.renderAssign=function(){ var el=document.getElementById('tAsg'); if(!el) return; load(); var o=opts();
+    var dx=document.getElementById('dlXuong'),dt=document.getElementById('dlTo'),dp=document.getElementById('dlPj');
+    if(dx)dx.innerHTML=o.x.map(function(v){return '<option value="'+esc(v)+'">';}).join('');
+    if(dt)dt.innerHTML=o.to.map(function(v){return '<option value="'+esc(v)+'">';}).join('');
+    if(dp)dp.innerHTML=o.pj.map(function(v){return '<option value="'+esc(v)+'">';}).join('');
+    var qs=qcList();
+    var h='<tr><th>QC</th><th>Email</th><th>Xưởng</th><th>Tổ (nhiều: dấu phẩy)</th><th>Dự án (nhiều: dấu ;)</th><th>Ghi chú / cảnh báo</th><th>Tồn chờ NT (t)</th></tr>';
+    qs.forEach(function(q){ var c=window.asgCfg[q]||{};
+      h+='<tr data-q="'+esc(q)+'"><td style="font-weight:bold">'+esc(q)+'</td>'
+        +'<td><input class="asgI" data-f="email" value="'+esc(c.email||'')+'" placeholder="'+esc(q)+'@daidung.vn" style="width:165px"></td>'
+        +'<td><input class="asgI" data-f="x" list="dlXuong" value="'+esc((c.x||[]).join(','))+'" placeholder="AH2,AH3" style="width:100px"></td>'
+        +'<td><input class="asgI" data-f="to" list="dlTo" value="'+esc((c.to||[]).join(','))+'" placeholder="AH9.TO1HA" style="width:145px"></td>'
+        +'<td><input class="asgI" data-f="pj" list="dlPj" value="'+esc((c.pj||[]).join(';'))+'" placeholder="BISON; GA T2" style="width:185px"></td>'
+        +'<td><input class="asgI" data-f="note" value="'+esc(c.note||'')+'" placeholder="nhắc / cảnh báo tiến độ" style="width:205px"></td>'
+        +'<td class="asgW" style="text-align:right;font-weight:bold">'+fm(waitFor(c))+'</td></tr>';
+    });
+    el.innerHTML=h; };
+  function collect(){ var cfg={};
+    document.querySelectorAll('#tAsg tr[data-q]').forEach(function(tr){ var q=tr.getAttribute('data-q'),c={};
+      tr.querySelectorAll('.asgI').forEach(function(inp){ var f=inp.getAttribute('data-f'),v=inp.value.trim();
+        if(f==='email')c.email=v; else if(f==='note')c.note=v;
+        else if(f==='pj')c.pj=v.split(';').map(function(s){return s.trim();}).filter(Boolean);
+        else c[f]=v.split(/[,\s]+/).map(function(s){return s.trim();}).filter(Boolean); });
+      if(c.email||c.note||(c.x&&c.x.length)||(c.to&&c.to.length)||(c.pj&&c.pj.length)) cfg[q]=c; });
+    return cfg; }
+  window.asgSave=function(){ window.asgCfg=collect();
+    try{ localStorage.setItem(LSK,JSON.stringify(window.asgCfg)); }catch(e){}
+    document.querySelectorAll('#tAsg tr[data-q]').forEach(function(tr){ var q=tr.getAttribute('data-q'),c=window.asgCfg[q]||{};
+      var wc=tr.querySelector('.asgW'); if(wc)wc.textContent=fm(waitFor(c)); });
+    var m=document.getElementById('asgMsg'); if(m){ m.textContent='Đã lưu ✓'; setTimeout(function(){m.textContent='';},2500); } };
+  window.asgAddRow=function(){ var q=prompt('Nhập tên SPM (mã QC) người mới:'); if(!q)return; q=q.trim().toLowerCase(); if(!q)return;
+    window.asgCfg[q]=window.asgCfg[q]||{email:''}; try{ localStorage.setItem(LSK,JSON.stringify(window.asgCfg)); }catch(e){} window.renderAssign(); };
+  window.asgDownload=function(){ var cfg=collect(); var txt='window.MAILCFG='+JSON.stringify(cfg,null,1)+';\n';
+    var b=new Blob([txt],{type:'text/javascript'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='mailcfg.js';
+    document.body.appendChild(a); a.click(); a.remove();
+    var m=document.getElementById('asgMsg'); if(m){ m.textContent='Đã tải mailcfg.js — chép vào thư mục dự án rồi chạy DAY_LEN_GITHUB.bat'; setTimeout(function(){m.textContent='';},6000); } };
+  function boot(){ if(window.QCDATA&&window.QCDATA.rows){ try{ window.renderAssign(); }catch(e){} } else { setTimeout(boot,400); } }
+  if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded',boot);
+})();
+</script>
 </body>
 </html>
