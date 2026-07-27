@@ -349,7 +349,7 @@ body.tvmode #hdrStick{position:static;box-shadow:none}
 body.tvmode .view>.kpis{position:static}
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 27/7 v61 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 27/7 v63 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="ncr_data.js"></script>
@@ -419,11 +419,11 @@ body.tvmode .view>.kpis{position:static}
 
   <!-- 01 TỔNG QUAN -->
   <section id="v_tq" class="view active">
-    <div id="tqPeriod" style="display:flex;align-items:center;gap:10px;margin:2px 0 11px;flex-wrap:wrap"></div>
-    <div class="card" id="tqBrief" style="display:none;border-left:4px solid var(--acc)"></div>
     <div class="kpis" id="tqKpis"></div>
     <div id="tqMonthKpis"></div>
     <div class="card" id="tqTarget" style="display:none;border-left:4px solid var(--warn)"></div>
+    <div class="card" id="tqBrief" style="display:none;border-left:4px solid var(--acc)"></div>
+    <div id="tqPeriod" style="display:none"></div>
     <div class="panel" id="pendPanel" style="display:none">
       <button class="close" onclick="hideP('pendPanel')">✕</button>
       <h3>Chờ nghiệm thu (Waiting) — công đoạn · xưởng · tổ · dự án</h3>
@@ -1283,10 +1283,10 @@ function rTQ(){
   const fpyData=ta.keys.map(k=>{const o=QFPY?(ta.mode==='d'?QFPY.byDay[k]:QFPY.byMonth[k]):null;if(o&&(o.a+o.j))return +(o.a/(o.a+o.j)*100).toFixed(1);const pr=sxBy[k]||0;return pr?+(((sxAcc[k]||0)/pr)*100).toFixed(1):null;});
   const hasReal=fpyData.some(v=>v!=null);
   const _lc=document.documentElement.dataset.theme==='dark'?'#cbd5e1':'#475569';
-  setOpt('cTime',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){let s='<b>'+ps[0].axisValue+'</b><br>';ps.forEach(p=>{if(p.value==null)return;const v=(p.seriesName==='FPY %')?p.value+'% (đạt/đã kiểm)':((p.seriesName.indexOf('% ')===0)?p.value+'% (đm '+capTgt+' t)':fm1(p.value)+' t');s+=p.marker+p.seriesName+': <b>'+v+'</b><br>';});return s;}},grid:GRID,legend:{top:0,left:'center',itemWidth:11,itemHeight:11},
+  setOpt('cTime',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){let s='<b>'+ps[0].axisValue+'</b><br>';ps.forEach(p=>{if(p.value==null)return;const v=(p.seriesName==='FPY %')?p.value+'% (đạt/đã kiểm)':((p.seriesName.indexOf('% ')===0)?p.value+'% (đm '+capTgt+' t)':fm1(p.value)+' t');s+=p.marker+p.seriesName+': <b>'+v+'</b><br>';});return s;}},grid:GRID,legend:{top:0,left:'center',itemWidth:11,itemHeight:11,selected:{'FPY %':false}},
     xAxis:{type:'category',data:ta.keys.map(k=>ta.mode==='d'?dayVN(k):moVN(k))},
     yAxis:hasFpy?[{type:'value',name:'tấn',max:axTon,min:0},{type:'value',name:'',max:axPctMax,min:0,position:'right',axisLabel:{formatter:'{value}%'}}]:{type:'value',name:'tấn'},
-    series:selStg.map(([k,n,c],i)=>({name:n,type:'bar',barMaxWidth:26,itemStyle:{color:grad(c,c+'99'),borderRadius:[4,4,0,0],opacity:1},emphasis:{focus:'series',itemStyle:{opacity:1}},data:ta.keys.map(x=>+ta.map[x][k].toFixed(1))})).concat([{name:'Final DIM',type:'bar',barMaxWidth:26,itemStyle:{color:grad('#0D9488','#0D948899'),borderRadius:[4,4,0,0],opacity:1},emphasis:{focus:'series',itemStyle:{opacity:1}},data:ta.keys.map(x=>+(ta.map[x].fd||0).toFixed(1))}]).concat(selStg.map(([k,n,c],i)=>({name:'% '+n,type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:6,connectNulls:true,z:5,lineStyle:{width:2.4,color:c},areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:c+'42'},{offset:1,color:c+'04'}]}},itemStyle:{color:c,borderColor:'#fff',borderWidth:1.5},label:{show:ta.keys.length<=31,position:'top',distance:6,formatter:p=>p.value+'%',fontSize:9,fontWeight:700,color:c},emphasis:{focus:'series',lineStyle:{width:3.6}},markLine:i===0?{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#b4690e'},data:[{yAxis:100,label:{formatter:'100% · định mức',color:'#b4690e',fontSize:9,position:'insideEndTop'}}]}:undefined,data:ta.keys.map(x=>capTgt?+(((ta.map[x][k]||0)/capTgt)*100).toFixed(1):null)}))).concat(hasReal?[{name:'FPY %',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:5,connectNulls:true,z:6,lineStyle:{width:2.2,color:'#16a34a',type:'dashed'},itemStyle:{color:'#16a34a'},emphasis:{focus:'series',lineStyle:{width:3}},data:fpyData}]:[])
+    series:selStg.map(([k,n,c],i)=>({name:n,type:'bar',barMaxWidth:26,itemStyle:{color:grad(c,c+'99'),borderRadius:[4,4,0,0],opacity:1},emphasis:{focus:'series',itemStyle:{opacity:1}},data:ta.keys.map(x=>+ta.map[x][k].toFixed(1))})).concat([{name:'Final DIM',type:'bar',barMaxWidth:26,itemStyle:{color:grad('#0D9488','#0D948899'),borderRadius:[4,4,0,0],opacity:1},emphasis:{focus:'series',itemStyle:{opacity:1}},data:ta.keys.map(x=>+(ta.map[x].fd||0).toFixed(1))}]).concat(selStg.map(([k,n,c],i)=>({name:'% '+n,type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:6,connectNulls:true,z:5,lineStyle:{width:2.4,color:c},itemStyle:{color:c,borderColor:'#fff',borderWidth:1.5},label:{show:ta.keys.length<=10,position:'top',distance:6,formatter:p=>p.value+'%',fontSize:9,fontWeight:700,color:c},emphasis:{focus:'series',lineStyle:{width:3.6}},markLine:i===0?{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#b4690e'},data:[{yAxis:100,label:{formatter:'100% · định mức',color:'#b4690e',fontSize:9,position:'insideEndTop'}}]}:undefined,data:ta.keys.map(x=>capTgt?+(((ta.map[x][k]||0)/capTgt)*100).toFixed(1):null)}))).concat(hasReal?[{name:'FPY %',type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:5,connectNulls:true,z:6,lineStyle:{width:2.2,color:'#16a34a',type:'dashed'},itemStyle:{color:'#16a34a'},emphasis:{focus:'series',lineStyle:{width:3}},data:fpyData}]:[])
   },p=>{if(p.componentType==='series'&&p.seriesType==='bar')tog(ta.mode==='m'?'m':'d',ta.keys[p.dataIndex]);});
   let _lmX='';for(const r of done){const m=(r[3]||'').slice(0,7);if(m&&m>_lmX)_lmX=m;}
   let _doneM=done.filter(r=>(r[3]||'').slice(0,7)===_lmX);
