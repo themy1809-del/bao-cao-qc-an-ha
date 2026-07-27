@@ -349,7 +349,7 @@ body.tvmode #hdrStick{position:static;box-shadow:none}
 body.tvmode .view>.kpis{position:static}
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 27/7 v65 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 27/7 v66 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="ncr_data.js"></script>
@@ -450,7 +450,7 @@ body.tvmode .view>.kpis{position:static}
     <div class="r23"><div class="card"><h3 id="tqTimeTtl">Sản lượng nghiệm thu theo ngày</h3><div class="q" id="tqTimeQ">Bấm cột để lọc theo kỳ</div><div id="cTime" class="ch"></div></div><div class="card"><h3>Sản lượng theo công đoạn</h3><div class="q" id="tqMixQ">So với mục tiêu 4.500 t/tháng · bấm để lọc</div><div style="display:flex;gap:6px;align-items:stretch"><div id="cMix" class="ch" style="flex:1.5"></div><div id="cMixDonut" class="ch" style="flex:1"></div></div></div></div>
     <div class="r23" style="grid-template-columns:1fr 1.4fr">
       <div class="card" style="display:flex;flex-direction:column"><h3>Sản lượng theo xưởng</h3><div class="q" id="tqXQ">Bấm cột xưởng để lọc</div><div id="cX" class="ch" style="flex:1 1 auto;height:auto;min-height:170px"></div></div>
-      <div class="card"><h3>Top dự án đang hoạt động</h3><div class="q">Đã NT trong kỳ · <b>Chờ NT</b> · <b>Còn lại BOM</b> · bấm để lọc</div><div id="tqIns"></div></div>
+      <div class="card"><h3>Top dự án đang hoạt động</h3><div class="q">Đã NT trong kỳ · <b>Chờ NT</b> · <b>Còn lại BOM</b> · bấm để lọc</div><div id="cPjDonut5" style="width:100%;height:250px"></div><div id="tqIns"></div></div>
     </div>
   </section>
 
@@ -1318,6 +1318,27 @@ function rTQ(){
       +'<div class="num" style="font-weight:700;min-width:52px;text-align:right;color:var(--warn)" title="đã làm, chưa nghiệm thu">'+(x.w>0?fm1(x.w):'\u00b7')+'</div>'+'<div class="num" style="font-weight:700;min-width:62px;text-align:right;color:var(--mut)" title="còn lại so với tổng BOM dự án">'+(x.rem!=null?fm1(x.rem):'\u2014')+'</div>'
       +'</div>').join('')) : '<div class="muted">Không có dự án đang hoạt động trong kỳ.</div>';
   }
+  (function(){ /* DONUT top 5 du an co san luong chinh trong thang */
+    var el=document.getElementById('cPjDonut5');if(!el)return;
+    var lm='';for(const r of done){const m=(r[3]||'').slice(0,7);if(m&&m>lm)lm=m;}
+    var PM={};for(const r of done){if((r[3]||'').slice(0,7)!==lm)continue;PM[r[0]]=(PM[r[0]]||0)+(r[7]+r[8]+r[9]);}
+    var arr=Object.keys(PM).map(function(pi){return [+pi,PM[pi]];}).sort(function(a,b){return b[1]-a[1];});
+    if(!arr.length){el.style.display='none';return;}
+    el.style.display='block';
+    var top=arr.slice(0,5),other=0;arr.slice(5).forEach(function(e){other+=e[1];});
+    var tot=arr.reduce(function(a,e){return a+e[1];},0);
+    var CST=['#2563EB','#F59E0B','#16A34A','#0D9488','#7C3AED','#94A3B8'];
+    var data=top.map(function(e,i){return {name:pName(e[0]),value:+e[1].toFixed(1),_pi:e[0],itemStyle:{color:CST[i]}};});
+    if(other>0.5)data.push({name:'Khác',value:+other.toFixed(1),_pi:null,itemStyle:{color:CST[5]}});
+    setOpt('cPjDonut5',{
+      title:{text:'Top 5 dự án'+(lm?' · tháng '+moVN(lm):'')+' — '+fm1(tot)+' t',left:'center',top:2,textStyle:{fontSize:12.5,fontWeight:800}},
+      tooltip:{trigger:'item',confine:true,valueFormatter:function(v){return fm1(v)+' t';}},
+      series:[{type:'pie',radius:['40%','66%'],center:['50%','57%'],avoidLabelOverlap:true,
+        label:{show:true,formatter:function(p){return p.name.slice(0,16)+'\n'+fm1(p.value)+' t · '+p.percent.toFixed(0)+'%';},fontSize:11,fontWeight:700,lineHeight:14},
+        labelLine:{length:10,length2:8},
+        emphasis:{scale:true,scaleSize:6},data:data}]},
+      function(p){if(p.data&&p.data._pi!=null)tog('pj',p.data._pi);});
+  })();
   if(document.getElementById('pendPanel').style.display==='block')renderPend();
   var _fp=document.getElementById('fpyPanel');if(_fp&&_fp.style.display==='block')try{renderFpy();}catch(e){}
 }
