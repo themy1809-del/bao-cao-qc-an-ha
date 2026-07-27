@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phân tích WAITING — tồn chờ nghiệm thu theo công đoạn</title>
+<style>
+:root{--acc:#2563EB;--warn:#b4690e;--bad:#c0392b;--good:#1f8a4c;--line:#e5e0d8;--mut:#8a939c;--bg:#faf7f2;--card:#fff;--hl:#fff3d6;--han:#c2410c;--son:#7c3aed}
+*{box-sizing:border-box}
+body{font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:#2b2b2b;margin:0 auto;padding:18px;max-width:1150px}
+h1{font-size:20px;color:#334155;margin:6px 0 2px}
+h2{font-size:14px;color:var(--warn);margin:20px 0 6px;text-transform:uppercase;letter-spacing:.3px}
+.sub{font-size:12.5px;color:var(--mut);margin-bottom:10px}
+.cards{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.card{flex:1;min-width:150px;background:var(--card);border:1px solid var(--line);border-top:4px solid var(--acc);border-radius:10px;padding:10px 13px}
+.card.click{cursor:pointer;transition:.12s}
+.card.click:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.card.on{background:var(--hl);outline:2px solid var(--warn)}
+.card .l{font-size:10.5px;color:var(--mut);font-weight:700;text-transform:uppercase}
+.card .v{font-size:21px;font-weight:800;margin:2px 0}
+.card .s{font-size:11.5px;color:#5b6470}
+table{border-collapse:collapse;width:100%;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;font-size:12.5px}
+th{background:#f2ede4;color:#6b5b3e;text-align:left;padding:6px 9px;font-size:11.5px}
+td{padding:5px 9px;border-top:1px solid #f0ece4}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.pick{cursor:pointer}
+tr.pick:hover{background:#faf5ea}
+.note{background:#fff7e6;border:1px solid #f0d9a8;border-left:5px solid var(--warn);border-radius:9px;padding:10px 14px;font-size:13px;line-height:1.6;margin:10px 0}
+.sum{background:#eef3fb;border:1px solid #cdddf2;border-left:6px solid var(--acc);border-radius:10px;padding:13px 16px;font-size:14px;line-height:1.75;margin:12px 0}
+.sum b.big{font-size:16px}
+.fbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0;position:sticky;top:0;z-index:5;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.chip{border:1px solid var(--line);background:#faf7f2;border-radius:99px;padding:4px 12px;font-size:12.5px;cursor:pointer;font-weight:600;color:#5b6470}
+.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+select,input[type=text]{border:1px solid var(--line);border-radius:7px;padding:5px 8px;font-size:12.5px;background:#fff;max-width:230px}
+.clr{background:var(--bad);color:#fff;border:none;border-radius:7px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:700}
+.badge{display:inline-block;background:var(--bad);color:#fff;border-radius:5px;font-size:10.5px;padding:1px 6px;font-weight:700}
+.tag{display:inline-block;border-radius:4px;font-size:10px;font-weight:800;padding:1px 5px;color:#fff;margin-right:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.two{grid-template-columns:1fr}}
+.small{font-size:11.5px;color:var(--mut);margin:4px 0}
+.stF{color:var(--acc)}.stW{color:var(--han)}.stP{color:var(--son)}
+.bar{display:inline-block;height:9px;border-radius:99px;background:#e8e2d6;width:110px;vertical-align:middle;overflow:hidden;margin-right:6px}
+.bar i{display:block;height:100%;border-radius:99px}
+.flow{display:flex;gap:0;align-items:stretch;flex-wrap:wrap;margin:10px 0}
+.step{flex:1;min-width:180px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 13px;position:relative}
+.step .t{font-weight:800;font-size:14px}
+.step .d{font-size:12px;color:#5b6470;margin-top:3px;line-height:1.5}
+.arrow{align-self:center;font-size:20px;color:var(--mut);padding:0 7px;font-weight:800}
+.guide{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px 14px;margin:10px 0;font-size:13px}
+.guide summary{cursor:pointer;font-weight:700;color:var(--acc);padding:8px 0}
+.guide li{margin:5px 0;line-height:1.55}
+</style>
+</head>
+<body>
+<h1>Phân tích WAITING — tồn chờ nghiệm thu</h1>
+<div class="sub" id="meta">Đang tải qcdata.js…</div>
+
+<div class="sum" id="sumBox" style="display:none"></div>
+
+<details class="guide"><summary>❓ Waiting là gì &amp; cách đọc trang này (bấm để mở)</summary>
+<ul>
+<li><b>Waiting (tồn chờ NT)</b> = khối lượng tổ sản xuất báo <b>đã làm xong</b> nhưng QC <b>chưa nghiệm thu accept</b>. Trạng thái trên SPM còn là "Chưa QC".</li>
+<li>Một hạng mục đi qua 3 công đoạn <b>Fitup → Hàn → Sơn</b>; mỗi công đoạn nghiệm thu riêng, nên tồn được tách theo từng công đoạn (cột F / H / S).</li>
+<li><b>Mail QC hằng ngày chỉ đếm Fitup</b>, còn dashboard cộng cả 3 công đoạn → hai con số khác nhau là do phạm vi đếm, không phải sai.</li>
+<li><b>Tuổi tồn</b> tính từ ngày sản xuất xong: ≤7 ngày là hàng mới (bình thường, chưa tới lượt QC) · 8–30 ngày cần đẩy nhanh · <b>&gt;30 ngày là bất thường</b> (tô đỏ) — hoặc chưa NT thật, hoặc đã NT nhưng SPM chưa cập nhật.</li>
+<li>Bấm vào <b>thẻ công đoạn, thẻ tuổi tồn, hoặc dòng bất kỳ</b> trong bảng xưởng/tổ/tháng/dự án để lọc; các bảng và tổng số tự tính lại theo bộ lọc. Bấm lần nữa để bỏ lọc.</li>
+</ul>
+</details>
+
+<div id="flowBox"></div>
+
+<div class="fbar" id="fbar" style="display:none">
+  <b style="font-size:12px;color:#6b5b3e">LỌC:</b>
+  <span class="chip" id="cF" onclick="togSt('F')">Fitup</span>
+  <span class="chip" id="cW" onclick="togSt('W')">Hàn</span>
+  <span class="chip" id="cP" onclick="togSt('P')">Sơn</span>
+  <select id="selX" onchange="setX(this.value)"><option value="">— Xưởng —</option></select>
+  <select id="selT" onchange="FL.to=this.value;render()"><option value="">— Tổ —</option></select>
+  <select id="selM" onchange="FL.m=this.value;render()"><option value="">— Tháng SX —</option></select>
+  <input type="text" id="selPj" placeholder="tìm dự án…" oninput="FL.pj=this.value.toLowerCase();render()">
+  <button class="clr" onclick="clearF()">✕ Xóa lọc</button>
+  <span class="small" id="fsum"></span>
+</div>
+
+<div id="out"></div>
+
+<script src="qcdata.js"></script>
+<script>
+var D=window.QCDATA,ITEMS=[],FL={st:null,x:'',to:'',m:'',pj:'',age:null},SORT='ag';
+function iso(s){s=String(s==null?'':s).trim();var m=s.match(/(\d{4})-(\d{2})-(\d{2})/);if(m)return m[1]+'-'+m[2]+'-'+m[3];m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return m[3]+'-'+('0'+m[1]).slice(-2)+'-'+('0'+m[2]).slice(-2);return'';}
+function vn(i){return i?i.slice(8,10)+'/'+i.slice(5,7)+'/'+i.slice(0,4):'';}
+function mvn(m){return m&&m.indexOf('-')>0?('T'+(+m.slice(5,7))+'/'+m.slice(0,4)):m;}
+function fm(n){return (Math.round(n*10)/10).toLocaleString('vi-VN');}
+function pc(a,b){return b>0?Math.round(a/b*100):0;}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');}
+function bar(v,mx,c){return '<span class="bar"><i style="width:'+Math.max(3,Math.round(v/(mx||1)*100))+'%;background:'+c+'"></i></span>';}
+
+(function init(){
+if(!D||!D.rows){document.getElementById('meta').textContent='LỖI: không tải được qcdata.js (mở file này trong cùng thư mục với qcdata.js).';return;}
+var P=D.P,X=D.X,T=D.T,PL=D.PL,rows=D.rows;
+var today=new Date();today.setHours(0,0,0,0);
+for(var i=0;i<rows.length;i++){
+  var r=rows[i],st=PL[r[6]];
+  if(st!=='Chưa QC')continue;
+  var f=+r[7]||0,w=+r[8]||0,p=+r[9]||0;
+  if(f+w+p<=0)continue;
+  var sx=iso(r[4]),ag=sx?Math.floor((today-new Date(sx))/864e5):null;
+  ITEMS.push({pj:P[r[0]]||'—',x:X[r[1]],to:X[r[1]]+'.'+T[r[2]],sx:sx,ag:ag,
+    f:f,w:w,p:p,t:f+w+p,pcs:(+r[10]||0)+(+r[11]||0)+(+r[12]||0),memo:String(r[13]||'')});
+}
+document.getElementById('meta').innerHTML='Nguồn: <b>qcdata.js</b> cập nhật <b>'+esc(D.updated||'?')+'</b> · '+ITEMS.length+' dòng đang "Chưa QC"';
+
+/* ==== TÓM TẮT DỄ HIỂU (toàn nhà máy, không phụ thuộc bộ lọc) ==== */
+var tF=0,tW=0,tP=0,a7=0,a30=0,aOld=0,nOld=0,byX0={},byTo0={};
+ITEMS.forEach(function(it){tF+=it.f;tW+=it.w;tP+=it.p;
+  if(it.ag!=null&&it.ag<=7)a7+=it.t;else if(it.ag!=null&&it.ag<=30)a30+=it.t;else{aOld+=it.t;nOld++;}
+  byX0[it.x]=(byX0[it.x]||0)+it.t;byTo0[it.to]=(byTo0[it.to]||0)+it.t;});
+var TOT=tF+tW+tP;
+var topX=Object.keys(byX0).sort(function(a,b){return byX0[b]-byX0[a];})[0]||'';
+var topTo=Object.keys(byTo0).sort(function(a,b){return byTo0[b]-byTo0[a];})[0]||'';
+var sb=document.getElementById('sumBox');sb.style.display='block';
+sb.innerHTML='<b class="big">📌 Tóm tắt cho sếp:</b> Toàn nhà máy đang tồn <b class="big" style="color:var(--warn)">'+fm(TOT)+' tấn</b> đã sản xuất xong nhưng QC chưa nghiệm thu.<br>'
++'• Theo công đoạn: <b class="stW">Hàn '+fm(tW)+' t ('+pc(tW,TOT)+'%)</b> — nhiều nhất · <b class="stF">Fitup '+fm(tF)+' t ('+pc(tF,TOT)+'%)</b> · <b class="stP">Sơn '+fm(tP)+' t ('+pc(tP,TOT)+'%)</b>.<br>'
++'• Theo độ trễ: <b style="color:var(--good)">'+fm(a7)+' t</b> là hàng mới ≤7 ngày (bình thường) · <b style="color:var(--warn)">'+fm(a30)+' t</b> tồn 8–30 ngày (cần đẩy nhanh) · <b style="color:var(--bad)">'+fm(aOld)+' t tồn quá 30 ngày ('+nOld+' dòng) — đây là phần bất thường cần xử lý</b>.<br>'
++'• Tập trung nhiều nhất tại xưởng <b>'+esc(topX)+'</b> ('+fm(byX0[topX]||0)+' t), tổ <b>'+esc(topTo)+'</b> ('+fm(byTo0[topTo]||0)+' t).';
+
+/* ==== SƠ ĐỒ 3 CÔNG ĐOẠN ==== */
+document.getElementById('flowBox').innerHTML='<h2>Hạng mục đi qua 3 công đoạn — tồn ở đâu?</h2><div class="flow">'
++'<div class="step" style="border-top:4px solid var(--acc)"><div class="t stF">1 · FITUP (gá lắp)</div><div class="d">Tổ gá xong khung → chờ QC kiểm kích thước, gá lắp.<br><b>Đang chờ: '+fm(tF)+' t</b></div></div><div class="arrow">→</div>'
++'<div class="step" style="border-top:4px solid var(--han)"><div class="t stW">2 · HÀN</div><div class="d">Hàn xong → chờ QC kiểm mối hàn.<br><b>Đang chờ: '+fm(tW)+' t</b> — khâu ứ đọng lớn nhất</div></div><div class="arrow">→</div>'
++'<div class="step" style="border-top:4px solid var(--son)"><div class="t stP">3 · SƠN</div><div class="d">Sơn xong → chờ QC kiểm bề mặt trước xuất xưởng.<br><b>Đang chờ: '+fm(tP)+' t</b></div></div></div>'
++'<div class="small">Mail QC hằng ngày chỉ đếm cột Fitup ('+fm(tF)+' t) — dashboard cộng cả 3 ('+fm(TOT)+' t). Chênh nhau '+fm(TOT-tF)+' t là tồn Hàn + Sơn, không phải số sai.</div>';
+
+/* fill selects */
+var xs={},ms={};ITEMS.forEach(function(it){xs[it.x]=1;ms[it.sx?it.sx.slice(0,7):'(thiếu ngày)']=1;});
+var sx=document.getElementById('selX');Object.keys(xs).sort().forEach(function(x){sx.innerHTML+='<option>'+esc(x)+'</option>';});
+var sm=document.getElementById('selM');Object.keys(ms).sort().forEach(function(m){sm.innerHTML+='<option value="'+esc(m)+'">'+mvn(m)+'</option>';});
+document.getElementById('fbar').style.display='flex';
+fillTo();render();
+})();
+
+function fillTo(){
+var st=document.getElementById('selT'),cur=FL.to;st.innerHTML='<option value="">— Tổ —</option>';
+var ts={};ITEMS.forEach(function(it){if(!FL.x||it.x===FL.x)ts[it.to]=1;});
+Object.keys(ts).sort().forEach(function(t){st.innerHTML+='<option'+(t===cur?' selected':'')+'>'+esc(t)+'</option>';});
+if(cur&&!ts[cur])FL.to='';
+}
+function setX(v){FL.x=v;FL.to='';fillTo();render();}
+function togSt(s){FL.st=(FL.st===s?null:s);render();}
+function togAge(a){FL.age=(FL.age===a?null:a);render();}
+function pickTo(t){FL.to=(FL.to===t?'':t);document.getElementById('selT').value=FL.to;render();}
+function pickPj(p){FL.pj=(FL.pj===p.toLowerCase()?'':p.toLowerCase());document.getElementById('selPj').value=FL.pj;render();}
+function pickM(m){FL.m=(FL.m===m?'':m);document.getElementById('selM').value=FL.m;render();}
+function setSort(s){SORT=s;render();}
+function clearF(){FL={st:null,x:'',to:'',m:'',pj:'',age:null};document.getElementById('selX').value='';document.getElementById('selM').value='';document.getElementById('selPj').value='';fillTo();render();}
+function ageBk(it){return it.ag==null?'none':(it.ag<=7?'a7':(it.ag<=30?'a30':'old'));}
+function stVal(it){return FL.st==='F'?it.f:(FL.st==='W'?it.w:(FL.st==='P'?it.p:it.t));}
+function stTags(it){var s='';if(it.f>0)s+='<span class="tag" style="background:var(--acc)">F</span>';if(it.w>0)s+='<span class="tag" style="background:var(--han)">H</span>';if(it.p>0)s+='<span class="tag" style="background:var(--son)">S</span>';return s;}
+
+function render(){
+var fs=ITEMS.filter(function(it){
+  if(FL.st&&stVal(it)<=0)return false;
+  if(FL.x&&it.x!==FL.x)return false;
+  if(FL.to&&it.to!==FL.to)return false;
+  if(FL.m&&(it.sx?it.sx.slice(0,7):'(thiếu ngày)')!==FL.m)return false;
+  if(FL.pj&&it.pj.toLowerCase().indexOf(FL.pj)<0)return false;
+  if(FL.age&&ageBk(it)!==FL.age)return false;
+  return true;
+});
+['F','W','P'].forEach(function(s){document.getElementById('c'+s).className='chip'+(FL.st===s?' on':'');});
+var act=[];if(FL.st)act.push({F:'Fitup',W:'Hàn',P:'Sơn'}[FL.st]);if(FL.x)act.push(FL.x);if(FL.to)act.push(FL.to);if(FL.m)act.push(mvn(FL.m));if(FL.pj)act.push('"'+FL.pj+'"');if(FL.age)act.push({a7:'≤7 ng',a30:'8–30 ng',old:'>30 ng',none:'thiếu ngày'}[FL.age]);
+document.getElementById('fsum').innerHTML=act.length?('<b style="color:var(--bad)">đang lọc:</b> '+act.join(' · ')):'';
+
+var sF=0,sW=0,sP=0,pcs=0,age={a7:0,a30:0,old:0,none:0};
+var byX={},byTo={},byPj={},byM={};
+fs.forEach(function(it){
+  var v=FL.st?stVal(it):it.t;
+  sF+=it.f;sW+=it.w;sP+=it.p;pcs+=it.pcs;age[ageBk(it)]+=v;
+  (byX[it.x]=byX[it.x]||{f:0,w:0,p:0,v:0,n:0});var o=byX[it.x];o.f+=it.f;o.w+=it.w;o.p+=it.p;o.v+=v;o.n++;
+  (byTo[it.to]=byTo[it.to]||{v:0,q:0,n:0});byTo[it.to].v+=v;byTo[it.to].q+=it.pcs;byTo[it.to].n++;
+  (byPj[it.pj]=byPj[it.pj]||{v:0,q:0,n:0});byPj[it.pj].v+=v;byPj[it.pj].q+=it.pcs;byPj[it.pj].n++;
+  var mk=it.sx?it.sx.slice(0,7):'(thiếu ngày)';(byM[mk]=byM[mk]||{v:0,n:0});byM[mk].v+=v;byM[mk].n++;
+});
+var tot=FL.st?(FL.st==='F'?sF:(FL.st==='W'?sW:sP)):(sF+sW+sP);
+var unit=FL.st?({F:'Fitup',W:'Hàn',P:'Sơn'}[FL.st]+' (t)'):'Tổng (t)';
+var h='';
+
+h+='<h2>Tồn theo công đoạn — bấm thẻ để lọc</h2><div class="cards">';
+h+='<div class="card click'+(FL.st==='F'?' on':'')+'" style="border-top-color:var(--acc)" onclick="togSt(\'F\')"><div class="l">① Fitup chờ NT</div><div class="v stF">'+fm(sF)+' t</div><div class="s">'+fs.filter(function(i){return i.f>0}).length+' dòng · '+pc(sF,sF+sW+sP)+'%</div></div>';
+h+='<div class="card click'+(FL.st==='W'?' on':'')+'" style="border-top-color:var(--han)" onclick="togSt(\'W\')"><div class="l">② Hàn chờ NT</div><div class="v stW">'+fm(sW)+' t</div><div class="s">'+fs.filter(function(i){return i.w>0}).length+' dòng · '+pc(sW,sF+sW+sP)+'%</div></div>';
+h+='<div class="card click'+(FL.st==='P'?' on':'')+'" style="border-top-color:var(--son)" onclick="togSt(\'P\')"><div class="l">③ Sơn chờ NT</div><div class="v stP">'+fm(sP)+' t</div><div class="s">'+fs.filter(function(i){return i.p>0}).length+' dòng · '+pc(sP,sF+sW+sP)+'%</div></div>';
+h+='<div class="card" style="border-top-color:var(--warn)"><div class="l">Tổng theo bộ lọc</div><div class="v" style="color:var(--warn)">'+fm(tot)+' t</div><div class="s">'+fs.length+' dòng · '+pcs.toLocaleString('vi-VN')+' pcs</div></div>';
+h+='</div>';
+
+h+='<h2>Tuổi tồn (từ ngày SX xong) — bấm thẻ để lọc</h2><div class="cards">';
+[['a7','≤ 7 ngày · hàng mới, bình thường','var(--good)'],['a30','8–30 ngày · cần đẩy nhanh','var(--warn)'],['old','Trên 30 ngày · BẤT THƯỜNG','var(--bad)'],['none','Thiếu ngày SX','var(--mut)']].forEach(function(b){
+h+='<div class="card click'+(FL.age===b[0]?' on':'')+'" style="border-top-color:'+b[2]+'" onclick="togAge(\''+b[0]+'\')"><div class="l">'+b[1]+'</div><div class="v" style="color:'+b[2]+'">'+fm(age[b[0]])+' t</div><div class="s">'+pc(age[b[0]],tot)+'% tồn</div></div>';});
+h+='</div>';
+
+var mxX=0;Object.keys(byX).forEach(function(x){if(byX[x].v>mxX)mxX=byX[x].v;});
+h+='<h2>Theo xưởng — bấm dòng để lọc</h2><table><tr><th>Xưởng</th><th></th><th class="n">Fitup (t)</th><th class="n">Hàn (t)</th><th class="n">Sơn (t)</th><th class="n">'+unit+'</th><th class="n">% tồn</th><th class="n">dòng</th></tr>';
+Object.keys(byX).sort(function(a,b){return byX[b].v-byX[a].v;}).forEach(function(x){var o=byX[x];
+h+='<tr class="pick" onclick="setX(FL.x===\''+esc(x)+'\'?\'\':\''+esc(x)+'\');document.getElementById(\'selX\').value=FL.x"><td><b>'+esc(x)+'</b></td><td>'+bar(o.v,mxX,'var(--warn)')+'</td><td class="n stF">'+fm(o.f)+'</td><td class="n stW">'+fm(o.w)+'</td><td class="n stP">'+fm(o.p)+'</td><td class="n"><b>'+fm(o.v)+'</b></td><td class="n">'+pc(o.v,tot)+'%</td><td class="n">'+o.n+'</td></tr>';});
+h+='</table>';
+
+var tks=Object.keys(byTo).sort(function(a,b){return byTo[b].v-byTo[a].v;}).slice(0,20);
+var mxT=tks.length?byTo[tks[0]].v:0;
+var mks=Object.keys(byM).sort();var mxM=0;mks.forEach(function(m){if(byM[m].v>mxM)mxM=byM[m].v;});
+h+='<div class="two"><div><h2>Top tổ — bấm dòng để lọc</h2><table><tr><th>Tổ</th><th></th><th class="n">'+unit+'</th><th class="n">pcs</th><th class="n">dòng</th></tr>';
+tks.forEach(function(t){var o=byTo[t];
+h+='<tr class="pick" onclick="pickTo(\''+esc(t)+'\')"><td><b>'+esc(t)+'</b></td><td>'+bar(o.v,mxT,'var(--acc)')+'</td><td class="n"><b>'+fm(o.v)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td><td class="n">'+o.n+'</td></tr>';});
+h+='</table></div><div><h2>Theo tháng SX — bấm dòng để lọc</h2><table><tr><th>Tháng</th><th></th><th class="n">'+unit+'</th><th class="n">dòng</th></tr>';
+mks.forEach(function(m){
+h+='<tr class="pick" onclick="pickM(\''+esc(m)+'\')"><td><b>'+mvn(m)+'</b></td><td>'+bar(byM[m].v,mxM,'var(--han)')+'</td><td class="n"><b>'+fm(byM[m].v)+'</b></td><td class="n">'+byM[m].n+'</td></tr>';});
+h+='</table><div class="small">Tháng cũ còn KL lớn = tồn lâu ngày thật hoặc SPM chưa cập nhật trạng thái.</div></div></div>';
+
+var pks=Object.keys(byPj).sort(function(a,b){return byPj[b].v-byPj[a].v;}).slice(0,15);
+var mxP=pks.length?byPj[pks[0]].v:0;
+h+='<h2>Top dự án — bấm dòng để lọc</h2><table><tr><th>Dự án</th><th></th><th class="n">'+unit+'</th><th class="n">pcs</th><th class="n">dòng</th></tr>';
+pks.forEach(function(p){var o=byPj[p];
+h+='<tr class="pick" onclick="pickPj(\''+esc(p).replace(/&#39;/g,"\\'")+'\')"><td>'+esc(p.length>58?p.slice(0,57)+'…':p)+'</td><td>'+bar(o.v,mxP,'var(--son)')+'</td><td class="n"><b>'+fm(o.v)+'</b></td><td class="n">'+o.q.toLocaleString('vi-VN')+'</td><td class="n">'+o.n+'</td></tr>';});
+h+='</table>';
+
+var det=fs.slice().sort(function(a,b){return SORT==='ag'?((b.ag==null?-1:b.ag)-(a.ag==null?-1:a.ag)):(stVal(b)-stVal(a));});
+h+='<h2>Chi tiết từng hạng mục ('+fs.length+' dòng, hiện tối đa 200) — sắp xếp: '
++'<span class="chip'+(SORT==='ag'?' on':'')+'" onclick="setSort(\'ag\')">tồn lâu nhất</span> '
++'<span class="chip'+(SORT==='kl'?' on':'')+'" onclick="setSort(\'kl\')">KL lớn nhất</span></h2>';
+h+='<div class="small">Cột "Chờ ở": <span class="tag" style="background:var(--acc)">F</span>=Fitup · <span class="tag" style="background:var(--han)">H</span>=Hàn · <span class="tag" style="background:var(--son)">S</span>=Sơn · dòng nền đỏ = tồn quá 30 ngày</div>';
+h+='<table><tr><th>Dự án</th><th>Tổ</th><th>Chờ ở</th><th>Ngày SX</th><th class="n">Tồn (ngày)</th><th class="n">F (t)</th><th class="n">H (t)</th><th class="n">S (t)</th><th class="n">Tổng</th><th class="n">pcs</th><th>Memo</th></tr>';
+det.slice(0,200).forEach(function(it){
+h+='<tr'+(it.ag!=null&&it.ag>30?' style="background:#fdf3f2"':'')+'><td>'+esc(it.pj.length>40?it.pj.slice(0,39)+'…':it.pj)+'</td><td>'+esc(it.to)+'</td><td>'+stTags(it)+'</td><td>'+(it.sx?vn(it.sx):'<span class="badge">thiếu</span>')+'</td><td class="n"><b>'+(it.ag==null?'—':it.ag)+'</b></td><td class="n stF">'+(it.f?fm(it.f):'')+'</td><td class="n stW">'+(it.w?fm(it.w):'')+'</td><td class="n stP">'+(it.p?fm(it.p):'')+'</td><td class="n"><b>'+fm(it.t)+'</b></td><td class="n">'+it.pcs+'</td><td class="small">'+esc(it.memo.slice(0,40))+'</td></tr>';});
+h+='</table><div class="note" style="margin-top:12px"><b>Cách chốt số với sếp:</b> bấm thẻ <b>Hàn</b> + thẻ <b>Trên 30 ngày</b> → ra đúng danh sách cần đi kiểm tra thực tế tại xưởng. Hàng đã NT mà vẫn hiện ở đây = SPM chưa cập nhật trạng thái, không phải QC bỏ sót.</div>';
+
+document.getElementById('out').innerHTML=h;
+}
+</script>
+</body>
+</html>
