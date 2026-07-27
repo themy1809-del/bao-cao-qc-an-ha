@@ -349,7 +349,7 @@ body.tvmode #hdrStick{position:static;box-shadow:none}
 body.tvmode .view>.kpis{position:static}
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 27/7 v63 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 27/7 v65 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="ncr_data.js"></script>
@@ -1832,6 +1832,7 @@ function renderFresh(){
   var src=(window.__QCSRC==='live'?'Google \u00b7 LIVE':'file n\u1ed9i b\u1ed9');
   var ig=document.getElementById('integ'); if(ig) ig.innerHTML='<b style="color:inherit">'+nR.toLocaleString('vi-VN')+' d\u00f2ng</b> \u00b7 \u03a3 '+fm1(tot)+' t<br>'+src;var _sb=document.getElementById('sbSrc');if(_sb&&ig)_sb.title=ig.textContent;
   var box=document.getElementById('freshBar'); if(!box) return;
+  box.style.display='none'; return;   /* da bo banner "du lieu moi toi..." theo yeu cau */
   var acc=D.rows.filter(function(r){return isAcc(r);});
   var ld=''; for(var k=0;k<acc.length;k++){var d=acc[k][3]; if(d&&d>ld) ld=d;}
   if(!ld){ box.style.display='none'; return; }
@@ -1983,13 +1984,11 @@ function renderTarget(done){
   var col=pct>=90?'var(--good)':(pct>=60?'#F59E0B':'var(--acc)');
   var fcol=fpct>=100?'var(--good)':(fpct>=85?'var(--warn)':'var(--bad)');
   box.style.display='block';
-  box.innerHTML='<h3>Mục tiêu tháng '+moVN(lm)+' — '+CAP_MONTH.toLocaleString('vi-VN')+' t</h3>'
-   +'<div class="tgt-wrap">'
-   +'<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px">'
-   +'<span>Đã NT: <b>'+fm1(t)+' t</b> ('+pct.toFixed(1).replace('.',',')+'%) · hết ngày '+de+'/'+mn+'</span>'
-   +'<span>Dự báo cuối tháng: <b style="color:'+fcol+'">'+fm1(fc)+' t · '+fpct.toFixed(0)+'%</b>'+(remD>0?' · cần <b>'+fm1(need)+' t/ngày</b>':'')+'</span></div>'
-   +'<div class="tgt-bar"><i style="width:'+Math.min(100,pct).toFixed(1)+'%;background:'+col+'"></i><span class="mk" style="left:'+Math.min(100,de/dim*100).toFixed(1)+'%" title="% thời gian tháng đã trôi"></span></div>'
-   +'</div>';
+  box.style.padding='8px 14px';
+  box.innerHTML='<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;align-items:center">'
+   +'<span><b>Mục tiêu '+moVN(lm)+': '+CAP_MONTH.toLocaleString('vi-VN')+' t</b> · Đã NT <b style="color:'+col+'">'+fm1(t)+' t ('+pct.toFixed(1).replace('.',',')+'%)</b> · hết '+de+'/'+mn+'</span>'
+   +'<span>Dự báo: <b style="color:'+fcol+'">'+fm1(fc)+' t · '+fpct.toFixed(0)+'%</b>'+(remD>0?' · cần <b>'+fm1(need)+' t/ngày</b>':'')+'</span></div>'
+   +'<div class="tgt-bar" style="height:6px;margin-top:5px"><i style="width:'+Math.min(100,pct).toFixed(1)+'%;background:'+col+'"></i><span class="mk" style="left:'+Math.min(100,de/dim*100).toFixed(1)+'%" title="% thời gian tháng đã trôi"></span></div>';
 }
 
 /* --- TIM KIEM NHANH --- */
