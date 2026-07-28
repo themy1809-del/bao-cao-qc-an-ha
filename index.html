@@ -663,7 +663,8 @@ function val(r){if(!S.st.size)return r[7]+r[8]+r[9];let v=0;if(S.st.has('f'))v+=
 function qval(r){if(!S.st.size)return r[10]+r[11]+r[12];let v=0;if(S.st.has('f'))v+=r[10];if(S.st.has('w'))v+=r[11];if(S.st.has('p'))v+=r[12];return v;}
 function sums(rows){let f=0,w=0,p=0;for(const r of rows){f+=r[7];w+=r[8];p+=r[9];}return{f,w,p};}
 function stSums(rows){const s=sums(rows);return{f:S.st.size&&!S.st.has('f')?0:s.f,w:S.st.size&&!S.st.has('w')?0:s.w,p:S.st.size&&!S.st.has('p')?0:s.p};}
-const isReject=r=>D.PL[r[6]]==='Rớt'||(r[13]&&(/\b(reject|fail)\b/i.test(''+r[13])||/rớt|không đạt/i.test(''+r[13])));const isAcc=r=>!!r[3]&&!isReject(r);const isTon=r=>D.PL[r[6]]==='Chưa QC';const plLabel=v=>({'Đã QC (AH)':'Accept','Chưa QC':'Waiting','Rớt':'Reject'}[v]||v);
+const isReject=r=>D.PL[r[6]]==='Rớt'||(r[13]&&(/\b(reject|fail)\b/i.test(''+r[13])||/rớt|không đạt/i.test(''+r[13])));/* VA 2026-07-28: QC ngoai (PhanLoai='QC khác', vd BD.VP) KHONG duoc tinh la An Ha nghiem thu -> loai khoi moi KPI */
+const isOther=r=>D.PL[r[6]]==='QC khác';const isAcc=r=>!!r[3]&&!isReject(r)&&!isOther(r);const isTon=r=>D.PL[r[6]]==='Chưa QC';const plLabel=v=>({'Đã QC (AH)':'Accept','Chưa QC':'Waiting','Rớt':'Reject','QC khác':'QC ngoài'}[v]||v);
 const ERRRE=/\b(MAT|PRE|FIT|DIM|WEL|GRI|BLA|PAI|PAC|DRW)\s*-\s*\d{1,2}\b/i;
 const isErr=r=>!!(r[13]&&ERRRE.test(''+r[13]));
 const errCode=r=>{const m=(''+(r[13]||'')).match(ERRRE);return m?m[0].toUpperCase().replace(/\s/g,''):'';};
