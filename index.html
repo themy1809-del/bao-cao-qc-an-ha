@@ -1262,7 +1262,24 @@ function rTQ(){
     var _xw={};Fnodate().filter(isTon).forEach(function(_xr){var _xn=D.X[_xr[1]];_xw[_xn]=(_xw[_xn]||0)+_xr[7]+_xr[8]+_xr[9];});
     var _xwc=['#2563EB','#F59E0B','#16A34A','#0D9488','#0EA5E9','#DC2626','#64748B','#CA8A04','#0F766E'];
     var _xwData=Object.keys(_xw).sort(function(a,b){return _xw[b]-_xw[a];}).map(function(x,i){return {value:+_xw[x].toFixed(1),name:x,itemStyle:{color:_xwc[i%_xwc.length]}};});
-    setOpt('cMixDonut',{title:{text:'Tỉ trọng chờ NT theo xưởng',left:'center',top:2,textStyle:{fontSize:10,color:'#9aa89f',fontWeight:700}},tooltip:{trigger:'item',formatter:p=>p.marker+' '+p.name+': <b>'+fm1(p.value)+' t</b> · '+p.percent+'%'},legend:{show:true,bottom:0,left:'center',itemWidth:8,itemHeight:8,itemGap:7,textStyle:{fontSize:9,color:_dk?'#cfe3d8':'#697c70'}},series:[{type:'pie',radius:['30%','63%'],center:['50%','44%'],avoidLabelOverlap:true,itemStyle:{borderColor:_dk?'#1b2620':'#fff',borderWidth:2},label:{show:true,position:'inside',formatter:'{d}%',fontSize:9,fontWeight:700,color:'#fff'},data:_xwData}]});})();
+    /* VA 2026-07-28 (ban 3): khung nho -> vong vua phai, chu giua GON,
+       nhan chi hien % cho mieng du lon; chi tiet xem o tooltip. */
+    var _xwTot=_xwData.reduce(function(a,e){return a+e.value;},0);
+    setOpt('cMixDonut',{
+      title:{text:'Tỉ trọng chờ NT theo xưởng',left:'center',top:0,textStyle:{fontSize:10.5,color:_dk?'#9fb3a6':'#7c8c82',fontWeight:800}},
+      tooltip:{trigger:'item',confine:true,formatter:p=>p.marker+' <b>'+p.name+'</b><br>'+fm1(p.value)+' t · '+p.percent+'%'},
+      legend:{show:true,bottom:0,left:'center',itemWidth:9,itemHeight:9,itemGap:8,icon:'roundRect',textStyle:{fontSize:9.5,fontWeight:600,color:_dk?'#cfe3d8':'#697c70'}},
+      graphic:[{type:'text',left:'center',top:'43%',z:10,silent:true,style:{
+        text:'{a|'+fm1(_xwTot)+'}\n{b|tấn chờ NT}',
+        textAlign:'center',textVerticalAlign:'middle',
+        rich:{a:{fontSize:14,fontWeight:800,fill:_dk?'#e6ece8':'#16261c',lineHeight:17},
+              b:{fontSize:8.5,fontWeight:600,fill:_dk?'#9fb3a6':'#8b9a91',lineHeight:11}}}}],
+      series:[{type:'pie',radius:['40%','62%'],center:['50%','43%'],avoidLabelOverlap:true,
+        itemStyle:{borderColor:_dk?'#1b2620':'#fff',borderWidth:2,borderRadius:4,shadowBlur:9,shadowColor:'rgba(15,42,28,.20)',shadowOffsetY:3},
+        label:{show:true,position:'inside',formatter:p=>(p.percent>=8?p.percent+'%':''),fontSize:9,fontWeight:800,color:'#fff',textShadowBlur:3,textShadowColor:'rgba(0,0,0,.4)'},
+        emphasis:{scale:true,scaleSize:6,itemStyle:{shadowBlur:16,shadowColor:'rgba(15,42,28,.38)'}},
+        animationDuration:1100,animationEasing:'cubicOut',
+        data:_xwData}]});})();
   document.getElementById('tqTimeTtl').textContent='Sản lượng '+(DB==='q'?'nghiệm thu':'gia công')+' '+(S.st.size?STG.filter(([k])=>S.st.has(k)):[STG[0]]).map(x=>x[1]).join(' + ')+' theo '+(ta.mode==='d'?'ngày · '+ta.keys.length+' ngày gần nhất':'tháng');
   document.getElementById('tqTimeQ').textContent=(DB==='q'?'Theo ngày QC nghiệm thu':'Theo ngày gia công')+' · cột = tấn · đường = % so định mức '+CAP_DAY+' t/ngày · bấm cột để lọc';
   const selStg=S.st.size?STG.filter(([k])=>S.st.has(k)):[STG[0]];
