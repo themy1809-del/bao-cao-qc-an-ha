@@ -491,6 +491,8 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
       <div class="q" id="xtSum">—</div>
       <div id="xtCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:6px 0 14px"></div>
       <div class="cg-lbl" id="xtChTtl" style="margin:2px 0 4px">Tỉ lệ nghiệm thu theo Xưởng</div><div id="cXt" class="ch" style="height:200px;margin:0"></div><div id="xtGaugeLbl" style="display:flex;margin:0 0 14px"></div>
+      <div class="cg-lbl" id="xtWfTtl" style="margin:10px 0 4px">Tồn chờ NT theo công đoạn — theo Xưởng</div><div id="cXtWf" class="ch" style="height:235px;margin:0 0 4px"></div>
+      <div class="cg-lbl" id="xtWtTtl" style="margin:8px 0 4px">Tồn chờ NT theo Tổ</div><div id="cXtWt" class="ch" style="height:280px;margin:0 0 12px"></div>
       <div class="tw" style="max-height:640px" id="xtTree"></div>
       <div class="muted" style="margin-top:8px;font-size:11.5px">Bấm <b>Xưởng</b> hoặc <b>Tổ</b> để xem chi tiết · cột phải: Đã NT / <b style="color:var(--warn)">Chờ NT</b></div>
     </div>
@@ -1429,14 +1431,14 @@ function rXT(){
   const accR=F().filter(isAcc), penR=Fnodate().filter(isTon);
   const X={};
   const ax=x=>X[x]||(X[x]={acc:0,wait:0,wf:0,ww:0,wp:0,tos:{},pjs:new Set()});
-  const at=(xo,t)=>xo.tos[t]||(xo.tos[t]={acc:0,wait:0,pjs:{},days:{},qcs:{}});
+  const at=(xo,t)=>xo.tos[t]||(xo.tos[t]={acc:0,wait:0,wf:0,ww:0,wp:0,pjs:{},days:{},qcs:{}});
   for(const r of accR){const x=D.X[r[1]],t=D.T[r[2]]||'—',pj=r[0],tn=r[7]+r[8]+r[9];
     const xo=ax(x);xo.pjs.add(pj);xo.acc+=tn;const to=at(xo,t);to.acc+=tn;
     const p=to.pjs[pj]||(to.pjs[pj]={acc:0,wait:0});p.acc+=tn;
     if(r[3])to.days[r[3]]=(to.days[r[3]]||0)+tn;
     const q=D.Q[r[5]];if(q&&q!=='—')to.qcs[q]=(to.qcs[q]||0)+tn;}
   for(const r of penR){const x=D.X[r[1]],t=D.T[r[2]]||'—',pj=r[0],tn=r[7]+r[8]+r[9];
-    const xo=ax(x);xo.pjs.add(pj);xo.wait+=tn;xo.wf+=r[7];xo.ww+=r[8];xo.wp+=r[9];const to=at(xo,t);to.wait+=tn;
+    const xo=ax(x);xo.pjs.add(pj);xo.wait+=tn;xo.wf+=r[7];xo.ww+=r[8];xo.wp+=r[9];const to=at(xo,t);to.wait+=tn;to.wf+=r[7];to.ww+=r[8];to.wp+=r[9];
     const p=to.pjs[pj]||(to.pjs[pj]={acc:0,wait:0});p.wait+=tn;}
   const xs=Object.keys(X).sort();
   const nTo=xs.reduce((a,x)=>a+Object.keys(X[x].tos).length,0);
@@ -1445,6 +1447,42 @@ function rXT(){
   const cd=document.getElementById('xtCards');if(cd)cd.innerHTML=xs.map(x=>{const o=X[x];const on=(xtFocus===x);
     return `<div class="clickable" onclick="xtSel('${x}')" style="border:1.5px solid ${on?'var(--acc)':'var(--line)'};background:${on?'var(--chipBg)':'var(--card)'};border-radius:12px;padding:11px 13px 15px;box-shadow:var(--sh);transition:.15s"><div style="font-size:15px;font-weight:800;color:var(--acc)">${x}</div><div class="muted" style="font-size:10.5px;margin-top:2px">${Object.keys(o.tos).length} tổ · ${o.pjs.size} dự án</div><div style="font-size:19px;font-weight:800;margin-top:7px;letter-spacing:-.01em">${fm1(o.acc)} <span style="font-size:11px;font-weight:600;color:var(--mut)">t đã NT</span></div><div style="font-size:14px;font-weight:700;color:var(--warn);margin-top:2px">${fm1(o.wait)} <span style="font-size:10.5px;font-weight:600">t chờ NT</span></div>${o.wait>0?`<div title="Chờ NT theo công đoạn (t): Fitup / Welding / Painting" style="font-size:10.5px;font-weight:700;margin-top:3px;display:flex;gap:7px;flex-wrap:wrap">`+[['f','F',o.wf],['w','W',o.ww],['p','P',o.wp]].filter(e=>e[2]>=0.05).map(e=>`<span style="color:var(--${e[0]})">${e[1]} ${fm1(e[2])}</span>`).join('<span style="color:var(--mut)">·</span>')+`</div>`:''}</div>`;
   }).join('');
+  (function(){ /* Ton cho NT theo dong chay F->W->P: theo Xuong + theo To */
+    const t1=document.getElementById('xtWfTtl'),c1=document.getElementById('cXtWf'),t2=document.getElementById('xtWtTtl'),c2=document.getElementById('cXtWt');
+    if(!c1||!c2)return;
+    const SC=[['wf','Fitup','#2563EB'],['ww','Welding','#F59E0B'],['wp','Painting','#16A34A']];
+    const totW=xs.reduce((a,x)=>a+X[x].wait,0);
+    const show=totW>0.05&&typeof echarts!=='undefined';
+    [t1,c1,t2,c2].forEach(e=>{if(e)e.style.display=show?'':'none';});
+    if(!show)return;
+    const mx1=Math.max.apply(null,xs.map(x=>X[x].wait).concat([0.001]));
+    if(t1)t1.textContent='Tồn CHỜ NT theo dòng chảy Fitup → Welding → Painting — theo Xưởng · tổng '+fmTon(totW)+' · bấm cột để chọn xưởng';
+    setOpt('cXtWf',{
+      tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:ps=>{const i=ps[0].dataIndex,o=X[xs[i]];let h='<b>'+xs[i]+'</b> — chờ NT <b>'+fmTon(o.wait)+'</b><br>';ps.forEach(p=>{if(p.seriesName==='_t')return;const v=p.value||0;h+=p.marker+p.seriesName+': <b>'+fmTon(v)+'</b>'+(o.wait>0?' · '+Math.round(v/o.wait*100)+'%':'')+'<br>';});return h;}},
+      legend:{top:0,data:SC.map(e=>e[1]),itemWidth:12,itemHeight:8,textStyle:{fontSize:10.5,fontWeight:700}},
+      grid:{left:8,right:14,top:28,bottom:6,containLabel:true},
+      xAxis:{type:'category',data:xs,axisLabel:{fontWeight:800}},
+      yAxis:{type:'value',name:'t',splitLine:{lineStyle:{opacity:.4}}},
+      series:SC.map((e,si)=>({name:e[1],type:'bar',stack:'w',barMaxWidth:46,itemStyle:{color:e[2],borderRadius:si===2?[4,4,0,0]:0},label:{show:true,fontSize:10,fontWeight:700,color:'#fff',formatter:p=>{const v=p.value||0;return v>=mx1*0.08?fm1(v):'';}},data:xs.map(x=>+X[x][e[0]].toFixed(1))})).concat([{name:'_t',type:'bar',stack:'w',itemStyle:{color:'transparent'},tooltip:{show:false},label:{show:true,position:'top',fontWeight:800,fontSize:11,color:'#64748B',formatter:p=>fm1(X[xs[p.dataIndex]].wait)},data:xs.map(()=>0)}])
+    },p=>{if(xs[p.dataIndex]!=null)xtSel(xs[p.dataIndex]);});
+    let rows2=[];
+    if(xtFocus&&X[xtFocus]){for(const t in X[xtFocus].tos){const o=X[xtFocus].tos[t];if(o.wait>0.05)rows2.push([xtFocus+'.'+t,o]);}}
+    else{xs.forEach(x=>{for(const t in X[x].tos){const o=X[x].tos[t];if(o.wait>0.05)rows2.push([x+'.'+t,o]);}});}
+    rows2.sort((a,b)=>b[1].wait-a[1].wait);
+    const cut=xtFocus?rows2:rows2.slice(0,14);
+    if(t2)t2.textContent='Tồn CHỜ NT theo Tổ — '+(xtFocus?('xưởng '+xtFocus+' · '+cut.length+' tổ'):('top '+cut.length+' tổ tồn nhiều nhất — bấm 1 xưởng để xem riêng'))+' · bấm 1 thanh để lọc toàn báo cáo theo tổ';
+    if(!cut.length){c2.style.display='none';return;}
+    c2.style.height=Math.max(130,34*cut.length+62)+'px';
+    const mx2=Math.max.apply(null,cut.map(e=>e[1].wait).concat([0.001]));
+    setOpt('cXtWt',{
+      tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:ps=>{const i=ps[0].dataIndex,o=cut[i][1];let h='<b>'+cut[i][0]+'</b> — chờ NT <b>'+fmTon(o.wait)+'</b><br>';ps.forEach(p=>{if(p.seriesName==='_t')return;const v=p.value||0;h+=p.marker+p.seriesName+': <b>'+fmTon(v)+'</b>'+(o.wait>0?' · '+Math.round(v/o.wait*100)+'%':'')+'<br>';});return h;}},
+      legend:{top:0,data:SC.map(e=>e[1]),itemWidth:12,itemHeight:8,textStyle:{fontSize:10.5,fontWeight:700}},
+      grid:{left:8,right:46,top:28,bottom:6,containLabel:true},
+      xAxis:{type:'value',name:'t',splitLine:{lineStyle:{opacity:.4}}},
+      yAxis:{type:'category',data:cut.map(e=>e[0]),inverse:true,axisLabel:{fontWeight:700,fontSize:10.5}},
+      series:SC.map((e,si)=>({name:e[1],type:'bar',stack:'w',barMaxWidth:20,itemStyle:{color:e[2],borderRadius:si===2?[0,4,4,0]:0},label:{show:true,fontSize:9.5,fontWeight:700,color:'#fff',formatter:p=>{const v=p.value||0;return v>=mx2*0.12?fm1(v):'';}},data:cut.map(e2=>+e2[1][e[0]].toFixed(1))})).concat([{name:'_t',type:'bar',stack:'w',itemStyle:{color:'transparent'},tooltip:{show:false},label:{show:true,position:'right',fontWeight:800,fontSize:10.5,color:'#64748B',formatter:p=>fm1(cut[p.dataIndex][1].wait)},data:cut.map(()=>0)}])
+    },p=>{const e=cut[p.dataIndex];if(e)tog('to',e[0]);});
+  })();
   (function(){
     const tt=document.getElementById('xtChTtl');
     if(tt)tt.textContent='Tỉ lệ nghiệm thu theo Xưởng = Đã NT / (Đã NT + Chờ NT) · bấm 1 đồng hồ để chọn xưởng';
