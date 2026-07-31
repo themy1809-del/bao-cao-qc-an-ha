@@ -496,13 +496,13 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
   <!-- 03 QC VIÊN -->
   <section id="v_qc" class="view">
     <div class="kpis" id="qcKpis"></div>
+    <div class="card"><h3>Khối lượng nghiệm thu theo QC</h3><div class="q">Top 15 · màu theo công đoạn chính · bấm thanh để xem hồ sơ</div><div id="cQc" class="ch tall"></div></div>
     <div class="card" style="border-left:4px solid #B45309"><h3>Bảng chấm điểm KPI QC viên — thước đo ngày &amp; tổng KPI</h3>
       <div class="q">TỔNG 100 = Sản lượng 40 (<b>tấn/ngày</b> so mốc <b id="kpiDayLbl"></b> — trần 100%, khớp số báo cáo hằng ngày; SLQĐ = K × XK × (tấn + β·pcs) dùng xếp hạng công bằng) + Phát hiện lỗi 30 ((lỗi mã + rớt) ÷ KL kiểm, mốc 2% — <b>phát hiện càng nhiều điểm càng cao, 0% = ⚠ sạch bất thường</b>) + Kỷ luật 15 (độ đều) + Trách nhiệm 15 (dự án khó + Final DIM) · theo kỳ đang lọc · <b>bấm dòng để bóc tách tiêu chí từng QC</b></div>
       <div class="tw" style="max-height:520px"><table id="tQcKpi"></table></div><div id="qcKpiDet"></div></div>
     
 
 
-    <div class="card"><h3>Khối lượng nghiệm thu theo QC</h3><div class="q">Top 15 · màu theo công đoạn chính · bấm thanh để xem hồ sơ</div><div id="cQc" class="ch tall"></div></div>
     <div class="card"><h3>Bảng năng suất QC — đánh giá</h3><div class="q">Bấm một QC để xem hồ sơ theo tuần & tháng</div><div class="tw" style="max-height:460px"><table id="tQc"></table></div></div>
     <div class="card"><h3>Ma trận QC × Tháng (tấn)</h3><div class="q">Tấn nghiệm thu mỗi QC theo tháng</div><div class="tw" style="max-height:440px;overflow:auto"><table id="tQcMx"></table></div></div>
     <div class="card"><h3>Nhịp làm việc QC viên theo ngày</h3><div class="q">Mỗi ô = tấn/ngày · 15 ngày gần nhất · xanh nhiều · đỏ ít · trắng nghỉ</div><div class="tw" style="max-height:440px;overflow:auto"><table id="qcHeat"></table></div></div>
@@ -596,6 +596,10 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
   <!-- 07 MUC TIEU KPI -->
   <section id="v_kp" class="view">
     <div class="kpis" id="kpKpis"></div>
+    <div class="r2">
+      <div class="card"><h3>Sản lượng — QC nghiệm thu so với SX (mục tiêu ≥ 95%)</h3><div class="q">Đậm = NT · nhạt = SX cùng kỳ · % = SX đã NT · vạch cam = mục tiêu 95%</div><div id="cKp31" class="ch"></div></div>
+      <div class="card"><h3>Chất lượng — FPY công đoạn chính (mục tiêu ≥ 98%)</h3><div class="q">FPY = đạt ngay lần đầu ÷ đã kiểm (theo tấn) · vạch cam = 98%</div><div id="cKp32" class="ch"></div></div>
+    </div>
     <div class="card"><h3>Xu hướng theo tháng — sản lượng &amp; FPY</h3><div class="q">Cột = tấn NT mỗi tháng · đường = FPY% · bảng dưới so tháng gần nhất với tháng trước · toàn bộ dữ liệu, không theo bộ lọc</div><div id="cTrendM" class="ch"></div><div class="tw" id="tTrendM" style="margin-top:6px"></div></div>
     <div class="card"><h3>Tỷ lệ nghiệm thu QC so với sản xuất — ngày · tuần · tháng</h3>
       <div class="q">Mẫu số = tấn SX theo NGÀY GIA CÔNG trong kỳ · tử số = phần trong đó ĐÃ được QC accept (bất kể nghiệm thu ngày nào) · không vượt 100%, đối soát được từng dòng SPM · <b>bấm cột biểu đồ hoặc hàng bảng để lọc toàn dashboard theo kỳ đó</b> · cột <b>NT trong kỳ</b> = tấn QC nghiệm thu trong kỳ tính theo NGÀY NT (mọi lô) — đây mới là số khớp mail báo cáo ngày · Tỷ lệ % thấp ở kỳ gần nhất là bình thường</div>
@@ -605,10 +609,6 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
         <div><div class="cg-lbl" style="margin:0 0 4px">Bảng theo kỳ — mới nhất trước</div><div class="tw" style="max-height:340px" id="tCov"></div></div>
         <div><div class="cg-lbl" style="margin:0 0 4px">Theo xưởng — cùng phương pháp, toàn kỳ đang lọc</div><div id="cCovX" class="ch" style="height:330px"></div></div>
       </div></div>
-    <div class="r2">
-      <div class="card"><h3>Sản lượng — QC nghiệm thu so với SX (mục tiêu ≥ 95%)</h3><div class="q">Đậm = NT · nhạt = SX cùng kỳ · % = SX đã NT · vạch cam = mục tiêu 95%</div><div id="cKp31" class="ch"></div></div>
-      <div class="card"><h3>Chất lượng — FPY công đoạn chính (mục tiêu ≥ 98%)</h3><div class="q">FPY = đạt ngay lần đầu ÷ đã kiểm (theo tấn) · vạch cam = 98%</div><div id="cKp32" class="ch"></div></div>
-    </div>
     <div class="card"><h3>Phân tích theo loại hình dự án (8 mức Dễ → Phức tạp)</h3><div class="q">Hệ số K = độ khó · phân loại theo tên dự án</div><div id="cPjType" class="ch"></div><div class="tw" style="max-height:380px"><table id="tPjType"></table></div></div>
     <div class="card"><h3>Scorecard AOP 2026 — tự chấm theo dữ liệu</h3><div class="q">Các chỉ tiêu đo tự động từ SPM · chỉ tiêu chưa đo được ghi rõ nguồn cần bổ sung · <span id="scNote"></span></div><div class="tw"><table id="tScore"></table></div></div>
     <div class="card" id="bscCard"><h3>BSC 2026 — chấm điểm theo trọng số AOP</h3><div class="q">Trọng số Tài chính 45% · Khách hàng 30% · Quy trình 15% · Học tập 10% · KR đo được máy tự chấm · KR khác nhập % hoàn thành (0–120), máy quy đổi và <b>lưu lại trên máy</b></div>
