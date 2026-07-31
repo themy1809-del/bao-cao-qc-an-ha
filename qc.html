@@ -478,9 +478,10 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
       <div class="tw" style="max-height:380px" id="fpyErrWrap"></div>
     </div>
     <div class="r23"><div class="card"><h3 id="tqTimeTtl">Sản lượng nghiệm thu theo ngày</h3><div class="q" id="tqTimeQ">Bấm cột để lọc theo kỳ</div><div id="cTime" class="ch"></div></div><div class="card"><h3>Sản lượng theo công đoạn</h3><div class="q" id="tqMixQ">So với mục tiêu 4.500 t/tháng · bấm để lọc</div><div style="display:flex;gap:6px;align-items:stretch"><div id="cMix" class="ch" style="flex:1.5"></div><div id="cMixDonut" class="ch" style="flex:1"></div></div></div></div>
-    <div class="r23" style="grid-template-columns:1fr 1.4fr">
+    <div class="r23" style="grid-template-columns:1fr 1.15fr .95fr">
       <div class="card" style="display:flex;flex-direction:column"><h3>Sản lượng theo xưởng</h3><div class="q" id="tqXQ">Bấm cột xưởng để lọc</div><div id="cX" class="ch" style="flex:1 1 auto;height:auto;min-height:170px"></div></div>
       <div class="card"><h3>Top dự án đang hoạt động</h3><div class="q">Đã NT trong kỳ · <b>Chờ NT</b> · <b>Còn lại BOM</b> · bấm để lọc</div><div id="cPjDonut5" style="width:100%;height:280px"></div><div id="tqIns" style="display:none"></div></div>
+      <div class="card clickable" onclick="setView('cl')" title="Bấm để mở tab Chất lượng — phân tích NCR đầy đủ" style="display:none"><h3>NCR — 6 tháng gần nhất</h3><div class="q" id="ncrMiniQ">Cột = số vụ · đường = kg · bấm để xem chi tiết</div><div id="cNcrMini" style="width:100%;height:280px"></div></div>
     </div>
   </section>
 
@@ -558,8 +559,8 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
           <div><div class="cg-lbl" style="margin-bottom:4px">Theo dự án</div><div class="tw" style="max-height:260px"><table id="ndByP"></table></div></div>
         </div>
         <div class="r2" style="gap:22px;margin-top:18px">
-          <div><div class="cg-lbl" style="margin-bottom:4px">Theo tổ</div><div class="tw" style="max-height:260px"><table id="ndByTo"></table></div></div>
           <div><div class="cg-lbl" style="margin-bottom:4px">Theo QC viên</div><div class="tw" style="max-height:260px"><table id="ndByQ"></table></div></div>
+          <div><div class="cg-lbl" style="margin-bottom:4px">Theo tổ</div><div class="tw" style="max-height:260px"><table id="ndByTo"></table></div></div>
         </div>
       </div>
       <div id="ndExtra"></div>
@@ -1327,6 +1328,23 @@ function rTQ(){
         emphasis:{scale:true,scaleSize:6,itemStyle:{shadowBlur:16,shadowColor:'rgba(15,42,28,.38)'}},
         animationDuration:1100,animationEasing:'cubicOut',
         data:_xwData}]});})();
+  (function(){ /* NCR mini — 6 thang gan nhat (Tong quan) */
+    var el=document.getElementById('cNcrMini');if(!el)return;var cardEl=el.parentNode;
+    var N=window.NCRDATA;
+    if(!N||!N.rows||!N.rows.length||typeof echarts==='undefined'){cardEl.style.display='none';return;}
+    cardEl.style.display='';
+    var MO={};N.rows.forEach(function(r){var m=(r[2]||'').slice(0,7);if(m){var o=MO[m]=MO[m]||{n:0,k:0,open:0};o.n++;o.k+=r[3];if(String(r[6]||'').toUpperCase().indexOf('OPEN')>-1)o.open++;}});
+    var ks=Object.keys(MO).sort().slice(-6);
+    var opn=0,opk=0;N.rows.forEach(function(r){if(String(r[6]||'').toUpperCase().indexOf('OPEN')>-1){opn++;opk+=r[3];}});
+    var q=document.getElementById('ncrMiniQ');if(q)q.innerHTML='Cột = số vụ (số trong ngoặc = đang mở) · đường = kg'+(opn?' · <b style="color:var(--bad)">'+opn+' phiếu đang mở · '+Math.round(opk).toLocaleString('vi-VN')+' kg</b>':'')+' · bấm để xem chi tiết';
+    setOpt('cNcrMini',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){var m=ks[ps[0].dataIndex],o=MO[m];return '<b>'+moVN(m)+'</b><br>'+o.n+' vụ · '+Math.round(o.k).toLocaleString('vi-VN')+' kg'+(o.open?' · <b style="color:#DC2626">'+o.open+' đang mở</b>':'');}},
+      legend:{show:false},grid:{left:8,right:42,top:16,bottom:6,containLabel:true},
+      xAxis:{type:'category',data:ks.map(moVN),axisLabel:{fontWeight:700}},
+      yAxis:[{type:'value',name:'vụ',minInterval:1,splitLine:{lineStyle:{opacity:.4}}},{type:'value',name:'kg',splitLine:{show:false},axisLabel:{formatter:function(v){return fmt(v);}}}],
+      series:[{name:'Số vụ',type:'bar',barMaxWidth:30,itemStyle:{color:'#DC2626',borderRadius:[4,4,0,0]},label:{show:true,position:'top',fontWeight:800,fontSize:11,color:'#64748B',formatter:function(p){var o=MO[ks[p.dataIndex]];return p.value+(o.open?' ('+o.open+')':'');}},data:ks.map(function(m){return MO[m].n;})},
+        {name:'KL (kg)',type:'line',yAxisIndex:1,smooth:true,symbolSize:5,lineStyle:{width:2.4,color:'#F59E0B'},itemStyle:{color:'#F59E0B'},data:ks.map(function(m){return Math.round(MO[m].k);})}]
+    },function(){setView('cl');});
+  })();
   document.getElementById('tqTimeTtl').textContent='Sản lượng '+(DB==='q'?'nghiệm thu':'gia công')+' '+(S.st.size?STG.filter(([k])=>S.st.has(k)):STG).map(x=>x[1]).join(' + ')+' theo '+(ta.mode==='d'?'ngày · '+ta.keys.length+' ngày gần nhất':'tháng');
   document.getElementById('tqTimeQ').textContent=(DB==='q'?'Theo ngày QC nghiệm thu':'Theo ngày gia công')+' · cột chồng = tấn theo công đoạn · đường cam = % TỔNG so định mức '+CAP_DAY+' t/ngày · đường xám = xu hướng bình quân · bấm cột để lọc';
   const selStg=S.st.size?STG.filter(([k])=>S.st.has(k)):STG;
