@@ -360,7 +360,7 @@ var rs=parse(t);var hd=null,hi=0;
 for(var i=0;i<Math.min(rs.length,6);i++){if(rs[i].join('|').indexOf('MÃ LỖI NCR')>-1){hd=rs[i];hi=i;break;}}
 if(!hd)return;
 function col(kw){for(var j=0;j<hd.length;j++)if((hd[j]||'').indexOf(kw)>-1)return j;return -1;}
-var cPj=col('Tên dự án'),cX=col('Nơi phát hiện'),cD=col('Thời điểm phát hiện'),cK=col('Khối lượng'),cM=col('MÃ LỖI NCR');
+var cPj=col('Tên dự án'),cX=col('Nơi phát hiện'),cD=col('Thời điểm phát hiện'),cK=col('Khối lượng'),cM=col('MÃ LỖI NCR'),cS=col('Tình trạng');
 if(cPj<0||cX<0||cD<0||cK<0||cM<0)return;
 var out=[],mx='';
 for(var i=hi+1;i<rs.length;i++){var r=rs[i];if(!r||!r[cD])continue;
@@ -369,7 +369,7 @@ for(var i=hi+1;i<rs.length;i++){var r=rs[i];if(!r||!r[cD])continue;
   var mm=String(r[cM]||'').trim().split(/\s*\|\s*/),code=mm[0]||'',nn=mm[1]||'';
   if(!code)continue;
   var kg=Math.round(parseFloat(String(r[cK]||'').replace(/\s|,/g,''))||0);
-  out.push([String(r[cPj]||'').trim(),String(r[cX]||'').trim(),iso,kg,code,nn]);
+  out.push([String(r[cPj]||'').trim(),String(r[cX]||'').trim(),iso,kg,code,nn,String(((cS>-1?r[cS]:'')||'')).trim().toUpperCase()]);
   if(iso>mx)mx=iso;}
 if(!out.length)return;
 var N=window.NCRDATA||{};N.rows=out;
@@ -579,9 +579,10 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
       <div class="card"><h3>Chất lượng theo dự án</h3><div class="q">Sắp theo tấn rớt · bấm dòng để lọc</div><div class="tw" style="max-height:420px"><table id="tRejPj"></table></div></div>
     </div>
     <div class="card"><h3>Danh sách lượt rớt (mới nhất trước)</h3><div class="q" id="rejCnt"></div><div class="tw" style="max-height:460px"><table id="tRejList"></table></div></div>
-    <div class="card" id="ncrCard"><h3>NCR theo bộ mã lỗi (10/2025 → nay)</h3><div class="q">Nguồn: Sổ tay QC (NCR link) · KL: kg · toàn kỳ, không theo bộ lọc</div>
+    <div class="card" id="ncrCard"><h3>NCR theo bộ mã lỗi (10/2025 → nay)</h3><div class="q">Nguồn: Google Sheet NCR — đọc trực tiếp khi mở trang (offline dùng bản lưu) · KL: kg · toàn kỳ, không theo bộ lọc</div>
       <div id="ncrSum" style="display:flex;gap:7px;flex-wrap:wrap;margin:2px 0 10px"></div>
-      <div class="r2"><div><div class="cg-lbl">Pareto theo công đoạn lỗi</div><div id="cNcrStage" class="ch short"></div></div><div><div class="cg-lbl">Nguyên nhân gốc rễ (8M)</div><div id="cNcrNN" class="ch short"></div></div></div>
+      <div class="r2"><div><div class="cg-lbl">NCR theo Xưởng — số vụ, tách theo nhóm công đoạn</div><div id="cNcrX" class="ch short"></div></div><div><div class="cg-lbl">Diễn biến NCR theo tháng — số vụ &amp; khối lượng</div><div id="cNcrM" class="ch short"></div></div></div>
+      <div class="r2" style="margin-top:10px"><div><div class="cg-lbl">Pareto theo công đoạn lỗi</div><div id="cNcrStage" class="ch short"></div></div><div><div class="cg-lbl">Nguyên nhân gốc rễ (8M)</div><div id="cNcrNN" class="ch short"></div></div></div>
       <div class="r2" style="margin-top:10px">
         <div><div class="cg-lbl">Lỗi lặp lại — cùng dự án, cùng mã (≥ 2 lần)</div><div class="tw" style="max-height:300px"><table id="tNcrRep"></table></div></div>
         <div><div class="cg-lbl">NCR khách hàng &amp; liên phòng ban phát hiện</div><div class="tw" style="max-height:300px"><table id="tNcrKh"></table></div></div>
@@ -1957,10 +1958,12 @@ function renderNCR(){
   var fmk=v=>v.toLocaleString('vi-VN');
   var rows=N.rows.slice().sort((a,b)=>(b[2]||'').localeCompare(a[2]||''));
   var totK=0;rows.forEach(r=>totK+=r[3]);
-  var manT=0;rows.forEach(r=>{if(r[5]==='MAN')manT++;});
+  var manT=0,openN=0,openK=0;rows.forEach(r=>{if(r[5]==='MAN')manT++;if(String(r[6]||'').toUpperCase().indexOf('OPEN')>-1){openN++;openK+=r[3];}});
+  var hasSt=rows.some(r=>r[6]);
   var last=rows.length?rows[0][2]:'';
   document.getElementById('ncrSum').innerHTML=
     '<span class="tag b">'+rows.length+' NCR nội bộ · '+fmk(totK)+' kg</span>'
+    +(openN>0?'<span class="tag r">Đang mở: '+openN+' phiếu · '+fmk(openK)+' kg</span>':(hasSt?'<span class="tag g">Đã đóng hết phiếu</span>':''))
     +'<span class="tag o">'+N.kh.length+' NCR khách hàng</span>'
     +'<span class="tag">'+N.lpb.length+' liên phòng ban</span>'
     +'<span class="tag '+(manT/rows.length>0.5?'r':'o')+'">MAN (tay nghề): '+Math.round(manT/rows.length*100)+'% số vụ</span>'
@@ -1978,6 +1981,23 @@ function renderNCR(){
     legend:{show:false},
     series:[{type:'pie',radius:['34%','66%'],center:['50%','52%'],label:{show:true,formatter:p=>p.name+' '+p.percent+'%',fontSize:10.5,fontWeight:700},
       data:nks.map((k,i)=>({name:k,value:NG[k],itemStyle:{color:['#2563EB','#F59E0B','#16A34A','#0D9488','#64748B','#CA8A04','#0EA5E9','#94A3B8'][i%8]}}))}]});
+  var XW={};rows.forEach(r=>{var x=r[1]||'?';var o=XW[x]=XW[x]||{n:0,k:0,open:0,g:{}};o.n++;o.k+=r[3];if(String(r[6]||'').toUpperCase().indexOf('OPEN')>-1)o.open++;var g=N.stageChuan[(r[4]||'').split('-')[0]]||'Khác';o.g[g]=(o.g[g]||0)+1;});
+  var xks=Object.keys(XW).sort((a,b)=>XW[b].n-XW[a].n);
+  var GRPS=[['Dim','#2563EB'],['Welding','#F59E0B'],['Painting','#16A34A'],['Bản vẽ','#8B5CF6'],['Khác','#64748B']].filter(g=>xks.some(x=>XW[x].g[g[0]]));
+  setOpt('cNcrX',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:ps=>{var x=xks[ps[0].dataIndex],o=XW[x];var h='<b>'+x+'</b> — '+o.n+' vụ · '+fmk(o.k)+' kg'+(o.open?' · <b style="color:#DC2626">'+o.open+' đang mở</b>':'')+'<br>';ps.forEach(p=>{if(p.value&&p.seriesName!=='_t')h+=p.marker+p.seriesName+': <b>'+p.value+'</b> vụ<br>';});return h;}},
+    legend:{top:0,data:GRPS.map(g=>g[0]),itemWidth:12,itemHeight:8,textStyle:{fontSize:10.5,fontWeight:700}},
+    grid:{left:8,right:14,top:26,bottom:6,containLabel:true},
+    xAxis:{type:'category',data:xks,axisLabel:{fontWeight:800}},
+    yAxis:{type:'value',name:'vụ',minInterval:1,splitLine:{lineStyle:{opacity:.4}}},
+    series:GRPS.map((g,gi)=>({name:g[0],type:'bar',stack:'n',barMaxWidth:34,itemStyle:{color:g[1],borderRadius:gi===GRPS.length-1?[3,3,0,0]:0},data:xks.map(x=>XW[x].g[g[0]]||0)})).concat([{name:'_t',type:'bar',stack:'n',itemStyle:{color:'transparent'},tooltip:{show:false},label:{show:true,position:'top',fontWeight:800,fontSize:11,color:'#64748B',formatter:p=>XW[xks[p.dataIndex]].n+(XW[xks[p.dataIndex]].open?' ('+XW[xks[p.dataIndex]].open+' mở)':'')},data:xks.map(()=>0)}])});
+  var MO={};rows.forEach(r=>{var m=(r[2]||'').slice(0,7);if(!m)return;var o=MO[m]=MO[m]||{n:0,k:0};o.n++;o.k+=r[3];});
+  var mks=Object.keys(MO).sort();
+  setOpt('cNcrM',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:ps=>{var m=mks[ps[0].dataIndex],o=MO[m];return '<b>'+moVN(m)+'</b><br>'+o.n+' vụ · '+fmk(Math.round(o.k))+' kg';}},
+    legend:{top:0,itemWidth:12,itemHeight:8,textStyle:{fontSize:10.5,fontWeight:700}},
+    grid:{left:8,right:46,top:26,bottom:6,containLabel:true},
+    xAxis:{type:'category',data:mks.map(moVN),axisLabel:{fontWeight:700}},
+    yAxis:[{type:'value',name:'vụ',minInterval:1,splitLine:{lineStyle:{opacity:.4}}},{type:'value',name:'kg',splitLine:{show:false},axisLabel:{formatter:v=>fmt(v)}}],
+    series:[{name:'Số vụ',type:'bar',barMaxWidth:26,itemStyle:{color:'#2563EB',borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontWeight:800,fontSize:10.5,color:'#64748B'},data:mks.map(m=>MO[m].n)},{name:'KL (kg)',type:'line',yAxisIndex:1,smooth:true,symbolSize:5,lineStyle:{width:2.5,color:'#F59E0B'},itemStyle:{color:'#F59E0B'},data:mks.map(m=>Math.round(MO[m].k))}]});
   var RP={};rows.forEach(r=>{var key=r[0]+'||'+(r[4]||'');var o=RP[key]=RP[key]||{p:r[0],c:r[4],n:0,k:0,last:''};o.n++;o.k+=r[3];if(r[2]>o.last)o.last=r[2];});
   var reps=Object.values(RP).filter(o=>o.n>=2).sort((a,b)=>b.n-a.n);
   document.getElementById('tNcrRep').innerHTML=reps.length?'<thead><tr><th>Dự án</th><th>Mã lỗi</th><th class="n">Số lần</th><th class="n">KL (kg)</th><th>Gần nhất</th></tr></thead><tbody>'+
@@ -1986,8 +2006,8 @@ function renderNCR(){
   khAll.sort((a,b)=>(b[1]||'').localeCompare(a[1]||''));
   document.getElementById('tNcrKh').innerHTML='<thead><tr><th>Dự án</th><th>Ngày</th><th>Công đoạn</th><th>NN</th><th>Nguồn</th></tr></thead><tbody>'+
     khAll.map(r=>'<tr><td class="pjn" style="min-width:150px">'+r[0]+'</td><td>'+dayVN(r[1])+'</td><td>'+r[2]+'</td><td><span class="tag o">'+r[3]+'</span></td><td>'+r[4]+'</td></tr>').join('')+'</tbody>';
-  document.getElementById('tNcrList').innerHTML='<thead><tr><th>Ngày</th><th>Dự án</th><th>Xưởng</th><th class="n">KL (kg)</th><th>Mã lỗi</th><th>Nguyên nhân</th></tr></thead><tbody>'+
-    rows.map(r=>'<tr><td>'+dayVN(r[2])+'/'+r[2].slice(2,4)+'</td><td class="pjn" style="min-width:170px">'+r[0]+'</td><td><b>'+r[1]+'</b></td><td class="n">'+fmk(r[3])+'</td><td><span class="tag b">'+r[4]+'</span></td><td title="'+(N.nn[r[5]]||'')+'">'+r[5]+'</td></tr>').join('')+'</tbody>';
+  document.getElementById('tNcrList').innerHTML='<thead><tr><th>Ngày</th><th>Dự án</th><th>Xưởng</th><th class="n">KL (kg)</th><th>Mã lỗi</th><th>Nguyên nhân</th><th>TT</th></tr></thead><tbody>'+
+    rows.map(r=>'<tr><td>'+dayVN(r[2])+'/'+r[2].slice(2,4)+'</td><td class="pjn" style="min-width:170px">'+r[0]+'</td><td><b>'+r[1]+'</b></td><td class="n">'+fmk(r[3])+'</td><td><span class="tag b">'+r[4]+'</span></td><td title="'+(N.nn[r[5]]||'')+'">'+r[5]+'</td><td>'+(String(r[6]||'').toUpperCase().indexOf('OPEN')>-1?'<span class="tag r">MỞ</span>':(r[6]?'<span class="tag g">đóng</span>':'·'))+'</td></tr>').join('')+'</tbody>';
 }
 /* --- MUC TIEU & DU BAO THANG --- */
 function renderTarget(done){
