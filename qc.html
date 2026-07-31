@@ -539,15 +539,17 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
       <button class="qf" onclick="window.print()" style="float:right;margin:0 0 6px 8px" title="In / lưu PDF báo cáo ngày của xưởng này">In / Lưu PDF</button>
       <h3 id="ndTtl"></h3><div class="q" id="ndSub"></div>
       <div class="kpis" id="ndStg" style="margin:6px 0 4px"></div>
-      <div style="margin-top:8px">
-        <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu QC nghiệm thu — SX gia công theo công đoạn</div>
-        <div class="q" style="margin:0 0 4px">Đậm = NT · nhạt = SX cùng ngày · % = SX đã NT · vạch cam = định mức</div>
-        <div id="cNdCmp" class="ch" style="height:340px"></div>
-      </div>
-      <div style="margin-top:14px">
-        <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu theo xưởng — công đoạn</div>
-        <div class="q" style="margin:0 0 4px">Đậm = NT · nhạt = SX · màu = công đoạn</div>
-        <div id="cNdCmpX" class="ch" style="height:330px"></div>
+      <div class="r2" style="gap:22px;align-items:start;margin-top:8px">
+        <div>
+          <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu QC nghiệm thu — SX gia công theo công đoạn</div>
+          <div class="q" style="margin:0 0 4px">Đậm = NT · nhạt = SX cùng ngày · % = SX đã NT · vạch cam = định mức</div>
+          <div id="cNdCmp" class="ch" style="height:320px"></div>
+        </div>
+        <div>
+          <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu theo xưởng — công đoạn</div>
+          <div class="q" style="margin:0 0 4px">Đậm = NT · nhạt = SX · màu = công đoạn</div>
+          <div id="cNdCmpX" class="ch" style="height:320px"></div>
+        </div>
       </div>
       <div id="ndReject"></div>
       <div style="margin-top:18px;padding-top:12px;border-top:1px solid var(--line)">
@@ -567,6 +569,16 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
   <!-- 06 CHẤT LƯỢNG -->
   <section id="v_cl" class="view">
     <div class="kpis" id="clKpis"></div>
+    <div class="card" id="ncrCard"><h3>NCR theo bộ mã lỗi (10/2025 → nay)</h3><div class="q">Nguồn: Google Sheet NCR — đọc trực tiếp khi mở trang (offline dùng bản lưu) · KL: kg · toàn kỳ, không theo bộ lọc</div>
+      <div id="ncrSum" style="display:flex;gap:7px;flex-wrap:wrap;margin:2px 0 10px"></div>
+      <div class="r2"><div><div class="cg-lbl">NCR theo Xưởng — số vụ, tách theo nhóm công đoạn</div><div id="cNcrX" class="ch short"></div></div><div><div class="cg-lbl">Diễn biến NCR theo tháng — số vụ &amp; khối lượng</div><div id="cNcrM" class="ch short"></div></div></div>
+      <div class="r2" style="margin-top:10px"><div><div class="cg-lbl">Pareto theo công đoạn lỗi</div><div id="cNcrStage" class="ch short"></div></div><div><div class="cg-lbl">Nguyên nhân gốc rễ (8M)</div><div id="cNcrNN" class="ch short"></div></div></div>
+      <div class="r2" style="margin-top:10px">
+        <div><div class="cg-lbl">Lỗi lặp lại — cùng dự án, cùng mã (≥ 2 lần)</div><div class="tw" style="max-height:300px"><table id="tNcrRep"></table></div></div>
+        <div><div class="cg-lbl">NCR khách hàng &amp; liên phòng ban phát hiện</div><div class="tw" style="max-height:300px"><table id="tNcrKh"></table></div></div>
+      </div>
+      <div class="cg-lbl" style="margin-top:12px">Chi tiết NCR nội bộ (mới nhất trước)</div><div class="tw" style="max-height:380px"><table id="tNcrList"></table></div>
+    </div>
     <div class="card"><h3>Giải nghĩa mã lỗi</h3>
       <div class="q">Mã = <b>CÔNG ĐOẠN</b>-<b>số</b> (vd <b>WEL-03</b> = lỗi hàn số 03) · chi tiết tra <b>Sổ tay QC — NCR link</b> · nguyên nhân 8M xem mục NCR</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:5px"><span class="tag">MAT · Vật liệu</span><span class="tag">PRE · Sơ chế</span><span class="tag">FIT · Ráp thô</span><span class="tag">DIM · Kích thước</span><span class="tag">WEL · Hàn</span><span class="tag">GRI · Vệ sinh–mài chà</span><span class="tag">BLA · Bắn bi</span><span class="tag">PAI · Sơn</span><span class="tag">PAC · Đóng gói</span><span class="tag">DRW · Bản vẽ</span></div>
@@ -586,16 +598,6 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
       <div class="card"><h3>Chất lượng theo dự án</h3><div class="q">Sắp theo tấn rớt · bấm dòng để lọc</div><div class="tw" style="max-height:420px"><table id="tRejPj"></table></div></div>
     </div>
     <div class="card"><h3>Danh sách lượt rớt (mới nhất trước)</h3><div class="q" id="rejCnt"></div><div class="tw" style="max-height:460px"><table id="tRejList"></table></div></div>
-    <div class="card" id="ncrCard"><h3>NCR theo bộ mã lỗi (10/2025 → nay)</h3><div class="q">Nguồn: Google Sheet NCR — đọc trực tiếp khi mở trang (offline dùng bản lưu) · KL: kg · toàn kỳ, không theo bộ lọc</div>
-      <div id="ncrSum" style="display:flex;gap:7px;flex-wrap:wrap;margin:2px 0 10px"></div>
-      <div class="r2"><div><div class="cg-lbl">NCR theo Xưởng — số vụ, tách theo nhóm công đoạn</div><div id="cNcrX" class="ch short"></div></div><div><div class="cg-lbl">Diễn biến NCR theo tháng — số vụ &amp; khối lượng</div><div id="cNcrM" class="ch short"></div></div></div>
-      <div class="r2" style="margin-top:10px"><div><div class="cg-lbl">Pareto theo công đoạn lỗi</div><div id="cNcrStage" class="ch short"></div></div><div><div class="cg-lbl">Nguyên nhân gốc rễ (8M)</div><div id="cNcrNN" class="ch short"></div></div></div>
-      <div class="r2" style="margin-top:10px">
-        <div><div class="cg-lbl">Lỗi lặp lại — cùng dự án, cùng mã (≥ 2 lần)</div><div class="tw" style="max-height:300px"><table id="tNcrRep"></table></div></div>
-        <div><div class="cg-lbl">NCR khách hàng &amp; liên phòng ban phát hiện</div><div class="tw" style="max-height:300px"><table id="tNcrKh"></table></div></div>
-      </div>
-      <div class="cg-lbl" style="margin-top:12px">Chi tiết NCR nội bộ (mới nhất trước)</div><div class="tw" style="max-height:380px"><table id="tNcrList"></table></div>
-    </div>
   </section>
   <!-- 07 MUC TIEU KPI -->
   <section id="v_kp" class="view">
@@ -2627,120 +2629,4 @@ if(typeof echarts!=='undefined'){(function(){var r=dRange();if(r[1]){DR.from=r[1
     </div>
     <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-top:18px"><div style="font-weight:800;font-size:13px;color:#E2231A;margin-bottom:3px">TÌNH HÌNH THEO XƯỞNG — QC PHỤ TRÁCH &amp; KHỐI LƯỢNG</div><div style="font-size:11px;color:#6b7280;margin-bottom:8px">T/QC = tấn ÷ số QC (tải mỗi người) · (!) = Chờ NT cao hoặc T/QC cao → cân nhắc thêm QC</div><table id="repXuong" style="width:100%;border-collapse:collapse"></table></div>
     <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-top:18px"><div style="font-weight:800;font-size:13px;color:#E2231A;margin-bottom:8px">BẢNG NĂNG SUẤT QC VIÊN — TOP 10</div><table id="repQc" style="width:100%;border-collapse:collapse"></table></div>
-    <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-top:18px">
-      <div style="font-weight:800;font-size:14px;color:#E2231A;margin-bottom:2px">BÁO CÁO QC NGÀY MỚI NHẤT — <span id="repDayD"></span></div>
-      <div id="repDaySub" style="font-size:11.5px;color:#6b7280;margin-bottom:10px"></div>
-      <div id="repDayKpi" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div><div style="font-weight:700;font-size:12px;color:#E2231A;margin-bottom:4px">Theo xưởng</div><table id="repDayX" style="width:100%;border-collapse:collapse"></table></div>
-        <div><div style="font-weight:700;font-size:12px;color:#E2231A;margin-bottom:4px">Theo dự án</div><table id="repDayP" style="width:100%;border-collapse:collapse"></table></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px">
-        <div><div style="font-weight:700;font-size:12px;color:#E2231A;margin-bottom:4px">Theo tổ</div><table id="repDayTo" style="width:100%;border-collapse:collapse"></table></div>
-        <div><div style="font-weight:700;font-size:12px;color:#E2231A;margin-bottom:4px">Theo QC viên</div><table id="repDayQ" style="width:100%;border-collapse:collapse"></table></div>
-      </div>
-    </div>
-    <div style="display:flex;justify-content:space-around;margin-top:30px;padding:0 40px">
-      <div style="text-align:center;font-size:12.5px;color:#13231a"><b>NGƯỜI LẬP BÁO CÁO</b><br><span style="color:#6b7280;font-size:10.5px">(ký, ghi rõ họ tên)</span><div style="height:70px"></div><b>The My</b> — Tổ trưởng QC</div>
-      <div style="text-align:center;font-size:12.5px;color:#13231a"><b>PHỤ TRÁCH QC NHÀ MÁY</b><br><span style="color:#6b7280;font-size:10.5px">(ký, ghi rõ họ tên)</span><div style="height:70px"></div></div>
-    </div>
-    <div style="text-align:center;color:#6b7280;font-size:11.5px;margin-top:16px;padding-bottom:10px">Tự động từ SPM · cập nhật <span id="repUpd"></span> · Dashboard QC An Hạ</div>
-  </div>
-</div>
-<script src="apiurl.js"></script>
-<script>
-/* ====== PHAN CONG QC (tab Du lieu) — waiting theo to/xuong/du an ====== */
-(function(){
-  var API=(window.QC_ASSIGN_API||"");var TOKEN="anha2026";  /* <-- dan URL Web App vao giua 2 dau nhay cua API roi push (ca 3 file) */
-  function D(){ return window.QCDATA||{}; }
-  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-  function fm(n){ n=+n||0; return n.toLocaleString('vi-VN',{maximumFractionDigits:1}); }
-  var LSK='qc_assign_v1';
-  window.asgCfg={};
-  function load(){ try{ window.asgCfg=JSON.parse(localStorage.getItem(LSK)||'{}'); }catch(e){ window.asgCfg={}; } }
-  function opts(){ var d=D(),xs={},tos={},pjs={};
-    (d.X||[]).forEach(function(x){ xs[x]=1; });
-    (d.rows||[]).forEach(function(r){ tos[d.X[r[1]]+'.'+d.T[r[2]]]=1; if(d.P[r[0]])pjs[d.P[r[0]]]=1; });
-    return {x:Object.keys(xs).sort(),to:Object.keys(tos).sort(),pj:Object.keys(pjs).sort()}; }
-  function waitFor(c){ var d=D(),sx={},sto={},spj=(c.pj||[]);
-    (c.x||[]).forEach(function(v){sx[String(v).toUpperCase()]=1;}); (c.to||[]).forEach(function(v){sto[String(v).toUpperCase()]=1;});
-    var hasX=(c.x||[]).length>0,hasTo=(c.to||[]).length>0,hasPj=spj.length>0;
-    if(!hasX&&!hasTo&&!hasPj) return 0;
-    var w=0;
-    (d.rows||[]).forEach(function(r){ if(d.PL[r[6]]!=='Chưa QC') return;
-      var xn=d.X[r[1]],to=(xn+'.'+d.T[r[2]]).toUpperCase(),pj=d.P[r[0]]||'';
-      if(hasX&&!sx[String(xn).toUpperCase()])return;
-      if(hasTo&&!sto[to])return;
-      if(hasPj){ var pm=false; for(var k=0;k<spj.length;k++){ if(spj[k]&&pj.indexOf(spj[k])>=0){pm=true;break;} } if(!pm)return; }
-      w+=(+r[7]||0)+(+r[8]||0)+(+r[9]||0);
-    });
-    return w; }
-  function qcList(){ var d=D(),s={}; (d.Q||[]).forEach(function(q){ if(q&&q!=='—')s[q]=1; });
-    Object.keys(window.asgCfg).forEach(function(q){ s[q]=1; }); return Object.keys(s).sort(); }
-  var _OPT=null; function optsC(){ if(!_OPT)_OPT=opts(); return _OPT; }
-  var AC=null,acInput=null,acField=null;
-  function acEl(){ if(!AC){ AC=document.createElement('div'); AC.style.cssText='position:absolute;z-index:99999;display:none;background:#fff;border:1px solid #bbb;border-radius:6px;max-height:300px;overflow:auto;font-size:12px;box-shadow:0 6px 16px rgba(0,0,0,.16)'; document.body.appendChild(AC); } return AC; }
-  function acSep(f){ return f==='pj'?';':','; }
-  function acShow(inp){ var f=inp.getAttribute('data-f'); if(f!=='x'&&f!=='to'&&f!=='pj'){ acEl().style.display='none'; return; }
-    acInput=inp; acField=f; var o=optsC(), list=f==='x'?o.x:(f==='to'?o.to:o.pj);
-    var sep=acSep(f), parts=inp.value.split(sep), frag=parts[parts.length-1].trim().toLowerCase();
-    var chosen={}; parts.slice(0,-1).forEach(function(p){ chosen[p.trim().toLowerCase()]=1; });
-    var hits=list.filter(function(v){ return v.toLowerCase().indexOf(frag)>=0 && !chosen[v.toLowerCase()]; }).slice(0,60);
-    var el=acEl(); if(!hits.length){ el.style.display='none'; return; }
-    el.innerHTML=hits.map(function(v){ return '<div class="acit" data-v="'+esc(v)+'" style="padding:5px 10px;cursor:pointer;border-bottom:1px solid #f1f1f1">'+esc(v)+'</div>'; }).join('');
-    var r=inp.getBoundingClientRect(); el.style.left=(r.left+window.scrollX)+'px'; el.style.top=(r.bottom+window.scrollY+2)+'px'; el.style.minWidth=r.width+'px'; el.style.display='block'; }
-  function acPick(v){ if(!acInput) return; var sep=acSep(acField), parts=acInput.value.split(sep);
-    parts[parts.length-1]=(parts.length>1?' ':'')+v; acInput.value=parts.join(sep)+sep+' '; acInput.focus(); acShow(acInput); try{asgAutoSave();}catch(e){} }
-  var _asgT=null; function asgAutoSave(){ try{ localStorage.setItem(LSK, JSON.stringify(collect())); }catch(e){} }
-  document.addEventListener('input', function(e){ if(e.target&&e.target.classList&&e.target.classList.contains('asgI')){ acShow(e.target); clearTimeout(_asgT); _asgT=setTimeout(asgAutoSave,600); } });
-  document.addEventListener('focusin', function(e){ if(e.target&&e.target.classList&&e.target.classList.contains('asgI')) acShow(e.target); });
-  document.addEventListener('mousedown', function(e){ var el=acEl();
-    if(e.target&&e.target.classList&&e.target.classList.contains('acit')){ e.preventDefault(); acPick(e.target.getAttribute('data-v')); return; }
-    if(e.target!==acInput && !el.contains(e.target)) el.style.display='none'; });
-  window.renderAssign=function(){ var el=document.getElementById('tAsg'); if(!el) return; load(); var o=opts();
-    var dx=document.getElementById('dlXuong'),dt=document.getElementById('dlTo'),dp=document.getElementById('dlPj');
-    if(dx)dx.innerHTML=o.x.map(function(v){return '<option value="'+esc(v)+'">';}).join('');
-    if(dt)dt.innerHTML=o.to.map(function(v){return '<option value="'+esc(v)+'">';}).join('');
-    if(dp)dp.innerHTML=o.pj.map(function(v){return '<option value="'+esc(v)+'">';}).join('');
-    var qs=qcList();
-    var h='<tr><th>QC</th><th>Email</th><th>Xưởng</th><th>Tổ (nhiều: dấu phẩy)</th><th>Dự án (nhiều: dấu ;)</th><th>Ghi chú / cảnh báo</th><th>Tồn chờ NT (t)</th></tr>';
-    qs.forEach(function(q){ var c=window.asgCfg[q]||{};
-      h+='<tr data-q="'+esc(q)+'"><td style="font-weight:bold">'+esc(q)+'</td>'
-        +'<td><input class="asgI" data-f="email" value="'+esc(c.email||'')+'" placeholder="'+esc(q)+'@daidung.vn" style="width:165px"></td>'
-        +'<td><input class="asgI" data-f="x" value="'+esc((c.x||[]).join(','))+'" placeholder="AH2,AH3" style="width:100px"></td>'
-        +'<td><input class="asgI" data-f="to" value="'+esc((c.to||[]).join(','))+'" placeholder="AH9.TO1HA" style="width:145px"></td>'
-        +'<td><input class="asgI" data-f="pj" value="'+esc((c.pj||[]).join(';'))+'" placeholder="BISON; GA T2" style="width:185px"></td>'
-        +'<td><input class="asgI" data-f="note" value="'+esc(c.note||'')+'" placeholder="nhắc / cảnh báo tiến độ" style="width:205px"></td>'
-        +'<td class="asgW" style="text-align:right;font-weight:bold">'+fm(waitFor(c))+'</td></tr>';
-    });
-    el.innerHTML=h; };
-  function collect(){ var cfg={};
-    document.querySelectorAll('#tAsg tr[data-q]').forEach(function(tr){ var q=tr.getAttribute('data-q'),c={};
-      tr.querySelectorAll('.asgI').forEach(function(inp){ var f=inp.getAttribute('data-f'),v=inp.value.trim();
-        if(f==='email')c.email=v; else if(f==='note')c.note=v;
-        else if(f==='pj')c.pj=v.split(';').map(function(s){return s.trim();}).filter(Boolean);
-        else c[f]=v.split(/[,\s]+/).map(function(s){return s.trim();}).filter(Boolean); });
-      if(c.email||c.note||(c.x&&c.x.length)||(c.to&&c.to.length)||(c.pj&&c.pj.length)) cfg[q]=c; });
-    return cfg; }
-  window.asgSave=function(){ window.asgCfg=collect();
-    try{ localStorage.setItem(LSK,JSON.stringify(window.asgCfg)); }catch(e){}
-    document.querySelectorAll('#tAsg tr[data-q]').forEach(function(tr){ var q=tr.getAttribute('data-q'),c=window.asgCfg[q]||{};
-      var wc=tr.querySelector('.asgW'); if(wc)wc.textContent=fm(waitFor(c)); });
-    var m=document.getElementById('asgMsg');
-    if(API){ try{ fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({key:TOKEN,cfg:window.asgCfg})}); if(m)m.textContent='Đã lưu lên máy chủ ✓ (mọi máy + mail sẽ dùng)'; }catch(e){ if(m)m.textContent='Đã lưu máy này; gửi máy chủ lỗi (kiểm tra mạng/URL).'; } }
-    else if(m){ m.textContent='Đã lưu (máy này). Chưa dán URL máy chủ.'; }
-    if(m) setTimeout(function(){m.textContent='';},4500); };
-  window.asgAddRow=function(){ var q=prompt('Nhập tên SPM (mã QC) người mới:'); if(!q)return; q=q.trim().toLowerCase(); if(!q)return;
-    window.asgCfg[q]=window.asgCfg[q]||{email:''}; try{ localStorage.setItem(LSK,JSON.stringify(window.asgCfg)); }catch(e){} window.renderAssign(); };
-  window.asgDownload=function(){ var cfg=collect(); var txt='window.MAILCFG='+JSON.stringify(cfg,null,1)+';\n';
-    var b=new Blob([txt],{type:'text/javascript'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='mailcfg.js';
-    document.body.appendChild(a); a.click(); a.remove();
-    var m=document.getElementById('asgMsg'); if(m){ m.textContent='Đã tải mailcfg.js — chép vào thư mục dự án rồi chạy DAY_LEN_GITHUB.bat'; setTimeout(function(){m.textContent='';},6000); } };
-  window.__asgCb=function(data){ if(data&&typeof data==='object'&&!Array.isArray(data)&&Object.keys(data).length){ window.asgCfg=data; try{ localStorage.setItem(LSK,JSON.stringify(data)); }catch(e){} if(document.getElementById('tAsg')) window.renderAssign(); } };
-  function serverLoad(){ if(!API) return; try{ var sc=document.createElement('script'); sc.src=API+(API.indexOf('?')>=0?'&':'?')+'cb=__asgCb&t='+Date.now(); document.body.appendChild(sc); }catch(e){} }
-  function boot(){ if(window.QCDATA&&window.QCDATA.rows){ try{ window.renderAssign(); }catch(e){} serverLoad(); } else { setTimeout(boot,400); } }
-  if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded',boot);
-})();
-</script>
-</body>
-</html>
+    <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 
