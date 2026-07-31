@@ -651,8 +651,8 @@ const STN={f:'Fitup',w:'Welding',p:'Painting'};
 function tog(dim,v){const s=S[dim];s.has(v)?s.delete(v):s.add(v);renderAll();}
 function clearAll(){for(const k in S)S[k].clear();DR={from:'',to:''};setupDR();renderAll();}
 function clearSel(){var any=false;for(const k in S){if(S[k].size){S[k].clear();any=true;}}if(any)renderAll();}
-function setQR(k){const r=dRange();if(k==='all'){DR={from:'',to:''};}else if(k==='3m'){const d=new Date(r[1]||new Date());d.setMonth(d.getMonth()-3);DR={from:d.toISOString().slice(0,10),to:''};}else if(k==='m'){DR={from:(r[1]||'').slice(0,7)+'-01',to:''};}qrMark();setupDR();renderAll();}
-function qrMark(){const r=dRange();let cur='cus';if(!DR.from&&!DR.to)cur='all';else if(r[1]){const d=new Date(r[1]);d.setMonth(d.getMonth()-3);if(DR.from===d.toISOString().slice(0,10)&&!DR.to)cur='3m';else if(DR.from===(r[1]||'').slice(0,7)+'-01'&&!DR.to)cur='m';}for(const[id,k]of[['qr3','3m'],['qrm','m'],['qra','all']]){const b=document.getElementById(id);if(b)b.classList.toggle('on',cur===k);}}
+function setQR(k){const r=dRange();if(k==='all'){DR={from:'',to:''};}else if(k==='3m'){const d=new Date(r[1]||new Date());d.setMonth(d.getMonth()-3);DR={from:isNaN(d)?'':d.toISOString().slice(0,10),to:''};}else if(k==='m'){DR={from:(r[1]||'').slice(0,7)+'-01',to:''};}qrMark();setupDR();renderAll();}
+function qrMark(){const r=dRange();let cur='cus';if(!DR.from&&!DR.to)cur='all';else if(r[1]){const d=new Date(r[1]);d.setMonth(d.getMonth()-3);if(!isNaN(d)&&DR.from===d.toISOString().slice(0,10)&&!DR.to)cur='3m';else if(DR.from===(r[1]||'').slice(0,7)+'-01'&&!DR.to)cur='m';}for(const[id,k]of[['qr3','3m'],['qrm','m'],['qra','all']]){const b=document.getElementById(id);if(b)b.classList.toggle('on',cur===k);}}
 const pcode=pj=>{const idx=D.P.indexOf(pj);return idx;};
 function F(){return D.rows.filter(r=>
   (!S.x.size||S.x.has(D.X[r[1]]))&&(!S.to.size||S.to.has(toKey(r)))&&
