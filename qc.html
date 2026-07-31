@@ -1397,7 +1397,7 @@ function xtSel(x){xtFocus=(xtFocus===x?null:x);if(xtFocus){xtX.add(xtFocus);}rXT
 function rXT(){
   const accR=F().filter(isAcc), penR=Fnodate().filter(isTon);
   const X={};
-  const ax=x=>X[x]||(X[x]={acc:0,wait:0,tos:{},pjs:new Set()});
+  const ax=x=>X[x]||(X[x]={acc:0,wait:0,wf:0,ww:0,wp:0,tos:{},pjs:new Set()});
   const at=(xo,t)=>xo.tos[t]||(xo.tos[t]={acc:0,wait:0,pjs:{},days:{},qcs:{}});
   for(const r of accR){const x=D.X[r[1]],t=D.T[r[2]]||'—',pj=r[0],tn=r[7]+r[8]+r[9];
     const xo=ax(x);xo.pjs.add(pj);xo.acc+=tn;const to=at(xo,t);to.acc+=tn;
@@ -1405,14 +1405,14 @@ function rXT(){
     if(r[3])to.days[r[3]]=(to.days[r[3]]||0)+tn;
     const q=D.Q[r[5]];if(q&&q!=='—')to.qcs[q]=(to.qcs[q]||0)+tn;}
   for(const r of penR){const x=D.X[r[1]],t=D.T[r[2]]||'—',pj=r[0],tn=r[7]+r[8]+r[9];
-    const xo=ax(x);xo.pjs.add(pj);xo.wait+=tn;const to=at(xo,t);to.wait+=tn;
+    const xo=ax(x);xo.pjs.add(pj);xo.wait+=tn;xo.wf+=r[7];xo.ww+=r[8];xo.wp+=r[9];const to=at(xo,t);to.wait+=tn;
     const p=to.pjs[pj]||(to.pjs[pj]={acc:0,wait:0});p.wait+=tn;}
   const xs=Object.keys(X).sort();
   const nTo=xs.reduce((a,x)=>a+Object.keys(X[x].tos).length,0);
   const nPj=new Set(accR.concat(penR).map(r=>r[0])).size;
   const sm=document.getElementById('xtSum');if(sm)sm.textContent=xs.length+' xưởng · '+nTo+' tổ · '+nPj+' dự án (theo bộ lọc hiện tại)';
   const cd=document.getElementById('xtCards');if(cd)cd.innerHTML=xs.map(x=>{const o=X[x];const on=(xtFocus===x);
-    return `<div class="clickable" onclick="xtSel('${x}')" style="border:1.5px solid ${on?'var(--acc)':'var(--line)'};background:${on?'var(--chipBg)':'var(--card)'};border-radius:12px;padding:11px 13px 15px;box-shadow:var(--sh);transition:.15s"><div style="font-size:15px;font-weight:800;color:var(--acc)">${x}</div><div class="muted" style="font-size:10.5px;margin-top:2px">${Object.keys(o.tos).length} tổ · ${o.pjs.size} dự án</div><div style="font-size:19px;font-weight:800;margin-top:7px;letter-spacing:-.01em">${fm1(o.acc)} <span style="font-size:11px;font-weight:600;color:var(--mut)">t đã NT</span></div><div style="font-size:14px;font-weight:700;color:var(--warn);margin-top:2px">${fm1(o.wait)} <span style="font-size:10.5px;font-weight:600">t chờ NT</span></div></div>`;
+    return `<div class="clickable" onclick="xtSel('${x}')" style="border:1.5px solid ${on?'var(--acc)':'var(--line)'};background:${on?'var(--chipBg)':'var(--card)'};border-radius:12px;padding:11px 13px 15px;box-shadow:var(--sh);transition:.15s"><div style="font-size:15px;font-weight:800;color:var(--acc)">${x}</div><div class="muted" style="font-size:10.5px;margin-top:2px">${Object.keys(o.tos).length} tổ · ${o.pjs.size} dự án</div><div style="font-size:19px;font-weight:800;margin-top:7px;letter-spacing:-.01em">${fm1(o.acc)} <span style="font-size:11px;font-weight:600;color:var(--mut)">t đã NT</span></div><div style="font-size:14px;font-weight:700;color:var(--warn);margin-top:2px">${fm1(o.wait)} <span style="font-size:10.5px;font-weight:600">t chờ NT</span></div>${o.wait>0?`<div title="Chờ NT theo công đoạn (t): Fitup / Welding / Painting" style="font-size:10.5px;font-weight:700;margin-top:3px;display:flex;gap:7px;flex-wrap:wrap">`+[['f','F',o.wf],['w','W',o.ww],['p','P',o.wp]].filter(e=>e[2]>=0.05).map(e=>`<span style="color:var(--${e[0]})">${e[1]} ${fm1(e[2])}</span>`).join('<span style="color:var(--mut)">·</span>')+`</div>`:''}</div>`;
   }).join('');
   (function(){
     const tt=document.getElementById('xtChTtl');
