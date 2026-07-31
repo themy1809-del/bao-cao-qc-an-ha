@@ -352,6 +352,37 @@ body.tvmode .view>.kpis{position:static}
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="ncr_data.js"></script>
+<script>
+/* NCR LIVE tu Google Sheet (tab noi bo, gid=0) — ghi de rows cua ncr_data.js; neu offline/het quyen xem thi giu ban tinh */
+(function(){try{
+if(!window.fetch)return;
+var U='https://docs.google.com/spreadsheets/d/1DqerGEB_XpzUjcnvf8l3Srb93WXSRPwhdYRN34BUtlg/gviz/tq?tqx=out:csv&gid=0';
+function parse(t){var rows=[],row=[],cur='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){cur+='"';i++;}else q=false;}else cur+=ch;}else{if(ch==='"')q=true;else if(ch===','){row.push(cur);cur='';}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;row.push(cur);cur='';rows.push(row);row=[];}else cur+=ch;}}if(cur!==''||row.length){row.push(cur);rows.push(row);}return rows;}
+fetch(U,{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.text();}).then(function(t){
+var rs=parse(t);var hd=null,hi=0;
+for(var i=0;i<Math.min(rs.length,6);i++){if(rs[i].join('|').indexOf('MÃ LỖI NCR')>-1){hd=rs[i];hi=i;break;}}
+if(!hd)return;
+function col(kw){for(var j=0;j<hd.length;j++)if((hd[j]||'').indexOf(kw)>-1)return j;return -1;}
+var cPj=col('Tên dự án'),cX=col('Nơi phát hiện'),cD=col('Thời điểm phát hiện'),cK=col('Khối lượng'),cM=col('MÃ LỖI NCR');
+if(cPj<0||cX<0||cD<0||cK<0||cM<0)return;
+var out=[],mx='';
+for(var i=hi+1;i<rs.length;i++){var r=rs[i];if(!r||!r[cD])continue;
+  var m=String(r[cD]).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(!m)continue;   /* ngay dd/mm/yyyy */
+  var iso=m[3]+'-'+('0'+m[2]).slice(-2)+'-'+('0'+m[1]).slice(-2);
+  var mm=String(r[cM]||'').trim().split(/\s*\|\s*/),code=mm[0]||'',nn=mm[1]||'';
+  if(!code)continue;
+  var kg=Math.round(parseFloat(String(r[cK]||'').replace(/\s|,/g,''))||0);
+  out.push([String(r[cPj]||'').trim(),String(r[cX]||'').trim(),iso,kg,code,nn]);
+  if(iso>mx)mx=iso;}
+if(!out.length)return;
+var N=window.NCRDATA||{};N.rows=out;
+if(mx)N.updated=mx.slice(8,10)+'/'+mx.slice(5,7)+'/'+mx.slice(0,4);
+N.source='Google Sheet NCR (live)';N.kh=N.kh||[];N.lpb=N.lpb||[];N.stage=N.stage||{};N.stageChuan=N.stageChuan||{};N.nn=N.nn||{};
+window.NCRDATA=N;
+try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='function')renderNCR();}catch(e){}
+}).catch(function(e){});
+}catch(e){}})();
+</script>
 <script src="aop_data.js"></script>
 <script>window.__LQ=window.QCDATA;</script>
 <script>if(window.QCDATA&&window.QCDATA.rows&&window.QCDATA.rows.length&&window.QCDATA!==window.__LQ){window.__QCSRC='live';}else{window.QCDATA=window.__LQ;window.__QCSRC='local';}</script>
