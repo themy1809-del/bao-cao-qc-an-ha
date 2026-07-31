@@ -563,6 +563,7 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
   <!-- 06 CHẤT LƯỢNG -->
   <section id="v_cl" class="view">
     <div class="kpis" id="clKpis"></div>
+    <div id="clWarn" style="display:none"></div>
     <div class="card" id="ncrCard"><h3>NCR theo bộ mã lỗi (10/2025 → nay)</h3><div class="q">Nguồn: Google Sheet NCR — đọc trực tiếp khi mở trang (offline dùng bản lưu) · KL: kg · toàn kỳ, không theo bộ lọc</div>
       <div id="ncrSum" style="display:flex;gap:7px;flex-wrap:wrap;margin:2px 0 10px"></div>
       <div class="r2"><div><div class="cg-lbl">NCR theo Xưởng — số vụ, tách theo nhóm công đoạn</div><div id="cNcrX" class="ch short"></div></div><div><div class="cg-lbl">Diễn biến NCR theo tháng — số vụ &amp; khối lượng</div><div id="cNcrM" class="ch short"></div></div></div>
@@ -573,17 +574,12 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
       </div>
       <div class="cg-lbl" style="margin-top:12px">Chi tiết NCR nội bộ (mới nhất trước)</div><div class="tw" style="max-height:380px"><table id="tNcrList"></table></div>
     </div>
-    <div class="card"><h3>Giải nghĩa mã lỗi</h3>
-      <div class="q">Mã = <b>CÔNG ĐOẠN</b>-<b>số</b> (vd <b>WEL-03</b> = lỗi hàn số 03) · chi tiết tra <b>Sổ tay QC — NCR link</b> · nguyên nhân 8M xem mục NCR</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:5px"><span class="tag">MAT · Vật liệu</span><span class="tag">PRE · Sơ chế</span><span class="tag">FIT · Ráp thô</span><span class="tag">DIM · Kích thước</span><span class="tag">WEL · Hàn</span><span class="tag">GRI · Vệ sinh–mài chà</span><span class="tag">BLA · Bắn bi</span><span class="tag">PAI · Sơn</span><span class="tag">PAC · Đóng gói</span><span class="tag">DRW · Bản vẽ</span></div>
-    </div>
 
-    <div id="clWarn" style="display:none"></div>
     <div class="r2">
       <div class="card"><h3>Pareto mã lỗi — quy tắc 80/20</h3><div class="q">Cột = tấn theo mã lỗi (nặng nhất trước) · đường = % cộng dồn · xử lý nhóm bên trái là hết phần lớn lỗi</div><div id="cErrPar" class="ch"></div></div>
       <div class="card"><h3>Lỗi mã theo xưởng</h3><div class="q">Cột chồng theo nhóm lỗi · bấm cột để lọc xưởng</div><div id="cErrX" class="ch"></div></div>
     </div>
-    <div class="r2">
+    <div class="r2" id="rejChRow" style="display:none">
       <div class="card"><h3>Xu hướng tỷ lệ rớt theo tháng</h3><div class="q">Cột = tấn rớt · đường = % rớt</div><div id="cRejTrend" class="ch"></div></div>
       <div class="card"><h3>Tỷ lệ rớt theo xưởng</h3><div class="q">Bấm cột để lọc xưởng</div><div id="cRejX" class="ch"></div></div>
     </div>
@@ -591,7 +587,11 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
       <div class="card"><h3>Chất lượng theo QC viên</h3><div class="q">% rớt cao xếp trước · bấm dòng để lọc</div><div class="tw" style="max-height:420px"><table id="tRejQc"></table></div></div>
       <div class="card"><h3>Chất lượng theo dự án</h3><div class="q">Sắp theo tấn rớt · bấm dòng để lọc</div><div class="tw" style="max-height:420px"><table id="tRejPj"></table></div></div>
     </div>
-    <div class="card"><h3>Danh sách lượt rớt (mới nhất trước)</h3><div class="q" id="rejCnt"></div><div class="tw" style="max-height:460px"><table id="tRejList"></table></div></div>
+    <div class="card" id="rejListCard" style="display:none"><h3>Danh sách lượt rớt (mới nhất trước)</h3><div class="q" id="rejCnt"></div><div class="tw" style="max-height:460px"><table id="tRejList"></table></div></div>
+    <div class="card"><h3>Giải nghĩa mã lỗi</h3>
+      <div class="q">Mã = <b>CÔNG ĐOẠN</b>-<b>số</b> (vd <b>WEL-03</b> = lỗi hàn số 03) · chi tiết tra <b>Sổ tay QC — NCR link</b> · nguyên nhân 8M xem mục NCR</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:5px"><span class="tag">MAT · Vật liệu</span><span class="tag">PRE · Sơ chế</span><span class="tag">FIT · Ráp thô</span><span class="tag">DIM · Kích thước</span><span class="tag">WEL · Hàn</span><span class="tag">GRI · Vệ sinh–mài chà</span><span class="tag">BLA · Bắn bi</span><span class="tag">PAI · Sơn</span><span class="tag">PAC · Đóng gói</span><span class="tag">DRW · Bản vẽ</span></div>
+    </div>
   </section>
   <!-- 07 MUC TIEU KPI -->
   <section id="v_kp" class="view">
@@ -1868,6 +1868,7 @@ function renderFresh(){
 function rCL(){
   const rows=F(),tw=r=>r[7]+r[8]+r[9];
   const acc=rows.filter(isAcc),rej=rows.filter(isReject);
+  ['rejChRow','rejQPRow','rejListCard'].forEach(function(_i){var _e=document.getElementById(_i);if(_e)_e.style.display=rej.length?'':'none';});
   let aT=0;acc.forEach(r=>aT+=tw(r));let jT=0;rej.forEach(r=>jT+=tw(r));
   const tot=aT+jT,rate=tot?jT/tot*100:0;
   const errs=acc.filter(isErr);let eT=0;errs.forEach(r=>eT+=tw(r));
@@ -1945,7 +1946,6 @@ function rCL(){
   for(const r of rej){const o=PG[r[0]]=PG[r[0]]||{a:0,j:0,n:0};o.j+=tw(r);o.n++;}
   const pks=Object.keys(PG).sort((a,b)=>PG[b].j-PG[a].j||PG[b].a-PG[a].a);
   document.getElementById('tRejPj').innerHTML='<thead><tr><th>Dự án</th><th class="n">Đã kiểm (t)</th><th class="n">Rớt (t)</th><th class="n">% rớt</th></tr></thead><tbody>'+pks.map(pi=>{const o=PG[pi],t2=o.a+o.j,pc=t2?o.j/t2*100:0;return '<tr class="clickable" onclick="tog(\'pj\','+pi+')"><td class="pjn">'+shortP(pi)+'</td><td class="n">'+fm1(t2)+'</td><td class="n" style="color:var(--bad)">'+(o.j?fm1(o.j):'·')+'</td><td class="n"><b>'+pf(pc)+'%</b></td></tr>';}).join('')+'</tbody>';
-  var _rowQP=document.getElementById('rejQPRow');if(_rowQP)_rowQP.style.display=rej.length?'':'none';
   const rl=rej.slice().sort((a,b)=>(dateOf(b)||'').localeCompare(dateOf(a)||''));
   document.getElementById('rejCnt').textContent=rl.length?(rl.length+' lượt rớt trong phạm vi lọc'+(rl.length>300?' · hiển thị 300 mới nhất':'')):'Không có lượt rớt trong phạm vi lọc';
   try{renderNCR();}catch(e){}
