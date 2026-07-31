@@ -534,23 +534,20 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
 
   <!-- 05 DỮ LIỆU -->
   <section id="v_nd" class="view">
-    <div class="card" id="tqLatest" style="border-left:4px solid var(--acc)"></div>
-    <div class="card" id="tqAlert" style="display:none"></div>
+    <!-- 31/7: bo card "Nghiem thu ngay gan nhat" + "Canh bao & phan bo QC" theo yeu cau (render tu bo qua vi khong con element) -->
     <div class="panel" id="ndPanel" style="display:none">
       <button class="qf" onclick="window.print()" style="float:right;margin:0 0 6px 8px" title="In / lưu PDF báo cáo ngày của xưởng này">In / Lưu PDF</button>
       <h3 id="ndTtl"></h3><div class="q" id="ndSub"></div>
       <div class="kpis" id="ndStg" style="margin:6px 0 4px"></div>
-      <div class="r2" style="gap:22px;align-items:start">
-        <div>
-          <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu QC nghiệm thu — SX gia công theo công đoạn</div>
-          <div class="q" style="margin:0 0 4px">Đậm = NT · nhạt = SX cùng ngày · % = SX đã NT · vạch cam = định mức</div>
-          <div id="cNdCmp" class="ch short"></div>
-        </div>
-        <div>
-          <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu theo xưởng — công đoạn</div>
-          <div class="q" style="margin:0 0 4px">Đậm = NT · nhạt = SX · màu = công đoạn</div>
-          <div id="cNdCmpX" class="ch short"></div>
-        </div>
+      <div style="margin-top:8px">
+        <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu QC nghiệm thu — SX gia công theo công đoạn</div>
+        <div class="q" style="margin:0 0 4px">Đậm = NT · nhạt = SX cùng ngày · % = SX đã NT · vạch cam = định mức</div>
+        <div id="cNdCmp" class="ch" style="height:340px"></div>
+      </div>
+      <div style="margin-top:14px">
+        <div class="cg-lbl" style="margin:10px 0 2px">Đối chiếu theo xưởng — công đoạn</div>
+        <div class="q" style="margin:0 0 4px">Đậm = NT · nhạt = SX · màu = công đoạn</div>
+        <div id="cNdCmpX" class="ch" style="height:330px"></div>
       </div>
       <div id="ndReject"></div>
       <div class="r2" style="grid-template-columns:2fr 3fr;gap:22px">
