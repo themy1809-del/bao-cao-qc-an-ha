@@ -885,7 +885,8 @@ function renderBrief(){
     const iso=d=>d.toISOString().slice(0,10);
     const pTo=iso(new Date(new Date(from)-864e5)),pFrom=iso(new Date(new Date(from)-span*864e5));
     let prev=0;all.forEach(r=>{const d=dateOf(r);if(d&&isAcc(r)&&d>=pFrom&&d<=pTo)prev+=r[7]+r[8]+r[9];});
-    const dl=prev>0?((tot-prev)/prev*100):null;
+    const _pOK=prev>=Math.max(1,tot*0.02);  /* 1/8: SPM co luc cat du lieu ky truoc (con 2,3t) -> % ao 486.389%; thieu thi khong so sanh */
+    const dl=_pOK?((tot-prev)/prev*100):null;
     li.push('Sản lượng nghiệm thu kỳ này <b>'+fm1(tot)+' t</b>'+(dl==null?'':' — <b style="color:'+(dl>=0?'var(--good)':'var(--bad)')+'">'+(dl>=0?'▲ tăng ':'▼ giảm ')+Math.abs(dl).toFixed(0)+'%</b> so với '+span+' ngày liền trước ('+fm1(prev)+' t)'));
   }
   const XW={};done.forEach(r=>{const x=D.X[r[1]];XW[x]=(XW[x]||0)+r[7]+r[8]+r[9];});
@@ -2380,7 +2381,7 @@ function rKP(){
     var el=document.getElementById('tTrendM');
     if(el&&ks.length>=2){
       var a=ks[ks.length-1],b=ks[ks.length-2],A=M[a],B=M[b];
-      var dv=function(x,y){ if(!y)return '—'; var d=(x-y)/y*100; return '<b style="color:'+(d>=0?'var(--good)':'var(--bad)')+'">'+(d>=0?'▲':'▼')+Math.abs(d).toFixed(0)+'%</b>'; };
+      var dv=function(x,y){ if(!y||y<Math.max(1,x*0.02))return ''; var d=(x-y)/y*100; return '<b style="color:'+(d>=0?'var(--good)':'var(--bad)')+'">'+(d>=0?'▲':'▼')+Math.abs(d).toFixed(0)+'%</b>'; };
       var fa=fp[fp.length-1],fb=fp[fp.length-2];
       el.innerHTML='<table><thead><tr><th></th><th class="n">'+moVN(b)+'</th><th class="n">'+moVN(a)+'</th><th class="n">So tháng trước</th></tr></thead><tbody>'
         +'<tr><td>Sản lượng NT (t)</td><td class="n">'+fm1(B.nt)+'</td><td class="n"><b>'+fm1(A.nt)+'</b></td><td class="n">'+dv(A.nt,B.nt)+'</td></tr>'
