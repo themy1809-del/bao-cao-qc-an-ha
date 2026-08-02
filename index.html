@@ -1092,7 +1092,7 @@ var _covMode='d';
 function _wkKey(d){var dt=new Date(d);var t=new Date(Date.UTC(dt.getFullYear(),dt.getMonth(),dt.getDate()));var dn=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-dn+3);var y=t.getUTCFullYear();var w1=new Date(Date.UTC(y,0,4));var w=1+Math.round(((t-w1)/864e5-3+((w1.getUTCDay()+6)%7))/7);return y+'-T'+('0'+w).slice(-2);}
 function _covLbl(k){return _covMode==='d'?dayVN(k):(_covMode==='m'?moVN(k):('T.'+k.slice(6)+'/'+k.slice(2,4)));}
 function _covData(all){
-  var rows=Fnodate().filter(function(r){return r[4];});
+  var rows=Fnodate().filter(function(r){return r[4]&&D.PL[r[6]]!=='Miễn QC';});
   var G={};
   rows.forEach(function(r){
     var k=_covMode==='d'?r[4]:(_covMode==='w'?_wkKey(r[4]):r[4].slice(0,7));
@@ -1135,7 +1135,7 @@ function renderCov(){
 }
 function _covX(){
   var XG={};
-  Fnodate().forEach(function(r){ if(!r[4])return; var x=D.X[r[1]]; var t=r[7]+r[8]+r[9]; var o=XG[x]=XG[x]||{sx:0,nt:0}; o.sx+=t; if(r[3]&&!isReject(r))o.nt+=t; });
+  Fnodate().forEach(function(r){ if(!r[4]||D.PL[r[6]]==='Miễn QC')return; var x=D.X[r[1]]; var t=r[7]+r[8]+r[9]; var o=XG[x]=XG[x]||{sx:0,nt:0}; o.sx+=t; if(r[3]&&!isReject(r))o.nt+=t; });
   return XG;
 }
 function covCSV(){
@@ -1339,7 +1339,7 @@ function rTQ(){
   document.getElementById('tqTimeTtl').textContent='Sản lượng '+(DB==='q'?'nghiệm thu':'gia công')+' '+(S.st.size?STG.filter(([k])=>S.st.has(k)):[STG[0]]).map(x=>x[1]).join(' + ')+' theo '+(ta.mode==='d'?'ngày · '+ta.keys.length+' ngày gần nhất':'tháng');
   document.getElementById('tqTimeQ').textContent=(DB==='q'?'Theo ngày QC nghiệm thu':'Theo ngày gia công')+' · cột = tấn · đường = % so định mức '+CAP_DAY+' t/ngày · đường xám = xu hướng bình quân · bấm cột để lọc';
   const selStg=S.st.size?STG.filter(([k])=>S.st.has(k)):[STG[0]];
-  const sxBy={},sxAcc={};for(const r of Fnodate()){const wd=r[4];if(!wd)continue;const kk=(ta.mode==='d'?wd:wd.slice(0,7));const tn=r[7]+r[8]+r[9];sxBy[kk]=(sxBy[kk]||0)+tn;if(r[3])sxAcc[kk]=(sxAcc[kk]||0)+tn;}
+  const sxBy={},sxAcc={};for(const r of Fnodate()){const wd=r[4];if(!wd||D.PL[r[6]]==='Miễn QC')continue;const kk=(ta.mode==='d'?wd:wd.slice(0,7));const tn=r[7]+r[8]+r[9];sxBy[kk]=(sxBy[kk]||0)+tn;if(r[3])sxAcc[kk]=(sxAcc[kk]||0)+tn;}
   const sxData=ta.keys.map(k=>+(sxBy[k]||0).toFixed(1));
   const capTgt=(ta.mode==='d'?CAP_DAY:CAP_MONTH);
   const perMax=Math.max.apply(null,[0].concat(ta.keys.map(x=>Math.max.apply(null,[0].concat(selStg.map(([k])=>ta.map[x][k]||0))))));
