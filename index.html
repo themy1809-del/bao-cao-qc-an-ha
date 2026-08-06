@@ -650,6 +650,10 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
   </section>
   <section id="v_ql" class="view">
     <div class="card"><div class="q">Kế hoạch nhập ở <b>Google Sheet chia sẻ</b> (tab đầu) · cột "Theo dõi"=1 cho dự án cần kiểm soát · <button class="qf" onclick="_qldaLoaded=false;rQL()">Tải lại kế hoạch</button> · <a href="https://docs.google.com/spreadsheets/d/1hDz5QDbf4hEJAYJhq7JLlut9pMLK9wDXnAXaXt_1LCE/edit" target="_blank">Mở Sheet</a></div></div>
+    <div class="card" id="secGalCard" style="display:none"><h3>Section 3D — nghiệm thu theo cấu kiện</h3>
+      <div class="q" id="secGalQ"></div>
+      <div id="secGalBody"></div>
+    </div>
     <div id="qlWrap"><div class="q" style="padding:16px">Đang tải kế hoạch…</div></div>
   </section>
 
@@ -803,7 +807,7 @@ function renderPend(){
   (function(){ /* breakdown Waiting: cong doan + xuong */
     var bx=document.getElementById('pendBk');if(!bx)return;
     var sf=0,sw=0,sp=0,X={};
-    for(var i=0;i<rows.length;i++){var r=rows[i];sf+=r[7];sw+=r[8];sp+=r[9];var xn=D.X[r[1]];X[xn]=(X[xn]||0)+val(r);}
+    for(var i=0;i<rows.length;i++){var r=rows[i];if(!S.st.size||S.st.has('f'))sf+=r[7];if(!S.st.size||S.st.has('w'))sw+=r[8];if(!S.st.size||S.st.has('p'))sp+=r[9];var xn=D.X[r[1]];X[xn]=(X[xn]||0)+val(r);}
     var stg='<span class="cg-lbl">Công đoạn chờ:</span>'
       +'<span class="tag clickable" onclick="tog(\'st\',\'f\')" style="background:#eaf1fb;color:#2d5aa0;margin:2px">Fitup '+fmTon(sf)+'</span>'
       +'<span class="tag clickable" onclick="tog(\'st\',\'w\')" style="background:#fdf3e3;color:#9a6310;margin:2px">Welding '+fmTon(sw)+'</span>'
@@ -1414,7 +1418,7 @@ function rXT(){
     if(r[3])to.days[r[3]]=(to.days[r[3]]||0)+tn;
     const q=D.Q[r[5]];if(q&&q!=='—')to.qcs[q]=(to.qcs[q]||0)+tn;}
   for(const r of penR){const x=D.X[r[1]],t=D.T[r[2]]||'—',pj=r[0],tn=val(r);
-    const xo=ax(x);xo.pjs.add(pj);xo.wait+=tn;xo.wf+=r[7];xo.ww+=r[8];xo.wp+=r[9];const to=at(xo,t);to.wait+=tn;to.wf+=r[7];to.ww+=r[8];to.wp+=r[9];
+    const _vf=(!S.st.size||S.st.has('f'))?r[7]:0,_vw=(!S.st.size||S.st.has('w'))?r[8]:0,_vp=(!S.st.size||S.st.has('p'))?r[9]:0;const xo=ax(x);xo.pjs.add(pj);xo.wait+=tn;xo.wf+=_vf;xo.ww+=_vw;xo.wp+=_vp;const to=at(xo,t);to.wait+=tn;to.wf+=_vf;to.ww+=_vw;to.wp+=_vp;
     const p=to.pjs[pj]||(to.pjs[pj]={acc:0,wait:0});p.wait+=tn;}
   const xs=Object.keys(X).sort();
   const nTo=xs.reduce((a,x)=>a+Object.keys(X[x].tos).length,0);
@@ -1849,12 +1853,12 @@ function _asgWaitOf(c){
     if(c.x&&c.x.indexOf(x)>=0)hit=true;
     if(!hit&&c.to&&c.to.indexOf(tk)>=0)hit=true;
     if(!hit&&c.pj&&c.pj.length){for(var j=0;j<c.pj.length;j++){if(pn&&pn.toUpperCase().indexOf(String(c.pj[j]).toUpperCase())>=0){hit=true;break;}}}
-    if(hit)t+=r[7]+r[8]+r[9];}
+    if(hit)t+=r[7];}   /* chi FITUP — khop mail team kich thuoc (_waitScoped ST_FITUP) */
   return t;
 }
 function _asgWaitBy(kind){ /* ton waiting theo x | to | pj de hien tren chip */
   var W={};
-  for(var i=0;i<D.rows.length;i++){var r=D.rows[i];if(D.PL[r[6]]!=='Chưa QC')continue;var t=r[7]+r[8]+r[9];
+  for(var i=0;i<D.rows.length;i++){var r=D.rows[i];if(D.PL[r[6]]!=='Chưa QC')continue;var t=r[7];
     var k=kind==='x'?D.X[r[1]]:(kind==='to'?toKey(r):D.P[r[0]]);
     W[k]=(W[k]||0)+t;}
   return W;
@@ -1882,7 +1886,7 @@ function asgRender(){
   if(_ASG===null){tb.innerHTML='<tbody><tr><td style="padding:12px" class="muted">Đang tải phân công…</td></tr></tbody>';if(_ASG_ST==='idle')asgFetch(asgRender);return;}
   _asgEnsure();
   var ks=Object.keys(_ASGE).sort();
-  var h='<thead><tr><th>Mã QC</th><th>Email</th><th>Xưởng</th><th>Tổ</th><th>Dự án</th><th>Ghi chú</th><th class="n">Tồn waiting (t)</th><th></th></tr></thead><tbody>';
+  var h='<thead><tr><th>Mã QC</th><th>Email</th><th>Xưởng</th><th>Tổ</th><th>Dự án</th><th>Ghi chú</th><th class="n">Tồn Fitup chờ NT (t)</th><th></th></tr></thead><tbody>';
   ks.forEach(function(code){var c=_ASGE[code];var w=_asgWaitOf(c);
     h+='<tr><td style="font-weight:800">'+_asgE(code)+'</td>'
      +'<td><input class="asg-i" value="'+_asgE(c.email)+'" placeholder="'+_asgE(code)+'@daidung.vn" onchange="asgInp(\''+code+'\',\'email\',this.value)" style="width:160px"></td>'
@@ -1906,13 +1910,13 @@ function _asgPickerHtml(){
   else if(p.field==='to'){var s2={};D.rows.forEach(function(r){s2[toKey(r)]=1;});
     Object.keys(s2).forEach(function(tk){items.push([tk,tk,W[tk]||0]);});
     items.sort(function(a,b){return b[2]-a[2]||(a[0]<b[0]?-1:1);});
-    if(c.x&&c.x.length)items=items.filter(function(e){return c.x.indexOf(e[0].split('.')[0])<0;}); /* to thuoc xuong da chon thi khoi can chon rieng */
+    if(c.x&&c.x.length)items=items.filter(function(e){return c.x.indexOf(e[0].split('.')[0])>=0;}); /* chon xuong roi -> chi hien to cua xuong do */
   }
   else{D.P.forEach(function(pn){var lb=String(pn).replace(/^[0-9A-Z.\-]+ /,'').slice(0,34);items.push([pn,lb,W[pn]||0]);});
     items.sort(function(a,b){return b[2]-a[2];});}
   var kept=items.filter(function(e){return e[2]>0.05||sel.indexOf(e[0])>=0;});
   if(p.field!=='x')kept=kept.slice(0,40);
-  var ttl={x:'XƯỞNG',to:'TỔ (sắp theo tồn waiting — tổ thuộc xưởng đã chọn được ẩn vì đã nằm trong phạm vi)',pj:'DỰ ÁN (top tồn waiting)'}[p.field];
+  var ttl={x:'XƯỞNG (số cam = tồn Fitup chờ NT)',to:'TỔ — sắp theo tồn Fitup'+((c.x&&c.x.length)?' · chỉ hiện tổ thuộc '+c.x.join(', '):''),pj:'DỰ ÁN (top tồn Fitup)'}[p.field];
   return '<div style="border:1.5px solid var(--acc);border-radius:12px;padding:10px 12px;margin-top:8px;background:var(--card)">'
    +'<div class="cg-lbl" style="margin-bottom:6px">Chọn '+ttl+' cho <b style="color:var(--acc)">'+_asgE(p.code)+'</b> · bấm để thêm/bỏ · số cam = tồn chờ NT hiện tại · <span class="clickable" style="color:var(--acc);font-weight:700" onclick="_asgPick=null;asgRender()">Đóng ✕</span></div>'
    +'<div style="display:flex;flex-wrap:wrap;gap:6px">'
@@ -2550,7 +2554,63 @@ function _loadQLDA(cb){
   s.onerror=function(){ _qldaLoading=false; var el=document.getElementById('qlWrap'); if(el) el.innerHTML='<div class="card"><div class="q" style="padding:12px;color:var(--warn)">Không đọc được Google Sheet. Chia sẻ "Bất kỳ ai có link → Người xem" chưa?</div></div>'; };
   document.body.appendChild(s);
 }
-function rQL(){ var w=document.getElementById('qlWrap'); if(w&&!_qldaLoaded) w.innerHTML='<div class="q" style="padding:16px">Đang tải danh sách dự án…</div>'; if(_qldaLoaded){ _renderQL(); } else { _loadQLDA(function(){ if(CUR==='ql') _renderQL(); }); } }
+/* ===== VA 6/8: GALLERY ANH SECTION (doc JSON tu Web App ?gallery=1) ===== */
+var _SECG=null,_SECG_ST='idle',_secGalTo={};
+function secGalLoad(){
+  var card=document.getElementById('secGalCard');
+  if(!window.QC_ASSIGN_API){if(card)card.style.display='none';return;}
+  if(_SECG){secGalRender();return;}
+  if(_SECG_ST==='loading')return;
+  _SECG_ST='loading';
+  var fn='_segCB_'+Math.floor(Math.random()*1e9);
+  window[fn]=function(d){_SECG=(d&&d.projects)?d:{projects:[]};_SECG_ST='ok';try{delete window[fn];}catch(e){window[fn]=null;}secGalRender();};
+  var sc=document.createElement('script');
+  sc.src=window.QC_ASSIGN_API+'?gallery=1&cb='+fn+'&_t='+Date.now();
+  sc.onerror=function(){_SECG_ST='err';};
+  document.head.appendChild(sc);
+}
+function secGalTog(pi,enc){var v=decodeURIComponent(enc);_secGalTo[pi]=(_secGalTo[pi]===v?'':v);secGalRender();}
+function _segDone(v){return /done|xong|✓|ok|^x$|^1$/i.test(String(v||'').trim());}
+function _segDot(v,lbl){var on=_segDone(v);return '<span title="'+lbl+': '+(on?'Done':'chưa')+'" style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;color:'+(on?'#16A34A':'#9aa6b4')+'"><span style="width:9px;height:9px;border-radius:50%;background:'+(on?'#16A34A':'#d6dde6')+'"></span>'+lbl+'</span>';}
+function secGalRender(){
+  var card=document.getElementById('secGalCard'),body=document.getElementById('secGalBody');if(!card||!body)return;
+  if(!_SECG||!_SECG.projects||!_SECG.projects.length){card.style.display='none';return;}
+  card.style.display='block';
+  var q=document.getElementById('secGalQ');
+  if(q)q.innerHTML='Ảnh + trạng thái từ Sheet <b>Quản Lý Dự án</b> (cập nhật '+(_SECG.updated||'—')+') · viền đỏ = cấu kiện ưu tiên · bấm ảnh phóng to · thêm ảnh mới thì chạy <b>xuatAnhSection()</b> trong Apps Script';
+  var h='';
+  _SECG.projects.forEach(function(p,pi){
+    var tos={};p.secs.forEach(function(s3){if(s3.to)tos[s3.to]=1;});
+    var selTo=_secGalTo[pi]||'';
+    var secs=selTo?p.secs.filter(function(s3){return s3.to===selTo;}):p.secs;
+    var nF=0,nL=0,nD=0;p.secs.forEach(function(s3){if(_segDone(s3.f))nF++;if(_segDone(s3.l))nL++;if(_segDone(s3.d))nD++;});
+    var tot=p.secs.length,pct=tot?Math.round(nD/tot*100):0;
+    h+='<div style="margin:4px 0 18px">'
+     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px"><b style="font-size:13.5px">'+p.name+'</b>'
+     +'<span class="muted" style="font-size:11px">'+tot+' section · Fitup <b style="color:var(--f)">'+nF+'</b> · Lắp thử <b style="color:var(--w)">'+nL+'</b> · Final <b style="color:var(--good)">'+nD+'</b> · xong Final <b>'+pct+'%</b></span>'
+     +Object.keys(tos).sort().map(function(t){return '<span class="tag clickable'+(selTo===t?' b':'')+'" style="font-size:10px" onclick="secGalTog('+pi+',\''+encodeURIComponent(t)+'\')">'+t+'</span>';}).join('')
+     +'</div>'
+     +'<div class="tgt-bar" style="height:5px;margin:0 0 9px;max-width:420px"><i style="width:'+pct+'%;background:var(--good)"></i></div>'
+     +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px">'
+     +secs.map(function(s3){var uu=!!String(s3.uu||'').trim();
+       return '<div style="border:1.5px solid '+(uu?'var(--bad)':'var(--line)')+';border-radius:11px;overflow:hidden;background:var(--card);box-shadow:var(--sh)">'
+        +(s3.img?'<img loading="lazy" src="'+s3.img+'" onclick="secZoom(this.src)" style="width:100%;height:120px;object-fit:contain;background:#fff;cursor:zoom-in;display:block">':'<div style="height:120px;display:flex;align-items:center;justify-content:center;color:#c3ccd6;background:#fafbfc;font-size:11px">không có ảnh</div>')
+        +'<div style="padding:7px 9px 8px">'
+        +'<div style="display:flex;justify-content:space-between;gap:4px;align-items:center"><b style="font-size:11.5px">'+s3.n+'</b>'+(s3.to?'<span class="tag" style="font-size:9px">'+s3.to+'</span>':'')+'</div>'
+        +(uu?'<div style="color:var(--bad);font-size:9.5px;font-weight:800;margin-top:2px">★ ƯU TIÊN</div>':'')
+        +'<div style="display:flex;gap:8px;margin-top:5px">'+_segDot(s3.f,'Fitup')+_segDot(s3.l,'Lắp thử')+_segDot(s3.d,'Final')+'</div>'
+        +(s3.tt?'<div class="muted" style="font-size:9.5px;margin-top:3px">'+s3.tt+'</div>':'')
+        +'</div></div>';}).join('')
+     +'</div></div>';
+  });
+  body.innerHTML=h;
+}
+function secZoom(src){
+  var ov=document.getElementById('secZoomOv');
+  if(!ov){ov=document.createElement('div');ov.id='secZoomOv';ov.style.cssText='position:fixed;inset:0;background:rgba(10,14,20,.82);z-index:99999;display:flex;align-items:center;justify-content:center;cursor:zoom-out';ov.onclick=function(){ov.style.display='none';};ov.innerHTML='<img style="max-width:92vw;max-height:92vh;border-radius:10px;background:#fff">';document.body.appendChild(ov);}
+  ov.style.display='flex';ov.querySelector('img').src=String(src).replace('sz=w400','sz=w1600');
+}
+function rQL(){ try{secGalLoad();}catch(e){} var w=document.getElementById('qlWrap'); if(w&&!_qldaLoaded) w.innerHTML='<div class="q" style="padding:16px">Đang tải danh sách dự án…</div>'; if(_qldaLoaded){ _renderQL(); } else { _loadQLDA(function(){ if(CUR==='ql') _renderQL(); }); } }
 function _qlPick(i){ _qlSel=i; _renderQL(); }
 function _qlTracked(){ return (window.__QLDA||[]).filter(function(r){ var v=String(r[1]==null?'':r[1]).trim().toLowerCase(); return v==='1'||v==='x'||v==='có'||v==='co'||v==='true'; }); }
 function _pd(v){ if(v==null||v==='')return null; if(Object.prototype.toString.call(v)==='[object Date]')return v; var m=String(v).trim().match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/); if(!m)return null; var y=+m[3]; if(y<100)y+=2000; var dt=new Date(y,(+m[2])-1,+m[1]); return isNaN(dt.getTime())?null:dt; }
