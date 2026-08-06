@@ -717,7 +717,7 @@ const ERRNM={MAT:'Vật liệu',PRE:'Sơ chế',FIT:'Ráp thô',DIM:'Kích thư�
 const errName=c=>{const m=String(c||'').toUpperCase().match(/^([A-Z]{3})/);return (m&&ERRNM[m[1]])||'';};
 const errTag=c=>{if(!c)return'';const n=errName(c);return '<span class="tag r" title="'+(n?n+' — ':'')+'số chi tiết tra Sổ tay QC (NCR link)">'+c+(n?' · '+n:'')+'</span>';};
 
-function fpyCalc(rows){let a=0,j=0,e=0,n=0;for(const r of rows){const t=r[7]+r[8]+r[9];if(isReject(r))j+=t;else if(isAcc(r)){a+=t;if(isErr(r)){e+=t;n++;}}}const d=a+j;return{a:a,j:j,e:e,n:n,fpy:d>0?(a-e)/d*100:null};}/* Waiting = lay thang status tu SPM */
+function fpyCalc(rows){let a=0,j=0,e=0,n=0;for(const r of rows){const t=val(r);if(isReject(r))j+=t;else if(isAcc(r)){a+=t;if(isErr(r)){e+=t;n++;}}}const d=a+j;return{a:a,j:j,e:e,n:n,fpy:d>0?(a-e)/d*100:null};}/* Waiting = lay thang status tu SPM */
 
 function renderChips(){
   const box=document.getElementById('chips');box.innerHTML='';let n=0;
@@ -797,13 +797,13 @@ function renderPend(){
   let TQ=0;for(const r of rows)TQ+=qval(r);
   const _tdy=new Date();_tdy.setHours(0,0,0,0);let _a7=0,_a30=0,_aO=0,_aN=0;
   for(const r of rows){const v=val(r);if(v<=0)continue;const wd=r[4];if(!wd){_aN+=v;continue;}const ag=Math.floor((_tdy-new Date(wd))/864e5);if(ag<=7)_a7+=v;else if(ag<=30)_a30+=v;else _aO+=v;}
-  let _clr=0;const _allR=Fnodate();for(const r of _allR){const qd=r[3],wd=r[4];if(qd&&wd){const aq=Math.floor((_tdy-new Date(qd))/864e5),lag=Math.floor((new Date(qd)-new Date(wd))/864e5);if(aq>=0&&aq<=7&&lag>30)_clr+=r[7]+r[8]+r[9];}}
+  let _clr=0;const _allR=Fnodate();for(const r of _allR){const qd=r[3],wd=r[4];if(qd&&wd){const aq=Math.floor((_tdy-new Date(qd))/864e5),lag=Math.floor((new Date(qd)-new Date(wd))/864e5);if(aq>=0&&aq<=7&&lag>30)_clr+=val(r);}}
   const _ageHtml='<div style="margin-top:7px;display:flex;gap:7px;flex-wrap:wrap;align-items:center"><span class="cg-lbl">Tuổi tồn (từ ngày gia công):</span><span class="tag g" title="chờ kiểm bình thường">≤7 ngày · '+fmTon(_a7)+'</span><span class="tag o">8–30 ngày · '+fmTon(_a30)+'</span><span class="tag r" title="tồn cũ cần rà soát">&gt;30 ngày · '+fmTon(_aO)+'</span>'+(_clr>0?'<span class="tag g" title="hàng gia công >30 ngày trước, vừa nghiệm thu trong 7 ngày qua">Đã dọn tồn cũ (7 ngày): '+fmTon(_clr)+' t</span>':'')+(_aN>0?'<span class="tag">không có ngày · '+fmTon(_aN)+'</span>':'')+'</div>';
   document.getElementById('pendSub').innerHTML='<b>'+fmTon(T)+'</b> · '+TQ.toLocaleString('vi-VN')+' pcs chờ QC accept · '+rows.length+' dòng · bấm một tổ để xem dự án'+_ageHtml;
   (function(){ /* breakdown Waiting: cong doan + xuong */
     var bx=document.getElementById('pendBk');if(!bx)return;
     var sf=0,sw=0,sp=0,X={};
-    for(var i=0;i<rows.length;i++){var r=rows[i];sf+=r[7];sw+=r[8];sp+=r[9];var xn=D.X[r[1]];X[xn]=(X[xn]||0)+r[7]+r[8]+r[9];}
+    for(var i=0;i<rows.length;i++){var r=rows[i];sf+=r[7];sw+=r[8];sp+=r[9];var xn=D.X[r[1]];X[xn]=(X[xn]||0)+val(r);}
     var stg='<span class="cg-lbl">Công đoạn chờ:</span>'
       +'<span class="tag clickable" onclick="tog(\'st\',\'f\')" style="background:#eaf1fb;color:#2d5aa0;margin:2px">Fitup '+fmTon(sf)+'</span>'
       +'<span class="tag clickable" onclick="tog(\'st\',\'w\')" style="background:#fdf3e3;color:#9a6310;margin:2px">Welding '+fmTon(sw)+'</span>'
@@ -818,7 +818,7 @@ function renderPend(){
     if(!_mx)return;
     const end=new Date(_mx),dd=[];for(let i=44;i>=0;i--){const d=new Date(end);d.setDate(d.getDate()-i);dd.push(d.toISOString().slice(0,10));}
     const totT=[],oldT=[];
-    for(const D of dd){let sm=0,o=0;const Dt=new Date(D);for(const r of _allR){const wd=r[4];if(!wd||wd>D)continue;const qd=r[3];if(qd&&qd<=D)continue;const v=r[7]+r[8]+r[9];sm+=v;if(Math.floor((Dt-new Date(wd))/864e5)>30)o+=v;}totT.push(+sm.toFixed(1));oldT.push(+o.toFixed(1));}
+    for(const D of dd){let sm=0,o=0;const Dt=new Date(D);for(const r of _allR){const wd=r[4];if(!wd||wd>D)continue;const qd=r[3];if(qd&&qd<=D)continue;const v=val(r);sm+=v;if(Math.floor((Dt-new Date(wd))/864e5)>30)o+=v;}totT.push(+sm.toFixed(1));oldT.push(+o.toFixed(1));}
     setOpt('cPendTrend',{tooltip:{trigger:'axis',valueFormatter:v=>fm1(v)+' t'},legend:{top:0,right:4,itemWidth:11,itemHeight:11},grid:{left:8,right:14,top:22,bottom:6,containLabel:true},xAxis:{type:'category',data:dd.map(dayVN)},yAxis:{type:'value',name:'t'},series:[{name:'Tổng tồn',type:'line',smooth:true,symbol:'none',areaStyle:{color:grad('rgba(37,99,235,.30)','rgba(37,99,235,0)')},lineStyle:{width:2.6,color:'#2563EB'},itemStyle:{color:'#2563EB'},data:totT},{name:'Tồn >30 ngày',type:'line',smooth:true,symbol:'none',lineStyle:{width:2,color:'#c0392b',type:'dashed'},itemStyle:{color:'#c0392b'},data:oldT}]});
   })();
   const g={};
@@ -854,12 +854,12 @@ function renderBrief(){
     const span=Math.max(1,Math.round((new Date(to)-new Date(from))/864e5)+1);
     const iso=d=>d.toISOString().slice(0,10);
     const pTo=iso(new Date(new Date(from)-864e5)),pFrom=iso(new Date(new Date(from)-span*864e5));
-    let prev=0;all.forEach(r=>{const d=dateOf(r);if(d&&isAcc(r)&&d>=pFrom&&d<=pTo)prev+=r[7]+r[8]+r[9];});
+    let prev=0;all.forEach(r=>{const d=dateOf(r);if(d&&isAcc(r)&&d>=pFrom&&d<=pTo)prev+=val(r);});
     const _pOK=prev>=Math.max(1,tot*0.02);  /* 1/8: SPM co luc cat du lieu ky truoc (con 2,3t) -> % ao 486.389%; thieu thi khong so sanh */
     const dl=_pOK?((tot-prev)/prev*100):null;
     li.push('Sản lượng nghiệm thu kỳ này <b>'+fm1(tot)+' t</b>'+(dl==null?'':' — <b style="color:'+(dl>=0?'var(--good)':'var(--bad)')+'">'+(dl>=0?'▲ tăng ':'▼ giảm ')+Math.abs(dl).toFixed(0)+'%</b> so với '+span+' ngày liền trước ('+fm1(prev)+' t)'));
   }
-  const XW={};done.forEach(r=>{const x=D.X[r[1]];XW[x]=(XW[x]||0)+r[7]+r[8]+r[9];});
+  const XW={};done.forEach(r=>{const x=D.X[r[1]];XW[x]=(XW[x]||0)+val(r);});
   const xs=Object.entries(XW).sort((a,b)=>b[1]-a[1]);
   if(xs.length)li.push('Xưởng dẫn đầu: <b>'+xs[0][0]+'</b> ('+fm1(xs[0][1])+' t'+(tot>0?' · '+Math.round(xs[0][1]/tot*100)+'% toàn nhà máy':'')+')'+(xs.length>1?' · thấp nhất: <b>'+xs[xs.length-1][0]+'</b> ('+fm1(xs[xs.length-1][1])+' t)':''));
   const fq=fpyCalc(rows);
@@ -868,7 +868,7 @@ function renderBrief(){
     let worst=null;Object.keys(byX).forEach(x=>{const q=fpyCalc(byX[x]);if(q.fpy!=null&&(!worst||q.fpy<worst.f))worst={x:x,f:q.fpy};});
     li.push('Chất lượng: FPY toàn nhà máy <b style="color:'+(fq.fpy>=98?'var(--good)':'var(--bad)')+'">'+fq.fpy.toFixed(1).replace('.',',')+'%</b>'+(fq.fpy>=98?' — đạt mốc 98%':' — <b style="color:var(--bad)">DƯỚI mốc 98%</b>')+(worst&&worst.f<98?' · cần chú ý <b>'+worst.x+'</b> ('+worst.f.toFixed(1).replace('.',',')+'%)':''));
   }
-  const pend=all.filter(isTon);const PX={};let pT=0;pend.forEach(r=>{const t=r[7]+r[8]+r[9];pT+=t;const x=D.X[r[1]];PX[x]=(PX[x]||0)+t;});
+  const pend=all.filter(isTon);const PX={};let pT=0;pend.forEach(r=>{const t=val(r);pT+=t;const x=D.X[r[1]];PX[x]=(PX[x]||0)+t;});
   const px=Object.entries(PX).sort((a,b)=>b[1]-a[1]);
   if(pT>1)li.push('Tồn chờ nghiệm thu <b style="color:var(--warn)">'+fm1(pT)+' t</b>'+(px.length?' — nhiều nhất tại <b>'+px[0][0]+'</b> ('+fm1(px[0][1])+' t)':''));
   window.__BRIEF=li;
@@ -1102,7 +1102,7 @@ function _covData(all){
   var G={};
   rows.forEach(function(r){
     var k=_covMode==='d'?r[4]:(_covMode==='w'?_wkKey(r[4]):r[4].slice(0,7));
-    var t=r[7]+r[8]+r[9];
+    var t=val(r);
     var o=G[k]=G[k]||{sx:0,nt:0};
     o.sx+=t; if(r[3]&&!isReject(r))o.nt+=t;
   });
@@ -1114,7 +1114,7 @@ function setCov(m){_covMode=m;['d','w','m'].forEach(function(k){var b=document.g
 function renderCov(){
   var el=document.getElementById('tCov');if(!el)return;
   var d=_covData(),ks=d.ks,G=d.G;
-  var FQ={};Fnodate().forEach(function(r){var d3=r[3];if(!d3)return;var k=_covMode==='d'?d3:(_covMode==='w'?_wkKey(d3):d3.slice(0,7));var t=r[7]+r[8]+r[9];var o=FQ[k]=FQ[k]||{a:0,j:0,e:0};if(isReject(r))o.j+=t;else if(isAcc(r)){o.a+=t;if(isErr(r))o.e+=t;}});
+  var FQ={};Fnodate().forEach(function(r){var d3=r[3];if(!d3)return;var k=_covMode==='d'?d3:(_covMode==='w'?_wkKey(d3):d3.slice(0,7));var t=val(r);var o=FQ[k]=FQ[k]||{a:0,j:0,e:0};if(isReject(r))o.j+=t;else if(isAcc(r)){o.a+=t;if(isErr(r))o.e+=t;}});
   var fpyOf=function(q){var dn=q?(q.a+q.j):0;return dn>0?+(((q.a-q.e)/dn)*100).toFixed(1):null;};
   if(typeof echarts!=='undefined')setOpt('cCov',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){var k=ks[ps[0].dataIndex],o=G[k];var p=o.sx>0?Math.round(o.nt/o.sx*100):null;return '<b>'+_covLbl(k)+'</b><br>SX: <b>'+fm1(o.sx)+' t</b><br>Đã NT: <b>'+fm1(o.nt)+' t</b>'+(p==null?'':'<br>Tỷ lệ: <b>'+p+'%</b>')+'<br>Chưa NT: '+fm1(Math.max(0,o.sx-o.nt))+' t<br>NT trong kỳ (mọi lô, theo ngày NT): <b>'+fm1((FQ[k]||{}).a||0)+' t</b> — số khớp báo cáo ngày'+(function(){var fv=fpyOf(FQ[k]);return fv==null?'':'<br>FPY: <b style="color:#548235">'+String(fv).replace('.',',')+'%</b>';})();}},
     legend:{top:0,itemWidth:11,itemHeight:11},grid:{left:8,right:44,top:28,bottom:6,containLabel:true},
@@ -1129,7 +1129,7 @@ function renderCov(){
   var rev=ks.slice().reverse();
   el.innerHTML='<table><thead><tr><th>Kỳ</th><th class="n">SX (t)</th><th class="n">Đã NT (t)</th><th class="n">Tỷ lệ</th><th class="n">Chưa NT (t)</th><th class="n">NT trong kỳ (t)</th></tr></thead><tbody>'+rev.map(function(k){var o=G[k];var p=o.sx>0?o.nt/o.sx*100:null;var c=p==null?'':(p>=95?'var(--good)':(p>=70?'var(--warn)':'var(--bad)'));return '<tr class="clickable" title="Bấm để lọc toàn dashboard theo kỳ này" onclick="covPick(&quot;'+k+'&quot;)"><td><b>'+_covLbl(k)+'</b></td><td class="n">'+fm1(o.sx)+'</td><td class="n"><b>'+fm1(o.nt)+'</b></td><td class="n"><b style="color:'+c+'">'+(p==null?'—':p.toFixed(1).replace('.',',')+'%')+'</b></td><td class="n" style="color:var(--warn)">'+fm1(Math.max(0,o.sx-o.nt))+'</td><td class="n"><b>'+fm1((FQ[k]||{}).a||0)+'</b></td></tr>';}).join('')+'</tbody></table>';
   var XG=_covX();var xk=Object.keys(XG).sort();
-  var XFQ={};Fnodate().forEach(function(r){if(!r[3])return;var x=D.X[r[1]];var t=r[7]+r[8]+r[9];var o=XFQ[x]=XFQ[x]||{a:0,j:0,e:0};if(isReject(r))o.j+=t;else if(isAcc(r)){o.a+=t;if(isErr(r))o.e+=t;}});
+  var XFQ={};Fnodate().forEach(function(r){if(!r[3])return;var x=D.X[r[1]];var t=val(r);var o=XFQ[x]=XFQ[x]||{a:0,j:0,e:0};if(isReject(r))o.j+=t;else if(isAcc(r)){o.a+=t;if(isErr(r))o.e+=t;}});
   if(typeof echarts!=='undefined')setOpt('cCovX',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){var x=xk[ps[0].dataIndex],o=XG[x];var p=o.sx>0?Math.round(o.nt/o.sx*100):null;return '<b>'+x+'</b><br>SX: <b>'+fm1(o.sx)+' t</b><br>Đã NT: <b>'+fm1(o.nt)+' t</b>'+(p==null?'':'<br>Tỷ lệ: <b>'+p+'%</b>')+'<br>Chưa NT: '+fm1(Math.max(0,o.sx-o.nt))+' t'+(function(){var fv=fpyOf(XFQ[x]);return fv==null?'':'<br>FPY: <b style="color:#548235">'+String(fv).replace('.',',')+'%</b>';})();}},
     legend:{top:0,itemWidth:11,itemHeight:11},grid:{left:8,right:44,top:28,bottom:6,containLabel:true},
     xAxis:{type:'category',data:xk,axisLabel:{fontWeight:800,fontSize:12}},
@@ -1141,7 +1141,7 @@ function renderCov(){
 }
 function _covX(){
   var XG={};
-  Fnodate().forEach(function(r){ if(!r[4]||D.PL[r[6]]==='Miễn QC')return; var x=D.X[r[1]]; var t=r[7]+r[8]+r[9]; var o=XG[x]=XG[x]||{sx:0,nt:0}; o.sx+=t; if(r[3]&&!isReject(r))o.nt+=t; });
+  Fnodate().forEach(function(r){ if(!r[4]||D.PL[r[6]]==='Miễn QC')return; var x=D.X[r[1]]; var t=val(r); var o=XG[x]=XG[x]||{sx:0,nt:0}; o.sx+=t; if(r[3]&&!isReject(r))o.nt+=t; });
   return XG;
 }
 function covCSV(){
@@ -1181,7 +1181,7 @@ function renderFpy(){
   }
   const errs=rows.filter(r=>isErr(r)||isReject(r)).sort((a,b)=>(dateOf(b)||'').localeCompare(dateOf(a)||'')).slice(0,300);
   document.getElementById('fpyErrWrap').innerHTML='<table><thead><tr><th>Ngày</th><th>Xưởng</th><th>Dự án</th><th>Tổ</th><th>QC</th><th>Loại</th><th class="n">KL (t)</th><th>Memo</th></tr></thead><tbody>'+
-    (errs.length?errs.map(r=>{const rj=isReject(r);return '<tr><td>'+(dateOf(r)?dayVN(dateOf(r)):'—')+'</td><td><b>'+D.X[r[1]]+'</b></td><td class="pjn"><b>'+pName(r[0])+'</b></td><td>'+toKey(r)+'</td><td><b>'+D.Q[r[5]]+'</b></td><td>'+(rj?'<span class="tag r">RỚT</span>':errTag(errCode(r)))+'</td><td class="n"><b>'+fm1(r[7]+r[8]+r[9])+'</b></td><td style="white-space:normal;font-size:11.5px;color:var(--mut)">'+(''+(r[13]||'')).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</td></tr>';}).join(''):'<tr><td colspan="8" class="muted" style="padding:12px">Không có lỗi trong phạm vi lọc.</td></tr>')+'</tbody></table>';
+    (errs.length?errs.map(r=>{const rj=isReject(r);return '<tr><td>'+(dateOf(r)?dayVN(dateOf(r)):'—')+'</td><td><b>'+D.X[r[1]]+'</b></td><td class="pjn"><b>'+pName(r[0])+'</b></td><td>'+toKey(r)+'</td><td><b>'+D.Q[r[5]]+'</b></td><td>'+(rj?'<span class="tag r">RỚT</span>':errTag(errCode(r)))+'</td><td class="n"><b>'+fm1(val(r))+'</b></td><td style="white-space:normal;font-size:11.5px;color:var(--mut)">'+(''+(r[13]||'')).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</td></tr>';}).join(''):'<tr><td colspan="8" class="muted" style="padding:12px">Không có lỗi trong phạm vi lọc.</td></tr>')+'</tbody></table>';
 }
 
 
@@ -1345,7 +1345,7 @@ function rTQ(){
   document.getElementById('tqTimeTtl').textContent='Sản lượng '+(DB==='q'?'nghiệm thu':'gia công')+' '+(S.st.size?STG.filter(([k])=>S.st.has(k)):[STG[0]]).map(x=>x[1]).join(' + ')+' theo '+(ta.mode==='d'?'ngày · '+ta.keys.length+' ngày gần nhất':'tháng');
   document.getElementById('tqTimeQ').textContent=(DB==='q'?'Theo ngày QC nghiệm thu':'Theo ngày gia công')+' · cột = tấn · đường = % so định mức '+CAP_DAY+' t/ngày · đường xám = xu hướng bình quân · bấm cột để lọc';
   const selStg=S.st.size?STG.filter(([k])=>S.st.has(k)):[STG[0]];
-  const sxBy={},sxAcc={};for(const r of Fnodate()){const wd=r[4];if(!wd||D.PL[r[6]]==='Miễn QC')continue;const kk=(ta.mode==='d'?wd:wd.slice(0,7));const tn=r[7]+r[8]+r[9];sxBy[kk]=(sxBy[kk]||0)+tn;if(r[3])sxAcc[kk]=(sxAcc[kk]||0)+tn;}
+  const sxBy={},sxAcc={};for(const r of Fnodate()){const wd=r[4];if(!wd||D.PL[r[6]]==='Miễn QC')continue;const kk=(ta.mode==='d'?wd:wd.slice(0,7));const tn=val(r);sxBy[kk]=(sxBy[kk]||0)+tn;if(r[3])sxAcc[kk]=(sxAcc[kk]||0)+tn;}
   const sxData=ta.keys.map(k=>+(sxBy[k]||0).toFixed(1));
   const capTgt=(ta.mode==='d'?CAP_DAY:CAP_MONTH);
   const perMax=Math.max.apply(null,[0].concat(ta.keys.map(x=>Math.max.apply(null,[0].concat(selStg.map(([k])=>ta.map[x][k]||0))))));
@@ -1380,8 +1380,8 @@ function rTQ(){
   // Top du an dang hoat dong (theo KL nghiem thu trong ky)
   if(!rows.length){document.getElementById('tqIns').innerHTML='<div class="muted">Không có dữ liệu trong phạm vi lọc.</div>';}
   else{
-    const PJv={},PJw={};for(const r of done)PJv[r[0]]=(PJv[r[0]]||0)+(r[7]+r[8]+r[9]);
-    for(const r of pend)PJw[r[0]]=(PJw[r[0]]||0)+(r[7]+r[8]+r[9]);
+    const PJv={},PJw={};for(const r of done)PJv[r[0]]=(PJv[r[0]]||0)+(val(r));
+    for(const r of pend)PJw[r[0]]=(PJw[r[0]]||0)+(val(r));
     const pmap={};for(const pp of D.proj)pmap[pp.name]=pp;
     let tp=Object.keys(PJv).map(pi=>{const nm=D.P[pi],pp=pmap[nm]||{};return{pi:+pi,v:PJv[pi],w:PJw[pi]||0,pct:(pp.pct==null?null:pp.pct),rem:(pp.tp==null?null:pp.tp),st:pp.status||''};}).filter(x=>!/hoàn thành/i.test(x.st)).sort((a,b)=>b.v-a.v);
     const mx=tp.length?tp[0].v:1;
@@ -1408,12 +1408,12 @@ function rXT(){
   const X={};
   const ax=x=>X[x]||(X[x]={acc:0,wait:0,wf:0,ww:0,wp:0,tos:{},pjs:new Set()});
   const at=(xo,t)=>xo.tos[t]||(xo.tos[t]={acc:0,wait:0,wf:0,ww:0,wp:0,pjs:{},days:{},qcs:{}});
-  for(const r of accR){const x=D.X[r[1]],t=D.T[r[2]]||'—',pj=r[0],tn=r[7]+r[8]+r[9];
+  for(const r of accR){const x=D.X[r[1]],t=D.T[r[2]]||'—',pj=r[0],tn=val(r);
     const xo=ax(x);xo.pjs.add(pj);xo.acc+=tn;const to=at(xo,t);to.acc+=tn;
     const p=to.pjs[pj]||(to.pjs[pj]={acc:0,wait:0});p.acc+=tn;
     if(r[3])to.days[r[3]]=(to.days[r[3]]||0)+tn;
     const q=D.Q[r[5]];if(q&&q!=='—')to.qcs[q]=(to.qcs[q]||0)+tn;}
-  for(const r of penR){const x=D.X[r[1]],t=D.T[r[2]]||'—',pj=r[0],tn=r[7]+r[8]+r[9];
+  for(const r of penR){const x=D.X[r[1]],t=D.T[r[2]]||'—',pj=r[0],tn=val(r);
     const xo=ax(x);xo.pjs.add(pj);xo.wait+=tn;xo.wf+=r[7];xo.ww+=r[8];xo.wp+=r[9];const to=at(xo,t);to.wait+=tn;to.wf+=r[7];to.ww+=r[8];to.wp+=r[9];
     const p=to.pjs[pj]||(to.pjs[pj]={acc:0,wait:0});p.wait+=tn;}
   const xs=Object.keys(X).sort();
@@ -1580,7 +1580,7 @@ function rQC(){
     var mxD='';acc.forEach(function(r){var d=dateOf(r);if(d&&d>mxD)mxD=d;});
     var M={};
     acc.forEach(function(r){var q=D.Q[r[5]];if(!q||q==='—')return;var o=M[q]=M[q]||{f:0,w:0,p:0,fd:0,t:0,n:0,x:{},to:{},pj:{},days:{},last:''};
-      var t=r[7]+r[8]+r[9];o.t+=t;o.n++;o.f+=r[7];o.w+=r[8];o.p+=r[9];
+      var t=val(r);o.t+=t;o.n++;o.f+=r[7];o.w+=r[8];o.p+=r[9];
       var x=D.X[r[1]];o.x[x]=(o.x[x]||0)+t;
       var tk=toKey(r);o.to[tk]=(o.to[tk]||0)+t;
       o.pj[r[0]]=1;var d=dateOf(r);if(d){o.days[d]=1;if(d>o.last)o.last=d;}});
@@ -1622,12 +1622,12 @@ function rQC(){
   const sorted=[...st].sort((a,b)=>b.kl-a.kl),maxT=Math.max(...sorted.map(u=>u.tpd),1);
   document.getElementById('tQc').innerHTML=`<thead><tr><th>#</th><th>QC</th><th class="n">Tổng tấn</th><th class="n">Lượt</th><th class="n">Ngày</th><th class="n">T/ngày</th><th style="min-width:54px"></th><th class="n">Fitup</th><th class="n">Welding</th><th class="n">Painting</th><th class="n">Tổ</th><th class="n">Dự án</th></tr></thead><tbody>`+sorted.map((u,i)=>`<tr class="clickable" onclick="showQc('${u.q}')"><td>${i+1}</td><td><b>${u.q}</b></td><td class="n"><b>${fm1(u.kl)}</b></td><td class="n">${u.n}</td><td class="n">${u.nd}</td><td class="n"><b>${fm1(u.tpd)}</b></td><td><div class="bar"><i style="width:${u.tpd/maxT*100}%;background:var(--acc)"></i></div></td><td class="n">${u.f?fm1(u.f):'·'}</td><td class="n">${u.w?fm1(u.w):'·'}</td><td class="n">${u.p?fm1(u.p):'·'}</td><td class="n">${u.tos.size}</td><td class="n">${u.pjs.size}</td></tr>`).join('')+`</tbody>`;
   const months=[...new Set(rowsAll.filter(r=>isAccAH(r)&&dateOf(r)).map(r=>mo(r)).filter(Boolean))].sort();
-  const MX={};for(const r of rowsAll){if(!isAccAH(r))continue;const q=D.Q[r[5]];if(q==='—')continue;const mm=mo(r);if(!mm)continue;(MX[q]=MX[q]||{})[mm]=((MX[q]||{})[mm]||0)+r[7]+r[8]+r[9];}
+  const MX={};for(const r of rowsAll){if(!isAccAH(r))continue;const q=D.Q[r[5]];if(q==='—')continue;const mm=mo(r);if(!mm)continue;(MX[q]=MX[q]||{})[mm]=((MX[q]||{})[mm]||0)+val(r);}
   document.getElementById('tQcMx').innerHTML=`<thead><tr><th>QC</th>`+months.map(mm=>`<th class="n">${moVN(mm)}</th>`).join('')+`<th class="n">Tổng</th></tr></thead><tbody>`+sorted.map(u=>{const row=MX[u.q]||{};const tt=months.reduce((a,mm)=>a+(row[mm]||0),0);return `<tr class="clickable" onclick="showQc('${u.q}')"><td><b>${u.q}</b></td>`+months.map(mm=>`<td class="n">${row[mm]?fm1(row[mm]):'·'}</td>`).join('')+`<td class="n"><b>${fm1(tt)}</b></td></tr>`;}).join('')+`</tbody>`;
   (function(){const hd=document.getElementById('qcHeat');if(!hd)return;
     const accR=rows.filter(isAcc);
     const days=[...new Set(accR.map(dateOf).filter(Boolean))].sort().slice(-15);const dset=new Set(days);
-    const HM={};for(const r of accR){const d=dateOf(r);if(!dset.has(d))continue;const q=D.Q[r[5]];if(q==='—')continue;HM[q+'|'+d]=(HM[q+'|'+d]||0)+r[7]+r[8]+r[9];}
+    const HM={};for(const r of accR){const d=dateOf(r);if(!dset.has(d))continue;const q=D.Q[r[5]];if(q==='—')continue;HM[q+'|'+d]=(HM[q+'|'+d]||0)+val(r);}
     const _vv=Object.values(HM).filter(v=>v>0).sort((a,b)=>a-b);const _qt=p=>_vv.length?_vv[Math.min(_vv.length-1,Math.floor(_vv.length*p))]:0;const t33=_qt(0.34),t66=_qt(0.67);
     const hc=v=>{if(v<=0)return['var(--rowH)','var(--mut)'];return v<=t33?['#f0a59d','#7a2018']:(v<=t66?['#f3cd72','#6b4e0a']:['#4caf82','#06351f']);};
     const qord=sorted.slice(0,15).map(u=>u.q);
@@ -1643,10 +1643,10 @@ function showQc(u){
   document.getElementById('qcTtl').innerHTML=`QC · ${u} <button class="btn sec" style="padding:3px 9px;font-size:11px;margin-left:6px" onclick="tog('q','${u}')">${S.q.has(u)?'Bỏ lọc':'Lọc theo QC này'}</button>`;
   document.getElementById('qcSub').textContent='Hồ sơ năng suất — theo tuần & tháng';
   document.getElementById('qcKp2').innerHTML=kpi('b',fm1(tot),'Tổng tấn','')+kpi('',rows.length,'Lượt','')+kpi('',days,'Ngày làm','')+kpi('a',fm1(tot/days),'T/ngày','năng suất');
-  const W={};for(const r of rows){const wk=weekKey(dateOf(r));if(!wk)continue;W[wk]=(W[wk]||0)+r[7]+r[8]+r[9];}
+  const W={};for(const r of rows){const wk=weekKey(dateOf(r));if(!wk)continue;W[wk]=(W[wk]||0)+val(r);}
   const wks=Object.keys(W).sort().slice(-12);
   setOpt('cQcWeek',{tooltip:{trigger:'axis',valueFormatter:v=>fm1(v)+' t'},grid:{left:8,right:10,top:10,bottom:8,containLabel:true},xAxis:{type:'category',data:wks.map(w=>dayVN(w))},yAxis:{type:'value'},series:[{type:'line',smooth:true,symbol:'circle',symbolSize:5,lineStyle:{width:2.6,color:'#2563EB'},itemStyle:{color:'#2563EB'},areaStyle:{color:grad('rgba(37,99,235,.32)','rgba(37,99,235,0)')},data:wks.map(w=>+W[w].toFixed(1))}]});
-  const M={};for(const r of rows){const mm=mo(r);if(!mm)continue;M[mm]=(M[mm]||0)+r[7]+r[8]+r[9];}
+  const M={};for(const r of rows){const mm=mo(r);if(!mm)continue;M[mm]=(M[mm]||0)+val(r);}
   const mks=Object.keys(M).sort();
   setOpt('cQcMonth',{tooltip:{trigger:'axis',valueFormatter:v=>fm1(v)+' t'},grid:{left:8,right:10,top:10,bottom:8,containLabel:true},xAxis:{type:'category',data:mks.map(moVN)},yAxis:{type:'value'},series:[{type:'line',smooth:true,symbol:'circle',symbolSize:5,lineStyle:{width:2.6,color:'#F59E0B'},itemStyle:{color:'#F59E0B'},areaStyle:{color:grad('rgba(245,158,11,.30)','rgba(245,158,11,0)')},data:mks.map(mm=>+M[mm].toFixed(1))}]});
   const PJ={};for(const r of rows){const o=PJ[r[0]]=PJ[r[0]]||{f:0,w:0,p:0,q:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];o.q+=qval(r);}
@@ -1730,12 +1730,12 @@ function renderDay(){
   const sxRows=_dayX?sxAll.filter(r=>D.X[r[1]]===_dayX):sxAll;
   const sxS=sums(sxRows),sxT=sxS.f+sxS.w+sxS.p;
   const sxPcs=sxRows.reduce((a,r)=>a+r[10]+r[11]+r[12],0);
-  const dErr=rows.filter(isErr);let dET=0;dErr.forEach(r=>dET+=r[7]+r[8]+r[9]);
-  const _rjD=Fnodate().filter(r=>isReject(r)&&dateOf(r)===d&&(!_dayX||D.X[r[1]]===_dayX));let _rjT=0;_rjD.forEach(r=>_rjT+=r[7]+r[8]+r[9]);
+  const dErr=rows.filter(isErr);let dET=0;dErr.forEach(r=>dET+=val(r));
+  const _rjD=Fnodate().filter(r=>isReject(r)&&dateOf(r)===d&&(!_dayX||D.X[r[1]]===_dayX));let _rjT=0;_rjD.forEach(r=>_rjT+=val(r));
   const _fpyD=(tot+_rjT)>0?((tot-dET)/(tot+_rjT)*100):null;
   const SXX={},SXTO={},SXP={},SXXA={},SXTOA={},SXPA={};
-  for(const r of sxAll){const tn=r[7]+r[8]+r[9];const _x=D.X[r[1]];SXX[_x]=(SXX[_x]||0)+tn;if(r[3]&&!isReject(r))SXXA[_x]=(SXXA[_x]||0)+tn;}
-  for(const r of sxRows){const tn=r[7]+r[8]+r[9];SXTO[toKey(r)]=(SXTO[toKey(r)]||0)+tn;SXP[r[0]]=(SXP[r[0]]||0)+tn;if(r[3]&&!isReject(r)){SXTOA[toKey(r)]=(SXTOA[toKey(r)]||0)+tn;SXPA[r[0]]=(SXPA[r[0]]||0)+tn;}}
+  for(const r of sxAll){const tn=val(r);const _x=D.X[r[1]];SXX[_x]=(SXX[_x]||0)+tn;if(r[3]&&!isReject(r))SXXA[_x]=(SXXA[_x]||0)+tn;}
+  for(const r of sxRows){const tn=val(r);SXTO[toKey(r)]=(SXTO[toKey(r)]||0)+tn;SXP[r[0]]=(SXP[r[0]]||0)+tn;if(r[3]&&!isReject(r)){SXTOA[toKey(r)]=(SXTOA[toKey(r)]||0)+tn;SXPA[r[0]]=(SXPA[r[0]]||0)+tn;}}
   let sxAccT=0;const sxAcS={f:0,w:0,p:0};sxRows.forEach(r=>{if(r[3]&&!isReject(r)){sxAcS.f+=r[7];sxAcS.w+=r[8];sxAcS.p+=r[9];}});sxAccT=sxAcS.f+sxAcS.w+sxAcS.p;
   const _cmp=(nt,sx)=>'<td class="n">'+(sx?fm1(sx):_dz)+'</td><td class="n">'+(sx?'<b style="color:'+(nt/sx>=0.95?'var(--good)':nt/sx>=0.7?'var(--warn)':'var(--bad)')+'">'+Math.round(nt/sx*100)+'%</b>':_dz)+'</td>';
   const WD=['CN','T2','T3','T4','T5','T6','T7'];const wd=WD[new Date(d).getDay()];
@@ -1777,7 +1777,7 @@ function renderDay(){
       ]});
     const XC={};
     for(const r of base){const x=D.X[r[1]];const o=XC[x]=XC[x]||{f:0,w:0,p:0,sf:0,sw:0,sp:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];}
-    for(const r of sxAll){const x=D.X[r[1]];const o=XC[x]=XC[x]||{f:0,w:0,p:0,sf:0,sw:0,sp:0};o.sf+=r[7];o.sw+=r[8];o.sp+=r[9];if(r[3]&&!isReject(r))o.sa=(o.sa||0)+r[7]+r[8]+r[9];}
+    for(const r of sxAll){const x=D.X[r[1]];const o=XC[x]=XC[x]||{f:0,w:0,p:0,sf:0,sw:0,sp:0};o.sf+=r[7];o.sw+=r[8];o.sp+=r[9];if(r[3]&&!isReject(r))o.sa=(o.sa||0)+val(r);}
     const xs2=Object.keys(XC).sort();
     const SC=[['f','sf','Fitup','#2563EB'],['w','sw','Welding','#F59E0B'],['p','sp','Painting','#16A34A']];
     setOpt('cNdCmpX',{
@@ -1811,16 +1811,16 @@ function renderDay(){
   var _rj=Fnodate().filter(r=>isReject(r)&&dateOf(r)===d&&(!_dayX||D.X[r[1]]===_dayX)),_rjEl=document.getElementById('ndReject');
   var _errHtml='';
   if(dErr.length){
-    _errHtml='<div style="margin:10px 0;padding:10px 14px;border:1px solid #f0d9a8;border-left:5px solid #D97706;border-radius:9px;background:rgba(217,119,6,.05)"><div style="font-weight:800;color:#B45309;font-size:12.5px;margin-bottom:6px">CẤU KIỆN CÓ MÃ LỖI — không đạt ngay lần đầu · '+dErr.length+' món · '+fm1(dET)+' t'+(_fpyD!=null?' · FPY ngày '+_fpyD.toFixed(1).replace('.',',')+'%':'')+'</div><div class="tw" style="max-height:240px"><table><thead><tr><th>Dự án</th><th>Tổ</th><th>QC</th><th>Mã lỗi</th><th class="n">KL (t)</th><th>Memo</th></tr></thead><tbody>'+dErr.map(r=>'<tr><td>'+pName(r[0])+'</td><td>'+toKey(r)+'</td><td>'+D.Q[r[5]]+'</td><td>'+errTag(errCode(r))+'</td><td class="n">'+fm1(r[7]+r[8]+r[9])+'</td><td style="white-space:normal;color:#7a5b17;font-size:11.5px">'+(''+(r[13]||'')).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</td></tr>').join('')+'</tbody></table></div></div>';
+    _errHtml='<div style="margin:10px 0;padding:10px 14px;border:1px solid #f0d9a8;border-left:5px solid #D97706;border-radius:9px;background:rgba(217,119,6,.05)"><div style="font-weight:800;color:#B45309;font-size:12.5px;margin-bottom:6px">CẤU KIỆN CÓ MÃ LỖI — không đạt ngay lần đầu · '+dErr.length+' món · '+fm1(dET)+' t'+(_fpyD!=null?' · FPY ngày '+_fpyD.toFixed(1).replace('.',',')+'%':'')+'</div><div class="tw" style="max-height:240px"><table><thead><tr><th>Dự án</th><th>Tổ</th><th>QC</th><th>Mã lỗi</th><th class="n">KL (t)</th><th>Memo</th></tr></thead><tbody>'+dErr.map(r=>'<tr><td>'+pName(r[0])+'</td><td>'+toKey(r)+'</td><td>'+D.Q[r[5]]+'</td><td>'+errTag(errCode(r))+'</td><td class="n">'+fm1(val(r))+'</td><td style="white-space:normal;color:#7a5b17;font-size:11.5px">'+(''+(r[13]||'')).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</td></tr>').join('')+'</tbody></table></div></div>';
   }
-  if(_rjEl){ _rjEl.innerHTML=_errHtml+(_rj.length?'<div style="margin:10px 0;padding:10px 14px;border:1px solid #f1c4bd;border-left:5px solid #c0392b;border-radius:9px;background:rgba(192,57,43,.05)"><div style="font-weight:800;color:#c0392b;font-size:12.5px;margin-bottom:6px">CẤU KIỆN REJECT — '+_rj.length+' món · '+fm1(_rj.reduce((a,r)=>a+r[7]+r[8]+r[9],0))+' t</div><div class="tw" style="max-height:240px"><table><thead><tr><th>Dự án</th><th>Tổ</th><th>QC</th><th class="n">KL (t)</th><th>Lý do / memo</th></tr></thead><tbody>'+_rj.map(r=>'<tr><td>'+pName(r[0])+'</td><td>'+toKey(r)+'</td><td>'+D.Q[r[5]]+'</td><td class="n">'+fm1(r[7]+r[8]+r[9])+'</td><td style="white-space:normal;color:#8a2020;font-size:11.5px">'+(''+(r[13]||'')).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</td></tr>').join('')+'</tbody></table></div></div>':''); }
+  if(_rjEl){ _rjEl.innerHTML=_errHtml+(_rj.length?'<div style="margin:10px 0;padding:10px 14px;border:1px solid #f1c4bd;border-left:5px solid #c0392b;border-radius:9px;background:rgba(192,57,43,.05)"><div style="font-weight:800;color:#c0392b;font-size:12.5px;margin-bottom:6px">CẤU KIỆN REJECT — '+_rj.length+' món · '+fm1(_rj.reduce((a,r)=>a+val(r),0))+' t</div><div class="tw" style="max-height:240px"><table><thead><tr><th>Dự án</th><th>Tổ</th><th>QC</th><th class="n">KL (t)</th><th>Lý do / memo</th></tr></thead><tbody>'+_rj.map(r=>'<tr><td>'+pName(r[0])+'</td><td>'+toKey(r)+'</td><td>'+D.Q[r[5]]+'</td><td class="n">'+fm1(val(r))+'</td><td style="white-space:normal;color:#8a2020;font-size:11.5px">'+(''+(r[13]||'')).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</td></tr>').join('')+'</tbody></table></div></div>':''); }
   var _nx=document.getElementById('ndExtra');
   if(_nx){ if(_dayX){
     var _pen=Fnodate().filter(isTon).filter(r=>D.X[r[1]]===_dayX),_wTo={},_wPj={},_wT=0;
-    for(const r of _pen){var tn=r[7]+r[8]+r[9];_wT+=tn;var tk=toKey(r);_wTo[tk]=(_wTo[tk]||0)+tn;_wPj[r[0]]=(_wPj[r[0]]||0)+tn;}
+    for(const r of _pen){var tn=val(r);_wT+=tn;var tk=toKey(r);_wTo[tk]=(_wTo[tk]||0)+tn;_wPj[r[0]]=(_wPj[r[0]]||0)+tn;}
     var _wToA=Object.entries(_wTo).sort((a,b)=>b[1]-a[1]).slice(0,8),_wPjA=Object.entries(_wPj).sort((a,b)=>b[1]-a[1]).slice(0,8),_wmx=Math.max(1,..._wToA.concat(_wPjA).map(x=>x[1]));
     var _wbar=(arr,pj)=>arr.map(([k,v])=>{var w=Math.max(7,Math.round(v/_wmx*100)),nm=pj?pName(+k):k;return '<tr><td style="padding:3px 8px 3px 0;font-size:11.5px;text-align:right;white-space:nowrap;max-width:170px;overflow:hidden;text-overflow:ellipsis">'+nm+'</td><td><div style="background:#f1eadf;border-radius:5px"><div style="width:'+w+'%;min-width:44px;background:#EA580C;border-radius:5px;text-align:right"><span style="color:#fff;font-size:10.5px;font-weight:700;padding:0 7px;line-height:18px;display:inline-block">'+fm1(v)+' t</span></div></div></td></tr>';}).join('');
-    var _byD={};for(const r of Fnodate().filter(isAcc).filter(r=>D.X[r[1]]===_dayX)){var dd=dateOf(r);if(dd)_byD[dd]=(_byD[dd]||0)+r[7]+r[8]+r[9];}
+    var _byD={};for(const r of Fnodate().filter(isAcc).filter(r=>D.X[r[1]]===_dayX)){var dd=dateOf(r);if(dd)_byD[dd]=(_byD[dd]||0)+val(r);}
     var _dks=Object.keys(_byD).sort().slice(-12),_tmx=Math.max(1,..._dks.map(x=>_byD[x]));
     var _tr=_dks.map((dd,ii)=>{var v=_byD[dd],pv=ii>0?_byD[_dks[ii-1]]:null,dl=pv?((v-pv)/pv*100):null,w=Math.max(5,Math.round(v/_tmx*100)),ds=dl===null?'':(dl>=0?'<span style="color:#15803d;font-weight:700">▲'+Math.round(dl)+'%</span>':'<span style="color:#dc2626;font-weight:700">▼'+Math.round(Math.abs(dl))+'%</span>');return '<tr><td style="padding:2px 8px 2px 0;font-size:11px;text-align:right;white-space:nowrap">'+dayVN(dd)+'</td><td><div class="pend-pbar" style="max-width:320px"><i style="width:'+w+'%;background:var(--f)"></i></div></td><td style="padding:2px 0 2px 8px;font-size:11.5px;font-weight:700;white-space:nowrap">'+fm1(v)+' t</td><td style="padding:2px 0 2px 10px;font-size:11px;white-space:nowrap">'+ds+'</td></tr>';}).join('');
     _nx.innerHTML='<div style="margin-top:22px;padding-top:14px;border-top:1px solid var(--line)"><div class="cg-lbl" style="margin-bottom:6px;color:#EA580C">Chờ nghiệm thu — Xưởng '+_dayX+' · tổng '+fm1(_wT)+' t</div><div class="r2" style="grid-template-columns:1fr 1fr;gap:22px"><div><div class="muted" style="font-size:10.5px;margin-bottom:3px;font-weight:700">Theo tổ</div><table>'+(_wToA.length?_wbar(_wToA,false):'<tr><td class="muted" style="font-size:11.5px">— không có —</td></tr>')+'</table></div><div><div class="muted" style="font-size:10.5px;margin-bottom:3px;font-weight:700">Theo dự án</div><table>'+(_wPjA.length?_wbar(_wPjA,true):'<tr><td class="muted" style="font-size:11.5px">— không có —</td></tr>')+'</table></div></div></div><div style="margin-top:22px;padding-top:14px;border-top:1px solid var(--line)"><div class="cg-lbl" style="margin-bottom:6px">Xu hướng KL nghiệm thu theo ngày — Xưởng '+_dayX+'</div><table>'+_tr+'</table></div>';
@@ -1928,8 +1928,20 @@ function asgAddRow(){
 }
 function asgAddDim(){
   _asgEnsure();
-  TEAM_DIM.forEach(function(code){if(!_ASGE[code])_ASGE[code]={email:code+'@daidung.vn',x:[],to:[],pj:[],note:''};});
+  /* VA 5/8: lay TOAN BO team kich thuoc tu SPM = ai co Fitup 'Da QC (AH)' hoac co kiem Final DIM (loai team han/son thuan) */
+  var ST={};
+  for(var i=0;i<D.rows.length;i++){var r=D.rows[i];
+    if(D.PL[r[6]]==='Đã QC (AH)'){var q=D.Q[r[5]];if(q&&q!=='—'){var o=ST[q.toLowerCase()]=ST[q.toLowerCase()]||{f:0,w:0,p:0,fd:0};o.f+=r[7];o.w+=r[8];o.p+=r[9];}}
+    try{var nm=_fdName(r);if(nm){(ST[nm]=ST[nm]||{f:0,w:0,p:0,fd:0}).fd+=r[8];}}catch(e){}}
+  var codes={};
+  TEAM_DIM.forEach(function(c){codes[c]=1;});
+  Object.keys(ST).forEach(function(c){var o=ST[c];var mx=Math.max(o.f,o.w,o.p);
+    if(o.fd>0.05||(o.f>0.05&&o.f>=mx))codes[c]=1;});   /* co DIM, hoac fitup la cong doan chinh */
+  var n0=Object.keys(_ASGE).length;
+  Object.keys(codes).sort().forEach(function(code){if(!_ASGE[code])_ASGE[code]={email:code+'@daidung.vn',x:[],to:[],pj:[],note:''};});
   asgRender();
+  var msg=document.getElementById('asgMsg');
+  if(msg){msg.style.color='#1f6b46';msg.textContent='Đã thêm team kích thước từ SPM: +'+(Object.keys(_ASGE).length-n0)+' người (tổng '+Object.keys(_ASGE).length+'). Xóa người thừa bằng nút ✕ rồi bấm Lưu.';msg.dataset.hold='1';setTimeout(function(){delete msg.dataset.hold;},4000);}
 }
 function asgSave(){
   var msg=document.getElementById('asgMsg');
@@ -1961,7 +1973,7 @@ function rDL(){
 }
 function _fillRep(){
   var di=function(id){try{return CH[id]?CH[id].getDataURL({pixelRatio:2,backgroundColor:'#ffffff'}):'';}catch(e){return'';}};
-  var acc=F().filter(isAcc),pend=Fnodate().filter(isTon),tw=function(r){return r[7]+r[8]+r[9];};
+  var acc=F().filter(isAcc),pend=Fnodate().filter(isTon),tw=function(r){return val(r);};
   var s={f:0,w:0,p:0};acc.forEach(function(r){s.f+=r[7];s.w+=r[8];s.p+=r[9];});var tot=s.f+s.w+s.p;
   var pT=pend.reduce(function(a,r){return a+tw(r);},0);
   var kc=function(lbl,v,sub,col){return '<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;font-weight:700">'+lbl+'</div><div style="font-size:23px;font-weight:800;color:'+col+';margin-top:4px">'+v+'</div><div style="font-size:10.5px;color:#6b7280;margin-top:3px">'+(sub||'')+'</div></div>';};
@@ -2016,7 +2028,7 @@ function buildReportPDF(){
 }
 function exportReport(){
   if(typeof XLSX==='undefined'){alert('Chưa tải được thư viện Excel — cần mạng internet, mở lại file rồi thử.');return;}
-  const acc=F().filter(isAcc),pend=Fnodate().filter(isTon),tw=r=>r[7]+r[8]+r[9];
+  const acc=F().filter(isAcc),pend=Fnodate().filter(isTon),tw=r=>val(r);
   const range=(DR.from?dayVN(DR.from):'đầu kỳ')+' → '+(DR.to?dayVN(DR.to):'mới nhất');
   const wb=XLSX.utils.book_new();const add=(aoa,nm)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),nm);
   const sA=acc.reduce((o,r)=>{o.f+=r[7];o.w+=r[8];o.p+=r[9];return o;},{f:0,w:0,p:0});
@@ -2071,7 +2083,7 @@ function renderFresh(){
 /* ================= UPGRADE 2026-07 ================= */
 /* --- 06 CHAT LUONG / ROT NG --- */
 function rCL(){
-  const rows=F(),tw=r=>r[7]+r[8]+r[9];
+  const rows=F(),tw=r=>val(r);
   const acc=rows.filter(isAcc),rej=rows.filter(isReject);
   ['rejChRow','rejQPRow','rejListCard'].forEach(function(_i){var _e=document.getElementById(_i);if(_e)_e.style.display=rej.length?'':'none';});
   let aT=0;acc.forEach(r=>aT+=tw(r));let jT=0;rej.forEach(r=>jT+=tw(r));
@@ -2482,11 +2494,11 @@ function rKP(){
   try{renderBSC();}catch(e){}
   // --- loai hinh du an ---
   const TG={};const add=(m,t)=>m[t.k]=m[t.k]||{t:t,nt:0,sx:0,rej:0,pend:0,pjs:new Set()};
-  for(const r of acc){const t=pjType(r[0]);add(TG,t);TG[t.k].nt+=r[7]+r[8]+r[9];TG[t.k].pjs.add(r[0]);}
-  for(const r of rej){const t=pjType(r[0]);add(TG,t);TG[t.k].rej+=r[7]+r[8]+r[9];TG[t.k].pjs.add(r[0]);}
-  for(const r of sxR){const t=pjType(r[0]);add(TG,t);const _tn=r[7]+r[8]+r[9];TG[t.k].sx+=_tn;if(r[3]&&!isReject(r))TG[t.k].sxa=(TG[t.k].sxa||0)+_tn;}
+  for(const r of acc){const t=pjType(r[0]);add(TG,t);TG[t.k].nt+=val(r);TG[t.k].pjs.add(r[0]);}
+  for(const r of rej){const t=pjType(r[0]);add(TG,t);TG[t.k].rej+=val(r);TG[t.k].pjs.add(r[0]);}
+  for(const r of sxR){const t=pjType(r[0]);add(TG,t);const _tn=val(r);TG[t.k].sx+=_tn;if(r[3]&&!isReject(r))TG[t.k].sxa=(TG[t.k].sxa||0)+_tn;}
   const pendAll=Fnodate().filter(isTon);
-  for(const r of pendAll){const t=pjType(r[0]);add(TG,t);TG[t.k].pend+=r[7]+r[8]+r[9];}
+  for(const r of pendAll){const t=pjType(r[0]);add(TG,t);TG[t.k].pend+=val(r);}
   const tks=Object.keys(TG).map(Number).sort((x,y)=>y-x);
   (function(){
     const shade=K=>K>=1.8?'#1E3A8A':K>=1.6?'#1D4ED8':K>=1.5?'#2563EB':K>=1.4?'#3B82F6':K>=1.2?'#60A5FA':K>=1.1?'#93C5FD':'#BFDBFE';
@@ -2503,16 +2515,16 @@ function rKP(){
   // --- du an phuc tap K>=1.5 ---
   const PH={};
   const addP=(pi)=>PH[pi]=PH[pi]||{nt:0,rej:0,pend:0,qc:new Set()};
-  for(const r of acc){const t=pjType(r[0]);if(t.K<1.5)continue;addP(r[0]);PH[r[0]].nt+=r[7]+r[8]+r[9];const q=D.Q[r[5]];if(q!=='—')PH[r[0]].qc.add(q);}
-  for(const r of rej){const t=pjType(r[0]);if(t.K<1.5)continue;addP(r[0]);PH[r[0]].rej+=r[7]+r[8]+r[9];}
-  for(const r of pendAll){const t=pjType(r[0]);if(t.K<1.5)continue;addP(r[0]);PH[r[0]].pend+=r[7]+r[8]+r[9];}
+  for(const r of acc){const t=pjType(r[0]);if(t.K<1.5)continue;addP(r[0]);PH[r[0]].nt+=val(r);const q=D.Q[r[5]];if(q!=='—')PH[r[0]].qc.add(q);}
+  for(const r of rej){const t=pjType(r[0]);if(t.K<1.5)continue;addP(r[0]);PH[r[0]].rej+=val(r);}
+  for(const r of pendAll){const t=pjType(r[0]);if(t.K<1.5)continue;addP(r[0]);PH[r[0]].pend+=val(r);}
   const pks=Object.keys(PH).sort((x,y)=>PH[y].nt-PH[x].nt);
   document.getElementById('tPjHard').innerHTML=pks.length?'<thead><tr><th>Dự án</th><th>Loại · K</th><th class="n">Đã NT (t)</th><th class="n">FPY</th><th class="n">Rớt (t)</th><th class="n">Chờ NT (t)</th><th class="n">QC</th></tr></thead><tbody>'+
     pks.map(pi=>{const o=PH[pi],t=pjType(pi);const fv=fpy(o.nt,o.rej);
       return '<tr class="clickable" onclick="tog(\'pj\','+pi+')"><td class="pjn" title="'+(D.P[pi]||'').replace(/"/g,'&quot;')+'">'+pName(+pi)+'</td><td><span class="tag b">K '+t.K.toFixed(1).replace('.',',')+'</span></td><td class="n"><b>'+fm1(o.nt)+'</b></td><td class="n">'+(fv==null?'·':'<b style="color:'+(fv>=98?'var(--good)':'var(--bad)')+'">'+fv.toFixed(1).replace('.',',')+'%</b>')+'</td><td class="n" style="color:var(--bad)">'+(o.rej?fm1(o.rej):'·')+'</td><td class="n" style="color:var(--warn)">'+(o.pend?fm1(o.pend):'·')+'</td><td class="n">'+o.qc.size+'</td></tr>';}).join('')+'</tbody>':'<tbody><tr><td class="muted" style="padding:14px">Không có dự án phức tạp trong phạm vi lọc.</td></tr></tbody>';
   // --- QC tren du an kho ---
   const QH={};
-  for(const r of acc){const q=D.Q[r[5]];if(q==='—')continue;const t=pjType(r[0]);const o=QH[q]=QH[q]||{hard:0,all:0,wt:0};const v=r[7]+r[8]+r[9];o.all+=v;o.wt+=v*t.K;if(t.K>=1.5)o.hard+=v;}
+  for(const r of acc){const q=D.Q[r[5]];if(q==='—')continue;const t=pjType(r[0]);const o=QH[q]=QH[q]||{hard:0,all:0,wt:0};const v=val(r);o.all+=v;o.wt+=v*t.K;if(t.K>=1.5)o.hard+=v;}
   const qks=Object.keys(QH).sort((x,y)=>QH[y].wt-QH[x].wt);
   document.getElementById('tQcHard').innerHTML='<thead><tr><th>QC</th><th class="n">Tổng NT (t)</th><th class="n">Trên DA khó (t)</th><th class="n">% khó</th><th class="n">KL quy đổi (t·K)</th></tr></thead><tbody>'+
     qks.map(q=>{const o=QH[q];const ph=o.all>0?o.hard/o.all*100:0;
