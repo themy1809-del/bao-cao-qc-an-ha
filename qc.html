@@ -348,7 +348,7 @@ body.tvmode #hdrStick{position:static;box-shadow:none}
 body.tvmode .view>.kpis{position:static}
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 7/8 v74 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 7/8 v75 ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="apiurl.js"></script>
@@ -698,7 +698,7 @@ function pName(i){return D.P[i].replace(/^[0-9A-Z.\-]+\s+/,'').replace(/^(DGRP|D
 const S={x:new Set(),to:new Set(),pj:new Set(),m:new Set(),d:new Set(),q:new Set(),st:new Set(),pl:new Set()};
 let DR={from:'',to:''};
 const LBL={x:'Xưởng',to:'Tổ',pj:'Dự án',m:'Kỳ',d:'Ngày',q:'QC',st:'Công đoạn',pl:'Loại QC'};
-const STN={f:'Fitup',w:'Welding',p:'Painting'};
+const STN={f:'Fitup',w:'Welding',p:'Painting',fd:'Final DIM'};
 function tog(dim,v){const s=S[dim];s.has(v)?s.delete(v):s.add(v);renderAll();}
 function clearAll(){for(const k in S)S[k].clear();DR={from:'',to:''};setupDR();renderAll();}
 function clearSel(){var any=false;for(const k in S){if(S[k].size){S[k].clear();any=true;}}if(any)renderAll();}
@@ -710,8 +710,8 @@ function F(){return D.rows.filter(r=>
   (!S.pj.size||S.pj.has(r[0]))&&(!S.m.size||S.m.has(mo(r)))&&
   (!S.q.size||S.q.has(D.Q[r[5]]))&&(!S.pl.size||S.pl.has(D.PL[r[6]]))&&(!S.d.size||S.d.has(dateOf(r)))&&(!DR.from||dateOf(r)>=DR.from)&&(!DR.to||dateOf(r)<=DR.to));}
 function Fnodate(){return D.rows.filter(r=>(!S.x.size||S.x.has(D.X[r[1]]))&&(!S.to.size||S.to.has(toKey(r)))&&(!S.pj.size||S.pj.has(r[0]))&&(!S.q.size||S.q.has(D.Q[r[5]]))&&(!S.pl.size||S.pl.has(D.PL[r[6]])));}
-function val(r){if(!S.st.size)return r[7]+r[8]+r[9];let v=0;if(S.st.has('f'))v+=r[7];if(S.st.has('w'))v+=r[8];if(S.st.has('p'))v+=r[9];return v;}
-function qval(r){if(!S.st.size)return r[10]+r[11]+r[12];let v=0;if(S.st.has('f'))v+=r[10];if(S.st.has('w'))v+=r[11];if(S.st.has('p'))v+=r[12];return v;}
+function val(r){if(!S.st.size)return r[7]+r[8]+r[9];let v=0;if(S.st.has('f'))v+=r[7];if(S.st.has('w'))v+=r[8];if(S.st.has('p'))v+=r[9];if(S.st.has('fd')&&!S.st.has('w')&&r[8]>0&&r[13]&&/acc/i.test(''+r[13]))v+=r[8];return v;}
+function qval(r){if(!S.st.size)return r[10]+r[11]+r[12];let v=0;if(S.st.has('f'))v+=r[10];if(S.st.has('w'))v+=r[11];if(S.st.has('p'))v+=r[12];if(S.st.has('fd')&&!S.st.has('w')&&r[8]>0&&r[13]&&/acc/i.test(''+r[13]))v+=r[11];return v;}
 function sums(rows){let f=0,w=0,p=0;for(const r of rows){f+=r[7];w+=r[8];p+=r[9];}return{f,w,p};}
 function stSums(rows){const s=sums(rows);return{f:S.st.size&&!S.st.has('f')?0:s.f,w:S.st.size&&!S.st.has('w')?0:s.w,p:S.st.size&&!S.st.has('p')?0:s.p};}
 const isReject=r=>D.PL[r[6]]==='Rớt'||(r[13]&&(/\b(reject|fail)\b/i.test(''+r[13])||/rớt|không đạt/i.test(''+r[13])));/* VA 2026-07-28 (ban 2): hang cua xuong An Ha + DA CO QC PASS thi TINH VAO KHOI LUONG, du ai kiem (isAcc).
@@ -786,7 +786,7 @@ function renderCtrls(){
   const xs=D.X.slice().sort();
   const xsel=xs.filter(x=>S.x.has(x));const xlab=xsel.length?(xsel.length<=2?xsel.join(', '):xsel.length+' xưởng'):'Tất cả';
   document.getElementById('xFilter').innerHTML='<span class="dd'+(xddOpen?' open':'')+'" onclick="event.stopPropagation()"><button class="dd-btn" onclick="ddTog(event)">Xưởng: '+xlab+' <span class="dd-ar">▾</span></button><div class="dd-menu"><div class="dd-it'+(xsel.length?'':' on')+'" onclick="xSel()">Tất cả xưởng</div>'+xs.map(x=>'<label class="dd-it"><input type="checkbox" '+(S.x.has(x)?'checked':'')+' onchange="tog(\'x\',\''+x+'\')"> '+x+'</label>').join('')+'</div></span>';
-  document.getElementById('stFilter').innerHTML=STG.map(s=>'<button class="qf '+s[0]+(S.st.has(s[0])?' on':'')+'" onclick="tog(\'st\',\''+s[0]+'\')">'+s[1]+'</button>').join('');
+  document.getElementById('stFilter').innerHTML=STG.map(s=>'<button class="qf '+s[0]+(S.st.has(s[0])?' on':'')+'" onclick="tog(\'st\',\''+s[0]+'\')">'+s[1]+'</button>').join('')+'<button class="qf'+(S.st.has('fd')?' on':'')+'" style="'+(S.st.has('fd')?'':'border-color:#0D9488;color:#0D9488')+'" onclick="tog(\'st\',\'fd\')">Final DIM</button>';
   document.getElementById('plFilter').innerHTML=D.PL.map(v=>'<button class="qf'+(v==='Chưa QC'?' plw':'')+(S.pl.has(v)?' on':'')+'" onclick="tog(\'pl\',\''+v+'\')">'+plLabel(v)+'</button>').join('');
 }
 function renderAll(){try{saveState();}catch(e){}renderChips();renderCtrls();
@@ -1355,21 +1355,22 @@ function rTQ(){
         {name:'KL (kg)',type:'line',yAxisIndex:1,smooth:true,symbolSize:5,lineStyle:{width:2.4,color:'#F59E0B'},itemStyle:{color:'#F59E0B'},data:ks.map(function(m){return Math.round(MO[m].k);})}]
     },function(){setView('cl');});
   })();
-  document.getElementById('tqTimeTtl').textContent=_timeFD?('Final DIM (kiểm cuối) so với SX Welding — theo '+(ta.mode==='d'?'ngày':'tháng')):'Sản lượng '+(DB==='q'?'nghiệm thu':'gia công')+' '+(S.st.size?STG.filter(([k])=>S.st.has(k)):[STG[0]]).map(x=>x[1]).join(' + ')+' theo '+(ta.mode==='d'?'ngày · '+ta.keys.length+' ngày gần nhất':'tháng');
-  document.getElementById('tqTimeQ').textContent=(DB==='q'?'Theo ngày QC nghiệm thu':'Theo ngày gia công')+(_timeFD?' · cột đậm = Final DIM đã acc · cột nhạt = SX Welding cùng ngày · đường đỏ = FD/SX hàn % · đường xám = xu hướng FD':' · cột đậm = NT · cột nhạt = SX gia công cùng công đoạn · đường đỏ = % SX đã NT · đường xám = xu hướng')+' · bấm cột để lọc';
+  const _FDm=_timeFD||(S.st.has('fd')&&!STG.some(([k])=>S.st.has(k)));
+  document.getElementById('tqTimeTtl').textContent=_FDm?('Final DIM (kiểm cuối) so với SX Welding — theo '+(ta.mode==='d'?'ngày':'tháng')):'Sản lượng '+(DB==='q'?'nghiệm thu':'gia công')+' '+(S.st.size?STG.filter(([k])=>S.st.has(k)):[STG[0]]).map(x=>x[1]).join(' + ')+' theo '+(ta.mode==='d'?'ngày · '+ta.keys.length+' ngày gần nhất':'tháng');
+  document.getElementById('tqTimeQ').textContent=(DB==='q'?'Theo ngày QC nghiệm thu':'Theo ngày gia công')+(_FDm?' · cột đậm = Final DIM đã acc · cột nhạt = SX Welding cùng ngày · đường đỏ = FD/SX hàn % · đường xám = xu hướng FD':' · cột đậm = NT · cột nhạt = SX gia công cùng công đoạn · đường đỏ = % SX đã NT · đường xám = xu hướng')+' · bấm cột để lọc';
   const selStg=S.st.size?STG.filter(([k])=>S.st.has(k)):[STG[0]];
-  const sxBy={},sxAcc={},sxW={};for(const r of Fnodate()){const wd=r[4];if(!wd||D.PL[r[6]]==='Miễn QC')continue;const kk=(ta.mode==='d'?wd:wd.slice(0,7));const tn=val(r);sxBy[kk]=(sxBy[kk]||0)+tn;if(r[3])sxAcc[kk]=(sxAcc[kk]||0)+tn;sxW[kk]=(sxW[kk]||0)+r[8];}
+  const sxBy={},sxAcc={},sxW={};for(const r of Fnodate()){const wd=r[4];if(!wd||D.PL[r[6]]==='Miễn QC')continue;const kk=(ta.mode==='d'?wd:wd.slice(0,7));const tn=selStg.reduce((a2,e)=>a2+(e[0]==='f'?r[7]:(e[0]==='w'?r[8]:r[9])),0);sxBy[kk]=(sxBy[kk]||0)+tn;if(r[3])sxAcc[kk]=(sxAcc[kk]||0)+tn;sxW[kk]=(sxW[kk]||0)+r[8];}
   const sxData=ta.keys.map(k=>+(sxBy[k]||0).toFixed(1));
   const sxWData=ta.keys.map(k=>+(sxW[k]||0).toFixed(1));const fdArr=ta.keys.map(x=>+(ta.map[x].fd||0).toFixed(1));
   const capTgt=(ta.mode==='d'?CAP_DAY:CAP_MONTH);
-  const perMax=_timeFD?Math.max.apply(null,[0].concat(fdArr)):Math.max.apply(null,[0].concat(ta.keys.map(x=>Math.max.apply(null,[0].concat(selStg.map(([k])=>ta.map[x][k]||0))))));
+  const perMax=_FDm?Math.max.apply(null,[0].concat(fdArr)):Math.max.apply(null,[0].concat(ta.keys.map(x=>Math.max.apply(null,[0].concat(selStg.map(([k])=>ta.map[x][k]||0))))));
   const hasFpy=ta.keys.length>0;
   const axTon=Math.max(ta.mode==='d'?250:capTgt*2,Math.ceil(perMax*1.12/(capTgt/2))*(capTgt/2));
   const axPctMax=Math.round(axTon/capTgt*100);
-  const fpyData=_timeFD?ta.keys.map(k=>{var pr=sxW[k]||0;return pr?+(((ta.map[k].fd||0)/pr)*100).toFixed(1):null;}):ta.keys.map(k=>{const o=QFPY?(ta.mode==='d'?QFPY.byDay[k]:QFPY.byMonth[k]):null;if(o&&(o.a+o.j))return +(o.a/(o.a+o.j)*100).toFixed(1);const pr=sxBy[k]||0;return pr?+(((sxAcc[k]||0)/pr)*100).toFixed(1):null;});
+  const fpyData=_FDm?ta.keys.map(k=>{var pr=sxW[k]||0;return pr?+(((ta.map[k].fd||0)/pr)*100).toFixed(1):null;}):ta.keys.map(k=>{const o=QFPY?(ta.mode==='d'?QFPY.byDay[k]:QFPY.byMonth[k]):null;if(o&&(o.a+o.j))return +(o.a/(o.a+o.j)*100).toFixed(1);const pr=sxBy[k]||0;return pr?+(((sxAcc[k]||0)/pr)*100).toFixed(1):null;});
   const hasReal=fpyData.some(v=>v!=null);
-  const _fpyName=_timeFD?'FD so SX Welding %':((QFPY&&ta.keys.some(k=>{var o=ta.mode==='d'?QFPY.byDay[k]:QFPY.byMonth[k];return o&&(o.a+o.j)>0;}))?'FPY %':'Đã NT so SX %');const _fpyCol=_fpyName==='FPY %'?'#16a34a':'#C00000';
-  const _totArr=_timeFD?ta.keys.map(x=>(ta.map[x].fd||0)):ta.keys.map(x=>selStg.reduce((a,e)=>a+(ta.map[x][e[0]]||0),0));
+  const _fpyName=_FDm?'FD so SX Welding %':((QFPY&&ta.keys.some(k=>{var o=ta.mode==='d'?QFPY.byDay[k]:QFPY.byMonth[k];return o&&(o.a+o.j)>0;}))?'FPY %':'Đã NT so SX %');const _fpyCol=_fpyName==='FPY %'?'#16a34a':'#C00000';
+  const _totArr=_FDm?ta.keys.map(x=>(ta.map[x].fd||0)):ta.keys.map(x=>selStg.reduce((a,e)=>a+(ta.map[x][e[0]]||0),0));
   const _win=ta.mode==='d'?7:3;
   const _maArr=_totArr.map((v,i)=>{const st0=Math.max(0,i-_win+1);let t=0;for(let j=st0;j<=i;j++)t+=_totArr[j];return +(t/(i-st0+1)).toFixed(1);});
   const _maSer={name:'Xu hướng TB '+_win+' '+(ta.mode==='d'?'ngày':'tháng'),type:'line',smooth:0.25,symbol:'none',z:4,lineStyle:{width:3,color:(document.documentElement.dataset.theme==='dark'?'#cbd5e1':'#334155'),opacity:.8},itemStyle:{color:(document.documentElement.dataset.theme==='dark'?'#cbd5e1':'#334155')},emphasis:{focus:'series'},data:_maArr};
@@ -1377,7 +1378,7 @@ function rTQ(){
   setOpt('cTime',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){let s='<b>'+ps[0].axisValue+'</b><br>';ps.forEach(p=>{if(p.value==null)return;const v=(p.seriesName==='FPY %')?p.value+'% (đạt/đã kiểm)':((p.seriesName==='Đã NT so SX %')?p.value+'% (phần SX cùng ngày đã được NT)':((p.seriesName==='FD so SX Welding %')?p.value+'% (FD ÷ SX hàn cùng ngày)':((p.seriesName.indexOf('% ')===0)?p.value+'% (đm '+capTgt+' t)':fm1(p.value)+' t')));s+=p.marker+p.seriesName+': <b>'+v+'</b><br>';});return s;}},grid:GRID,legend:{top:0,left:'center',itemWidth:11,itemHeight:11,selected:(function(){var o={};selStg.forEach(function(e){o['% '+e[1]]=false;});return o;})()},
     xAxis:{type:'category',data:ta.keys.map(k=>ta.mode==='d'?dayVN(k):moVN(k))},
     yAxis:hasFpy?[{type:'value',name:'tấn',max:axTon,min:0},{type:'value',name:'',max:axPctMax,min:0,position:'right',axisLabel:{formatter:'{value}%'}}]:{type:'value',name:'tấn'},
-    series:(_timeFD?[]:selStg.map(([k,n,c],i)=>({name:n,type:'bar',barMaxWidth:26,itemStyle:{color:grad(c,c+'99'),borderRadius:[4,4,0,0],opacity:1},emphasis:{focus:'series',itemStyle:{opacity:1}},data:ta.keys.map(x=>+ta.map[x][k].toFixed(1))})).concat([{name:'SX gia công',type:'bar',barMaxWidth:26,itemStyle:{color:'#C6D0DD',borderRadius:[4,4,0,0]},emphasis:{focus:'series'},data:sxData}])).concat(_timeFD?[{name:'Final DIM',type:'bar',barMaxWidth:30,itemStyle:{color:grad('#0D9488','#0D948899'),borderRadius:[4,4,0,0]},emphasis:{focus:'series'},data:fdArr},{name:'SX Welding',type:'bar',barMaxWidth:30,itemStyle:{color:'#C6D0DD',borderRadius:[4,4,0,0]},emphasis:{focus:'series'},data:sxWData}]:[]).concat(_timeFD?[]:selStg.map(([k,n,c],i)=>({name:'% '+n,type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:6,connectNulls:true,z:5,lineStyle:{width:2.4,color:c},itemStyle:{color:c,borderColor:'#fff',borderWidth:1.5},label:{show:ta.keys.length<=10,position:'top',distance:6,formatter:p=>p.value+'%',fontSize:9,fontWeight:700,color:c},emphasis:{focus:'series',lineStyle:{width:3.6}},markLine:i===0?{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#b4690e'},data:[{yAxis:100,label:{formatter:'100% · định mức',color:'#b4690e',fontSize:9,position:'insideEndTop'}}]}:undefined,data:ta.keys.map(x=>capTgt?+(((ta.map[x][k]||0)/capTgt)*100).toFixed(1):null)}))).concat([_maSer]).concat(hasReal?[{name:_fpyName,type:'line',yAxisIndex:1,smooth:false,symbol:'circle',symbolSize:7,connectNulls:true,z:6,lineStyle:{width:2.4,color:_fpyCol},itemStyle:{color:_fpyCol,borderColor:'#fff',borderWidth:1.5},emphasis:{focus:'series',scale:true,lineStyle:{width:3.4}},label:{show:ta.keys.length<=16,position:'top',distance:5,fontSize:9.5,fontWeight:800,color:_fpyCol,formatter:function(p){return p.value==null?'':String(p.value).replace('.',',')+'%';}},data:fpyData}]:[])
+    series:(_FDm?[]:selStg.map(([k,n,c],i)=>({name:n,type:'bar',barMaxWidth:26,itemStyle:{color:grad(c,c+'99'),borderRadius:[4,4,0,0],opacity:1},emphasis:{focus:'series',itemStyle:{opacity:1}},data:ta.keys.map(x=>+ta.map[x][k].toFixed(1))})).concat([{name:'SX gia công',type:'bar',barMaxWidth:26,itemStyle:{color:'#C6D0DD',borderRadius:[4,4,0,0]},emphasis:{focus:'series'},data:sxData}])).concat(_FDm?[{name:'Final DIM',type:'bar',barMaxWidth:30,itemStyle:{color:grad('#0D9488','#0D948899'),borderRadius:[4,4,0,0]},emphasis:{focus:'series'},data:fdArr},{name:'SX Welding',type:'bar',barMaxWidth:30,itemStyle:{color:'#C6D0DD',borderRadius:[4,4,0,0]},emphasis:{focus:'series'},data:sxWData}]:[]).concat(_FDm?[]:selStg.map(([k,n,c],i)=>({name:'% '+n,type:'line',yAxisIndex:1,smooth:true,symbol:'circle',symbolSize:6,connectNulls:true,z:5,lineStyle:{width:2.4,color:c},itemStyle:{color:c,borderColor:'#fff',borderWidth:1.5},label:{show:ta.keys.length<=10,position:'top',distance:6,formatter:p=>p.value+'%',fontSize:9,fontWeight:700,color:c},emphasis:{focus:'series',lineStyle:{width:3.6}},markLine:i===0?{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#b4690e'},data:[{yAxis:100,label:{formatter:'100% · định mức',color:'#b4690e',fontSize:9,position:'insideEndTop'}}]}:undefined,data:ta.keys.map(x=>capTgt?+(((ta.map[x][k]||0)/capTgt)*100).toFixed(1):null)}))).concat([_maSer]).concat(hasReal?[{name:_fpyName,type:'line',yAxisIndex:1,smooth:false,symbol:'circle',symbolSize:7,connectNulls:true,z:6,lineStyle:{width:2.4,color:_fpyCol},itemStyle:{color:_fpyCol,borderColor:'#fff',borderWidth:1.5},emphasis:{focus:'series',scale:true,lineStyle:{width:3.4}},label:{show:ta.keys.length<=16,position:'top',distance:5,fontSize:9.5,fontWeight:800,color:_fpyCol,formatter:function(p){return p.value==null?'':String(p.value).replace('.',',')+'%';}},data:fpyData}]:[])
   },p=>{if(p.componentType==='series'&&p.seriesType==='bar')tog(ta.mode==='m'?'m':'d',ta.keys[p.dataIndex]);});
   let _lmX='';for(const r of done){const m=(r[3]||'').slice(0,7);if(m&&m>_lmX)_lmX=m;}
   let _doneM=done.filter(r=>(r[3]||'').slice(0,7)===_lmX);
