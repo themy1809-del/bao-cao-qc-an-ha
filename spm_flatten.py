@@ -277,7 +277,7 @@ with open(os.path.join(ODIR,'spm_to.csv'),'w',newline='',encoding='utf-8-sig') a
 def _isoq(x):
     m=re.match(r'(\d{1,2})/(\d{1,2})/(\d{4})',str(x or ''))
     return '%s-%02d-%02d'%(m.group(3),int(m.group(1)),int(m.group(2))) if m else ''
-_P=[];_X=[];_T=[];_Q=[];_PL=[];_Pm={};_Xm={};_Tm={};_Qm={};_PLm={}
+_P=[];_X=[];_T=[];_Q=[];_PL=[];_Z=[];_Pm={};_Xm={};_Tm={};_Qm={};_PLm={};_Zm={}
 def _ixq(mp,lst,v):
     if v not in mp: mp[v]=len(lst);lst.append(v)
     return mp[v]
@@ -285,10 +285,11 @@ _R=[]
 for fr in flatFull:
     _R.append([_ixq(_Pm,_P,fr[0]),_ixq(_Xm,_X,fr[2]),_ixq(_Tm,_T,fr[3]),_isoq(fr[4]),_isoq(fr[13]),
                _ixq(_Qm,_Q,(fr[6] or '—')),_ixq(_PLm,_PL,fr[7]),
-               round(fr[9],3),round(fr[10],3),round(fr[11],3),int(fr[14]),int(fr[15]),int(fr[16]),fr[17]])
+               round(fr[9],3),round(fr[10],3),round(fr[11],3),int(fr[14]),int(fr[15]),int(fr[16]),fr[17],
+               _ixq(_Zm,_Z,(fr[1] or '(chua ghi)'))])   # [14] Zone = Hang muc (cho drill-down KHSX)
 _projq=[{'name':r['proj'],'bom':r['bom'],'f':r['st']['Fitup'],'w':r['st']['Welding'],'p':r['st']['Painting'],
          'tf':r['ton']['Fitup'],'tw':r['ton']['Welding'],'tp':r['ton']['Painting'],'pct':r['pct'],'status':r['status']} for r in byProjL]
-_qcobj={'updated':out['updated'],'source':os.path.basename(INP),'P':_P,'X':_X,'T':_T,'Q':_Q,'PL':_PL,'rows':_R,'proj':_projq,
+_qcobj={'updated':out['updated'],'source':os.path.basename(INP),'P':_P,'X':_X,'T':_T,'Q':_Q,'PL':_PL,'Z':_Z,'rows':_R,'proj':_projq,
         'check':{'f':round(sum(x[7] for x in _R),1),'w':round(sum(x[8] for x in _R),1),'p':round(sum(x[9] for x in _R),1)}}
 _qc_txt='window.QCDATA='+json.dumps(_qcobj,ensure_ascii=False,separators=(',',':'))+';'
 _qc_tmp=os.path.join(ODIR,'qcdata.js.tmp')
