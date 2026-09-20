@@ -348,7 +348,7 @@ body.tvmode #hdrStick{position:static;box-shadow:none}
 body.tvmode .view>.kpis{position:static}
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 20/9 v99 · DOC CONTROL + doc.html ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 20/9 v100 · COMPONENT CONTROL ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="apiurl.js"></script>
@@ -4821,9 +4821,9 @@ function aggregate(ma,rows,meta,pre){
     fitReq:mini(),fitInv:mini(),fitRep:mini(),fitQA:mini(),
     finInv:mini(),finDone:mini(),finNot:mini(),
     kiDDC:mini(),kiKH:mini(),bgHs:mini(),ndt:mini(),
-    rev:mini(),moiLai:mini(),od:mini(),soon:mini(),
+    rev:mini(),moiLai:mini(),od:mini(),soon:mini(),vir:mini(),bgIssue:mini(),revCrit:mini(),
     byWs:{},byWsCut:{},byGrp:{},byDwg:{},byM:{},byMPlan:{},byMPlanNot:{},rfi:{},
-    warnList:[],
+    warnList:[],revBy:{none:0,fit:0,fin:0,ndt:0,bg:0},
     caps:{finDone:(M.dir>=0||M.vir>=0),hoso:(M.bgHs>=0||M.kiDDC>=0),ndt:(M.mt>=0||M.rqNdt>=0),fitQA:M.fitQA>=0}};
   for(i=0;i<Math.min(4,rows.length);i++){var row0=rows[i]||[];
     for(var c0=0;c0<row0.length;c0++){var v0=String(row0[c0]||'');var mm0=v0.match(/(\d{5}-\d{3})/);if(mm0){P.code=mm0[1];break;}}
@@ -4839,7 +4839,10 @@ function aggregate(ma,rows,meta,pre){
     if(m.finInv)add(P.finInv,t);else add(P.finNot,t);
     if(m.finDone)add(P.finDone,t);
     if(m.kiDDC)add(P.kiDDC,t);if(m.kiKH)add(P.kiKH,t);if(m.bgHs)add(P.bgHs,t);if(m.ndt)add(P.ndt,t);
-    if(m.revWarn){add(P.rev,t);if(P.warnList.length<400)P.warnList.push([m.pn,m.dwg,m.rev,(m.revWarnFin?m.finRev:m.fitRev),(m.revWarnFin?'FINAL':'FITUP'),m.finRfi||m.fitRfi,m.ws]);}
+    if(m.vir)add(P.vir,t);
+    if(m.bgHs&&P.caps.ndt&&!m.ndt)add(P.bgIssue,t);
+    if(m.revWarn){add(P.rev,t);if(P.warnList.length<400)P.warnList.push([m.pn,m.dwg,m.rev,(m.revWarnFin?m.finRev:m.fitRev),(m.revWarnFin?'FINAL':'FITUP'),m.finRfi||m.fitRfi,m.ws]);
+      if(m.bgHs){P.revBy.bg++;add(P.revCrit,t);}else if(m.ndt)P.revBy.ndt++;else if(m.finDone||m.finInv)P.revBy.fin++;else if(m.fitRep||m.fitInv)P.revBy.fit++;else P.revBy.none++;}
     if(m.moiLai)add(P.moiLai,t);
     function wsAdd(map,key){var W=map[key]||(map[key]={mem:0,tan:0,han:0,fitReq:0,fitReqT:0,fitInv:0,fitInvT:0,fitRep:0,fitQA:0,finInv:0,finInvT:0,finDone:0,finDoneT:0,kiDDC:0,bgHs:0,rev:0,od:0,odT:0});
       W.mem++;W.tan+=t;if(m.weld)W.han++;
@@ -4852,8 +4855,9 @@ function aggregate(ma,rows,meta,pre){
     var ws=m.ws||'?';wsAdd(P.byWs,ws);
     if(m.wsCut)wsAdd(P.byWsCut,m.wsCut);
     var gk=[(m.ms||'?'),(m.grp1||'?'),(m.grp2||'?'),(m.ph||'')].join('‖');
-    var G=P.byGrp[gk]||(P.byGrp[gk]={mem:0,tan:0,han:0,fitReq:0,fitInv:0,finInv:0,finInvT:0,finDone:0,bgHs:0,rev:0,od:0});
-    G.mem++;G.tan+=t;if(m.weld)G.han++;if(m.fitAppl){G.fitReq++;if(m.fitInv)G.fitInv++;}
+    var G=P.byGrp[gk]||(P.byGrp[gk]={mem:0,tan:0,han:0,fitReq:0,fitInv:0,fitRep:0,finInv:0,finInvT:0,finDone:0,bgHs:0,ndt:0,rev:0,od:0});
+    G.mem++;G.tan+=t;if(m.weld)G.han++;if(m.fitAppl){G.fitReq++;if(m.fitInv)G.fitInv++;if(m.fitRep)G.fitRep++;}
+    if(m.ndt)G.ndt++;
     if(m.finInv){G.finInv++;G.finInvT+=t;}if(m.finDone)G.finDone++;if(m.bgHs)G.bgHs++;if(m.revWarn)G.rev++;if(_od)G.od++;if(_soon)G.soon=(G.soon||0)+1;
     var dk=m.dwg||'?';
     var Dg=P.byDwg[dk]||(P.byDwg[dk]={grp:m.grp1||m.grp2||'',mem:0,tan:0,fitInv:0,finInv:0,finDone:0,bgHs:0,rev:0,d:null,wsc:{},fitReq:0,od:0,han:0});
@@ -4876,7 +4880,7 @@ function aggregate(ma,rows,meta,pre){
   P.tan=+P.tan.toFixed(2);
   Object.keys(P.byGrp).forEach(function(k){var g=P.byGrp[k];g.tan=+g.tan.toFixed(2);g.finInvT=+g.finInvT.toFixed(2);});
   [P.byWs,P.byWsCut].forEach(function(mp){Object.keys(mp).forEach(function(k){var w=mp[k];['tan','fitReqT','fitInvT','finInvT','finDoneT','odT'].forEach(function(f){w[f]=+(w[f]||0).toFixed(2);});});});
-  ['weld','khan','fitReq','fitInv','fitRep','fitQA','finInv','finDone','finNot','kiDDC','kiKH','bgHs','ndt','rev','moiLai','od','soon'].forEach(function(k){P[k].t=+P[k].t.toFixed(2);});
+  ['weld','khan','fitReq','fitInv','fitRep','fitQA','finInv','finDone','finNot','kiDDC','kiKH','bgHs','ndt','rev','moiLai','od','soon','vir','bgIssue','revCrit'].forEach(function(k){P[k].t=+P[k].t.toFixed(2);});
   return P;
 }
 
@@ -5844,6 +5848,158 @@ function _dcSelP(i){_dcSel=(_dcSel===i?-1:i);_dcMod='pj';_dcPane='tq';_dcWsF='';
 function _dcScrollWs(){_dcMod='pj';_dcSel=-1;_dcRender();}
 function _dcJumpRev(){_dcMod='alert';_dcRender();}
 rDU=function(){ if(!_dcInit){_dcInit=true;_dcRender();_dcLoad(false);} else _dcRender(); };
+
+</script>
+<script>
+/* ================================================================
+   V6 — COMPONENT CONTROL CENTER (10 tab theo blueprint PDF)
+   01 Tổng quan · 02 Project · 03 Phase/Zone · 04 Component ·
+   05 Inspection · 06 Document · 07 Revision · 08 Shipment ·
+   09 Alert · 10 Report
+   ================================================================ */
+var _dcPzRow='ms',_dcPzMet='fin',_dcCompKv='';
+_MODS=[['tq','📊','Tổng quan','Executive Dashboard — toàn bộ cấu kiện'],
+ ['pj','📁','Project Control','Danh mục & chi tiết dự án'],
+ ['pz','🗺️','Phase / Zone','Ma trận Phase × Zone'],
+ ['comp','🧩','Component','Danh sách & trạng thái cấu kiện'],
+ ['insp','🔍','Inspection','FITUP · FINAL · VISUAL · NDT'],
+ ['docctl','📄','Document','Tình trạng hồ sơ'],
+ ['rev','♻️','Revision','Nâng REV & cấu kiện bị ảnh hưởng'],
+ ['ship','🚚','Shipment','Bàn giao / chuyển đi'],
+ ['alert','🔔','Alert Center','Cấu kiện có vấn đề'],
+ ['rep','📑','Report','Báo cáo & export']];
+function _dcKpiGo(st){_dcDocF=st;_dcDocPage=0;_dcMod='comp';_dcRender();}
+function _dcPzCell(pc){var c=pc>=90?'#16a34a':pc>=70?'#eab308':pc>=50?'#f97316':'#dc2626';
+  return 'background:'+c+'22;color:'+c+';font-weight:800';}
+function _dcPjOf(){var i=_dcF.pj>=0?_dcF.pj:-1;
+  if(i<0){(DDC.projects||[]).some(function(P,j){if(!P.err){i=j;return true;}return false;});}
+  return i;}
+function _dcRender(){
+  if(!DDC){DDC=window.DDC_SEED||{projects:[],src:'—',built:''};}
+  var src=document.getElementById('dcSrc');
+  if(src){var lbl=(DDC.src||'—')+(DDC.built?' · '+DDC.built:'');
+    var stale=[];(DDC.projects||[]).forEach(function(P){if(P.meta&&P.meta.stale)stale.push(P.ma);});
+    if(stale.length)lbl+=' · <b style="color:var(--warn)">'+stale.join(', ')+': bản lưu</b>';
+    src.innerHTML=lbl;}
+  var sel=document.getElementById('dcProjSel');
+  if(sel){var opts='<option value="-1">— Chọn nhanh dự án —</option>';
+    (DDC.projects||[]).forEach(function(P,i){var nm=P.err?P.ma:_dcSpmName(P).disp;opts+='<option value="'+i+'"'+(i===_dcSel&&_dcMod==='pj'?' selected':'')+'>'+_dcEsc(nm)+(P.err?' (lỗi)':'')+'</option>';});
+    if(sel.innerHTML!==opts)sel.innerHTML=opts;sel.value=String(_dcMod==='pj'?_dcSel:-1);}
+  var nav=document.getElementById('dcNav');
+  if(nav){var h='';_MODS.forEach(function(m){h+='<button class="qf'+(_dcMod===m[0]?' on':'')+'" onclick="_dcSetMod(\''+m[0]+'\')">'+m[1]+' '+m[2]+'</button> ';});nav.innerHTML=h;}
+  var main=document.getElementById('dcMain');if(!main)return;
+  if(_dcMod==='tq')_dcModTq(main);
+  else if(_dcMod==='pj')_dcModPj(main);
+  else if(_dcMod==='pz')_dcModPz(main);
+  else if(_dcMod==='comp')_dcModDoc(main);
+  else if(_dcMod==='insp')_dcModInsp(main);
+  else if(_dcMod==='docctl')_dcModDocctl(main);
+  else if(_dcMod==='rev')_dcModRev(main);
+  else if(_dcMod==='ship')_dcModShip(main);
+  else if(_dcMod==='alert')_dcModAlert(main);
+  else _dcModRep(main);
+  try{if(typeof _docSyncSb==='function')_docSyncSb();}catch(e){}
+}
+/* ---------- 03 PHASE / ZONE MATRIX ---------- */
+function _dcModPz(main){
+  var pi=_dcPjOf();if(pi<0){main.innerHTML='<div class="card q">Chưa có dự án.</div>';return;}
+  var P=DDC.projects[pi];
+  var h='<div class="card" style="padding:8px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+
+    '<select onchange="_dcSetF(\'pj\',this.value)" style="padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:transparent;color:inherit;max-width:260px">';
+  (DDC.projects||[]).forEach(function(Q,i){if(Q.err)return;h+='<option value="'+i+'"'+(pi===i?' selected':'')+'>'+_dcEsc(_dcSpmName(Q).disp)+'</option>';});
+  h+='</select><span class="cg-lbl">Hàng:</span>';
+  [['ms','Milestone'],['ph','Phase'],['hm','Hạng mục']].forEach(function(d){h+='<button class="qf'+(_dcPzRow===d[0]?' on':'')+'" onclick="_dcPzRow=\''+d[0]+'\';_dcRender()">'+d[1]+'</button>';});
+  h+='<span class="cg-lbl">Chỉ số:</span>';
+  var mets=[['fit','FITUP mời'],['fitRep','FITUP report'],['fin','FINAL mời'],['nt','Đã NT'],['ndt','NDT'],['doc','Hồ sơ BG']];
+  mets.forEach(function(m){h+='<button class="qf'+(_dcPzMet===m[0]?' on':'')+'" onclick="_dcPzMet=\''+m[0]+'\';_dcRender()">'+m[1]+'</button>';});
+  h+='<span class="q">xanh ≥90 · vàng 70–89 · cam 50–69 · đỏ &lt;50 (%) — bấm ô để mở danh sách cấu kiện khu vực đó</span></div>';
+  var ri={ms:0,ph:3,hm:2}[_dcPzRow],rows={},cols={},cell={};
+  Object.keys(P.byGrp||{}).forEach(function(k){var p=k.split('‖'),g=P.byGrp[k];
+    var r=(p[ri]||'—')==='?'?'—':(p[ri]||'—'),c=(p[1]||'—')==='?'?'—':(p[1]||'—');
+    rows[r]=1;cols[c]=1;var key=r+'¦'+c;
+    var o=cell[key]||(cell[key]={mem:0,fitReq:0,fitInv:0,fitRep:0,finInv:0,finDone:0,ndt:0,bgHs:0});
+    o.mem+=g.mem;o.fitReq+=g.fitReq||0;o.fitInv+=g.fitInv||0;o.fitRep+=g.fitRep||0;o.finInv+=g.finInv;o.finDone+=g.finDone;o.ndt+=g.ndt||0;o.bgHs+=g.bgHs;});
+  var rks=Object.keys(rows).sort(),cks=Object.keys(cols).sort();
+  function met(o){switch(_dcPzMet){
+    case 'fit':return [o.fitInv,o.fitReq];case 'fitRep':return [o.fitRep,o.fitReq];
+    case 'fin':return [o.finInv,o.mem];case 'nt':return [P.caps.finDone?o.finDone:o.finInv,o.mem];
+    case 'ndt':return [o.ndt,o.mem];default:return [o.bgHs,o.mem];}}
+  h+='<div class="card"><h3>'+_dcEsc(_dcSpmName(P).disp)+' — '+({ms:'Milestone',ph:'Phase',hm:'Hạng mục'}[_dcPzRow])+' × Khu vực (Zone)</h3><div class="tw"><table><thead><tr><th>'+({ms:'Milestone',ph:'Phase',hm:'Hạng mục'}[_dcPzRow])+' \\\\ Zone</th>';
+  cks.forEach(function(c){h+='<th style="text-align:center">'+_dcEsc(c)+'</th>';});
+  h+='<th class="n">TỔNG</th></tr></thead><tbody>';
+  rks.forEach(function(r){h+='<tr><td><b>'+_dcEsc(r)+'</b></td>';
+    var ta=0,tb=0;
+    cks.forEach(function(c){var o=cell[r+'¦'+c];
+      if(!o||!o.mem){h+='<td style="text-align:center;color:var(--muted)">·</td>';return;}
+      var m2=met(o),pc=m2[1]?Math.round(m2[0]*100/m2[1]):0;ta+=m2[0];tb+=m2[1];
+      h+='<td style="text-align:center;cursor:pointer;'+_dcPzCell(pc)+'" title="'+_dcN(m2[0])+' / '+_dcN(m2[1])+' cấu kiện" onclick="_dcF.pj='+pi+';_dcCompKv=\''+_dcEsc(c)+'\';_dcDocF=\'\';_dcMod=\'comp\';_dcRender()">'+pc+'%<br><span style="font-size:9.5px;font-weight:400">'+_dcN(m2[0])+'/'+_dcN(m2[1])+'</span></td>';});
+    var tpc=tb?Math.round(ta*100/tb):0;
+    h+='<td class="n" style="'+_dcPzCell(tpc)+'">'+tpc+'%</td></tr>';});
+  h+='</tbody></table></div><div class="q" style="margin-top:6px">Zone = cột Khu vực/Module/Street trong sheet · chỉ số NDT/Hồ sơ chỉ có ở mẫu sheet theo dõi mục đó.</div></div>';
+  main.innerHTML=h;
+}
+/* ---------- 05 INSPECTION ---------- */
+function _dcModInsp(main){
+  var T={fitReq:0,fitInv:0,fitRep:0,fin:0,finD:0,vir:0,ndt:0,mem:0};
+  var rows=[];
+  (DDC.projects||[]).forEach(function(P){if(P.err)return;
+    T.fitReq+=P.fitReq.n;T.fitInv+=P.fitInv.n;T.fitRep+=P.fitRep.n;T.fin+=P.finInv.n;T.finD+=P.finDone.n;T.vir+=P.vir?P.vir.n:0;T.ndt+=P.ndt.n;T.mem+=P.mem;
+    rows.push({P:P,nm:_dcSpmName(P)});});
+  function ic(lbl,a,b,col,sub){return '<div class="kpi" style="border-left:4px solid '+col+'"><div class="lbl">'+lbl+'</div><div class="v num" style="color:'+col+'">'+_dcN(a)+(b!=null?' <span style="font-size:13px;color:var(--muted)">/ '+_dcN(b)+'</span>':'')+'</div><div class="sub">'+sub+'</div></div>';}
+  var h='<div class="kpis">'+
+    ic('FITUP — đã mời / cần',T.fitInv,T.fitReq,_DC_C.proc,_dcPc(T.fitInv,T.fitReq)+'% · report FUR: '+_dcN(T.fitRep)+' · pending report: '+_dcN(Math.max(T.fitInv-T.fitRep,0)))+
+    ic('FINAL (DIM) — đã mời',T.fin,T.mem,_DC_C.proc,_dcPc(T.fin,T.mem)+'% · đã NT xong: '+_dcN(T.finD))+
+    ic('VISUAL — có report VIR',T.vir,null,_DC_C.done,'chỉ mẫu sheet có cột VIR')+
+    ic('NDT — có hồ sơ MT/UT',T.ndt,null,_DC_C.rev,'RQ/MT/UT theo mẫu sheet')+
+    '</div>';
+  h+='<div class="card"><h3>Inspection theo dự án</h3><div class="tw"><table><thead><tr><th>Dự án</th><th class="n">Cần FITUP</th><th class="n">Mời FITUP</th><th class="n">Report FUR</th><th class="n" style="color:var(--warn)">Mời nhưng chưa report</th><th class="n">Mời FINAL</th><th class="n">Đã NT</th><th class="n">VISUAL</th><th class="n">NDT</th></tr></thead><tbody>';
+  rows.forEach(function(x){var P=x.P,pend=Math.max(P.fitInv.n-P.fitRep.n,0);
+    h+='<tr class="clickable" onclick="_dcSel='+DDC.projects.indexOf(P)+';_dcMod=\'pj\';_dcPane=\'todo\';_dcRender()"><td><b>'+_dcEsc(x.nm.full?x.nm.short:P.ma)+'</b></td><td class="n">'+_dcN(P.fitReq.n)+'</td><td class="n">'+_dcN(P.fitInv.n)+'</td><td class="n">'+_dcN(P.fitRep.n)+'</td><td class="n">'+(pend?'<b style="color:var(--warn)">'+_dcN(pend)+'</b>':'0')+'</td><td class="n">'+_dcN(P.finInv.n)+'</td><td class="n">'+(P.caps.finDone?_dcN(P.finDone.n):'—')+'</td><td class="n">'+(P.vir&&P.vir.n?_dcN(P.vir.n):'—')+'</td><td class="n">'+(P.caps.ndt?_dcN(P.ndt.n):'—')+'</td></tr>';});
+  h+='</tbody></table></div><div class="q" style="margin-top:4px">Lifecycle: Chưa mời → Đã mời → Có report → (NT xong) — "Mời nhưng chưa report" là việc QC phải đòi report.</div></div>';
+  main.innerHTML=h;
+}
+/* ---------- 06 DOCUMENT CONTROL ---------- */
+function _dcModDocctl(main){
+  var pi=_dcPjOf();var P=pi>=0?DDC.projects[pi]:null;
+  var h='<div class="card" style="padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b>Tình trạng hồ sơ theo dự án:</b> '+
+    '<select onchange="_dcSetF(\'pj\',this.value)" style="padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:transparent;color:inherit;max-width:280px">';
+  (DDC.projects||[]).forEach(function(Q,i){if(Q.err)return;h+='<option value="'+i+'"'+(pi===i?' selected':'')+'>'+_dcEsc(_dcSpmName(Q).disp)+'</option>';});
+  h+='</select></div><div class="card" id="dcHsWrap"></div>';
+  main.innerHTML=h;
+  var w=document.getElementById('dcHsWrap');
+  if(w&&P)w.innerHTML=_dcPaneHs(P);
+}
+/* ---------- 07 REVISION CONTROL ---------- */
+function _dcModRev(main){
+  var tot=0,crit=0,by={none:0,fit:0,fin:0,ndt:0,bg:0};
+  (DDC.projects||[]).forEach(function(P){if(P.err)return;tot+=P.rev.n;crit+=P.revCrit?P.revCrit.n:0;
+    if(P.revBy)Object.keys(by).forEach(function(k){by[k]+=P.revBy[k]||0;});});
+  var h='<div class="kpis">'+
+    kpi(tot?'bad':'',_dcN(tot),'Cấu kiện bị lệch REV','đã mời/NT ở rev cũ — bản vẽ đã nâng rev')+
+    kpi('',_dcN(by.none),'Chưa kiểm tra gì','ảnh hưởng nhẹ — cập nhật bản vẽ là đủ')+
+    kpi('',_dcN(by.fit),'Đã FITUP','cần kiểm tra lại fitup theo rev mới')+
+    kpi('',_dcN(by.fin),'Đã FINAL / mời final','phải mời nghiệm thu lại')+
+    kpi('',_dcN(by.ndt),'Đã NDT','xem lại hồ sơ NDT theo rev mới')+
+    kpi(by.bg?'bad':'',_dcN(by.bg),'ĐÃ BÀN GIAO (CRITICAL)','hồ sơ đã giao khách ở rev cũ!')+
+    '</div>';
+  h+='<div class="card"><h3>Mức ảnh hưởng REV theo dự án</h3><div class="tw"><table><thead><tr><th>Dự án</th><th class="n">Tổng lệch REV</th><th class="n">Chưa KT</th><th class="n">Đã FITUP</th><th class="n">Đã FINAL</th><th class="n">Đã NDT</th><th class="n" style="color:var(--bad)">Đã bàn giao</th><th></th></tr></thead><tbody>';
+  (DDC.projects||[]).forEach(function(P,i){if(P.err||!P.rev.n)return;var b=P.revBy||{};
+    h+='<tr class="clickable" onclick="_dcSel='+i+';_dcMod=\'pj\';_dcPane=\'rev\';_dcRender()"><td><b>'+_dcEsc(_dcSpmName(P).disp)+'</b></td><td class="n"><b style="color:var(--bad)">'+_dcN(P.rev.n)+'</b></td><td class="n">'+_dcN(b.none||0)+'</td><td class="n">'+_dcN(b.fit||0)+'</td><td class="n">'+_dcN(b.fin||0)+'</td><td class="n">'+_dcN(b.ndt||0)+'</td><td class="n">'+(b.bg?'<b style="color:var(--bad)">'+_dcN(b.bg)+'</b>':'0')+'</td><td>Chi tiết ▸</td></tr>';});
+  h+='</tbody></table></div><div class="q" style="margin-top:4px">REVISION MISMATCH = rev nghiệm thu &lt; rev bản vẽ hiện hành · nhóm theo bước xa nhất cấu kiện đã đi qua · bấm dòng xem danh sách từng cây.</div></div>';
+  main.innerHTML=h;
+}
+/* ---------- 08 SHIPMENT / BÀN GIAO ---------- */
+function _dcModShip(main){
+  var h='<div class="q" style="margin:2px 0 8px">Sheet DATA hiện theo dõi đến bước <b>bàn giao hồ sơ / BBGN</b> (chưa có cột shipment xuất hàng riêng — số xuất hàng thực tế xem dashboard SPM). Trạng thái: Chưa đủ điều kiện → Đã NT → Đã bàn giao. <b>Critical</b> = đã bàn giao nhưng thiếu hồ sơ NDT.</div>';
+  h+='<div class="card"><h3>Bàn giao theo dự án</h3><div class="tw"><table><thead><tr><th>Dự án</th><th class="n">Đã NT / đủ điều kiện</th><th class="n" style="color:var(--good)">Đã bàn giao</th><th class="n">Chưa bàn giao</th><th class="n" style="color:var(--bad)">BG thiếu NDT (Critical)</th><th class="n" style="color:var(--bad)">BG lệch REV (Critical)</th></tr></thead><tbody>';
+  (DDC.projects||[]).forEach(function(P,i){if(P.err)return;
+    var done=P.caps.finDone?P.finDone.n:P.finInv.n;
+    var bg=P.caps.hoso?P.bgHs.n:(P.caps.fitQA?P.fitQA.n:0);
+    var lbl=P.caps.hoso?'':' (QA fitup)';
+    h+='<tr class="clickable" onclick="_dcSel='+i+';_dcMod=\'pj\';_dcPane=\'hs\';_dcRender()"><td><b>'+_dcEsc(_dcSpmName(P).disp)+'</b></td><td class="n">'+_dcN(done)+'</td><td class="n" style="color:var(--good)"><b>'+_dcN(bg)+'</b>'+lbl+'</td><td class="n">'+_dcN(Math.max(done-bg,0))+'</td><td class="n">'+(P.bgIssue&&P.bgIssue.n?'<b style="color:var(--bad)">'+_dcN(P.bgIssue.n)+'</b>':'—')+'</td><td class="n">'+(P.revBy&&P.revBy.bg?'<b style="color:var(--bad)">'+_dcN(P.revBy.bg)+'</b>':'0')+'</td></tr>';});
+  h+='</tbody></table></div></div>';
+  main.innerHTML=h;
+}
 
 </script>
 </body></html>
