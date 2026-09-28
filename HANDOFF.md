@@ -35,6 +35,33 @@ Current deployment / environment:
 
 ## 2. CURRENT TASK
 
+**MỚI 28/09 (vòng 4): đã dựng xong APP TRA CỨU riêng biệt** theo yêu cầu của user
+("một app riêng biệt, đa chức năng, tương tác được, import list vào được, giao diện chuyên nghiệp").
+Thêm **2 file mới**, **không đụng** `index.html` / `qc.html` / `doc.html`:
+
+| File | Nội dung |
+|---|---|
+| `ddc_core.js` | Tách **nguyên văn** bộ đọc bảng gốc từ `doc.html` (dòng 123–414). Đã `diff`: giống 100%. `doc.html`/`qc.html` vẫn giữ bản nội tuyến của chúng — gộp lại là việc RIÊNG, phải hỏi trước. |
+| `app.html` | App tra cứu độc lập, **chỉ đọc** Google Sheet qua gviz. |
+
+Chức năng `app.html`: chọn & tải nhiều dự án (tải 1 lần → tra cứu chạy tức thì trên máy) ·
+tra 1 mã (khớp đúng hoặc một phần) ra thẻ chi tiết + bậc thang tiến độ hồ sơ + cảnh báo nâng Rev ·
+**tra nhiều mã: dán danh sách hoặc import `.xlsx/.xls/.csv/.txt`** → bảng kết quả + 5 KPI bấm lọc được
++ xuất Excel · duyệt theo bản vẽ · tổng quan theo xưởng + danh sách nâng Rev · sáng/tối · chạy được trên điện thoại.
+
+**Đã TEST thật** bằng Chromium + giả lập phản hồi gviz (egress ra `docs.google.com` bị chính sách
+môi trường chặn — không phải lỗi app): registry → `detectLayout`=A → `buildMap` → `normRow` →
+chỉ mục → tra cứu. 7 cấu kiện mẫu: 5 đã mời fitup / 5 đã mời final / 2 chưa / 1 bàn giao / 1 nâng Rev
+— **khớp 100%** với số đếm tay. Không còn lỗi JS.
+
+**Lỗi đã bắt được và sửa trong lúc test:** `onclick` nội tuyến dùng `JSON.stringify` sinh dấu nháy kép
+**bên trong** `onclick="..."` làm **vỡ thuộc tính HTML** (lọc chip không ăn, mở bản vẽ ra 0 dòng, 2 lỗi JS)
+→ đã chuyển sang `data-*` + uỷ nhiệm sự kiện.
+
+**CÒN LẠI cho app:** chưa chạy thử với **Google Sheet thật** (container bị chặn egress) —
+anh mở `app.html` trên máy anh và thử 1 dự án là biết ngay. Hai dự án WOLF sẽ **không tải được**
+vì chưa chia sẻ (xem `SECURITY_MODEL.md` §S0c).
+
 **Việc đang làm:** *Rà soát toàn hệ thống (audit) — dựng lại kiến trúc thật từ mã nguồn,
 lập bộ tài liệu chuẩn, CHƯA sửa mã ứng dụng.* Yêu cầu của user: "Do NOT modify application
 code yet. Do not make major code changes until I approve the architecture."

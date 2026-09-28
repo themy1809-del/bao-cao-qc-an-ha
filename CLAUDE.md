@@ -48,6 +48,15 @@ Toàn bộ là trang tĩnh; **không có backend riêng, không có đăng nhậ
 | `apiurl.js` | `window.QC_ASSIGN_API` = URL Web App phân công QC | 11/08/2026 |
 | `spm_flatten.py` | bộ chuyển SPM Pivot → qcdata.js | 13/09/2026 |
 | `.github/workflows/capnhat.yml` | tự sinh qcdata.js khi upload `Update spm/spm.xlsx` — **chưa từng chạy** | 11/08/2026 |
+| **`app.html`** | **APP TRA CỨU riêng biệt** (mới 28/09) — tra 1 mã / tra danh sách / import Excel / xuất Excel / duyệt bản vẽ / tổng quan. Chỉ đọc gviz. | 28/09/2026 |
+| **`ddc_core.js`** | Bộ đọc bảng gốc dùng chung — tách **nguyên văn** từ `doc.html`. | 28/09/2026 |
+
+> **Khi sửa `app.html`:** đây là file ĐỘC LẬP, không ảnh hưởng `qc.html`/`doc.html`.
+> Logic đọc dữ liệu nằm ở `ddc_core.js` — **đừng viết lại**, hãy gọi `DDC_CORE.*`.
+> **Không dùng `onclick` nội tuyến với dữ liệu động** (mã cấu kiện / tên bản vẽ có thể chứa
+> dấu nháy → vỡ thuộc tính HTML). Dùng `data-*` + uỷ nhiệm sự kiện như hiện tại.
+> `ddc_core.js` là bản sao thứ 3 của `DDC_CORE` (cùng với 2 bản nội tuyến trong
+> `doc.html`/`qc.html`) — gộp làm một là việc RIÊNG, phải được duyệt trước.
 
 Luồng: `SPM.xlsx → (python trên PC) → qcdata.js → git push → GitHub Pages → trình duyệt`.
 Khi mở trang, JS còn đọc **trực tiếp** nhiều Google Sheet qua `gviz` (NCR live, Quản lý dự án,

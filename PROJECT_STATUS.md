@@ -112,7 +112,7 @@ Theo dõi (không phải bug): file packing / SX đổi tên cột hay bố cụ
 `ghiDoiChieuSX_` dò theo tên, nhưng đổi hẳn thì phải cập nhật đúng 1 chỗ tương ứng.
 
 ## CURRENT STATE
-Last meaningful change: **28/09 — rà soát toàn hệ thống, dựng lại kiến trúc từ mã nguồn,
+Last meaningful change: **28/09 — dựng APP TRA CỨU riêng (`app.html` + `ddc_core.js`, đã test bằng trình duyệt) sau khi rà soát toàn hệ thống, dựng lại kiến trúc từ mã nguồn,
 lập bộ 7 tài liệu chuẩn. KHÔNG sửa mã ứng dụng (đúng yêu cầu của user).**
 Thay đổi mã gần nhất trước đó: 27/09 `qcdata.js` (`fba9e18`, PC đẩy);
 20/09 `qc.html` v100 COMPONENT CONTROL.
