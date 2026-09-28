@@ -220,16 +220,69 @@ Quy ước đọc giá trị:
 Mỗi dự án có `byWs`, `byWsCut`, `byGrp`, `byDwg`, `byM`, `byMPlan`, `rfi`, `warnList`, `caps`, `revBy`.
 Seed này chỉ dùng khi đọc live thất bại (`meta.stale = true`).
 
-### 5.4 Registry mà hệ 3 đọc — **khác** với registry mà hệ 1/2 đọc
+### 5.4 Registry — hệ 1, hệ 2 và hệ 3 đọc **CÙNG MỘT TAB** (đã đính chính 28/09)
+
+> **ĐÍNH CHÍNH.** Bản tài liệu đầu (28/09, vòng 1) kết luận *"hệ 1/2 và hệ 3 đọc hai tab khác nhau"*.
+> **Kết luận đó SAI.** Sau khi đọc file thật qua Drive: thứ tự tab trong `DANH MUC DỰ AN` là
+> `DANH MUC` → `KIEM CHUNG` → `NHAT KY` → `THAY DOI` → `BAN DO COT` → `TIEU DE GOC`
+> → `BAO CAO DATA QC` → `Sheet1`. Tức **`getSheets()[0]` CHÍNH LÀ tab `DANH MUC`**.
+
 | | Hệ 1 & 2 (Apps Script) | Hệ 3 (web) |
 |---|---|---|
-| File | `146lyk2…` | `146lyk2…` (cùng file) |
-| Vị trí | `getSheets()[0]` — **sheet đầu tiên** | tab tên **`DANH MUC`**, dự phòng `gid=1397171776` |
-| Cột | A = tên dự án, B = file id | dò theo tiêu đề: `ma du an`, `spreadsheet id`, `cap nhat cuoi`, `spm` |
+| Vị trí | `getSheets()[0]` = tab **`DANH MUC`** | `sheet=DANH MUC` (dự phòng `gid=1397171776`) |
+| Cột dùng | A = `Ma du an`, B = `Spreadsheet ID` | dò tiêu đề: `ma du an`, `spreadsheet id`, `cap nhat cuoi`, `spm` |
 
-→ Hai hệ đọc **hai tab khác nhau của cùng một file**. Thêm dự án ở tab này mà quên tab kia
-sẽ khiến dự án chỉ xuất hiện ở một bên. **UNKNOWN — NEED USER CONFIRMATION:
-hai tab này có được đồng bộ tự động không?**
+→ **Không có nguy cơ lệch tab.** Cả ba hệ dùng chung một nguồn danh mục.
+*(Lưu ý còn lại: cột `SPM` mà hệ 3 tìm **chưa tồn tại** trong registry — tiêu đề hiện có là
+`Ma du an | Spreadsheet ID | Link | Ngay tao | Cap nhat cuoi | So o dang dung`.
+Nên `_dcSpmName` luôn phải đoán tên dự án bằng so tiền tố / so token, hoặc dựa vào
+`localStorage['ddc_alias']` của từng máy.)*
+
+### 5.5 Nội dung registry thật (đọc 28/09/2026) — **11 dự án**
+
+| # | Ma du an | Spreadsheet ID | Cập nhật cuối |
+|---|---|---|---|
+| 1 | `BISON_U2` | `1L_PNa0ez…` | 28/09 19:42 |
+| 2 | `VIOLA_KCT` | `1cXQjEkY…` | 28/09 19:20 |
+| 3 | `VIOLA_TED` | `1xsZ0suRE…` | 21/09 10:05 |
+| 4 | `SVĐVINFATS` | `1OSoqIJel…` | 21/09 10:06 |
+| 5 | `10725-008 DGRP EVAPCO-GREGORY-STRUCTURAL` | `1FGb7z2cv…` | 28/09 19:05 |
+| 6 | `CHECKLIST_BISON (STEEL)_UNIT 1_CỤM AH_21.09.2026` | `1ZsKEknif…` | 28/09 19:28 |
+| 7 | `10725-011 DGRP VIOLA - DUCTING SDM & TED` | `15zHzlQP…` | 28/09 19:42 |
+| 8 | `10726-054 DG VIOLA CONDENSATE TANK` | `1EsChDAJ…` | 28/09 19:43 |
+| 9 | `EVAPCO - GREGORY - DUCTING` | `1ee9XfyCO…` | 28/09 19:43 |
+| 10 | `10726-043 WOLF SUMMIT_STEEL (200POR17540)` | `1WSM5ZIb…` | 28/09 19:56 |
+| 11 | **`WOLF QC DINH FITUP`** (mới 27/09, chưa có trong tài liệu cũ) | `1tsxEgJqV…` | 28/09 20:02 |
+
+**Chốt được 1 câu UNKNOWN:** tên đầy đủ của `10725-011` là
+`10725-011 DGRP VIOLA - DUCTING SDM & TED` — **có chứa "VIOLA"** → **khớp `CB_LOC`**
+→ dự án này **CÓ** vào dashboard cảnh báo và **CÓ** dính bug báo thừa "Chưa có DIR" (§7bis.3a).
+
+**`VIOLA_TED` (#3) và `10725-011` (#7) là CÙNG một dự án, hai file khác nhau**, cùng 878 cấu kiện,
+và **cả hai vẫn đang được đồng bộ** (NHAT KY 28/09 có cả hai) → đúng như mục TODO "xoá VIOLA_TED cũ".
+
+### 5.6 Trạng thái dựng `DATA QC` thật (tab `BAO CAO DATA QC`, 28/09)
+
+| Dự án | Tab dữ liệu | Kết quả |
+|---|---|---|
+| 10725-011 TED | `PKL` | OK 878/878 |
+| 10726-054 | `PKL` | OK 32/32 |
+| **EVAPCO - GREGORY - DUCTING** | `Checklist` | 🔴 **"CHUA KHAI BAO COT"** |
+| 10726-043 WOLF | `Checklist_QC` | OK 20.286/20.286 |
+| **WOLF QC DINH FITUP** | `PKL` | 🔴 **"CHUA KHAI BAO COT"** |
+| CHECKLIST_BISON | `CHECK_LIST` | OK 45.139/45.139 |
+| VIOLA_TED | `PKL` | OK 878/878 |
+| SVĐVINFATS | `PKL` | OK 10.032/10.033 |
+| 10725-008 GREGORY | `GRERY_STEEL` | OK 53.966/53.966 |
+| BISON_U2 | `CHECK_LIST` | OK 45.832/45.832 |
+| VIOLA_KCT | `PKL` | OK 40.524/40.524 |
+
+**Đây là bằng chứng cứng cho 3 việc:**
+1. **Hệ 1 `'27/09 gre-duct'` VẪN CHƯA ĐƯỢC DÁN** — nếu đã dán thì
+   `EVAPCO - GREGORY - DUCTING` phải chạy được, chứ không báo "CHUA KHAI BAO COT".
+2. **`WOLF QC DINH FITUP` là dự án mới chưa khai `BD_EP`** — chưa có trong bất kỳ tài liệu nào trước đây.
+3. Cơ chế **chặn tự đoán cột đang hoạt động đúng như thiết kế** (2 dự án chưa khai đều bị chặn,
+   không dựng bậy).
 
 ---
 

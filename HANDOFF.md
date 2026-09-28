@@ -75,7 +75,28 @@ code yet. Do not make major code changes until I approve the architecture."
    (115 dự án, 55 QC viên, sản lượng theo ngày) và `aop_data.js` (KPI/AOP 2026) đang công khai.
    Chi tiết: `SECURITY_MODEL.md`.
 
+**BỔ SUNG 28/09 (vòng 3, đọc trực tiếp Google Drive) — 4 việc GẤP:**
+
+- 🔴 **6 file Google Sheet đang mở `anyone: WRITER`** — ai có link cũng sửa được:
+  3 file PACKING (`1Tq3pCRh…`, `1610zRYT…`, `1RCTPxc3…`) + 3 file DATA dự án
+  **do chính anh sở hữu** (`VIOLA_KCT` 40.524 CK, `10725-008` 53.966 CK,
+  `CHECKLIST_BISON` 45.139 CK = **139.629 cấu kiện**). File packing chính là
+  "cơ sở thật của việc đã đi hàng" — sửa được nó là toàn bộ cảnh báo đi hàng sai theo.
+  *(File `TRUNG TAM CANH BAO` đang để `domain daidung.vn · reader` — đây là mẫu đúng.)*
+- 🟠 Registry mở `commenter` thay vì `reader`.
+- 🟡 **2 dự án WOLF không chia sẻ** (`10726-043`, `WOLF QC DINH FITUP`)
+  → tab Doc Control trên web **không đọc được**, sẽ hiện lỗi (seed không có 2 dự án này).
+- 🔴 **Bằng chứng cứng: hệ 1 `'27/09 gre-duct'` VẪN CHƯA ĐƯỢC DÁN.**
+  Tab `BAO CAO DATA QC` ngày 28/09 ghi `EVAPCO - GREGORY - DUCTING` = **"CHUA KHAI BAO COT"**.
+  Tab `NHAT KY` ngày 28/09 19:29 vẫn còn dòng **`#ERROR!`** (bug `'=== CHOT CUOI NGAY ==='`).
+  Ngoài ra `BISON_U2` 28/09: **+594 mới / −9 mất → "CAN XEM LAI"**, chưa ai xử lý;
+  `10725-011`: **+22 VIR** (khớp đúng 22 CK nợ DIR/VIR đã kiểm chứng — có thể đã xong).
+
 **Exact next action — CHỜ USER TRẢ LỜI TRƯỚC KHI SỬA CODE:**
+
+0. **(LÀM NGAY, không cần chờ gì)** Đổi quyền 3 file DATA của anh từ `writer` → `reader`
+   và registry từ `commenter` → `reader`; báo trungpt/cuongntk đổi 3 file packing.
+   Việc này **không ảnh hưởng hệ nào** (web chỉ cần reader; Apps Script chạy bằng tài khoản anh).
 1. **Repo công khai là cố ý hay vô ý?** (quyết định mọi bước bảo mật tiếp theo)
 2. **Link dashboard đang phát cho nhân viên là `/` (index.html) hay `/qc.html`?**
    - Nếu là `/` → cần quyết: đồng bộ `index.html` theo `qc.html`, hay đổi `index.html`
@@ -84,8 +105,13 @@ code yet. Do not make major code changes until I approve the architecture."
 4. **Cột "Chưa có DIR" trên dashboard cảnh báo báo thừa cho dự án dùng chung cột DIR/VIR
    là LỖI hay CỐ Ý?** (nếu là lỗi thì sửa 1 dòng trong `capNhatCanhBao`, nhưng đây là
    hệ 1 đang đóng băng nên phải có anh duyệt)
-5. **Tên chính xác của `10725-011` trong DANH MUC DU AN** (quyết định nó có nằm trong
-   phạm vi dashboard cảnh báo hay không).
+5. ~~Tên chính xác của `10725-011`~~ → **ĐÃ TỰ TRA ĐƯỢC**:
+   `10725-011 DGRP VIOLA - DUCTING SDM & TED` → có chứa "VIOLA" → **CÓ** khớp `CB_LOC`
+   → **CÓ** dính bug báo thừa "Chưa có DIR". Không cần anh trả lời nữa.
+6. **6 file mở `anyone: writer` là cố ý hay lỡ tay?**
+7. **Có muốn 2 dự án WOLF lên tab Doc Control không?** (muốn thì phải mở public — thêm phơi nhiễm;
+   không thì chấp nhận WOLF chỉ có trên Google Sheet, không có trên web)
+8. **`WOLF QC DINH FITUP` có cần khai `BD_EP` không?** (hiện đang bị chặn "CHUA KHAI BAO COT")
 4. Sau khi user duyệt kiến trúc → thực hiện theo thứ tự trong `SECURITY_MODEL.md` §4
    và `PERFORMANCE_PLAN.md` §3 (giai đoạn A trước, rẻ và rủi ro thấp).
 
@@ -216,12 +242,14 @@ Chỉ ghi quy tắc ĐÃ XÁC MINH trong mã. Chi tiết đầy đủ: `DATA_MOD
 Danh sách ID đầy đủ: `SYSTEM_ARCHITECTURE.md` §4. Lược đồ chi tiết: `DATA_MODEL.md`.
 
 - **DANH MUC DU AN (registry)**: `146lyk2TjTD6LwNR9R6bpXYhKzZxXISTIDvBzEbD5tz0`
-  - Hệ 1 & 2 đọc **sheet đầu tiên**: cột A = tên dự án, cột B = file id.
-  - Hệ 3 đọc **tab `DANH MUC`** (dự phòng `gid=1397171776`), dò tiêu đề
-    `ma du an` / `spreadsheet id` / `cap nhat cuoi` / `spm`.
-  - ⚠️ **Hai hệ đọc HAI TAB KHÁC NHAU của cùng một file** → thêm dự án phải làm cả hai chỗ.
-    **UNKNOWN — NEED USER CONFIRMATION: hai tab có tự đồng bộ không?**
-  - Tab phụ: BAN DO COT (hiển thị), KIEM CHUNG, NHAT KY (400 dòng mới nhất), THAY DOI, BAO CAO DATA QC.
+  - **Cả 3 hệ đọc CÙNG tab `DANH MUC`** (đó chính là `getSheets()[0]`).
+    Cột A = `Ma du an`, B = `Spreadsheet ID`. *(Đính chính bản 28/09 vòng 1 — không có lệch tab.)*
+  - Thứ tự tab thật: `DANH MUC` · `KIEM CHUNG` · `NHAT KY` · `THAY DOI` · `BAN DO COT`
+    · `TIEU DE GOC` · `BAO CAO DATA QC` · `Sheet1`.
+  - Registry hiện có **11 dự án** — danh sách đầy đủ ở `DATA_MODEL.md` §5.5,
+    gồm dự án mới **`WOLF QC DINH FITUP`** (27/09) chưa có trong tài liệu cũ.
+  - Cột `SPM` mà hệ 3 tìm (`_dcSpmName`) **chưa tồn tại** trong registry → hệ 3 luôn phải
+    đoán tên dự án bằng so tiền tố/token hoặc `localStorage['ddc_alias']` của từng máy.
 - TRUNG TAM CANH BAO - EVAPCO: `1m-3O2NQ76hYAj1OysAonSClnFCPM1dixyKJOBH317Nc`
 - TONG HOP BAO CAO EVAPCO (SX): `1RrP0qmkGH9dsYYpf3ZzkXgkqxOVlVQvtMdITZX8KHQ0`, tab `Tổng hợp da`
   (A=Tên dự án, B=Shipment, E=TKL, P=Đã giao, Q=Chưa giao; đơn vị TẤN)

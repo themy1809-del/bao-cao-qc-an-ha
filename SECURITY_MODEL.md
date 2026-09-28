@@ -54,6 +54,72 @@ Chia sẻ của từng file và chụp lại).
 
 ---
 
+## 1bis. KHẢO SÁT QUYỀN CHIA SẺ THẬT (28/09 — đọc qua connector Google Drive)
+
+Trước đây mục này ghi UNKNOWN. Nay đã đọc **quyền thật của 21 file**. Kết quả:
+
+| File | Chủ sở hữu | Quyền cho `anyone` |
+|---|---|---|
+| **TRUNG TAM CANH BAO** `1m-3O2N…` | mydt | **domain `daidung.vn` · reader** ✅ **CHUẨN** |
+| DANH MUC DU AN (registry) `146lyk2…` | mydt | ⚠️ **commenter** |
+| TRUNG TAM KIEM TRA BC & REV `1PlIysoe…` | mydt | reader *(không cần — web không đọc file này)* |
+| NCR `1DqerGEB…` | thaonm | reader *(web cần)* |
+| Quản lý dự án `1hDz5QDb…` | mydt | reader *(web cần)* |
+| KHSX `1kqMlDG4…` | linhdv | reader *(web cần)* |
+| SX Tổng hợp `1RrP0qmk…` | linhdv | reader |
+| **PACKING Bison** `1Tq3pCRh…` | trungpt | 🔴 **WRITER** |
+| **PACKING Viola** `1610zRYT…` | cuongntk | 🔴 **WRITER** |
+| **PACKING Gregory** `1RCTPxc3…` | trungpt | 🔴 **WRITER** |
+| **DATA VIOLA_KCT** `1cXQjEkY…` | **mydt** | 🔴 **WRITER** |
+| **DATA 10725-008 GREGORY** `1FGb7z2cv…` | **mydt** | 🔴 **WRITER** |
+| **DATA CHECKLIST_BISON** `1ZsKEknif…` | **mydt** | 🔴 **WRITER** |
+| DATA BISON_U2 `1L_PNa0ez…` | mydt | reader |
+| DATA VIOLA_TED `1xsZ0suRE…` | mydt | reader |
+| DATA SVĐVINFATS `1OSoqIJel…` | mydt | reader |
+| DATA 10725-011 TED `15zHzlQP…` | mydt | reader |
+| DATA 10726-054 `1EsChDAJ…` | mydt | reader |
+| DATA EVAPCO-GREGORY-DUCTING `1ee9XfyCO…` | mydt | reader |
+| DATA 10726-043 WOLF `1WSM5ZIb…` | mydt | **KHÔNG chia sẻ** (owner + qaqc.ddc) |
+| DATA WOLF QC DINH FITUP `1tsxEgJqV…` | mydt | **KHÔNG chia sẻ** (chỉ owner) |
+
+### 🔴 S0 — SÁU file đang mở `anyone: WRITER` — ai có link cũng **SỬA ĐƯỢC**
+Đây là rủi ro **nghiêm trọng nhất** của toàn hệ thống, nặng hơn cả khoá `'anha2026'`.
+
+**(a) Cả 3 file PACKING LIST đều ghi được.** Đây chính là **"cơ sở thật" của việc đã đi hàng** —
+thứ mà anh yêu cầu xây vì *"kết quả đi hàng đang chỉ là đoán, không có cơ sở"*.
+Ai sửa cột `SL đã đi hàng` là toàn bộ cảnh báo *"đã lên cont mà còn thiếu hồ sơ"* sai theo,
+và hệ 2 sẽ **âm thầm tin số sai đó** (nó chỉ đọc, không kiểm chứng ngược).
+→ 3 file này **không do anh sở hữu** (trungpt, cuongntk) → phải báo chủ sở hữu đổi.
+
+**(b) 3 file DATA dự án do CHÍNH ANH sở hữu cũng đang mở ghi:**
+`VIOLA_KCT` (40.524 CK) · `10725-008 GREGORY` (53.966 CK) · `CHECKLIST_BISON` (45.139 CK)
+→ **139.629 cấu kiện** có thể bị người ngoài sửa. Đây là **bảng gốc** mà hệ 1 dựng `DATA QC` từ đó.
+→ 3 file này **anh tự đổi quyền được ngay**, không ảnh hưởng gì:
+  - Web Doc Control chỉ cần **reader**, không cần writer.
+  - Apps Script hệ 1/2 chạy dưới tài khoản của anh nên không phụ thuộc quyền `anyone`.
+
+**Có bằng chứng là hệ thống CÓ THỂ làm đúng:** file `TRUNG TAM CANH BAO` đang để
+`domain daidung.vn · reader` — đúng chuẩn nội bộ. Các file khác nên theo mẫu này.
+
+### 🟠 S0b — Registry mở `commenter`, không phải `reader`
+`DANH MUC DU AN` cho `anyone` quyền **bình luận**. Người ngoài chèn comment vào registry
+gây nhiễu và lộ thêm thông tin; web chỉ cần `reader`.
+
+### 🟡 S0c — Hai file WOLF KHÔNG chia sẻ → tab Doc Control KHÔNG đọc được
+`10726-043 WOLF SUMMIT` và `WOLF QC DINH FITUP` không mở cho `anyone`.
+Chúng **có trong registry**, nên `_dcLoadProject` sẽ ném lỗi
+`'sheet chưa chia sẻ công khai?'`; vì `ddc_data.js` (seed) **không có** 2 dự án này,
+tab Doc Control sẽ hiện dòng lỗi thay vì số liệu.
+→ Đây vừa là lỗi chức năng vừa là **quyết định phải cân nhắc**: muốn WOLF lên Doc Control
+thì phải mở public (thêm phơi nhiễm), hoặc chấp nhận WOLF không có trên web.
+
+### Đánh giá lại S1 sau khảo sát
+Repo công khai (S1) vốn đã nặng; **cộng với S0** thì bức tranh là:
+link tới các Sheet **nằm sẵn trong repo công khai**, và một số Sheet trong đó **cho ghi**.
+Tức là chuỗi tấn công đầy đủ — tìm repo → lấy ID → sửa dữ liệu sản xuất — **không cần mật khẩu gì cả**.
+
+---
+
 ## 2. RỦI RO ĐÃ XÁC MINH (xếp theo mức nghiêm trọng)
 
 ### 🔴 S1 — Repo CÔNG KHAI chứa toàn bộ dữ liệu QC sản xuất
@@ -150,6 +216,9 @@ Không nơi nào ghi lại ai đã xem/sửa gì trên hệ 3. Hệ 1 có `NHAT_
 
 | Ưu tiên | Việc | Ảnh hưởng |
 |---|---|---|
+| **0a** | **Đổi 3 file DATA của anh từ `anyone: writer` → `reader`** (`VIOLA_KCT`, `10725-008`, `CHECKLIST_BISON`) | **Anh làm được ngay trong 2 phút, không hỏng gì.** Web chỉ cần reader; Apps Script không phụ thuộc |
+| **0b** | **Báo trungpt / cuongntk đổi 3 file PACKING từ `writer` → `reader`** | Bảo vệ cơ sở "đã đi hàng" — không tự làm được, phải nhờ chủ sở hữu |
+| **0c** | Đổi registry từ `commenter` → `reader` | Anh tự làm; web vẫn chạy bình thường |
 | 1 | Xác nhận repo công khai là **cố ý hay không** (S1) | quyết định toàn bộ các bước sau |
 | 2 | Nếu không cố ý: chuyển repo sang **private** + đổi cách phát dashboard | Pages của repo private cần gói trả phí → cần phương án thay thế |
 | 3 | Bỏ khoá `'anha2026'` khỏi mã client; chuyển xác thực về phía Web App (S2) | phải sửa `qc.html`/`index.html` + Web App |
@@ -164,7 +233,8 @@ Không nơi nào ghi lại ai đã xem/sửa gì trên hệ 3. Hệ 1 có `NHAT_
 
 ## 5. Chưa xác định được
 - Repo công khai là cố ý hay vô ý → **UNKNOWN — NEED USER CONFIRMATION**
-- Trạng thái chia sẻ thật của từng Sheet → **UNKNOWN — NEED USER CONFIRMATION**
+- ~~Trạng thái chia sẻ thật của từng Sheet~~ → **ĐÃ XÁC MINH 28/09**, xem §1bis
+- 6 file mở `anyone: writer` là **cố ý** hay do lỡ tay → **UNKNOWN — NEED USER CONFIRMATION**
+- Có muốn đưa 2 dự án WOLF lên tab Doc Control không (phải mở public) → **UNKNOWN — NEED USER CONFIRMATION**
 - Mã nguồn + cơ chế xác thực của Web App phân công QC → **UNKNOWN — NEED USER CONFIRMATION**
-- Ai được phép sửa Sheet NCR / Quản lý dự án / KHSX (đầu vào của S3) → **UNKNOWN — NEED USER CONFIRMATION**
 - Dashboard có được phát ra ngoài công ty (khách hàng EVAPCO…) không → **UNKNOWN — NEED USER CONFIRMATION**

@@ -57,8 +57,16 @@ KHSX, registry + file dự án cho Doc Control) và gọi Web App phân công QC
 1. **`index.html` cũ hơn `qc.html` 2 thế hệ.** Người mở link Pages gốc không thấy Doc Control/KHSX.
 2. **`spm_flatten.py` trong repo KHÔNG sinh ra `qcdata.js` đang chạy** (lệch số cột, lệch mảng `Z`,
    lệch giá trị `PL`). Hệ quả: drill-down KHSX theo Hạng mục đang **tắt âm thầm**.
-3. **Hệ 1 và hệ 3 đọc bảng gốc bằng HAI bộ khai báo cột khác nhau** (`BD_EP` ↔ `DDC_CORE.buildMap`),
-   và đọc **hai tab khác nhau** của cùng file registry.
+3. **Hệ 1 và hệ 3 đọc bảng gốc bằng HAI bộ khai báo cột khác nhau** (`BD_EP` ↔ `DDC_CORE.buildMap`).
+   *(Đính chính 28/09: phần "đọc hai tab khác nhau của registry" là SAI — cả ba hệ đọc
+   CÙNG tab `DANH MUC`, vì đó là `getSheets()[0]`. Xem `DATA_MODEL.md` §5.4.)*
+
+### 2D. Quyền chia sẻ Google Sheets — đã khảo sát thật 28/09
+**6 file đang mở `anyone: WRITER`** (ai có link cũng sửa được): 3 file PACKING
++ 3 file DATA dự án do chính user sở hữu (`VIOLA_KCT`, `10725-008`, `CHECKLIST_BISON`).
+Registry mở `commenter`. 2 file WOLF **không** chia sẻ nên tab Doc Control không đọc được.
+File `TRUNG TAM CANH BAO` để `domain daidung.vn · reader` — **đây là mẫu đúng, theo mẫu này**.
+Chi tiết + thứ tự xử lý: `SECURITY_MODEL.md` §1bis và §4.
 
 The exact current implementation must be determined from the source code.
 Do not invent missing business rules.

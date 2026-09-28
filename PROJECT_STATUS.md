@@ -34,6 +34,19 @@
   `SYSTEM_ARCHITECTURE.md`, `DATA_MODEL.md`, `SECURITY_MODEL.md`, `PERFORMANCE_PLAN.md`.
 - Skill tài khoản `qc-evapco-dongbo` đã lưu.
 
+### GẤP — phát hiện vòng 3 (28/09, đọc trực tiếp Google Drive)
+- 🔴 **6 file Sheet mở `anyone: WRITER`**: 3 file PACKING + 3 file DATA dự án của chính anh
+  (`VIOLA_KCT`, `10725-008`, `CHECKLIST_BISON` — tổng **139.629 cấu kiện**).
+  → 3 file DATA **anh tự đổi được ngay**; 3 file packing phải nhờ trungpt/cuongntk.
+- 🟠 Registry mở `commenter`. 🟡 2 dự án WOLF không chia sẻ → Doc Control không đọc được.
+- 🔴 **Xác nhận bằng bằng chứng: hệ 1 `'27/09 gre-duct'` CHƯA ĐƯỢC DÁN**
+  (`BAO CAO DATA QC` 28/09: `EVAPCO - GREGORY - DUCTING` = "CHUA KHAI BAO COT";
+  `NHAT KY` 28/09 19:29 vẫn còn `#ERROR!`).
+- 🟠 `BISON_U2` 28/09: **+594 mới / −9 mất → "CAN XEM LAI"**, chưa ai xử lý.
+- 🆕 Registry có **11 dự án**, gồm **`WOLF QC DINH FITUP`** (27/09) chưa khai `BD_EP`.
+- ✅ **Đính chính:** kết luận "hệ 1/2 và hệ 3 đọc hai tab registry khác nhau" (vòng 1) là **SAI** —
+  cả ba đọc cùng tab `DANH MUC`.
+
 ### IN PROGRESS
 - **Chờ user DUYỆT KIẾN TRÚC.** Theo yêu cầu 28/09: "Do NOT modify application code yet" —
   phiên này **không sửa một dòng mã ứng dụng nào**, chỉ tạo/cập nhật tài liệu.
