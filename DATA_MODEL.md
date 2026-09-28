@@ -306,9 +306,89 @@ Mã SPM và mã làm hồ sơ có thể **khác nhau** (GREGORY DUCTING: `part =
 
 ---
 
+---
+
+## 7bis. DASHBOARD CẢNH BÁO của hệ 1 (`capNhatCanhBao` → `veTongQuan`)
+
+File đích: **TRUNG TAM CANH BAO - EVAPCO** (`1m-3O2N…`, id cũng lưu ở Script Property `CANHBAO_ID`).
+
+### 7bis.1 Cách chạy
+1. Duyệt registry (sheet 1). Bỏ qua dự án **không khớp** `CB_LOC = ['EVAPCO','BISON','GREGORY','VIOLA']`
+   (`thuocLoc`, so sau khi bỏ dấu).
+2. Dự án **đang đồng bộ** (`dangDongBo`) hoặc **đọc lỗi / chưa có DATA QC**
+   → **giữ nguyên số liệu LẦN TRƯỚC** (`giuCu`), **không để trống bảng**.
+3. Đọc `DATA QC` cột **D..P** (13 cột: Member punch no → Xưởng).
+4. Bỏ dòng tiêu đề lọt xuống vùng dữ liệu (ô mã lại là tên cột).
+5. Gộp nhóm theo khoá `chuanNhomMS(Milestone) + \x01 + chuanNhomXuong(Xưởng)`.
+6. Ghi 2 tab ẩn `_DU LIEU GOC` (8 cột) và `_CHI TIET CAU KIEN` (7 cột, tối đa `CB_MAX = 45.000` dòng),
+   rồi gọi `veTongQuan()` vẽ tab hiển thị.
+
+Tab trong file cảnh báo: `TONG QUAN` · `CHUA MOI NT` · `KIEM TRA LO` ·
+`DANH SACH CAN XU LY` · `_DU LIEU GOC` (ẩn) · `_CHI TIET CAU KIEN` (ẩn).
+Ô `B3` của `TONG QUAN` là ô chọn dự án (data validation) — đổi ô này rồi chạy `veTongQuan` để lọc.
+
+### 7bis.2 Công thức từng cột (đọc trực tiếp từ mã)
+| Cột hiển thị | Công thức |
+|---|---|
+| Tổng CK | đếm mọi dòng có Member punch no |
+| **Đủ hồ sơ** | cột **`Cảnh báo` (cột 13) RỖNG** |
+| Chưa đủ HS | `Tổng CK − Đủ hồ sơ` |
+| Chưa mời NT | `thieu(RFI fab)` |
+| % chưa mời | `Chưa mời NT / Tổng CK` |
+| **Chưa có DIR** | `coGiaTri(RFI fab) && thieu(DIR Report no)` |
+| **Chưa có VIR** | `coGiaTri(RFI fab) && thieu(VIR report no)` |
+| % đủ | `Đủ hồ sơ / Tổng CK` |
+
+### 7bis.3 ⚠️ HAI KHÔNG NHẤT QUÁN ĐÃ XÁC MINH
+
+**(a) `Chưa có DIR` / `Chưa có VIR` KHÔNG áp ngưỡng `AD` mà `taoDataQC` dùng.**
+`taoDataQC` có quy tắc: công đoạn mà **cả dự án đều trống** (tỷ lệ < `NGUONG = 0.02`)
+thì **không báo thiếu** — nên cột `Cảnh báo` để trống, và cột **"Đủ hồ sơ" / "Chưa đủ HS" là ĐÚNG**.
+Nhưng `capNhatCanhBao` tính `o.dir`/`o.vir` **thẳng từ ô**, **không** qua ngưỡng đó.
+
+Hệ quả: dự án **cố ý bỏ trống cột DIR** (DIR và VIR chung 1 cột, chỉ điền VIR)
+sẽ bị **"Chưa có DIR" đếm bằng đúng số cấu kiện đã có RFI fab** — con số này **vô nghĩa**.
+Các khai báo `BD_EP` **không có khoá `dir`**:
+
+| Dự án | Có khớp `CB_LOC`? | Ảnh hưởng |
+|---|---|---|
+| `VIOLA_TED` | có (chứa "VIOLA") | **bị báo thừa** |
+| `EVAPCO - GREGORY - DUCTING` | có (chứa "EVAPCO"/"GREGORY") | **bị báo thừa** |
+| `10725-011` | tuỳ **tên trong registry**: nếu là `10725-011 DGRP VIOLA - DUCTING SDM & TED` → có; nếu chỉ là `10725-011` → **không vào dashboard cảnh báo** | **UNKNOWN — NEED USER CONFIRMATION** |
+| `SVĐVINFATS` | có? (không chứa từ khoá nào → **không** khớp `CB_LOC`) | không ảnh hưởng; ngoài ra không khai `rfi` nên điều kiện `coGiaTri(RFI)` luôn sai |
+
+> Đây là **báo thừa (over-report)**, không phải mất dữ liệu, và **không** làm sai
+> cột "Chưa đủ HS". Chưa sửa — chờ anh xác nhận đây là lỗi hay là cố ý.
+
+**(b) Hệ 1 và hệ 2 định nghĩa "nợ final" KHÁC NHAU → số hai bên không so trực tiếp được.**
+
+| | Hệ 1 (dashboard cảnh báo) | Hệ 2 (KIEM TRA BC-REV) |
+|---|---|---|
+| Cách đếm | **Tách riêng**: `Chưa có DIR` và `Chưa có VIR` là 2 con số | **Gộp một**: nợ final = có RFI fab **và VIR RỖNG VÀ DIR RỖNG** |
+| 1 cấu kiện có VIR, thiếu DIR | bị tính vào `Chưa có DIR` | **KHÔNG** tính là nợ |
+| Áp ngưỡng `AD` (cả cột trống thì bỏ qua) | **không** | (không cần — vì đòi cả hai cùng rỗng) |
+
+→ Khi đối chiếu số giữa "TRUNG TAM CANH BAO" và "TRUNG TAM KIEM TRA BC & REV",
+**phải nhớ hai bên đang đo hai thứ khác nhau.**
+
+### 7bis.4 `kiemChung` — 12 hạng mục tự kiểm (0 → 11)
+`0.` Khai báo cột trong `BD_EP` (chưa khai → dừng, chỉ báo 1 dòng) ·
+`1.` Bảng gốc đủ dòng so với Excel · `2.` Dòng tiêu đề đúng ·
+`3.` Đối chiếu ngược N cấu kiện mẫu · `4.` Không có dòng tiêu đề lẫn vào dữ liệu ·
+`5.` Cột `Member punch no` là mã thật · `6.` `RFI Fab date` đúng kiểu NGÀY ·
+`7.` Cột `Cảnh báo` đúng quy ước · `8.` `RFI fab` không lấy nhầm RFI fit-up ·
+`9.` `VIR` và `DIR` không trùng cột · `10.` Cột `Xưởng` không lấy nhầm ·
+`11.` `GUID` không bị điền xuống hàng loạt.
+
+---
+
 ## 8. Chưa xác định được
 - `spm_flatten.py` bản thật trên PC → **UNKNOWN — NEED USER CONFIRMATION**
 - Tab `DANH MUC` (hệ 3) và sheet 1 (hệ 1/2) của registry có đồng bộ không → **UNKNOWN — NEED USER CONFIRMATION**
 - Cấu trúc trả về của Web App phân công QC (`?cb=`, `?gallery=1`) → suy ra từ mã tiêu thụ,
   **chưa có mã nguồn phía server** → **UNKNOWN — NEED USER CONFIRMATION**
 - Ý nghĩa nghiệp vụ chính xác của phân loại `Miễn QC` → **UNKNOWN — NEED USER CONFIRMATION**
+- Tên chính xác của dự án `10725-011` trong registry (quyết định nó có vào dashboard
+  cảnh báo hay không, xem §7bis.3a) → **UNKNOWN — NEED USER CONFIRMATION**
+- Cột `Chưa có DIR` báo thừa cho dự án dùng chung cột DIR/VIR là **lỗi** hay **cố ý**
+  → **UNKNOWN — NEED USER CONFIRMATION**

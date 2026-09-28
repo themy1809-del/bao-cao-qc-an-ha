@@ -34,9 +34,12 @@ bên JS). Đây là rủi ro kiến trúc lớn nhất hiện nay (xem mục 6).
 - Nhánh mặc định: `main`. Tạo 21/06/2026. Push gần nhất 27/09/2026.
 - **`private: false` → repo CÔNG KHAI.** `has_pages: true` → GitHub Pages đang BẬT.
 - Có `.nojekyll` (tắt xử lý Jekyll — phục vụ file tĩnh nguyên trạng).
-- URL GitHub Pages thực tế: **UNKNOWN — NEED USER CONFIRMATION**
-  (mặc định sẽ là `https://themy1809-del.github.io/bao-cao-qc-an-ha/`,
-  nhưng chưa xác nhận được nhánh/thư mục nguồn Pages đang dùng).
+- **Nguồn Pages đã XÁC ĐỊNH:** GitHub API `list_branches` trả về **đúng 1 nhánh: `main`**
+  (không có `gh-pages`), và repo **không có thư mục `docs/`** → Pages chỉ có thể phục vụ từ
+  **`main` / thư mục gốc**. Do đó đường dẫn `/` **chắc chắn trả về `index.html`**.
+  URL mặc định: `https://themy1809-del.github.io/bao-cao-qc-an-ha/`.
+  *Còn lại:* link mà anh **thực sự phát cho nhân viên** là `/` hay `/qc.html`
+  → **UNKNOWN — NEED USER CONFIRMATION**.
 - 50 commit, **toàn bộ** do `Themy <themy1809@gmail.com>` đẩy lên,
   thông điệp dạng `Cap nhat QC <thứ> <mm/dd/yyyy> <giờ>` → đẩy từ script trên PC.
 
@@ -51,12 +54,28 @@ bên JS). Đây là rủi ro kiến trúc lớn nhất hiện nay (xem mục 6).
 | `kiem_tra_waiting.html` | 21.124 B | 238 | 11/08/2026 | qcdata | Trang phân tích tồn WAITING riêng |
 | `section_tracker.html` | 8.758 B | 76 | 11/08/2026 | (không) — đọc gviz trực tiếp | Theo dõi Section theo tổ |
 
-> **PHÁT HIỆN QUAN TRỌNG:** `index.html` — trang mà GitHub Pages phục vụ mặc định —
-> **chậm hơn `qc.html` 2 thế hệ**: không có tab `10 KHSX`, không có tab
-> `05 Doc Control`, không nạp `khsx_data.js` / `ddc_data.js`, không chứa `DDC_CORE`.
-> Người mở link Pages gốc sẽ thấy bản 11/08, không thấy Document Control.
-> Cần user xác nhận: link đang phát cho mọi người là `/` hay `/qc.html`?
-> → **UNKNOWN — NEED USER CONFIRMATION**
+> **PHÁT HIỆN QUAN TRỌNG:** `index.html` — trang mà GitHub Pages phục vụ tại `/` —
+> **chậm hơn `qc.html` 2 thế hệ**. Người mở link Pages gốc đang xem bản 11/08.
+
+#### 1.2b. Chênh lệch `index.html` ↔ `qc.html` — đã đo chính xác
+
+| Hạng mục | `qc.html` | `index.html` |
+|---|---|---|
+| Số tab | **10** | **9** |
+| Tab 05 | **Doc Control** (`DDC_CORE` + gviz live) | **Dự án** (bản cũ, chỉ đọc `QCDATA`) |
+| Tab 10 | **KHSX** (`rKH`, đọc live sheet `1kqMlDG4…`) | **không có** |
+| Hàm chỉ có ở `qc.html` | — | **thiếu 188 hàm** |
+| Hàm chỉ có ở `index.html` | — | **0** |
+
+**`index.html` là tập con thực sự của `qc.html`** — không có tính năng nào riêng.
+188 hàm thiếu gồm 3 khối: `DDC_CORE` + Document Control (`_dc*`, ~85 hàm),
+KHSX (`_kh*`, `kh*`, `rKH`, ~60 hàm), và một số tính năng nhỏ hơn
+(`renderDayCards`, `_pendAgeOf`, `togPendAge`, `togPendMonth`…).
+
+**Logic lõi thì GIỐNG HỆT NHAU** (đã so từng dòng, khớp 100 %):
+`F()`, `val(r)`, `isReject`, `fpyCalc`, `STG` — tức là **cách tính số liệu của hai trang là một**.
+→ Hệ quả thực tế: đồng bộ `index.html` theo `qc.html` (hoặc cho `/` chuyển hướng sang `/qc.html`)
+là thao tác **rủi ro thấp**, vì không có logic nào của `index.html` sẽ bị mất.
 
 ### 1.3 Thư viện ngoài (CDN, nạp trên mọi trang lớn)
 Từ `cdnjs.cloudflare.com`: `echarts 5.5.0`, `xlsx 0.18.5` (SheetJS),
@@ -229,8 +248,10 @@ Ngoài 3 đường trên, toàn bộ hệ 3 là **chỉ đọc**.
 
 ## 7. Những gì tài liệu này CHƯA xác định được
 
-- URL GitHub Pages thật đang phát cho nhân viên → **UNKNOWN — NEED USER CONFIRMATION**
-- Trang nào là "dashboard chính thức": `index.html` hay `qc.html` → **UNKNOWN — NEED USER CONFIRMATION**
+- Link anh **thực sự phát cho nhân viên**: `/` (→ `index.html`, bản cũ) hay `/qc.html`?
+  → **UNKNOWN — NEED USER CONFIRMATION**
+  *(Đã xác định: Pages phục vụ từ `main`/gốc nên `/` = `index.html`; chỉ còn thiếu thông tin
+  anh gửi link nào cho mọi người.)*
 - Mã nguồn + script id Web App phân công QC (`AKfycbwXuNubSP2_…`) → **UNKNOWN — NEED USER CONFIRMATION**
 - Script id project Apps Script hệ 2 → **UNKNOWN — NEED USER CONFIRMATION**
 - Đường dẫn thư mục đồng bộ trên PC Windows → **UNKNOWN — NEED USER CONFIRMATION**

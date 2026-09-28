@@ -51,9 +51,12 @@ code yet. Do not make major code changes until I approve the architecture."
 
 1. **`index.html` — trang chủ GitHub Pages — cũ hơn `qc.html` 2 thế hệ.**
    `index.html` commit 11/08 (`afaa7ad`); `qc.html` commit 20/09 (`bcc0ea8`).
-   `index.html` **không có** tab `05 Doc Control`, **không có** tab `10 KHSX`,
-   **không nạp** `ddc_data.js`/`khsx_data.js`, **không chứa** `DDC_CORE`.
-   → Ai mở link Pages gốc đang xem bản thiếu 2 tính năng lớn nhất.
+   Đã đo chính xác: `index.html` có **9 tab** (tab 05 là "Dự án" bản cũ, **không có** tab `10 KHSX`),
+   **thiếu 188 hàm**, và **không có hàm nào riêng** — tức là **tập con thực sự** của `qc.html`.
+   Repo chỉ có **1 nhánh `main`**, không có `gh-pages`, không có `docs/`
+   → Pages phục vụ từ `main`/gốc, nên `/` **chắc chắn** trả về `index.html`.
+   **Tin tốt:** logic lõi (`F()`, `val()`, `isReject`, `fpyCalc`, `STG`) của 2 file **giống hệt nhau**
+   → đồng bộ hoặc chuyển hướng là thao tác **rủi ro thấp**, không mất logic nào.
 
 2. **`spm_flatten.py` trong repo KHÔNG phải bộ sinh ra `qcdata.js` đang chạy.**
    | | `spm_flatten.py` (repo) | `qcdata.js` (đang chạy 27/09) |
@@ -78,6 +81,11 @@ code yet. Do not make major code changes until I approve the architecture."
    - Nếu là `/` → cần quyết: đồng bộ `index.html` theo `qc.html`, hay đổi `index.html`
      thành trang chuyển hướng sang `qc.html`.
 3. **Gửi bản `spm_flatten.py` THẬT đang chạy trên PC** để đồng bộ với repo và sửa `capnhat.yml`.
+4. **Cột "Chưa có DIR" trên dashboard cảnh báo báo thừa cho dự án dùng chung cột DIR/VIR
+   là LỖI hay CỐ Ý?** (nếu là lỗi thì sửa 1 dòng trong `capNhatCanhBao`, nhưng đây là
+   hệ 1 đang đóng băng nên phải có anh duyệt)
+5. **Tên chính xác của `10725-011` trong DANH MUC DU AN** (quyết định nó có nằm trong
+   phạm vi dashboard cảnh báo hay không).
 4. Sau khi user duyệt kiến trúc → thực hiện theo thứ tự trong `SECURITY_MODEL.md` §4
    và `PERFORMANCE_PLAN.md` §3 (giai đoạn A trước, rẻ và rủi ro thấp).
 
@@ -145,7 +153,9 @@ code yet. Do not make major code changes until I approve the architecture."
 | Bug | Vùng ảnh hưởng | Trạng thái | Ghi chú |
 |---|---|---|---|
 | Drill-down KHSX theo Hạng mục **tắt âm thầm** | `qc.html` `KH_HASZONE` (dòng 4110) | **MỞ** | `qcdata.js` không có mảng `Z`; nguyên nhân gốc = lệch `spm_flatten.py` |
-| `index.html` (trang chủ Pages) thiếu Doc Control + KHSX | `index.html` | **MỞ** | cũ hơn `qc.html` 2 thế hệ |
+| `index.html` (trang chủ Pages) thiếu Doc Control + KHSX | `index.html` | **MỞ** | thiếu **188 hàm**, 9 tab thay vì 10; logic lõi thì giống hệt |
+| Dashboard cảnh báo **báo thừa cột "Chưa có DIR"** | hệ 1 `capNhatCanhBao` | **MỞ — chờ xác nhận** | Không áp ngưỡng `AD` như `taoDataQC` → dự án dùng chung cột DIR/VIR (`VIOLA_TED`, `EVAPCO - GREGORY - DUCTING`, có thể cả `10725-011`) bị đếm thừa. Cột "Chưa đủ HS" vẫn ĐÚNG |
+| Hệ 1 và hệ 2 đếm "nợ final" **khác định nghĩa** | `capNhatCanhBao` ↔ `quetMotDuAn_` | **MỞ — chờ xác nhận** | Hệ 1 tách riêng DIR/VIR; hệ 2 chỉ tính khi **cả hai** rỗng → số 2 file không so trực tiếp được |
 | Khoá `'anha2026'` lộ trong mã client trên repo công khai | `qc.html:2277`, `index.html:1957` | **MỞ** | ai cũng ghi đè được bảng phân công QC |
 | 3 chỗ nhét dữ liệu Sheet vào `innerHTML` không escape | `qc.html` NCR list / `secGalRender` / bảng KHSX | **MỞ** | XSS lưu trữ từ người sửa được Sheet |
 | `capnhat.yml` có thể ghi đè `qcdata.js` bằng cấu trúc sai | `.github/workflows/capnhat.yml` | **MỞ** | chưa từng chạy, nhưng vẫn kích hoạt được |
@@ -167,7 +177,13 @@ Chỉ ghi quy tắc ĐÃ XÁC MINH trong mã. Chi tiết đầy đủ: `DATA_MOD
 - 4 chốt an toàn trước khi ghi DATA QC: nguồn thiếu dòng / chưa khai BD_EP / cột mã sai /
   số cấu kiện tụt > 20 % (trừ khi vừa `choPhepGiam()` trong 30 phút).
 - `_CHUP`: khoá = **Member punch no**; trạng thái = 4 bit `[RFI fab][VIR][DIR][RFI Gal]`, tiền tố `T`.
-- Dashboard cảnh báo chỉ nhận dự án khớp `CB_LOC = ['EVAPCO','BISON','GREGORY','VIOLA']`.
+- Dashboard cảnh báo chỉ nhận dự án khớp `CB_LOC = ['EVAPCO','BISON','GREGORY','VIOLA']`;
+  dự án **đang đồng bộ / đọc lỗi → GIỮ số liệu lần trước**, không để trống bảng;
+  "Đủ hồ sơ" = cột `Cảnh báo` RỖNG; "Chưa mời NT" = `thieu(RFI fab)`;
+  "Chưa có DIR/VIR" = `coGiaTri(RFI fab) && thieu(DIR/VIR)` — **không** áp ngưỡng `AD`
+  (xem bug ở §7). Giới hạn danh sách cấu kiện `CB_MAX = 45.000`.
+- `kiemChung` có **12 hạng mục (0→11)**; mục 0 = "chưa khai `BD_EP`" thì dừng luôn,
+  không chấm 11 mục còn lại bằng cột đoán mò.
 - Milestone/Xưởng chuẩn hoá hoa/thường/khoảng trắng KHI GỘP NHÓM (không sửa dữ liệu gốc).
 - BISON_U2: `Guid = Member punch no` là **CỐ Ý** (đối tác chạy code theo punch).
 - VIOLA_TED/10725-011 và GREGORY DUCTING: DIR và VIR chung 1 cột → **chỉ điền VIR, DIR để trống**.

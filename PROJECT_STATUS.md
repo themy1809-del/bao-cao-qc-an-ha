@@ -80,10 +80,15 @@
 - Hàng TEST trong danh mục: ĐÃ XOÁ ✓. Hàng VIOLA_TED cũ (`1xsZ0su…`): **VẪN CÒN** — user cần xoá.
 
 ### KNOWN BUGS
-**Mới phát hiện 28/09 (hệ 3, đều đang MỞ, chưa sửa):**
+**Mới phát hiện 28/09 (đều đang MỞ, chưa sửa):**
 - Drill-down KHSX theo Hạng mục **tắt âm thầm** — `qcdata.js` không có mảng `Z`,
   `KH_HASZONE` (`qc.html:4110`) = false. Nguyên nhân gốc: `spm_flatten.py` lệch bản thật.
-- `index.html` (trang chủ Pages) thiếu Doc Control + KHSX — cũ hơn `qc.html` 2 thế hệ.
+- `index.html` (trang chủ Pages) thiếu **188 hàm** so với `qc.html`: 9 tab thay vì 10,
+  tab 05 là "Dự án" bản cũ, không có tab 10 KHSX. Logic lõi 2 file **giống hệt**.
+- **(hệ 1)** Dashboard cảnh báo **báo thừa cột "Chưa có DIR"** cho dự án dùng chung
+  cột DIR/VIR — `capNhatCanhBao` không áp ngưỡng `AD` như `taoDataQC`. Cột "Chưa đủ HS" vẫn đúng.
+- **(hệ 1 ↔ hệ 2)** Hai hệ đếm "nợ final" **khác định nghĩa** → số của
+  "TRUNG TAM CANH BAO" và "TRUNG TAM KIEM TRA BC & REV" không so trực tiếp được.
 - Khoá `'anha2026'` lộ trong mã client trên repo công khai → ai cũng ghi đè được bảng phân công QC.
 - 3 chỗ nhét dữ liệu Google Sheet vào `innerHTML` **không escape** (XSS lưu trữ).
 - `.github/workflows/capnhat.yml` có thể ghi đè `qcdata.js` bằng cấu trúc sai (mất `Miễn QC`).
