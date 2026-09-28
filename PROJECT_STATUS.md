@@ -35,6 +35,7 @@
 - Skill tài khoản `qc-evapco-dongbo` đã lưu.
 
 ### GẤP — phát hiện vòng 3 (28/09, đọc trực tiếp Google Drive)
+- ✅ (28/09 vòng 5) App đã stress-test 45.832 cấu kiện, sửa 1 lỗi hiệu năng + 1 lỗi đúng/sai; thêm HUONG_DAN_APP.md, .gitignore
 - 🔴 **6 file Sheet mở `anyone: WRITER`**: 3 file PACKING + 3 file DATA dự án của chính anh
   (`VIOLA_KCT`, `10725-008`, `CHECKLIST_BISON` — tổng **139.629 cấu kiện**).
   → 3 file DATA **anh tự đổi được ngay**; 3 file packing phải nhờ trungpt/cuongntk.

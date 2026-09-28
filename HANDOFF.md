@@ -58,6 +58,20 @@ chỉ mục → tra cứu. 7 cấu kiện mẫu: 5 đã mời fitup / 5 đã m�
 **bên trong** `onclick="..."` làm **vỡ thuộc tính HTML** (lọc chip không ăn, mở bản vẽ ra 0 dòng, 2 lỗi JS)
 → đã chuyển sang `data-*` + uỷ nhiệm sự kiện.
 
+**Vòng 5 — stress test + hoàn thiện (28/09):**
+- Test với **45.832 cấu kiện** (đúng quy mô `BISON_U2` thật): tải 1,3–2,8s · bộ nhớ 121 MB ·
+  tra 1 mã 0,22s · tra 500 mã 1,3s · tab Bản vẽ 0,2s · tab Tổng quan 0,4s · không lỗi JS.
+- **Lỗi hiệu năng tìm được:** dán 3.000 mã KHÔNG tồn tại → **44,5 giây đứng máy**
+  (mỗi mã không khớp lại gọi `Object.keys(IDX)` dựng lại mảng 45.000 khoá).
+  Đã sửa: dựng sẵn `KEYS` một lần + tra **theo lô 150 mã** qua `setTimeout` có hiện tiến độ
+  → 24,8s và **không còn đóng băng trình duyệt**.
+- **Lỗi đúng/sai nghiêm trọng hơn đã sửa:** khi tra danh sách, mã không khớp đúng thì code lấy
+  `hits[0]` của phép **khớp một phần** và trình bày như thể đó chính là cấu kiện cần tra
+  → người QC có thể tin nhầm sang **một cây khác**. Nay có nhãn **"khớp một phần"**,
+  thẻ số liệu + bộ lọc riêng, và cột **"Kiểu khớp"** trong file Excel xuất ra.
+- Thêm **`HUONG_DAN_APP.md`** (hướng dẫn cho người dùng cuối + ràng buộc kỹ thuật + số đo hiệu năng).
+- Thêm **`.gitignore`**, gỡ `__pycache__/*.pyc` khỏi repo.
+
 **CÒN LẠI cho app:** chưa chạy thử với **Google Sheet thật** (container bị chặn egress) —
 anh mở `app.html` trên máy anh và thử 1 dự án là biết ngay. Hai dự án WOLF sẽ **không tải được**
 vì chưa chia sẻ (xem `SECURITY_MODEL.md` §S0c).
