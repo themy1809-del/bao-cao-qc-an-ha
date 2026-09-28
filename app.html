@@ -387,7 +387,7 @@ tbody tr:hover td.stick{background:var(--row)}
    co the chua dau nhay -> vo thuoc tinh HTML). Dung data-* + uy nhiem.
    ================================================================== */
 var REG_ID='146lyk2TjTD6LwNR9R6bpXYhKzZxXISTIDvBzEbD5tz0', REG_GID='1397171776';
-var REGS=[], PJ={}, IDX={}, KQ=[], KQF='', CH={}, RECENT=[];
+var REGS=[], PJ={}, IDX={}, KEYS=[], KQ=[], KQF='', CH={}, RECENT=[];
 
 /* ---------- tien ich ---------- */
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -536,6 +536,15 @@ function dungIDX(){
   IDX={};
   Object.keys(PJ).forEach(function(s){var p=PJ[s];if(p.st!=='ok')return;
     Object.keys(p.idx).forEach(function(k){p.idx[k].forEach(function(m){(IDX[k]=IDX[k]||[]).push({m:m,pj:p});});});});
+  /* Dung SAN mang khoa. Truoc day moi ma khong khop lai goi Object.keys(IDX)
+     -> 45.000 khoa x so ma = treo may (do duoc 44,5s voi 3.000 ma). */
+  KEYS=Object.keys(IDX);
+}
+/* Tim mot ma: khop DUNG truoc, khong co thi do khop MOT PHAN tren mang khoa da dung san */
+function timMa(c){
+  if(IDX[c])return IDX[c];
+  for(var i=0;i<KEYS.length;i++)if(KEYS[i].indexOf(c)>=0)return IDX[KEYS[i]];
+  return null;
 }
 function capSt(){
   var np=0,nm=0; Object.keys(PJ).forEach(function(s){if(PJ[s].st==='ok'){np++;nm+=PJ[s].ms.length;}});
@@ -567,10 +576,10 @@ function tra1(){
     box.innerHTML='<div class="note b"><b>Chưa tải dự án nào.</b> Mở thẻ <b>Dự án</b>, chọn dự án rồi bấm Tải.</div>';return;}
   var hits=[];
   if(IDX[q])hits=IDX[q].slice();
-  else Object.keys(IDX).forEach(function(k){if(k.indexOf(q)>=0)IDX[k].forEach(function(x){hits.push(x);});});
+  else KEYS.forEach(function(k){if(k.indexOf(q)>=0)IDX[k].forEach(function(x){hits.push(x);});});
   if(!hits.length){
     box.innerHTML='<div class="void"><span class="ic">⌕</span><b>Không tìm thấy «'+esc(q)+'»</b>'+
-      '<p>Đã tìm trong '+N(Object.keys(IDX).length)+' mã của các dự án đã tải. Thử tải thêm dự án khác ở thẻ <b>Dự án</b>.</p></div>';return;}
+      '<p>Đã tìm trong '+N(KEYS.length)+' mã của các dự án đã tải. Thử tải thêm dự án khác ở thẻ <b>Dự án</b>.</p></div>';return;}
   nhoMa(q);
   var extra = hits.length>30 ? '<div class="hint" style="margin-bottom:8px">Khớp '+N(hits.length)+' cấu kiện — hiện 30 cây đầu.</div>' : '';
   box.innerHTML=extra+hits.slice(0,30).map(function(x){return theCK(x.m,x.pj);}).join('');
@@ -647,18 +656,35 @@ $('fIn').addEventListener('change',function(){
   if(/\.(xlsx|xls)$/i.test(f.name))rd.readAsArrayBuffer(f); else rd.readAsText(f,'UTF-8');
 });
 
+var _dangTra=false;
 function traNhieu(){
+  if(_dangTra)return;
   var codes=tachMa($('qN').value);
   if(!codes.length){toast('Chưa có mã nào — dán danh sách vào ô, mỗi dòng một mã.');return;}
-  if(!Object.keys(IDX).length){toast('Chưa tải dự án nào.');go('du');return;}
-  KQ=codes.map(function(c){
-    var hits=IDX[c];
-    if(!hits){var ks=Object.keys(IDX);for(var i=0;i<ks.length;i++){if(ks[i].indexOf(c)>=0){hits=IDX[ks[i]];break;}}}
-    if(!hits||!hits.length)return {ma:c,found:false};
-    var x=hits[0],b=buoc(x.m,x.pj.layout);
-    return {ma:c,found:true,m:x.m,pj:x.pj,st:b[0],cls:b[1]};
-  });
-  KQF=''; $('kqF').value=''; go('kq'); veKQ();
+  if(!KEYS.length){toast('Chưa tải dự án nào.');go('du');return;}
+  /* Chay THEO LO qua setTimeout: danh sach dai (hang nghin ma, nhieu ma khong
+     ton tai) van khong lam dong bang trinh duyet, va nguoi dung thay tien do. */
+  _dangTra=true; KQ=[]; KQF=''; $('kqF').value=''; go('kq');
+  var LO=150, i=0, n=codes.length;
+  $('btnBulk').disabled=true;
+  function tien(){
+    $('kqBody').innerHTML='<div class="void"><span class="sp"></span><b style="margin-top:10px">Đang tra '+
+      N(Math.min(i,n))+' / '+N(n)+' mã…</b><p>Danh sách dài thì hơi lâu, nhưng trang vẫn dùng được.</p></div>';
+  }
+  tien();
+  (function lo(){
+    var het=Math.min(i+LO,n);
+    for(;i<het;i++){
+      var c=codes[i], dung=!!IDX[c], hits=timMa(c);
+      if(!hits||!hits.length){KQ.push({ma:c,found:false});continue;}
+      var x=hits[0],b=buoc(x.m,x.pj.layout);
+      /* dung=false nghia la chi KHOP MOT PHAN -> phai noi ro, khong duoc de
+         nguoi doc tuong day dung la cau kien minh tra.                      */
+      KQ.push({ma:c,found:true,exact:dung,nhieu:hits.length,m:x.m,pj:x.pj,st:b[0],cls:b[1]});
+    }
+    if(i<n){tien();setTimeout(lo,0);return;}
+    _dangTra=false; $('btnBulk').disabled=false; veKQ();
+  })();
 }
 
 function veKQ(){
@@ -671,14 +697,16 @@ function veKQ(){
       mat=tong-thay.length,
       bg=thay.filter(function(r){return r.m.bgHs;}).length,
       nofin=thay.filter(function(r){return !r.m.finInv;}).length,
-      rev=thay.filter(function(r){return r.m.revWarn;}).length;
+      rev=thay.filter(function(r){return r.m.revWarn;}).length,
+      mot=thay.filter(function(r){return r.exact===false;}).length;
   $('c_kq').textContent=N(tong);
   $('kqSub').textContent='Bấm một thẻ số hoặc một nhãn lọc để thu hẹp; bấm một dòng để xem chi tiết đầy đủ.';
   var S=[['','Mã đã tra',tong,'','trong '+Object.keys(PJ).filter(function(s){return PJ[s].st==='ok';}).length+' dự án đã tải'],
          ['MISS','Không tìm thấy',mat,mat?'bad':'ok',mat?'không có trong dự án đã tải':'tất cả đều tìm thấy'],
          ['NOFIN','Chưa mời NT final',nofin,nofin?'warn':'ok',pc(nofin,thay.length)+'% số mã tìm thấy'],
          ['BG','Đã bàn giao hồ sơ',bg,'ok',pc(bg,thay.length)+'% số mã tìm thấy'],
-         ['REV','Nâng Rev — NT lại',rev,rev?'bad':'',rev?'phải mời nghiệm thu lại':'không có']];
+         ['REV','Nâng Rev — NT lại',rev,rev?'bad':'',rev?'phải mời nghiệm thu lại':'không có'],
+         ['PART','Chỉ khớp một phần',mot,mot?'warn':'',mot?'kiểm lại — có thể không đúng cây':'mọi mã khớp đúng']];
   $('kqStats').innerHTML=S.map(function(x){
     return '<button class="stat '+x[3]+(KQF===x[0]?' act':'')+'" data-act="f" data-f="'+esc(x[0])+'">'+
       '<div class="l">'+x[1]+'</div><div class="v num">'+N(x[2])+'</div><div class="s">'+x[4]+'</div></button>';}).join('');
@@ -692,6 +720,7 @@ function veKQ(){
     if(KQF==='NOFIN'&&(!r.found||r.m.finInv))return false;
     if(KQF==='BG'&&(!r.found||!r.m.bgHs))return false;
     if(KQF==='REV'&&(!r.found||!r.m.revWarn))return false;
+    if(KQF==='PART'&&(!r.found||r.exact!==false))return false;
     if(f&&r.ma.indexOf(f)<0&&!(r.found&&String(r.m.dwg||'').toUpperCase().indexOf(f)>=0))return false;
     return true;});
   var h='<div class="tw"><table><thead><tr><th class="n">#</th><th class="stick">Mã tra</th><th>Dự án</th>'+
@@ -703,7 +732,9 @@ function veKQ(){
          '<td colspan="12"><span class="tag bad">KHÔNG TÌM THẤY</span> <span class="hint">không có trong các dự án đã tải</span></td></tr>';return;}
     var m=r.m;
     h+='<tr class="clk" data-act="ma" data-ma="'+esc(m.pn)+'"><td class="n">'+(i+1)+'</td>'+
-      '<td class="stick mono"><b>'+esc(m.pn)+'</b>'+(m.revWarn?' <span class="tag bad">REV!</span>':'')+'</td>'+
+      '<td class="stick mono"><b>'+esc(m.pn)+'</b>'+(m.revWarn?' <span class="tag bad">REV!</span>':'')+
+      (r.exact===false?' <span class="tag wait" title="Mã anh tra không khớp đúng — đây là cấu kiện có mã CHỨA chuỗi anh nhập'+
+        (r.nhieu>1?', và có '+r.nhieu+' cấu kiện cùng khớp':'')+'">khớp một phần</span>':'')+'</td>'+
       '<td class="hint">'+esc(r.pj.ma)+'</td><td><span class="tag '+r.cls+'">'+esc(r.st)+'</span></td>'+
       '<td>'+esc(m.dwg)+'</td><td>'+esc(m.ws)+'</td><td class="n">'+(m.rev==null?'—':m.rev)+'</td>'+
       '<td>'+(m.fitInv?(ds(m.fitD)||'✓'):'<span class="tag wait">chưa</span>')+'</td>'+
@@ -719,13 +750,13 @@ function xemMa(ma){$('q1').value=ma;go('tra');tra1();window.scrollTo({top:0,beha
 function xuatKQ(){
   if(!KQ.length){toast('Chưa có kết quả để xuất.');return;}
   if(typeof XLSX==='undefined'){toast('Chưa tải được thư viện Excel (cần mạng).');return;}
-  var aoa=[['Mã tra','Tìm thấy','Dự án','Trạng thái hồ sơ','Cấu kiện','Bản vẽ','Khu vực','Hạng mục','Milestone','Xưởng','Rev','Hàn',
+  var aoa=[['Mã tra','Tìm thấy','Kiểu khớp','Dự án','Trạng thái hồ sơ','Cấu kiện','Bản vẽ','Khu vực','Hạng mục','Milestone','Xưởng','Rev','Hàn',
             'Mời fitup','RFI fitup','Report FUR','Mời final','RFI final','Rev lúc NT','QC kiểm','DIR','VIR',
             'Trình kí DDC','Trình kí KH','Bàn giao hồ sơ','NDT','Cảnh báo nâng Rev','Mời lại']];
   KQ.forEach(function(r){
-    if(!r.found){aoa.push([r.ma,'KHÔNG','','KHÔNG TÌM THẤY']);return;}
+    if(!r.found){aoa.push([r.ma,'KHÔNG','','','KHÔNG TÌM THẤY']);return;}
     var m=r.m;
-    aoa.push([r.ma,'CÓ',r.pj.ma,r.st,m.pn,m.dwg,m.grp1,m.grp2,m.ms,m.ws,(m.rev==null?'':m.rev),m.weld?'Hàn':'K.Hàn',
+    aoa.push([r.ma,'CÓ',(r.exact===false?'KHỚP MỘT PHẦN':'khớp đúng'),r.pj.ma,r.st,m.pn,m.dwg,m.grp1,m.grp2,m.ms,m.ws,(m.rev==null?'':m.rev),m.weld?'Hàn':'K.Hàn',
       ds(m.fitD),m.fitRfi,m.fitRep,ds(m.finD),m.finRfi,(m.finRev==null?'':m.finRev),m.finQc,m.dir,m.vir,
       m.kiDDC?'x':'',m.kiKH?'x':'',m.bgHs?'x':'',m.ndt?'x':'',m.revWarn?'CẦN NT LẠI':'',m.moiLai?'x':'']);});
   var wb=XLSX.utils.book_new();
