@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Ban sao luu do spm_flatten.py tu tao tren PC
+DuLieu_SPM/
+_out/
+
+# File tam cua Excel / he dieu hanh
+~$*.xlsx
+~$*.xls
+.DS_Store
+Thumbs.db
+
+# Anh chup man hinh dung de kiem thu, khong thuoc san pham
+*_screenshot.png
