@@ -1,41 +1,18 @@
-name: Cap nhat du lieu QC tu spm.xlsx
-# Tu dong chay khi co file moi trong thu muc "Update spm" (upload qua trinh duyet github.com)
+name: Cap nhat du lieu QC tu spm.xlsx (DA TAT 29/09/2026)
+# DA TAT 29/09/2026 theo yeu cau user (viec "a"):
+#  - Workflow nay CHUA TUNG CHAY, va spm_flatten.py trong repo KHONG sinh ra qcdata.js dang dung (lech cot/PL).
+#  - Tu khi co dang nhap (khoa_qcdata.py), neu workflow chay se day len mot qcdata.js CHUA KHOA -> lo du lieu.
+#  - Chi con cach bam tay (workflow_dispatch) va job bi khoa cung "if: false" -> bam cung khong chay.
+#  Muon bat lai: phai sua spm_flatten.py cho khop ban that + them buoc khoa_qcdata.py, roi moi go "if: false".
 on:
-  push:
-    paths:
-      - "Update spm/**"
   workflow_dispatch:
 
 permissions:
-  contents: write
-
-concurrency:
-  group: capnhat
-  cancel-in-progress: false
+  contents: read
 
 jobs:
   capnhat:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Cai thu vien
-        run: pip install openpyxl
-
-      - name: Chay script tao qcdata.js
-        run: |
-          mkdir -p _out
-          python spm_flatten.py "Update spm/spm.xlsx" _out
-          cp _out/qcdata.js qcdata.js
-
-      - name: Day ket qua len repo
-        run: |
-          git config user.name "auto-capnhat"
-          git config user.email "actions@users.noreply.github.com"
-          git add qcdata.js
-          git commit -m "Cap nhat qcdata.js tu spm.xlsx (upload web)" || echo "Khong co thay doi"
-          git push
+      - run: echo "Workflow da tat 29/09/2026 — xem ghi chu dau file."

@@ -45,6 +45,8 @@ Current deployment / environment:
   20 dự án kèm mốc gần nhất (bấm dòng → `khDrill`). Chỉ trình bày lại `_khLive` bằng đúng công thức `_khTq`/`_khLiveDraw`.
   5 tab con cũ giữ nguyên. Đối chiếu trên dữ liệu mẫu đúng cấu trúc sheet: quá hạn, đến hạn 7 ngày, tiến độ chung,
   phân bổ, ráp HT — khớp tab cũ. **Chưa chạy với sheet thật** (máy phát triển bị chặn Google).
+- **Việc a+b (29/09)**: `.github/workflows/capnhat.yml` ĐÃ TẮT (chỉ còn workflow_dispatch + `if: false`) — tránh sinh lại
+  `qcdata.js` chưa khoá; KHSX 5 tab con cũ đã escape dữ liệu sheet (S3 đóng hết 3 chỗ).
 - **Tổng quan**: biểu đồ sản lượng ngày + NCR 6 tháng tách 2 khung (hết 2 trục tung); "Top dự án" vòng → thanh ngang
   (tổng 11.043,4 t khớp KPI, bấm thanh vẫn lọc dự án). **Bảo mật S3**: NCR + ảnh Section đã escape; KHSX tab cũ còn mở.
 - **Tab KHSX — khung chuyên nghiệp** (khối `kh2909b`): đầu tab có trạng thái dữ liệu live + Đọc lại + Mở sheet;

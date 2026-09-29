@@ -3122,6 +3122,7 @@ function _renderQL(){
 (function(){ if(typeof render==='function'){ var _rb=render; render=function(k){ if(k==='ql'){ try{rQL();}catch(e){} return; } return _rb(k); }; } })();
 
 /* ==================================================================
+   29/09 (việc b): mọi chữ lấy từ sheet KHSX / khsx_data.js đưa vào HTML đều qua esc2() — SECURITY_MODEL S3
    TAB 10 · KHSX — Kế hoạch sản xuất
    Nguồn A (tĩnh): khsx_data.js  — trích từ file "KH GIA CÔNG THÁNG NM AH"
    Nguồn B (live): Google Sheet "TỔNG HỢP BÁO CÁO DDC AN HẠ" gid=0
@@ -3199,7 +3200,7 @@ function _khGc(){
     yAxis:{type:'value',name:'tấn'},
     series:se});
 
-  var head='<thead><tr><th>Xưởng</th>'+C.map(function(c){return '<th class="n">'+c+'</th>';}).join('')+
+  var head='<thead><tr><th>Xưởng</th>'+C.map(function(c){return '<th class="n">'+esc2(c)+'</th>';}).join('')+
     '<th class="n">SL ĐẠT — QC NT</th><th style="min-width:104px">% đạt / phân bổ</th></tr></thead>';
   var body=rows.map(function(r){
     var xk=_khX(r[0]), tot=_khNum(r[1+iTot]), bh=_khNum(r[1+iBh]), q=QC[xk]||0;
@@ -3260,9 +3261,9 @@ function _khNs(){
   var html='';
   bl.forEach(function(b){
     var isAdd=/BỔ SUNG/i.test(b.t);
-    html+='<div class="cg-lbl" style="margin:14px 0 4px">'+b.t+'</div>'+
+    html+='<div class="cg-lbl" style="margin:14px 0 4px">'+esc2(b.t)+'</div>'+
       '<div class="tw" style="max-height:300px"><table><thead><tr><th>Xưởng</th>'+
-      b.cols.map(function(c){return '<th class="n">'+c+'</th>';}).join('')+'</tr></thead><tbody>'+
+      b.cols.map(function(c){return '<th class="n">'+esc2(c)+'</th>';}).join('')+'</tr></thead><tbody>'+
       b.rows.map(function(r){
         var isT=String(r[0]).toUpperCase().indexOf('TỔNG')===0;
         return '<tr'+(isT?' style="font-weight:800;background:var(--chipBg)"':'')+'><td><b>'+r[0]+'</b></td>'+
@@ -3496,8 +3497,8 @@ function _khLiveDraw(){
     var pjs=Object.keys(g.pj);
     var tag=g.idx===0?'<span class="tag r">Quá hạn</span>':'<span class="tag">'+keys[g.idx]+'</span>';
     html+='<tr'+(g.idx===0?' style="background:rgba(179,38,30,.06)"':'')+'><td>'+tag+'</td>'+
-      '<td><b style="color:'+g.c+'">'+g.st+'</b></td><td>'+g.x+'</td>'+
-      '<td class="pjn" title="'+pjs.join(' · ').replace(/"/g,'&quot;')+'">'+pjs.slice(0,2).map(function(s){return s.length>26?s.slice(0,25)+'…':s;}).join('; ')+(pjs.length>2?' +'+(pjs.length-2):'')+'</td>'+
+      '<td><b style="color:'+g.c+'">'+g.st+'</b></td><td>'+esc2(g.x)+'</td>'+
+      '<td class="pjn" title="'+esc2(pjs.join(' · '))+'">'+pjs.slice(0,2).map(function(s){return esc2(s.length>26?s.slice(0,25)+'…':s);}).join('; ')+(pjs.length>2?' +'+(pjs.length-2):'')+'</td>'+
       '<td class="n">'+g.n+'</td><td class="n"><b>'+fm1(g.t)+'</b></td></tr>';
   });
   html+='</tbody>';
@@ -3521,7 +3522,7 @@ function _khAllocInit(){
     return '<span class="daypick" style="margin-right:14px">'+lbl+': <select class="daySel" onchange="khAllocSet(\''+key+'\',this.value)">'+
       '<option value="">'+all+'</option>'+
       Object.keys(vals).sort(function(a,b){return a.localeCompare(b,'vi');}).map(function(v){
-        return '<option value="'+v.replace(/"/g,'&quot;')+'"'+(_khF[key]===v?' selected':'')+'>'+v+'</option>';}).join('')+
+        return '<option value="'+esc2(v)+'"'+(_khF[key]===v?' selected':'')+'>'+esc2(v)+'</option>';}).join('')+
       '</select></span>';
   }
   document.getElementById('khAllocFil').innerHTML=
@@ -3610,14 +3611,14 @@ function _khAllocDraw(){
   if(!rows.length) h+='<tr><td colspan="13" class="muted" style="padding:14px;text-align:center">Không có dự án nào khớp bộ lọc.</td></tr>';
   rows.slice(0,120).forEach(function(o){
     var xlist=Object.keys(o.x).sort(function(a,b){return o.x[b].t-o.x[a].t;});
-    var xtxt=xlist.slice(0,4).map(function(k){return '<span class="tag b" style="margin-right:4px">'+k+' '+fm1(T(o.x[k].t))+'</span>';}).join(' ')+
+    var xtxt=xlist.slice(0,4).map(function(k){return '<span class="tag b" style="margin-right:4px">'+esc2(k)+' '+fm1(T(o.x[k].t))+'</span>';}).join(' ')+
       (xlist.length>4?'<span class="muted"> +'+(xlist.length-4)+'</span>':'');
     var p=pc(o.deliv,o.tot);
     var kh=(o.m.start||o.m.end)?((o.m.start?o.m.start.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'}):'—')+' → '+
             (o.m.end?o.m.end.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'2-digit'}):'—')):'—';
     var lateE=o.m.end&&o.m.end<new Date()&&p<100;
     return h+='<tr class="clickable" style="cursor:pointer'+(lateE?';background:rgba(179,38,30,.06)':'')+'" onclick="khDrill(this.getAttribute(\'data-p\'))" data-p="'+o.p.replace(/"/g,'&quot;')+'">'+
-      '<td class="pjn" title="'+o.p.replace(/"/g,'&quot;')+'">'+(o.p.length>40?o.p.slice(0,39)+'…':o.p)+'</td>'+
+      '<td class="pjn" title="'+esc2(o.p)+'">'+esc2(o.p.length>40?o.p.slice(0,39)+'…':o.p)+'</td>'+
       '<td>'+(o.m.owner||'—')+'</td><td>'+(o.m.kind||'—')+'</td>'+
       '<td class="n"><b>'+fm1(T(o.tot))+'</b></td><td>'+xtxt+'</td>'+
       '<td class="n">'+fm1(T(o.fit))+'</td><td class="n">'+fm1(T(o.weld))+'</td>'+
@@ -3625,7 +3626,7 @@ function _khAllocDraw(){
       '<td class="n" style="font-weight:700;color:'+(o.tot-o.deliv>0?'var(--warn)':'var(--mut)')+'">'+fm1(T(Math.max(o.tot-o.deliv,0)))+'</td>'+
       '<td><div class="bar"><i style="width:'+Math.min(p,100)+'%;background:'+(p>=80?'var(--good)':p>=40?'var(--acc)':'var(--warn)')+'"></i></div><span class="muted">'+p.toLocaleString('vi-VN')+'%</span></td>'+
       '<td'+(lateE?' style="color:var(--bad);font-weight:700"':'')+'>'+kh+'</td>'+
-      '<td>'+(o.m.status?'<span class="tag'+(/ưu tiên/i.test(o.m.status)?' o':'')+'">'+o.m.status+'</span>':'—')+'</td></tr>';
+      '<td>'+(o.m.status?'<span class="tag'+(/ưu tiên/i.test(o.m.status)?' o':'')+'">'+esc2(o.m.status)+'</span>':'—')+'</td></tr>';
   });
   document.getElementById('tKhAlloc').innerHTML=h+'</tbody>';
 
@@ -3637,11 +3638,11 @@ function _khAllocDraw(){
   document.getElementById('khMxMode').innerHTML=Object.keys(MD).map(function(k){
     return '<button class="qf'+(k===md?' on':'')+'" onclick="khMxSet(\''+k+'\')">'+MD[k][0]+'</button>';}).join('');
   var top=rows.slice(0,30);
-  var mh='<thead><tr><th>Dự án</th>'+allX.map(function(k){return '<th class="n">'+k+'</th>';}).join('')+'<th class="n">Tổng</th></tr></thead><tbody>';
+  var mh='<thead><tr><th>Dự án</th>'+allX.map(function(k){return '<th class="n">'+esc2(k)+'</th>';}).join('')+'<th class="n">Tổng</th></tr></thead><tbody>';
   if(!top.length) mh+='<tr><td colspan="'+(allX.length+2)+'" class="muted" style="padding:14px;text-align:center">Không có dữ liệu.</td></tr>';
   top.forEach(function(o){
     var rtot=0; Object.keys(o.x).forEach(function(k){rtot+=getv(o.x[k]);});
-    mh+='<tr class="clickable" style="cursor:pointer" onclick="khDrill(this.getAttribute(\'data-p\'))" data-p="'+o.p.replace(/"/g,'&quot;')+'"><td class="pjn" title="'+o.p.replace(/"/g,'&quot;')+'">'+(o.p.length>36?o.p.slice(0,35)+'…':o.p)+'</td>'+
+    mh+='<tr class="clickable" style="cursor:pointer" onclick="khDrill(this.getAttribute(\'data-p\'))" data-p="'+esc2(o.p)+'"><td class="pjn" title="'+esc2(o.p)+'">'+esc2(o.p.length>36?o.p.slice(0,35)+'…':o.p)+'</td>'+
       allX.map(function(k){var v=o.x[k]?getv(o.x[k]):0;
         return '<td class="n"'+(v>0?' style="background:rgba(37,99,235,'+(Math.min(v/(o.tot||1),1)*0.22).toFixed(3)+')"':'')+'>'+(v>0?fm1(T(v)):'·')+'</td>';}).join('')+
       '<td class="n"><b>'+fm1(T(rtot))+'</b></td></tr>';
@@ -3710,7 +3711,7 @@ function _khVs(){
        markLine:{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#9aa89f'},data:[{yAxis:100}]}}
     ]});
 
-  var h='<thead><tr><th>Tháng</th>'+xs.map(function(x){return '<th class="n">'+x+'</th>';}).join('')+
+  var h='<thead><tr><th>Tháng</th>'+xs.map(function(x){return '<th class="n">'+esc2(x)+'</th>';}).join('')+
     '<th class="n">KH tổng</th><th class="n">NT tổng</th><th style="min-width:90px">% đạt</th></tr></thead><tbody>';
   ms.slice().reverse().forEach(function(m){
     var g=KH.gc[m], R={}; _khShops(g.rows).forEach(function(r){var kx=_khX(r[0]); R[kx]=(R[kx]||0)+_khNum(r[4]);});
@@ -3766,7 +3767,7 @@ function _khPb(){
        markLine:{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#9aa89f'},data:[{yAxis:100}]}}
     ]});
 
-  var h='<thead><tr><th>Tháng</th>'+X.map(function(x){return '<th class="n">'+x+'</th>';}).join('')+'<th class="n">Tổng KH</th><th class="n">Tổng TT</th></tr></thead><tbody>';
+  var h='<thead><tr><th>Tháng</th>'+X.map(function(x){return '<th class="n">'+esc2(x)+'</th>';}).join('')+'<th class="n">Tổng KH</th><th class="n">Tổng TT</th></tr></thead><tbody>';
   ms.slice().reverse().forEach(function(m){
     var k=0,t=0;
     h+='<tr><td><b>'+_khMonVN(m)+'</b></td>'+X.map(function(x){
@@ -3819,8 +3820,8 @@ function _khXh(){
   L.forEach(function(o){
     var k=o.kh||0,t=o.tt||0,p=k>0?Math.round(t/k*1000)/10:0,g=t-k;
     h+='<tr'+(k>0&&p<50?' style="background:rgba(179,38,30,.06)"':'')+'>'+
-      '<td class="pjn" title="'+o.p.replace(/"/g,'&quot;')+'">'+(o.p.length>44?o.p.slice(0,43)+'…':o.p)+'</td>'+
-      '<td>'+(o.kc||'—')+'</td><td class="n">'+fm1(k)+'</td><td class="n"><b>'+fm1(t)+'</b></td>'+
+      '<td class="pjn" title="'+esc2(o.p)+'">'+esc2(o.p.length>44?o.p.slice(0,43)+'…':o.p)+'</td>'+
+      '<td>'+esc2(o.kc||'—')+'</td><td class="n">'+fm1(k)+'</td><td class="n"><b>'+fm1(t)+'</b></td>'+
       '<td class="n" style="color:'+(g<0?'var(--bad)':'var(--good)')+';font-weight:700">'+(g>0?'+':'')+fm1(g)+'</td>'+
       '<td><div class="bar" style="max-width:74px;display:inline-block;vertical-align:middle"><i style="width:'+Math.min(p,100)+'%;background:'+(p>=85?'var(--good)':p>=50?'var(--acc)':'var(--warn)')+'"></i></div> <span class="muted">'+p.toLocaleString('vi-VN')+'%</span></td></tr>';
   });
@@ -3970,7 +3971,7 @@ function _khTq(){
   var pk=Object.keys(PJ).sort(function(a,b){return PJ[b].t-PJ[a].t;}).slice(0,15).reverse();
   setOpt('cKhProjBar',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},
       formatter:function(ps){var i=ps[0].dataIndex,k=pk[i],p=PJ[k];
-        return '<b>'+k+'</b><br>Phân bổ <b>'+fm1(T(p.t))+' t</b>'+
+        return '<b>'+esc2(k)+'</b><br>Phân bổ <b>'+fm1(T(p.t))+' t</b>'+
           '<br>Đã ráp HT (sheet) '+fm1(T(p.fit))+' t ('+(p.t>0?Math.round(p.fit/p.t*100):0)+'%)'+
           '<br>QC nghiệm thu (SPM) '+fm1(QP[_khN(k)]||0)+' t'+
           '<br>Đã giao (sheet) '+fm1(T(p.dl))+' t';}},
@@ -3999,7 +4000,7 @@ function _khTq(){
   var sRm=sx.map(function(x){return +T(Math.max(SH[x].t-SH[x].fit,0)).toFixed(1);});
   setOpt('cKhShopTq',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},
       formatter:function(ps){var i=ps[0].dataIndex,o=SH[sx[i]];
-        return '<b>'+sx[i]+'</b><br>Phân bổ '+fm1(T(o.t))+' t<br>Đã ráp HT '+fm1(T(o.fit))+' t ('+(o.t>0?Math.round(o.fit/o.t*100):0)+'%)<br>Còn lại '+fm1(T(Math.max(o.t-o.fit,0)))+' t<br>Đã giao '+fm1(T(o.dl))+' t';}},
+        return '<b>'+esc2(sx[i])+'</b><br>Phân bổ '+fm1(T(o.t))+' t<br>Đã ráp HT '+fm1(T(o.fit))+' t ('+(o.t>0?Math.round(o.fit/o.t*100):0)+'%)<br>Còn lại '+fm1(T(Math.max(o.t-o.fit,0)))+' t<br>Đã giao '+fm1(T(o.dl))+' t';}},
     legend:{top:0},grid:{left:8,right:120,top:30,bottom:8,containLabel:true},
     xAxis:{type:'value',name:'tấn'},
     yAxis:{type:'category',data:sx,axisLabel:{fontWeight:700,fontSize:11.5}},
@@ -4051,7 +4052,7 @@ function _khXuong(SH,PJ,QCM,ms,shops,byShop){
 
   var PAL2=['#0F766E','#2563EB','#38BDF8','#155E56','#7DD3FC','#94A3B8'];
   setOpt('cKhDonut',{tooltip:{trigger:'item',confine:true,
-      formatter:function(p){return '<b>'+p.name+'</b><br>'+fm1(p.value)+' t · '+p.percent+'%';}},
+      formatter:function(p){return '<b>'+esc2(p.name)+'</b><br>'+fm1(p.value)+' t · '+p.percent+'%';}},
     legend:{orient:'vertical',right:4,top:'middle',itemWidth:10,itemHeight:10},
     series:[{type:'pie',radius:['52%','76%'],center:['40%','52%'],avoidLabelOverlap:true,
       itemStyle:{borderColor:'var(--card)',borderWidth:2},
@@ -4076,7 +4077,7 @@ function _khXuong(SH,PJ,QCM,ms,shops,byShop){
   });
   var pjs=Object.keys(PJ).sort(function(a,b){return PJ[b].t-PJ[a].t;});
   var h='<thead><tr><th rowspan="2" style="vertical-align:bottom">Dự án</th>'+
-    xs.map(function(x){return '<th colspan="3" class="n" style="text-align:center;border-left:1px solid var(--line);cursor:pointer" onclick="khShopDrill(\''+x.replace(/'/g,"\\'")+'\')" title="Bấm để xem điều phối QC xưởng '+x+'"><span style="color:var(--acc)">'+x+'</span></th>';}).join('')+
+    xs.map(function(x){return '<th colspan="3" class="n" style="text-align:center;border-left:1px solid var(--line);cursor:pointer" data-x="'+esc2(x)+'" onclick="khShopDrill(this.getAttribute(\'data-x\'))" title="Bấm để xem điều phối QC xưởng '+esc2(x)+'"><span style="color:var(--acc)">'+esc2(x)+'</span></th>';}).join('')+
     '<th colspan="3" class="n" style="text-align:center;border-left:2px solid var(--ink)">TỔNG</th></tr><tr>'+
     xs.map(function(){return '<th class="n" style="border-left:1px solid var(--line);font-size:11px">PB</th>'+
       '<th class="n" style="font-size:11px">SX</th><th class="n" style="font-size:11px;color:var(--bad)">CÒN</th>';}).join('')+
@@ -4084,7 +4085,7 @@ function _khXuong(SH,PJ,QCM,ms,shops,byShop){
     '<th class="n" style="font-size:11px;color:var(--bad)">CÒN</th></tr></thead><tbody>';
   var mx=0; pjs.forEach(function(p){ xs.forEach(function(x){ var o=M[p+'|'+x]; if(o&&o.pb>mx)mx=o.pb; }); });
   pjs.slice(0,60).forEach(function(p){
-    h+='<tr class="clickable" style="cursor:pointer" onclick="khDrill(this.getAttribute(\'data-p\'))" data-p="'+p.replace(/"/g,'&quot;')+'"><td class="pjn" title="'+p.replace(/"/g,'&quot;')+'">'+(p.length>38?p.slice(0,37)+'…':p)+'</td>'+
+    h+='<tr class="clickable" style="cursor:pointer" onclick="khDrill(this.getAttribute(\'data-p\'))" data-p="'+esc2(p)+'"><td class="pjn" title="'+esc2(p)+'">'+esc2(p.length>38?p.slice(0,37)+'…':p)+'</td>'+
       xs.map(function(x){
         var o=M[p+'|'+x];
         if(!o||(!o.pb&&!o.sx))return '<td class="n muted" style="border-left:1px solid var(--line)">·</td><td class="n muted">·</td><td class="n muted">·</td>';
@@ -4234,7 +4235,7 @@ function khDrill(p){
     var cl=Math.max(o.t-o.fit,0), cn=Math.max(T(o.t)-q.f,0);
     var pc=o.t>0?Math.round(q.f/T(o.t)*1000)/10:0;
     var nz=function(v,st){return v>0?'<td class="n"'+(st||'')+'>'+fm1(v)+'</td>':'<td class="n muted">·</td>';};
-    h+='<tr><td><b>'+x+'</b></td><td class="n"><b>'+fm1(T(o.t))+'</b></td><td class="n">'+fm1(T(o.fit))+'</td>'+
+    h+='<tr><td><b>'+esc2(x)+'</b></td><td class="n"><b>'+fm1(T(o.t))+'</b></td><td class="n">'+fm1(T(o.fit))+'</td>'+
       '<td class="n" style="color:'+(cl>0?'var(--bad)':'var(--mut)')+';font-weight:700">'+(cl>0?fm1(T(cl)):'·')+'</td>'+
       nz(q.f,' style="border-left:2px solid var(--ink);color:var(--f);font-weight:700"')+
       nz(q.w,' style="color:var(--w);font-weight:700"')+
@@ -4299,13 +4300,13 @@ function khDrill(p){
     var q=I[k], op=!!_khOpenI[k];
     h2+='<tr class="clickable" style="cursor:pointer;background:var(--rowH)" onclick="khItemTog('+ii+')">'+
       '<td class="pjn"><span style="color:var(--acc);font-weight:800;margin-right:6px">'+(op?'▾':'▸')+'</span><b title="'+esc2(k)+'">'+esc2(k.length>42?k.slice(0,41)+'…':k)+'</b></td>'+
-      '<td>'+Object.keys(q.x).sort().map(function(v){return '<span class="tag b" style="margin-right:3px">'+v+'</span>';}).join(' ')+'</td>'+
+      '<td>'+Object.keys(q.x).sort().map(function(v){return '<span class="tag b" style="margin-right:3px">'+esc2(v)+'</span>';}).join(' ')+'</td>'+
       cell6(q,qz(k))+'</tr>';
     if(op){
       Object.keys(q.bx).sort(function(a,b){return q.bx[b].t-q.bx[a].t;}).forEach(function(x){
         var b=q.bx[x], kx=k+'||'+x, op2=!!_khOpenI[kx];
         h2+='<tr class="clickable" style="cursor:pointer" onclick="khItemTog2('+ii+',\''+x.replace(/'/g,"\\'")+'\')">'+
-          '<td style="padding-left:30px"><span style="color:var(--acc);font-weight:800;margin-right:6px">'+(op2?'▾':'▸')+'</span><span class="tag b">'+x+'</span></td>'+
+          '<td style="padding-left:30px"><span style="color:var(--acc);font-weight:800;margin-right:6px">'+(op2?'▾':'▸')+'</span><span class="tag b">'+esc2(x)+'</span></td>'+
           '<td class="muted" style="font-size:11.5px">'+Object.keys(b.parts).length+' loại cấu kiện</td>'+
           cell6(b,qz(k,x))+'</tr>';
         if(op2){
@@ -4423,8 +4424,8 @@ function _khShopMng(){
     else if(rate>=15){ warn='Tồn chờ NT '+Math.round(rate)+'% — theo dõi'; wc='b-warn'; }
     else if(men>0 && per>avgPer*1.5 && avgPer>0){ warn='Tải/QC cao ('+fm1(per)+' t/người)'; wc='b-warn'; }
     else if(men>0){ warn='Bình thường'; wc='b-soon'; }
-    h+='<tr class="clickable" style="cursor:pointer" onclick="khShopDrill(this.getAttribute(\'data-x\'))" data-x="'+x+'">'+
-      '<td><b style="color:var(--acc)">'+x+'</b></td>'+
+    h+='<tr class="clickable" style="cursor:pointer" onclick="khShopDrill(this.getAttribute(\'data-x\'))" data-x="'+esc2(x)+'">'+
+      '<td><b style="color:var(--acc)">'+esc2(x)+'</b></td>'+
       '<td class="n"><b>'+npj+'</b></td><td class="n">'+nim+'</td>'+
       '<td class="n"><b>'+fm1(T(o.t))+'</b></td><td class="n">'+fm1(T(o.fit))+'</td>'+
       '<td class="n" style="color:'+(cl>0?'var(--bad)':'var(--mut)')+';font-weight:700">'+fm1(T(cl))+'</td>'+

@@ -48,7 +48,7 @@ Toàn bộ là trang tĩnh; **không có backend riêng, không có đăng nhậ
 | `ddc_data.js` / `khsx_data.js` / `ncr_data.js` / `aop_data.js` | dữ liệu tĩnh dự phòng | 20/09 → 11/08 |
 | `apiurl.js` | `window.QC_ASSIGN_API` = URL Web App phân công QC | 11/08/2026 |
 | `spm_flatten.py` | bộ chuyển SPM Pivot → qcdata.js | 13/09/2026 |
-| `.github/workflows/capnhat.yml` | tự sinh qcdata.js khi upload `Update spm/spm.xlsx` — **chưa từng chạy** | 11/08/2026 |
+| `.github/workflows/capnhat.yml` | **ĐÃ TẮT 29/09** (`if: false`) — trước đây tự sinh qcdata.js, chưa từng chạy; bật lại sẽ đẩy dữ liệu CHƯA KHOÁ | 29/09/2026 |
 | **`app.html`** | **APP TRA CỨU riêng biệt** (mới 28/09) — tra 1 mã / tra danh sách / import Excel / xuất Excel / duyệt bản vẽ / tổng quan. Chỉ đọc gviz. | 28/09/2026 |
 | **`ddc_core.js`** | Bộ đọc bảng gốc dùng chung — tách **nguyên văn** từ `doc.html`. | 28/09/2026 |
 | `dangnhap.html` / `qc_khoa.js` / `khoa_qcdata.py` | **Đăng nhập** (29/09): PC mã hoá `qcdata.js`; trình duyệt giải mã. Chưa khoá thì không làm gì. Xem `HUONG_DAN_DANG_NHAP.md` | 29/09/2026 |
@@ -126,7 +126,7 @@ Do not invent missing business rules.
 - **Hệ 3 — đăng nhập:** trang mới đọc `qcdata.js` phải đặt `<script src="qc_khoa.js">` NGAY SAU nó.
   Đổi định dạng mã hoá thì sửa ĐỒNG THỜI `khoa_qcdata.py` + `dangnhap.html`. Không dùng `window.stop()` trong chốt chặn.
 - **Hệ 3:** đừng thêm chỗ nào nhét dữ liệu Sheet vào `innerHTML` mà không escape —
-  đã có 3 chỗ hở (xem `SECURITY_MODEL.md` §S3).
+  3 chỗ hở cũ đã vá 29/09 (NCR, ảnh Section, KHSX) — dùng `esc2()`/`_dhEsc()` sẵn có (xem `SECURITY_MODEL.md` §S3).
 
 ## 4. UI RULES
 - Avoid purple.

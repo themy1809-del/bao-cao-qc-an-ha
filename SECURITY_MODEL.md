@@ -159,7 +159,7 @@ Dữ liệu từ Sheet (ai sửa được Sheet thì chèn được mã) đi th�
 |---|---|
 | `qc.html` `renderNCR` (danh sách NCR live) | **ĐÃ SỬA 29/09** — escape qua `ES()` cho mọi trường từ Sheet `1DqerGEB…` |
 | `qc.html` `secGalRender()` | **ĐÃ SỬA 29/09** — `_sgE()` escape mọi trường; `_sgImg()` chỉ nhận ảnh `data:image`/`https`/đường dẫn tương đối (chặn `javascript:`); dấu nháy trong tên tổ không còn phá `onclick`. Thử cài mã độc: không chạy. *(Ghi chú: thẻ `secGalCard` hiện không có trong HTML nên khối này đang không hiển thị.)* |
-| `qc.html` `_khPjBuild` / các bảng KHSX | **CÒN MỞ** ở 5 tab con cũ (nhiều trường lấy từ Sheet KHSX). Tab con mới "Bảng điều khiển" (khối `kh2909`) đã escape |
+| `qc.html` `_khPjBuild` / các bảng KHSX | **ĐÃ SỬA 29/09** — 25 chỗ trong 5 tab con cũ qua `esc2()`; tiêu đề cột xưởng dùng `data-x` thay vì ghép chuỗi vào `onclick`. Thử cài mã độc vào sheet: bản cũ chạy 45 lần, bản mới 0 |
 
 (Ngược lại, khối Document Control **có** escape qua `_dcEsc()`, và bảng dữ liệu chi tiết `rDL()`
 **có** escape memo — nên rủi ro tập trung ở 3 chỗ trên.)
