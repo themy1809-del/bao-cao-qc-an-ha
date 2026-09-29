@@ -707,9 +707,9 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
         <div class="kpis" id="khTqKpis" style="margin:10px 0 0"></div>
         <div class="cg-lbl" style="margin:16px 0 6px">Tiến độ chung (bình quân gia quyền 6 công đoạn)</div>
         <div id="khEvm"></div>
-        <div class="cg-lbl" style="margin:18px 0 4px">Tiến độ theo công đoạn — <span style="color:var(--good)">xanh: đã xong</span> · <span style="color:var(--bad)">đỏ: còn lại</span></div>
+        <div class="cg-lbl" style="margin:18px 0 4px">Tiến độ theo công đoạn — <span style="color:var(--good)">xanh: đã xong</span> · <span style="color:var(--mut)">xám: còn lại</span></div>
         <div id="cKhStage" class="ch" style="height:260px;margin:0"></div>
-        <div class="cg-lbl" style="margin:18px 0 4px">Phân bổ theo xưởng — <span style="color:var(--good)">đã ráp HT</span> · <span style="color:var(--bad)">còn lại</span> (ghi kèm số tấn)</div>
+        <div class="cg-lbl" style="margin:18px 0 4px">Phân bổ theo xưởng — <span style="color:var(--good)">đã ráp HT</span> · <span style="color:var(--mut)">xám: còn lại</span> (ghi kèm số tấn)</div>
         <div id="cKhShopTq" class="ch" style="height:300px;margin:0"></div>
         <div class="cg-lbl" style="margin:16px 0 4px">Tiến độ theo dự án — 15 dự án khối lượng lớn nhất</div>
         <div id="khPjMode" style="margin:0 0 8px"></div>
@@ -3809,7 +3809,7 @@ function _khXh(){
   var top=L.slice(0,15).reverse();
   setOpt('cKhXh',{tooltip:Object.assign({},TT),legend:{top:0},grid:{left:8,right:56,top:30,bottom:8,containLabel:true},
     xAxis:{type:'value',name:'tấn'},
-    yAxis:{type:'category',data:top.map(function(o){return o.p.length>30?o.p.slice(0,29)+'…':o.p;}),axisLabel:{fontSize:10.5,fontWeight:700}},
+    yAxis:{type:'category',data:top.map(function(o){return o.p;}),axisLabel:{fontSize:10.5,fontWeight:700,width:250,overflow:'truncate'}},
     series:[
       {name:'KH xuất',type:'bar',barMaxWidth:16,itemStyle:{color:'#C8D0D8',borderRadius:[0,3,3,0]},data:top.map(function(o){return o.kh||0;})},
       {name:'Thực tế xuất',type:'bar',barMaxWidth:16,itemStyle:{color:grad('#34D399','#15803D'),borderRadius:[0,3,3,0]},
@@ -3980,7 +3980,7 @@ function _khTq(){
           '<br>Đã giao (sheet) '+fm1(T(p.dl))+' t';}},
     legend:{top:0},grid:{left:8,right:56,top:30,bottom:4,containLabel:true},
     xAxis:{type:'value',name:'tấn'},
-    yAxis:{type:'category',data:pk.map(function(s){return s.replace(/^[0-9A-Z.\-]+ /,'').slice(0,26);}),axisLabel:{fontSize:10.5,fontWeight:700}},
+    yAxis:{type:'category',data:pk.map(function(s){return s.replace(/^[0-9A-Z.\-]+ /,'');}),axisLabel:{fontSize:10.5,fontWeight:700,width:250,overflow:'truncate'}},
     series:[
       {name:MM[pm][0],type:'bar',stack:'p',barMaxWidth:16,itemStyle:{color:grad('#34D399','#15803D')},
        label:{show:true,position:'inside',fontSize:9.5,fontWeight:800,color:'#fff',
@@ -6588,7 +6588,7 @@ function draw(){
   var lateP=Object.keys(A.PJ).filter(function(k){return A.PJ[k].late>0.05;}).length;
   var h='<div class="card"><div class="bdHead"><div><h3>Bảng điều khiển kế hoạch sản xuất</h3>'
     +'<div class="q">Nguồn: sheet <b>TỔNG HỢP BÁO CÁO DDC AN HẠ</b> (đọc trực tiếp) · '+_khLive.n.toLocaleString('vi-VN')+' dòng cấu kiện · '+nPj+' dự án · '+nX+' xưởng · khối lượng lũy kế, đơn vị <b>tấn</b></div></div>'
-    +'<button class="qf" data-reload="1">↻ Đọc lại sheet</button></div>'
+    +'</div>'
     +'<div class="bdTiles">'
     +tile('Khối lượng phân bổ',fm1(T(A.tot)),'t',nPj+' dự án · '+nX+' xưởng','#64748B')
     +tile('Tiến độ chung',P1(evm),'%','bình quân gia quyền 6 công đoạn','#2563EB','#2563EB')
@@ -6639,6 +6639,120 @@ _khSubRender=function(){
 };
 if(typeof _khDone==='function'){var _d0=_khDone;_khDone=function(){_d0.apply(this,arguments);if(_khSub==='bd'){try{draw();}catch(e){console.error('KHSX/bd',e);}}};}
 if(typeof _khFail==='function'){var _f0=_khFail;_khFail=function(){_f0.apply(this,arguments);if(_khSub==='bd'){try{draw();}catch(e){}}};}
+try{if(typeof CUR!=='undefined'&&CUR==='kh'&&typeof render==='function')render('kh');}catch(e){}
+})();
+</script>
+<!-- ============================================================
+   29/09 — kh2909b: KHUNG CHUYÊN NGHIỆP CHO TAB KHSX
+   - Đầu tab: tiêu đề + trạng thái dữ liệu live + đọc lại + mở sheet; thanh tab con có mô tả
+   - Thanh "Số liệu QC lấy theo" gọn 1 dòng, chỉ hiện ở tab con có dùng SPM
+   - Màu: phần "Còn lại" đổi đỏ -> xám trung tính (việc chưa làm không phải lỗi)
+   - Biểu đồ 2 trục tung trong KHSX -> tự tách 2 khung xếp dọc, chung trục ngang
+   Không đổi cách tính; chỉ đổi cách trình bày (bọc setOpt cho các biểu đồ id bắt đầu 'cKh').
+   ============================================================ -->
+<style id="kh2909b">
+#v_kh>.card:first-child{padding:0!important;overflow:hidden}
+.khHdr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;padding:14px 18px 12px;border-bottom:1px solid var(--line)}
+.khHdr h3{margin:0;font-size:15px}
+.khHdr .sub{font-size:11.5px;color:var(--mut);margin-top:3px}
+.khLive{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--rowH)}
+.khLive i{width:8px;height:8px;border-radius:50%;background:#94A3B8;display:inline-block}
+.khLive.ok i{background:#16A34A;box-shadow:0 0 0 3px rgba(22,163,74,.18)}
+.khLive.bad{color:var(--bad)} .khLive.bad i{background:#C0392B}
+.khLive.busy i{background:#D97706;animation:pulseDot 1.2s infinite}
+.khAct{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.khAct a,.khAct button{font:inherit;font-size:11.5px;font-weight:700;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:9px;padding:6px 11px;cursor:pointer;text-decoration:none}
+.khAct a:hover,.khAct button:hover{border-color:var(--acc);color:var(--acc)}
+#khSubBar{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;border-bottom:1px solid var(--line)}
+.khTab{background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px 9px;text-align:left;cursor:pointer;font-family:inherit;color:var(--ink);min-width:0}
+.khTab:hover{background:var(--rowH)}
+.khTab b{display:block;font-size:12.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.khTab small{display:block;font-size:10.5px;color:var(--mut);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.khTab .no{font-size:10px;font-weight:800;color:var(--mut);letter-spacing:.08em;margin-right:5px}
+.khTab.on{border-bottom-color:var(--acc);background:linear-gradient(180deg,transparent,rgba(226,35,26,.05))}
+.khTab.on .no,.khTab.on b{color:var(--acc)}
+#khScopeBar{margin:0!important;border:0!important;padding:9px 18px!important;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:11.5px;color:var(--mut)}
+#khScopeBar .seg2{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+#khScopeBar .seg2 button{border:0;background:var(--card);font:inherit;font-size:11px;font-weight:700;padding:5px 10px;cursor:pointer;color:var(--mut)}
+#khScopeBar .seg2 button.on{background:var(--ink);color:var(--card)}
+#khScopeBar .pill{font-weight:800;font-size:10.5px;padding:2px 8px;border-radius:999px;background:rgba(217,119,6,.14);color:#B45309;cursor:help}
+@media(max-width:900px){#khSubBar{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:520px){#khSubBar{grid-template-columns:repeat(2,minmax(0,1fr))}.khHdr{padding:12px 12px 10px}#khScopeBar{padding:8px 12px!important}}
+</style>
+<script>
+(function(){
+if(typeof KH_SUBS==='undefined'||typeof _khSubRender!=='function')return;
+var ES=function(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+/* tên + mô tả từng tab con (khoá = mã sẵn có của KH_SUBS) */
+var INFO={bd:['Bảng điều khiển','nhìn 1 trang'],tq:['Tiến độ','công đoạn · xưởng · dự án'],xuong:['Theo xưởng','điều phối QC · ma trận'],
+  duan:['Theo dự án','phân bổ · chi tiết từng dự án'],thang:['Kế hoạch tháng','phân bổ · định biên'],doi:['Đối chiếu','kế hoạch ↔ thực tế']};
+var USE_QC={tq:1,xuong:1,duan:1,doi:1};
+var tRead=null;
+function liveChip(){
+  if(_khLiveBusy)return '<span class="khLive busy"><i></i>Đang đọc sheet…</span>';
+  if(_khLive)return '<span class="khLive ok" title="Sheet TỔNG HỢP BÁO CÁO DDC AN HẠ"><i></i>Dữ liệu live · '+_khLive.n.toLocaleString('vi-VN')+' dòng'+(tRead?' · đọc lúc '+tRead:'')+'</span>';
+  var st=document.getElementById('khLiveSt'),t=st?st.textContent:'';
+  if(/Không đọc được/.test(t))return '<span class="khLive bad" title="'+ES(t)+'"><i></i>Không đọc được sheet</span>';
+  return '<span class="khLive"><i></i>Chưa đọc sheet</span>';
+}
+function head(){
+  var card=document.querySelector('#v_kh>.card');if(!card)return;
+  var h=document.getElementById('khHdr');
+  if(!h){h=document.createElement('div');h.id='khHdr';h.className='khHdr';card.insertBefore(h,card.firstChild);}
+  h.innerHTML='<div><h3>Kế hoạch sản xuất · Nhà máy An Hạ</h3><div class="sub">Khối lượng phân bổ, tiến độ công đoạn và mốc ngày — đọc trực tiếp từ sheet TỔNG HỢP BÁO CÁO DDC AN HẠ · đơn vị tấn</div></div>'
+    +'<div class="khAct">'+liveChip()+'<button type="button" onclick="khLiveLoad(true);setTimeout(function(){try{_khSubRender();}catch(e){}},60)">↻ Đọc lại</button>'
+    +'<a href="https://docs.google.com/spreadsheets/d/'+KH_SHEET+'/edit" target="_blank" rel="noopener">Mở sheet ↗</a></div>';
+}
+function nav(){
+  var bar=document.getElementById('khSubBar');if(!bar)return;
+  bar.innerHTML=KH_SUBS.map(function(s,i){var inf=INFO[s[0]]||[s[1],''];
+    return '<button type="button" class="khTab'+(s[0]===_khSub?' on':'')+'" onclick="khSub(\''+s[0]+'\')"><b><span class="no">'+('0'+(i+1)).slice(-2)+'</span>'+ES(inf[0])+'</b><small>'+ES(inf[1])+'</small></button>';}).join('');
+}
+function scope(){
+  var el=document.getElementById('khScopeBar');if(!el)return;
+  if(!USE_QC[_khSub]){el.style.display='none';return;}
+  el.style.display='';
+  var nAll=D.rows.length,nF=nAll;try{nF=F().length;}catch(e){}
+  var ky='';try{ky=(DR.from||DR.to)?((DR.from||'…')+' → '+(DR.to||'nay')):'không giới hạn ngày';}catch(e){}
+  var lech=(_khScope==='all'&&nF!==nAll);
+  el.innerHTML='<span>Số liệu QC (SPM) trong tab này:</span>'
+    +'<span class="seg2"><button type="button" class="'+(_khScope==='all'?'on':'')+'" onclick="khScope(\'all\')">Lũy kế toàn bộ</button><button type="button" class="'+(_khScope==='filter'?'on':'')+'" onclick="khScope(\'filter\')">Theo bộ lọc đầu trang</button></span>'
+    +'<span>· bộ lọc: '+ES(ky)+' · '+nF.toLocaleString('vi-VN')+'/'+nAll.toLocaleString('vi-VN')+' dòng</span>'
+    +(lech?'<span class="pill" title="Tab 01–09 đang theo bộ lọc đầu trang, tab này đang cộng lũy kế nên số QC sẽ khác. Chọn &quot;Theo bộ lọc đầu trang&quot; để hai bên khớp.">≠ tab 01–09</span>':'')
+    +'<span style="flex-basis:100%;height:0"></span><span>Khối lượng phân bổ &amp; công đoạn luôn là lũy kế của dự án (sheet không có chiều ngày).</span>';
+}
+var _sr=_khSubRender;
+_khSubRender=function(){_sr.apply(this,arguments);try{head();nav();scope();}catch(e){console.error('KHSX/khung',e);}};
+if(typeof _khDone==='function'){var _d=_khDone;_khDone=function(){tRead=new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});_d.apply(this,arguments);try{head();}catch(e){}};}
+if(typeof _khFail==='function'){var _f=_khFail;_khFail=function(){_f.apply(this,arguments);try{head();}catch(e){}};}
+
+/* Màu + tách biểu đồ 2 trục — chỉ cho biểu đồ của KHSX */
+if(typeof setOpt==='function'){var _so=setOpt;
+  setOpt=function(id,opt,onClick){
+    try{ if(/^cKh/.test(String(id))&&opt){
+      var dk=document.documentElement.dataset.theme==='dark';
+      (opt.series||[]).forEach(function(se){
+        if(se&&se.name==='Còn lại'&&se.itemStyle&&String(se.itemStyle.color).toUpperCase()==='#EF6B63'){
+          se.itemStyle.color=dk?'#475569':'#CBD5E1';
+          if(se.label)se.label.color=dk?'#e6ece8':'#334155';}
+      });
+      var ya=opt.yAxis, sr=opt.series||[];
+      if(Array.isArray(ya)&&ya.length===2&&sr.some(function(x){return x&&x.yAxisIndex===1;})&&opt.xAxis&&!Array.isArray(opt.xAxis)){
+        var g=opt.grid||{}, L=g.left!=null?g.left:8, R=12;
+        var xa=opt.xAxis, x0=Object.assign({},xa,{gridIndex:0,axisLabel:Object.assign({},xa.axisLabel||{},{show:false}),axisTick:{show:false}}), x1=Object.assign({},xa,{gridIndex:1});
+        var top=(g.top!=null?g.top:30);
+        opt.grid=[{left:L,right:R,top:top,height:'40%',containLabel:true},{left:L,right:R,top:'64%',bottom:g.bottom!=null?g.bottom:8,containLabel:true}];
+        opt.xAxis=[x0,x1];
+        opt.yAxis=[Object.assign({},ya[0],{gridIndex:0}),Object.assign({},ya[1],{gridIndex:1,splitLine:{lineStyle:{opacity:.4}}})];
+        sr.forEach(function(x){if(!x)return;var i=x.yAxisIndex===1?1:0;x.xAxisIndex=i;x.yAxisIndex=i;
+          if(x.markLine){x.markLine.label=Object.assign({},x.markLine.label||{},{position:'insideEndTop',fontSize:10,formatter:function(q){return q.value+(i===1&&/%/.test(String((ya[1]||{}).name||''))?'%':'');}});}});
+        opt.axisPointer=Object.assign({},opt.axisPointer||{},{link:[{xAxisIndex:'all'}]});
+        var el=document.getElementById(id);if(el&&el.offsetHeight&&el.offsetHeight<380)el.style.height='380px';
+      }
+    }}catch(e){console.error('KHSX/setOpt',e);}
+    return _so.apply(this,arguments);
+  };
+}
 try{if(typeof CUR!=='undefined'&&CUR==='kh'&&typeof render==='function')render('kh');}catch(e){}
 })();
 </script>

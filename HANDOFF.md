@@ -45,6 +45,9 @@ Current deployment / environment:
   20 dự án kèm mốc gần nhất (bấm dòng → `khDrill`). Chỉ trình bày lại `_khLive` bằng đúng công thức `_khTq`/`_khLiveDraw`.
   5 tab con cũ giữ nguyên. Đối chiếu trên dữ liệu mẫu đúng cấu trúc sheet: quá hạn, đến hạn 7 ngày, tiến độ chung,
   phân bổ, ráp HT — khớp tab cũ. **Chưa chạy với sheet thật** (máy phát triển bị chặn Google).
+- **Tab KHSX — khung chuyên nghiệp** (khối `kh2909b`): đầu tab có trạng thái dữ liệu live + Đọc lại + Mở sheet;
+  thanh 6 tab con có mô tả; thanh "Số liệu QC lấy theo" gọn 1 dòng (chỉ ở tab con dùng SPM); phần "Còn lại" đỏ → xám;
+  biểu đồ 2 trục tung trong KHSX tự tách 2 khung (bọc `setOpt` cho id `cKh*`); tên dự án không còn cắt cứng 26 ký tự.
 - **Đăng nhập** (user cho phép 29/09): đã gắn vào `qc.html` + `kiem_tra_waiting.html`, đã lên `main`, **chưa bật** —
   tự bật khi PC đẩy `qcdata.js` đã khoá bằng `khoa_qcdata.py`. 18/18 kịch bản kiểm thử đạt. Hướng dẫn: `HUONG_DAN_DANG_NHAP.md`.
 
