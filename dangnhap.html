@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Đăng nhập — Báo cáo QC An Hạ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!-- Trang đăng nhập cho qcdata.js ĐÃ KHOÁ (khoa_qcdata.py).
+     Mật khẩu KHÔNG gửi đi đâu: trình duyệt tự dẫn xuất khoá (PBKDF2) và giải mã (AES-GCM) tại chỗ.
+     Định dạng phải khớp khoa_qcdata.py (fmt "qcenc-1"). -->
+<style>
+:root{--acc:#E2231A;--bg:#f4f5f7;--card:#fff;--ink:#1a1d21;--mut:#6b7280;--line:#e5e8ec;--bad:#c0392b;--good:#15803d;--field:#fff}
+:root[data-theme=dark]{--acc:#f0473e;--bg:#0c1310;--card:#161f1a;--ink:#e6ece8;--mut:#8ba093;--line:#27352d;--bad:#ef7b7b;--good:#3ecf94;--field:#0f1713}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+.box{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 2px 4px rgba(16,24,40,.05),0 18px 40px rgba(16,24,40,.12);overflow:hidden}
+.band{height:6px;background:linear-gradient(90deg,#E2231A,#BD160E)}
+.in{padding:26px 26px 22px}
+.brand{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--acc)}
+h1{font-size:20px;font-weight:800;letter-spacing:-.02em;margin-top:6px}
+.lead{font-size:13px;color:var(--mut);margin-top:4px;line-height:1.5}
+label{display:block;font-size:11.5px;font-weight:700;color:var(--mut);margin:16px 0 6px;letter-spacing:.02em}
+.f{position:relative}
+input[type=text],input[type=password]{width:100%;font:inherit;font-size:15px;color:var(--ink);background:var(--field);border:1.5px solid var(--line);border-radius:11px;padding:11px 13px;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(226,35,26,.14)}
+.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--mut);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:6px 8px;border-radius:8px}
+.eye:hover{color:var(--acc)}
+.rem{display:flex;gap:9px;align-items:flex-start;margin-top:14px;font-size:12.5px;line-height:1.45;color:var(--ink);cursor:pointer}
+.rem input{margin-top:2px;accent-color:var(--acc);width:16px;height:16px;flex-shrink:0}
+.rem span small{display:block;color:var(--mut);font-size:11.5px}
+button.go{width:100%;margin-top:18px;background:var(--acc);color:#fff;border:0;border-radius:11px;padding:13px;font:inherit;font-size:15px;font-weight:800;cursor:pointer;transition:filter .15s}
+button.go:hover{filter:brightness(1.06)}
+button.go:disabled{opacity:.6;cursor:wait}
+#msg{min-height:20px;margin-top:12px;font-size:13px;font-weight:600;line-height:1.45}
+#msg.bad{color:var(--bad)} #msg.ok{color:var(--good)} #msg.nt{color:var(--mut)}
+.foot{border-top:1px solid var(--line);padding:13px 26px;font-size:11.5px;color:var(--mut);line-height:1.5}
+</style>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('qcSpmTheme_v2');}catch(e){}
+  if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
+  document.documentElement.dataset.theme=t;})();
+</script>
+</head>
+<body>
+<main class="box">
+  <div class="band"></div>
+  <div class="in">
+    <div class="brand">DDC · AN HẠ</div>
+    <h1>Báo cáo QC — Nhà máy An Hạ</h1>
+    <p class="lead">Số liệu nội bộ đã được mã hoá. Đăng nhập để xem.</p>
+    <form id="frm" autocomplete="on">
+      <label for="u">Tên đăng nhập</label>
+      <input type="text" id="u" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      <label for="p">Mật khẩu</label>
+      <div class="f"><input type="password" id="p" name="password" autocomplete="current-password" required>
+        <button type="button" class="eye" id="eye" aria-label="Hiện mật khẩu">Hiện</button></div>
+      <label class="rem"><input type="checkbox" id="rem"><span>Ghi nhớ trên máy này 30 ngày
+        <small>Không bật trên máy dùng chung.</small></span></label>
+      <button class="go" id="go" type="submit">Đăng nhập</button>
+      <div id="msg" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+  <div class="foot">Quên mật khẩu hoặc chưa có tài khoản: liên hệ quản lý QC nhà máy An Hạ.</div>
+</main>
+<script src="qcdata.js"></script>
+<script>
+(function(){
+var E=window.QCDATA_ENC, NHO='qcNho_v1', NGAY=30;
+var msg=document.getElementById('msg'), go=document.getElementById('go');
+function say(t,c){msg.textContent=t;msg.className=c||'';}
+function nextUrl(){var m=location.search.match(/[?&]next=([^&]*)/),n='qc.html';
+  try{if(m)n=decodeURIComponent(m[1]);}catch(e){}
+  return /^[a-z0-9_]+\.html([?#][^]*)?$/i.test(n)?n:'qc.html';}
+var NEXT=nextUrl(), OUT=/[?&]out=1/.test(location.search);
+
+/* qcdata.js chưa khoá -> không cần đăng nhập */
+if(!E){ if(window.QCDATA&&window.QCDATA.rows){location.replace(NEXT);return;}
+  say('Không tải được dữ liệu. Kiểm tra mạng rồi tải lại trang.','bad');go.disabled=true;return; }
+if(!(window.crypto&&crypto.subtle)||typeof DecompressionStream==='undefined'){
+  say('Trình duyệt quá cũ, không giải mã được. Hãy cập nhật Chrome, Edge hoặc Safari.','bad');go.disabled=true;return; }
+
+var enc=new TextEncoder(), dec=new TextDecoder();
+function b64d(s){var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a;}
+function b64e(u){var s='';u=new Uint8Array(u);for(var i=0;i<u.length;i++)s+=String.fromCharCode(u[i]);return btoa(s);}
+async function idOf(ten){var h=await crypto.subtle.digest('SHA-256',enc.encode('qc-an-ha|'+ten.trim().toLowerCase()));
+  return Array.from(new Uint8Array(h)).map(function(x){return('0'+x.toString(16)).slice(-2);}).join('');}
+async function kekOf(pw,salt){var k=await crypto.subtle.importKey('raw',enc.encode(pw.normalize('NFC')),'PBKDF2',false,['deriveBits']);
+  return new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:salt,iterations:E.iter},k,256));}
+async function aes(raw,iv,ct){var k=await crypto.subtle.importKey('raw',raw,'AES-GCM',false,['decrypt']);
+  return crypto.subtle.decrypt({name:'AES-GCM',iv:iv},k,ct);}
+async function gunzip(buf){return new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).text();}
+
+/* Mở khoá bằng khoá riêng (kek) của 1 người -> giải mã dữ liệu -> lưu cho các trang dashboard */
+async function mo(id,kek,moi){
+  var u=null;for(var i=0;i<E.users.length;i++)if(E.users[i].id===id){u=E.users[i];break;}
+  if(!u)throw new Error('sai');
+  var goi=JSON.parse(dec.decode(await aes(kek,b64d(u.iv),b64d(u.w))));
+  var txt=await gunzip(await aes(b64d(goi.k),b64d(E.iv),b64d(E.ct)));
+  var o=JSON.parse(txt);if(!o||!o.rows||!o.rows.length)throw new Error('du lieu rong');
+  var luu=false;
+  try{sessionStorage.setItem('qcPlain',txt);sessionStorage.setItem('qcPlainV',E.v);luu=true;}catch(e){
+    try{sessionStorage.removeItem('qcPlain');sessionStorage.removeItem('qcPlainV');}catch(e2){}}
+  if(!luu)window.name='QCPLAIN1|'+E.v+'|'+txt;   /* dự phòng khi bộ nhớ phiên đầy */
+  try{sessionStorage.setItem('qcUser',JSON.stringify({ten:goi.ten,vai:goi.vai,u:goi.u}));
+      sessionStorage.setItem('qcKek',JSON.stringify({id:id,k:b64e(kek)}));}catch(e){}
+  /* Đăng nhập tay -> mở trang theo vai trò của người đó (link có ?vai= thì link thắng) */
+  if(moi&&goi.vai&&!/[?&]vai=/.test(NEXT)){try{localStorage.setItem('qcVaiTro_v1',goi.vai);}catch(e){}}
+  return goi;
+}
+
+/* 1) Đã đăng nhập trong tab này, hoặc đã "ghi nhớ" -> mở khoá lặng lẽ (vd. khi có dữ liệu mới) */
+(async function(){
+  if(OUT){say('Đã đăng xuất.','nt');document.getElementById('u').focus();return;}
+  var c=null;
+  try{c=JSON.parse(sessionStorage.getItem('qcKek')||'null');}catch(e){}
+  if(!c){try{var r=JSON.parse(localStorage.getItem(NHO)||'null');if(r&&r.exp>Date.now())c=r;else localStorage.removeItem(NHO);}catch(e){}}
+  if(c&&c.id&&c.k){
+    say('Đang mở khoá…','nt');go.disabled=true;
+    try{await mo(c.id,b64d(c.k),false);location.replace(NEXT);return;}
+    catch(e){try{sessionStorage.removeItem('qcKek');localStorage.removeItem(NHO);}catch(e2){}
+      say('Phiên cũ không còn hiệu lực (danh sách người dùng đã đổi). Đăng nhập lại.','nt');}
+    go.disabled=false;
+  }
+  document.getElementById('u').focus();
+})();
+
+/* 2) Đăng nhập tay */
+document.getElementById('eye').onclick=function(){var p=document.getElementById('p'),s=p.type==='password';
+  p.type=s?'text':'password';this.textContent=s?'Ẩn':'Hiện';this.setAttribute('aria-label',s?'Ẩn mật khẩu':'Hiện mật khẩu');};
+document.getElementById('frm').onsubmit=async function(ev){
+  ev.preventDefault();
+  var ten=document.getElementById('u').value, pw=document.getElementById('p').value;
+  if(!ten.trim()||!pw){say('Nhập tên đăng nhập và mật khẩu.','bad');return;}
+  go.disabled=true;say('Đang mở khoá… (vài giây trên điện thoại)','nt');
+  try{
+    var id=await idOf(ten), u=null;
+    for(var i=0;i<E.users.length;i++)if(E.users[i].id===id){u=E.users[i];break;}
+    if(!u)throw new Error('sai');
+    var kek=await kekOf(pw,b64d(u.s));
+    var goi=await mo(id,kek,true);
+    if(document.getElementById('rem').checked){
+      try{localStorage.setItem(NHO,JSON.stringify({id:id,k:b64e(kek),exp:Date.now()+NGAY*864e5}));}catch(e){}}
+    say('Xin chào '+goi.ten+' — đang mở dashboard…','ok');
+    location.replace(NEXT);
+  }catch(e){
+    await new Promise(function(r){setTimeout(r,600);});
+    say(e&&e.message==='du lieu rong'?'Mở khoá được nhưng dữ liệu rỗng — báo quản lý QC.':'Sai tên đăng nhập hoặc mật khẩu.','bad');
+    go.disabled=false;document.getElementById('p').select();
+  }
+};
+})();
+</script>
+</body>
+</html>
