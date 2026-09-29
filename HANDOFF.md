@@ -36,6 +36,20 @@ Current deployment / environment:
 
 ## 2. CURRENT TASK
 
+**MỚI 29/09 (vòng 8): nâng cấp tab Chất lượng + Bảng điều khiển KHSX** (đã lên `main`).
+- Tab 07 Chất lượng (khối `cl2909`): xu hướng FPY 12 tháng + tấn lỗi mã/rớt; lỗi mã theo tổ (dùng `fpyCalc`);
+  NCR theo tháng bỏ 2 trục tung → 2 khung; 8M vòng → thanh ngang; tên dự án đầy đủ; escape dữ liệu Sheet NCR.
+  Đối chiếu: FPY T9 99,51% = KPI; tổng lỗi mã theo tổ 54,3 t = KPI.
+- Tab 11 KHSX (khối `kh2909`): thêm tab con **"Bảng điều khiển"** làm trang mở đầu — 4 ô số (phân bổ, tiến độ chung,
+  quá hạn, đến hạn 7 ngày), dòng chảy 6 công đoạn, lịch đến hạn theo xưởng × tuần (bấm ô xem danh sách),
+  20 dự án kèm mốc gần nhất (bấm dòng → `khDrill`). Chỉ trình bày lại `_khLive` bằng đúng công thức `_khTq`/`_khLiveDraw`.
+  5 tab con cũ giữ nguyên. Đối chiếu trên dữ liệu mẫu đúng cấu trúc sheet: quá hạn, đến hạn 7 ngày, tiến độ chung,
+  phân bổ, ráp HT — khớp tab cũ. **Chưa chạy với sheet thật** (máy phát triển bị chặn Google).
+- **Đăng nhập (khoa_qcdata.py / dangnhap.html / qc_khoa.js)**: chỉ ở nhánh `claude/audit-existing-system-hjmvx9`,
+  CHƯA gắn, CHƯA lên `main` — chờ user cho phép.
+
+---
+
 **MỚI 29/09 (vòng 7): giao diện đa người dùng — "ai nhìn cũng hiểu".** Chỉ thêm lớp trình bày
 (khối `<style id="ux2909">` + script cuối `qc.html`), **không đổi cách tính số nào** — KPI 6/6 khớp,
 `QCDATA.check` không đổi, bảng tab Dự án giống từng ký tự.

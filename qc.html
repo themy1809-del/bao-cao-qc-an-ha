@@ -696,6 +696,9 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
       <div id="khScopeBar" style="margin-top:10px;border-top:1px solid var(--line);padding-top:9px"></div>
     </div>
 
+    <!-- 29/09: Bang dieu khien KHSX (khoi kh2909 cuoi file) — trang mo dau cua tab -->
+    <div class="khsub" id="khs-bd" style="display:none"><div id="khBd"></div></div>
+
     <div class="khsub" id="khs-tq">
       <div class="card">
         <h3>Tổng quan thực tế gia công</h3>
@@ -6448,6 +6451,191 @@ function toTable(){
 }
 if(typeof rCL==='function'){var _c0=rCL;rCL=function(){_c0.apply(this,arguments);try{trend();}catch(e){console.error('cl trend',e);}try{toTable();}catch(e){console.error('cl to',e);}};}
 try{if(typeof CUR!=='undefined'&&CUR==='cl'&&typeof render==='function')render('cl');}catch(e){}
+})();
+</script>
+<!-- ============================================================
+   29/09 — kh2909: BẢNG ĐIỀU KHIỂN KHSX (trang mở đầu của tab KHSX)
+   Chỉ TRÌNH BÀY lại dữ liệu live đã đọc (_khLive) bằng ĐÚNG công thức sẵn có:
+   - tiến độ công đoạn & bình quân gia quyền: như _khTq
+   - quá hạn / đến hạn 7 ngày: như _khLiveDraw (mốc 'Kết thúc …' còn khối lượng)
+   Các tab con cũ giữ nguyên. Chữ từ sheet đều escape; bấm dòng dùng data-* (không onclick nội tuyến).
+   ============================================================ -->
+<style id="kh2909">
+#khBd .bdHead{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+#khBd .bdHead .q{margin:0}
+#khBd .q{white-space:normal;overflow:visible;text-overflow:clip}
+.bdTiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:12px 0 4px}
+.bdT{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:13px 16px;position:relative;overflow:hidden}
+.bdT::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--tc,#64748B)}
+.bdT .l{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.bdT .v{font-size:clamp(22px,2.2vw,30px);font-weight:800;letter-spacing:-.02em;margin-top:3px;color:var(--tv,var(--ink))}
+.bdT .v small{font-size:13px;font-weight:700;color:var(--mut);margin-left:3px}
+.bdT .s{font-size:11.5px;color:var(--mut);margin-top:3px;line-height:1.4}
+.bdPipe{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:18px;margin-top:10px}
+.bdSt{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
+.bdSt:not(:last-child)::after{content:'›';position:absolute;right:-15px;top:50%;transform:translateY(-50%);font-size:22px;font-weight:800;color:var(--mut)}
+.bdSt .n{font-size:11.5px;font-weight:800;display:flex;align-items:center;gap:6px}
+.bdSt .n i{width:9px;height:9px;border-radius:3px;display:inline-block;flex-shrink:0}
+.bdSt .p{font-size:24px;font-weight:800;margin-top:4px;letter-spacing:-.02em}
+.bdBar{height:8px;border-radius:99px;background:var(--rowH);border:1px solid var(--line);overflow:hidden;margin-top:5px}
+.bdBar>b{display:block;height:100%;border-radius:99px}
+.bdSt .r{font-size:11px;color:var(--mut);margin-top:5px;line-height:1.4}
+.bdChips{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 10px}
+.bdHm{width:100%;border-collapse:separate;border-spacing:3px}
+.bdHm th{font-size:10.5px;font-weight:800;color:var(--mut);text-align:center;padding:4px 6px;white-space:nowrap}
+.bdHm th:first-child{text-align:left}
+.bdHm td{text-align:center;padding:9px 6px;border-radius:7px;font-weight:800;font-size:12.5px;font-variant-numeric:tabular-nums;cursor:default}
+.bdHm td.k{text-align:left;font-weight:800;background:none;padding-left:2px}
+.bdHm td.z{color:var(--mut);font-weight:600;background:var(--rowH)}
+.bdHm td.c{cursor:pointer;outline:0 solid transparent;transition:outline .1s}
+.bdHm td.c:hover,.bdHm td.c.on{outline:2px solid var(--ink)}
+.bdHm td.tt{background:none;color:var(--ink)}
+.bdLeg{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--mut);margin-top:6px;align-items:center}
+.bdLeg i{display:inline-block;width:26px;height:9px;border-radius:3px;vertical-align:-1px;margin-right:4px}
+.bdPj td{vertical-align:middle}
+.bdPj .mini{display:flex;align-items:center;gap:6px;min-width:120px}
+.bdPj .mini .bdBar{flex:1;margin:0}
+.bdPj .mini span{font-size:11px;font-weight:800;min-width:34px;text-align:right}
+.bdPj tr[data-p]{cursor:pointer}
+@media(max-width:1100px){.bdPipe{grid-template-columns:repeat(3,minmax(0,1fr))}.bdSt:nth-child(3n)::after{display:none}}
+@media(max-width:680px){.bdTiles{grid-template-columns:1fr 1fr}.bdPipe{grid-template-columns:1fr 1fr;gap:14px}.bdSt::after{display:none}}
+</style>
+<script>
+(function(){
+if(typeof KH_SUBS==='undefined'||typeof _khSubRender!=='function')return;
+KH_SUBS.unshift(['bd','Bảng điều khiển']);
+if(_khSub==='tq')_khSub='bd';
+var ES=function(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+var T=function(v){return v/1000;};
+var WN=4, stF='', cellSel='';
+var BK=['Quá hạn','Tuần này','Tuần sau','+2 tuần','+3 tuần','Sau đó'];
+var dmy=function(d){return d?('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2):'—';};
+var pct=function(a,b){return b>0?Math.round(a/b*1000)/10:0;};
+var P1=function(v){return String(v).replace('.',',');};
+function stInfo(k){for(var i=0;i<KH_ST.length;i++)if(KH_ST[i][0]===k)return KH_ST[i];return [k,k,'#64748B'];}
+
+function agg(){
+  var rec=_khLive.rec, today=new Date();today.setHours(0,0,0,0);var w0=_khMon(today);
+  var A={tot:0,n:_khLive.n,SH:{},PJ:{},ST:{},HM:{},IT:[],late:0,d7:0,lateN:0,today:today,w0:w0};
+  KH_STC.forEach(function(s){A.ST[s[0]]={dn:0,base:0};});
+  rec.forEach(function(r){
+    A.tot+=r.t;
+    var x=_khX(r.x);
+    var sh=A.SH[x]||(A.SH[x]={t:0,fit:0});sh.t+=r.t;sh.fit+=r.s.fit.dn;
+    var pj=A.PJ[r.p]||(A.PJ[r.p]={t:0,fit:0,dl:0,late:0,d7:0,x:{},nx:null});pj.t+=r.t;pj.fit+=r.s.fit.dn;pj.dl+=r.s.deliv.dn;pj.x[x]=1;
+    /* tiến độ công đoạn — y hệt _khTq */
+    KH_STC.forEach(function(s){var st=r.s[s[0]];A.ST[s[0]].dn+=st.dn;
+      A.ST[s[0]].base+=(s[0]==='galv')?((st.dn>0||st.rem>0)?r.t:0):r.t;});
+    /* mốc đến hạn — y hệt _khLiveDraw (còn khối lượng + có ngày kết thúc) */
+    KH_ST.forEach(function(s){var o=r.s[s[0]];if(!o||o.rem<=0||!o.e)return;
+      var ton=T(o.rem),idx;
+      if(o.e<today){idx=0;A.late+=ton;pj.late+=ton;A.lateN++;}
+      else{var wi=Math.floor((_khMon(o.e)-w0)/604800000);idx=wi<0?0:(wi>=WN?WN+1:wi+1);
+        if((o.e-today)/86400000<=7){A.d7+=ton;pj.d7+=ton;}}
+      if(!pj.nx||o.e<pj.nx.e)pj.nx={e:o.e,st:s[0],late:o.e<today};
+      A.IT.push({x:x,idx:idx,st:s[0],p:r.p,i:r.i,e:o.e,t:ton});
+    });
+  });
+  return A;
+}
+function tile(l,v,u,s,tc,tv){return '<div class="bdT" style="--tc:'+tc+(tv?';--tv:'+tv:'')+'"><div class="l">'+l+'</div><div class="v num">'+v+(u?'<small>'+u+'</small>':'')+'</div><div class="s">'+s+'</div></div>';}
+function heat(A){
+  var rows={},mx=0,mxL=0;
+  A.IT.forEach(function(it){if(stF&&it.st!==stF)return;var r=rows[it.x]||(rows[it.x]=new Array(BK.length).fill(0));r[it.idx]+=it.t;});
+  var xs=Object.keys(rows).sort(function(a,b){var ra=rows[a],rb=rows[b];return (rb[0]+rb[1])-(ra[0]+ra[1])||a.localeCompare(b);});
+  xs.forEach(function(x){rows[x].forEach(function(v,i){if(i===0)mxL=Math.max(mxL,v);else mx=Math.max(mx,v);});});
+  var head=BK.map(function(b,i){if(i===0||i===BK.length-1)return b;var d=new Date(A.w0);d.setDate(d.getDate()+(i-1)*7);return b+'<br><span style="font-weight:600">'+dmy(d)+'</span>';});
+  var h='<table class="bdHm"><thead><tr><th>Xưởng</th>'+head.map(function(t){return '<th>'+t+'</th>';}).join('')+'<th>Tổng</th></tr></thead><tbody>';
+  if(!xs.length)h+='<tr><td class="z" colspan="'+(BK.length+2)+'">Không có mốc nào còn khối lượng'+(stF?' ở công đoạn này':'')+'.</td></tr>';
+  xs.forEach(function(x){var r=rows[x],tt=0;
+    h+='<tr><td class="k">'+ES(x)+'</td>'+r.map(function(v,i){tt+=v;
+      if(v<0.05)return '<td class="z">·</td>';
+      var a=i===0?(0.18+0.72*v/(mxL||1)):(0.12+0.68*v/(mx||1)),rgb=i===0?'192,57,43':'37,99,235';
+      var key=x+'|'+i;
+      return '<td class="c'+(cellSel===key?' on':'')+'" data-cell="'+ES(key)+'" title="Bấm xem danh sách" style="background:rgba('+rgb+','+a.toFixed(2)+');color:'+(a>0.55?'#fff':'var(--ink)')+'">'+fm1(v)+'</td>';}).join('')
+      +'<td class="tt"><b>'+fm1(tt)+'</b></td></tr>';});
+  return h+'</tbody></table>';
+}
+function detail(A){
+  if(!cellSel)return '';
+  var sp=cellSel.split('|'),x=sp[0],idx=+sp[1];
+  var G={};A.IT.forEach(function(it){if(it.x!==x||it.idx!==idx||(stF&&it.st!==stF))return;
+    var k=it.p+'||'+it.i+'||'+it.st;var g=G[k]||(G[k]={p:it.p,i:it.i,st:it.st,e:it.e,t:0,n:0});g.t+=it.t;g.n++;if(it.e<g.e)g.e=it.e;});
+  var L=Object.keys(G).map(function(k){return G[k];}).sort(function(a,b){return a.e-b.e||b.t-a.t;});
+  return '<div class="cg-lbl" style="margin:14px 0 6px">'+ES(x)+' · '+BK[idx]+' — '+L.length+' nhóm việc <button class="qf" data-close="1" style="margin-left:8px">✕ Đóng</button></div>'
+    +'<div class="tw" style="max-height:340px"><table><thead><tr><th>Mốc</th><th>Công đoạn</th><th>Dự án</th><th>Hạng mục</th><th class="n">Dòng</th><th class="n">Còn lại (t)</th></tr></thead><tbody>'
+    +L.slice(0,300).map(function(g){var si=stInfo(g.st);
+      return '<tr><td><b style="color:'+(g.e<A.today?'var(--bad)':'var(--ink)')+'">'+dmy(g.e)+'</b></td><td><b style="color:'+si[2]+'">'+ES(si[1])+'</b></td><td class="pjn">'+ES(g.p)+'</td><td>'+ES(g.i||'—')+'</td><td class="n">'+g.n+'</td><td class="n"><b>'+fm1(g.t)+'</b></td></tr>';}).join('')
+    +'</tbody></table></div>';
+}
+function draw(){
+  var el=document.getElementById('khBd');if(!el)return;
+  var sb=document.getElementById('khScopeBar');if(sb)sb.style.display='none';
+  if(!_khLive){
+    var st=document.getElementById('khLiveSt');
+    el.innerHTML='<div class="card"><h3>Bảng điều khiển kế hoạch sản xuất</h3><div class="q">'+(_khLiveBusy?'Đang đọc sheet <b>TỔNG HỢP BÁO CÁO DDC AN HẠ</b>…':((st&&st.textContent)?ES(st.textContent):'Chưa đọc dữ liệu kế hoạch.'))+'</div>'
+      +(_khLiveBusy?'':'<button class="qf on" data-reload="1" style="margin-top:8px">Tải kế hoạch từ sheet</button>')+'</div>';
+    return;
+  }
+  var A=agg();
+  var pcAll=0,ws=0;KH_STC.forEach(function(s){if(A.ST[s[0]].base>0){pcAll+=A.ST[s[0]].dn;ws+=A.ST[s[0]].base;}});
+  var evm=ws>0?Math.round(pcAll/ws*1000)/10:0;
+  var nPj=Object.keys(A.PJ).length,nX=Object.keys(A.SH).length;
+  var lateP=Object.keys(A.PJ).filter(function(k){return A.PJ[k].late>0.05;}).length;
+  var h='<div class="card"><div class="bdHead"><div><h3>Bảng điều khiển kế hoạch sản xuất</h3>'
+    +'<div class="q">Nguồn: sheet <b>TỔNG HỢP BÁO CÁO DDC AN HẠ</b> (đọc trực tiếp) · '+_khLive.n.toLocaleString('vi-VN')+' dòng cấu kiện · '+nPj+' dự án · '+nX+' xưởng · khối lượng lũy kế, đơn vị <b>tấn</b></div></div>'
+    +'<button class="qf" data-reload="1">↻ Đọc lại sheet</button></div>'
+    +'<div class="bdTiles">'
+    +tile('Khối lượng phân bổ',fm1(T(A.tot)),'t',nPj+' dự án · '+nX+' xưởng','#64748B')
+    +tile('Tiến độ chung',P1(evm),'%','bình quân gia quyền 6 công đoạn','#2563EB','#2563EB')
+    +tile('Quá hạn kế hoạch',fm1(A.late),'t',A.late>0.05?('✕ '+lateP+' dự án có mốc đã trôi qua mà còn khối lượng'):'✓ không có mốc quá hạn','#C0392B',A.late>0.05?'var(--bad)':'var(--good)')
+    +tile('Đến hạn 7 ngày tới',fm1(A.d7),'t','QC cần bố trí nghiệm thu','#D97706','#B45309')
+    +'</div></div>';
+  /* dòng chảy công đoạn */
+  h+='<div class="card"><h3>Dòng chảy công đoạn</h3><div class="q">Mỗi ô = một công đoạn theo thứ tự sản xuất · % = tấn đã xong ÷ tấn phân bổ (mạ kẽm chỉ tính hạng mục có mạ)</div><div class="bdPipe">'
+    +KH_STC.map(function(s){var o=A.ST[s[0]],si=stInfo(s[0]),pc=pct(o.dn,o.base),rm=Math.max(o.base-o.dn,0);
+      return '<div class="bdSt"><div class="n"><i style="background:'+si[2]+'"></i>'+ES(s[1])+'</div><div class="p num">'+(o.base>0?P1(pc)+'%':'—')+'</div>'
+        +'<div class="bdBar"><b style="width:'+Math.min(pc,100)+'%;background:'+si[2]+'"></b></div>'
+        +'<div class="r">xong <b>'+fm1(T(o.dn))+'</b> t · còn <b>'+fm1(T(rm))+'</b> t</div></div>';}).join('')
+    +'</div></div>';
+  /* lịch đến hạn */
+  h+='<div class="card"><h3>Lịch đến hạn theo xưởng</h3><div class="q">Tấn còn lại theo mốc "Kết thúc" của từng công đoạn · cột đỏ = đã quá mốc · màu càng đậm càng nhiều việc · <b>bấm một ô</b> để xem dự án/hạng mục</div>'
+    +'<div class="bdChips"><button class="qf'+(stF?'':' on')+'" data-st="">Tất cả công đoạn</button>'+KH_ST.map(function(s){return '<button class="qf'+(stF===s[0]?' on':'')+'" data-st="'+s[0]+'"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+s[2]+';margin-right:5px"></span>'+ES(s[1])+'</button>';}).join('')+'</div>'
+    +'<div style="overflow-x:auto">'+heat(A)+'</div>'
+    +'<div class="bdLeg"><span><i style="background:linear-gradient(90deg,rgba(192,57,43,.2),rgba(192,57,43,.9))"></i>quá hạn</span><span><i style="background:linear-gradient(90deg,rgba(37,99,235,.15),rgba(37,99,235,.8))"></i>sắp đến hạn</span><span>'+(stF?'':'"Tất cả" cộng các công đoạn — một cấu kiện có thể đến hạn ở nhiều công đoạn')+'</span></div>'
+    +detail(A)+'</div>';
+  /* dự án */
+  var pk=Object.keys(A.PJ).sort(function(a,b){var pa=A.PJ[a],pb=A.PJ[b];return (pb.late-pa.late)||((pb.t-pb.fit)-(pa.t-pa.fit));}).slice(0,20);
+  h+='<div class="card"><h3>Dự án — tiến độ và mốc gần nhất</h3><div class="q">20 dự án: quá hạn nhiều nhất trước, rồi khối lượng chưa ráp hoàn thiện · <b>bấm một dòng</b> để mở chi tiết dự án</div>'
+    +'<div class="tw" style="max-height:560px"><table class="bdPj"><thead><tr><th>Dự án</th><th>Xưởng</th><th class="n">Phân bổ (t)</th><th>Ráp hoàn thiện</th><th>Giao hàng</th><th class="n">Quá hạn (t)</th><th>Mốc gần nhất</th><th>Tình trạng</th></tr></thead><tbody>'
+    +pk.map(function(k){var o=A.PJ[k],pf=pct(o.fit,o.t),pd=pct(o.dl,o.t),nx=o.nx,si=nx?stInfo(nx.st):null;
+      var tag=o.late>0.05?'<span class="tag r">✕ Quá hạn</span>':(o.d7>0.05?'<span class="tag o">! Đến hạn 7 ngày</span>':(nx?'<span class="tag g">✓ Trong kế hoạch</span>':'<span class="tag">— Chưa có mốc</span>'));
+      return '<tr data-p="'+ES(k)+'"><td class="pjn">'+ES(k)+'</td><td>'+ES(Object.keys(o.x).join(', '))+'</td><td class="n"><b>'+fm1(T(o.t))+'</b></td>'
+        +'<td><div class="mini"><div class="bdBar"><b style="width:'+Math.min(pf,100)+'%;background:#2563EB"></b></div><span>'+Math.round(pf)+'%</span></div></td>'
+        +'<td><div class="mini"><div class="bdBar"><b style="width:'+Math.min(pd,100)+'%;background:#8A5A44"></b></div><span>'+Math.round(pd)+'%</span></div></td>'
+        +'<td class="n">'+(o.late>0.05?'<b style="color:var(--bad)">'+fm1(o.late)+'</b>':'<span class="muted">0</span>')+'</td>'
+        +'<td>'+(nx?'<b style="color:'+(nx.late?'var(--bad)':'var(--ink)')+'">'+dmy(nx.e)+'</b> · <span style="color:'+si[2]+';font-weight:700">'+ES(si[1])+'</span>':'—')+'</td><td>'+tag+'</td></tr>';}).join('')
+    +'</tbody></table></div></div>';
+  el.innerHTML=h;
+}
+var bd=document.getElementById('khBd');
+if(bd)bd.addEventListener('click',function(e){
+  var t;
+  if((t=e.target.closest('[data-reload]'))){try{khLiveLoad(true);}catch(er){}setTimeout(draw,50);return;}
+  if((t=e.target.closest('[data-st]'))){stF=t.getAttribute('data-st');cellSel='';draw();return;}
+  if((t=e.target.closest('[data-cell]'))){var k=t.getAttribute('data-cell');cellSel=(cellSel===k?'':k);draw();return;}
+  if(e.target.closest('[data-close]')){cellSel='';draw();return;}
+  if((t=e.target.closest('tr[data-p]'))){try{khDrill(t.getAttribute('data-p'));}catch(er){console.error(er);}return;}
+});
+var _sr=_khSubRender;
+_khSubRender=function(){
+  var sb=document.getElementById('khScopeBar');if(sb)sb.style.display='';
+  _sr.apply(this,arguments);
+  if(_khSub==='bd'){try{draw();}catch(e){console.error('KHSX/bd',e);}}
+};
+if(typeof _khDone==='function'){var _d0=_khDone;_khDone=function(){_d0.apply(this,arguments);if(_khSub==='bd'){try{draw();}catch(e){console.error('KHSX/bd',e);}}};}
+if(typeof _khFail==='function'){var _f0=_khFail;_khFail=function(){_f0.apply(this,arguments);if(_khSub==='bd'){try{draw();}catch(e){}}};}
+try{if(typeof CUR!=='undefined'&&CUR==='kh'&&typeof render==='function')render('kh');}catch(e){}
 })();
 </script>
 </body></html>
