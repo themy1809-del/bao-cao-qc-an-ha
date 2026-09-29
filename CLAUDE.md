@@ -38,8 +38,9 @@ Toàn bộ là trang tĩnh; **không có backend riêng, không có đăng nhậ
 
 | File | Vai trò | Commit cuối |
 |---|---|---|
-| `qc.html` | **Dashboard đầy đủ nhất** — 10 tab, có Doc Control + KHSX (`BẢN MỚI 20/9 v100`) | 20/09/2026 |
-| `index.html` | Trang chủ Pages — **BẢN CŨ 11/08**, thiếu Doc Control + KHSX | 11/08/2026 |
+| `qc.html` | **Dashboard DUY NHẤT** — 11 tab (thêm 06 Dự án 29/09), Doc Control nhúng `app.html?embed=1`, khối Sức khoẻ dữ liệu ở tab 09 | 29/09/2026 |
+| `index.html` | **Chỉ chuyển hướng** sang `qc.html` (từ 29/09) | 29/09/2026 |
+| `index_backup_1108.html` | Bản lưu `index.html` 11/08 cũ (không ai link tới) | 29/09/2026 |
 | `doc.html` | Giao diện Document Control độc lập | 20/09/2026 |
 | `qc_backup_truoc_ddc.html` | Bản lưu trước khi thêm Doc Control (`v90 KHSX`) | 20/09/2026 |
 | `kiem_tra_waiting.html`, `section_tracker.html` | 2 trang phụ độc lập | 11/08/2026 |
@@ -63,7 +64,8 @@ Khi mở trang, JS còn đọc **trực tiếp** nhiều Google Sheet qua `gviz`
 KHSX, registry + file dự án cho Doc Control) và gọi Web App phân công QC qua JSONP/POST.
 
 ### 2C. Ba lệch pha ĐÃ XÁC MINH — đọc trước khi sửa bất cứ thứ gì
-1. **`index.html` cũ hơn `qc.html` 2 thế hệ.** Người mở link Pages gốc không thấy Doc Control/KHSX.
+1. ~~`index.html` cũ hơn `qc.html` 2 thế hệ.~~ **Đã xử lý 29/09**: `index.html` chuyển hướng sang `qc.html`.
+   Từ nay chỉ sửa `qc.html`; quy tắc "giữ 2 file cùng hành vi" không còn áp dụng cho `index.html`.
 2. **`spm_flatten.py` trong repo KHÔNG sinh ra `qcdata.js` đang chạy** (lệch số cột, lệch mảng `Z`,
    lệch giá trị `PL`). Hệ quả: drill-down KHSX theo Hạng mục đang **tắt âm thầm**.
 3. **Hệ 1 và hệ 3 đọc bảng gốc bằng HAI bộ khai báo cột khác nhau** (`BD_EP` ↔ `DDC_CORE.buildMap`).
@@ -104,7 +106,7 @@ Do not invent missing business rules.
 - Hệ 2 chỉ ĐỌC file dự án/packing/SX; chỉ ghi vào file kết quả riêng của nó.
 - Mỗi lần sửa code Apps Script: tăng PHIEN_BAN/PHIEN_BAN_BC dạng `'dd/mm mo-ta'`;
   kiểm tra `node --check` + soát trùng tên hàm TRƯỚC khi giao.
-- Sửa `qc.html`/`index.html`: **giữ 2 file cùng hành vi** hoặc nói rõ vì sao chỉ sửa 1 file;
+- Sửa `qc.html` (`index.html` chỉ là chuyển hướng — giữ nguyên, đừng chép dashboard vào lại);
   sau khi sửa phải đối chiếu `QCDATA.check.f/w/p` và KPI trang Tổng quan — **lệch 0**.
 - Số liệu phải có bằng chứng: tải file gốc về đếm lại độc lập trước khi kết luận.
 

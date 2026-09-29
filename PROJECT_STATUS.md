@@ -1,9 +1,18 @@
 # PROJECT_STATUS.md
-# Cập nhật: 28/09/2026 — sau đợt rà soát toàn hệ thống (audit)
+# Cập nhật: 29/09/2026 — rà soát số liệu + nâng cấp dashboard `qc.html`
 
 ## STATUS
 
 ### DONE
+**Hệ 3 — vòng 6 (29/09): rà soát số liệu + nâng cấp dashboard**
+- Số liệu `qcdata.js` 28/09 (18.826 dòng, 115 dự án) đếm lại độc lập: `check` khớp, `proj`↔`rows` 115/115,
+  KPI Tổng quan tháng 9 **khớp 6/6**, dải NT/SX 82,8 % khớp.
+- `index.html` → chuyển hướng `qc.html` (bản cũ: `index_backup_1108.html`). `qc.html` là dashboard duy nhất.
+- Khôi phục tab **06 Dự án** (tiến độ & tồn so với BOM) bị Doc Control đè mất.
+- Doc Control: nút **🔍 Tra cứu hàng loạt · import Excel** nhúng `app.html?embed=1`.
+- Tổng quan: phân tuổi Waiting (>90 ngày = 2.546,1 t, 44 %). Tab 09: khối **Sức khoẻ dữ liệu** 7 mục.
+- Phát hiện nguồn SPM: 131 dòng ngày NT < ngày gia công (518,4 t).
+
 **Hệ 1 "DATA HỒ SƠ" (Apps Script + VBS)**
 - Hoàn chỉnh, đóng băng (BẢN CỐ ĐỊNH). Bản ĐÃ deploy: `'26/09 bit-lo-hong'` **Version 9**
   (26/09 12:53), URL /exec giữ nguyên. Bản trong gói bàn giao `'27/09 gre-duct'` **chưa dán**.
@@ -61,7 +70,7 @@
 ### TODO (đã xếp lại ưu tiên sau audit)
 **Cao — hệ 3**
 1. Quyết định repo public/private + xử lý khoá `'anha2026'` lộ trong `qc.html`/`index.html`.
-2. Chốt trang chính thức, rồi đồng bộ `index.html` với `qc.html` (hoặc chuyển hướng).
+2. ~~Chốt trang chính thức / đồng bộ `index.html`~~ — XONG 29/09 (chuyển hướng về `qc.html`).
 3. Lấy `spm_flatten.py` thật → sửa/tắt `.github/workflows/capnhat.yml` cho khỏi ghi đè
    `qcdata.js` bằng cấu trúc sai.
 
@@ -97,8 +106,8 @@
 **Mới phát hiện 28/09 (đều đang MỞ, chưa sửa):**
 - Drill-down KHSX theo Hạng mục **tắt âm thầm** — `qcdata.js` không có mảng `Z`,
   `KH_HASZONE` (`qc.html:4110`) = false. Nguyên nhân gốc: `spm_flatten.py` lệch bản thật.
-- `index.html` (trang chủ Pages) thiếu **188 hàm** so với `qc.html`: 9 tab thay vì 10,
-  tab 05 là "Dự án" bản cũ, không có tab 10 KHSX. Logic lõi 2 file **giống hệt**.
+- ~~`index.html` thiếu 188 hàm so với `qc.html`~~ — **ĐÃ SỬA 29/09** (chuyển hướng).
+- `qc.html` chứa mô-đun Doc Control **lặp 2 lần** (`rDU` gán ~dòng 5500 và ~5850); chạy đúng, gộp là việc riêng.
 - **(hệ 1)** Dashboard cảnh báo **báo thừa cột "Chưa có DIR"** cho dự án dùng chung
   cột DIR/VIR — `capNhatCanhBao` không áp ngưỡng `AD` như `taoDataQC`. Cột "Chưa đủ HS" vẫn đúng.
 - **(hệ 1 ↔ hệ 2)** Hai hệ đếm "nợ final" **khác định nghĩa** → số của
@@ -113,6 +122,9 @@ Theo dõi (không phải bug): file packing / SX đổi tên cột hay bố cụ
 `ghiDoiChieuSX_` dò theo tên, nhưng đổi hẳn thì phải cập nhật đúng 1 chỗ tương ứng.
 
 ## CURRENT STATE
+**29/09:** nâng cấp `qc.html` + `index.html` chuyển hướng + `app.html` chế độ nhúng (xem DONE vòng 6).
+Chờ user: cách hiển thị Waiting >90 ngày; dọn SPM.
+
 Last meaningful change: **28/09 — dựng APP TRA CỨU riêng (`app.html` + `ddc_core.js`, đã test bằng trình duyệt) sau khi rà soát toàn hệ thống, dựng lại kiến trúc từ mã nguồn,
 lập bộ 7 tài liệu chuẩn. KHÔNG sửa mã ứng dụng (đúng yêu cầu của user).**
 Thay đổi mã gần nhất trước đó: 27/09 `qcdata.js` (`fba9e18`, PC đẩy);
@@ -130,6 +142,6 @@ Phiên 28/09 **không phát hành gì** — chỉ thêm/cập nhật tài liệu
 
 Checklist bắt buộc cho MỌI lần phát hành sau này (hệ 3):
 - [ ] `QCDATA.check.f/w/p` và KPI trang Tổng quan **lệch 0** trước ↔ sau
-- [ ] `qc.html` và `index.html` cùng hành vi (hoặc nói rõ lý do chỉ sửa 1 file)
+- [ ] `index.html` vẫn chỉ là trang chuyển hướng sang `qc.html` (không chép dashboard vào lại)
 - [ ] Mở thử `qc.html` với cache sạch: splash tắt, không có lỗi trong `window.__ERRS`
 - [ ] Tab 05 Doc Control tải được ít nhất 1 dự án live (không rơi về seed)

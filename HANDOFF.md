@@ -3,7 +3,7 @@
 
 > Cầu nối giữa các phiên Chat/Cowork và Claude Code Cloud. Cập nhật mỗi khi xong việc lớn
 > hoặc đổi việc đang làm.
-> **Cập nhật lần cuối: 28/09/2026 — phiên Claude Code Cloud rà soát toàn bộ repo.**
+> **Cập nhật lần cuối: 29/09/2026 — nâng cấp dashboard `qc.html`, trang chủ chuyển hướng về `qc.html`.**
 > Bản 27/09 chỉ mô tả hệ 1 + hệ 2. Bản này bổ sung **hệ 3 (dashboard web = repo này)**
 > đã được dựng lại từ mã nguồn thật, và ghi rõ các lệch pha đã xác minh.
 
@@ -28,12 +28,46 @@ Current deployment / environment:
 - **Hệ 3 "DASHBOARD WEB" = repo `themy1809-del/bao-cao-qc-an-ha`**:
   nhánh `main`, **repo CÔNG KHAI** (`private: false`), **GitHub Pages BẬT** (`has_pages: true`),
   có `.nojekyll`. 50 commit, toàn bộ do `Themy <themy1809@gmail.com>` đẩy từ PC.
-  Trang mới nhất = `qc.html` (20/09, `BẢN MỚI 20/9 v100`); trang chủ `index.html` = **bản 11/08**.
-  URL Pages đang phát cho nhân viên: **UNKNOWN — NEED USER CONFIRMATION**.
+  **Từ 29/09: `qc.html` là dashboard DUY NHẤT.** `index.html` chỉ còn là trang chuyển hướng
+  sang `qc.html` (giữ nguyên `?query` và `#hash`). Bản 11/08 cũ lưu ở `index_backup_1108.html`.
+  Link chung: `https://themy1809-del.github.io/bao-cao-qc-an-ha/` → tự mở `qc.html`.
 - **PC Windows**: KEO_DULIEU.vbs + QUAN_LY.vbs + NHAT_KY.txt + DANG_CHAY.khoa, Task Scheduler
   17:00 hằng ngày (chế độ 1). Đường dẫn thư mục trên PC: **UNKNOWN — NEED USER CONFIRMATION**.
 
 ## 2. CURRENT TASK
+
+**MỚI 29/09 (vòng 6): rà soát số liệu + nâng cấp dashboard** theo yêu cầu "kiểm tra rà soát số liệu,
+nâng cấp, đưa dữ liệu vào tab Doc Control, thêm bớt bỏ để vận hành chuyên nghiệp".
+
+Rà soát số liệu (`qcdata.js` 28/09: 18.826 dòng, 115 dự án) — đếm lại độc lập bằng Python:
+- `QCDATA.check` f/w/p khớp tổng `rows`; `proj[]` khớp `rows` **115/115** dự án (không đếm trùng).
+- KPI Tổng quan tháng 9/2026 **khớp 6/6**: 4.165,4 · 3.688,9 · 3.536,2 · 3.189,2 · Waiting 5.797,2 t · FPY 99,5 %.
+- Dải "Tỷ lệ QC NT/SX" 82,8 % = 10.018,4 / 12.095,6 t — khớp.
+- 290 dòng giống hệt nhau = va chạm khi làm phẳng SPM (mất Zone/Xưởng QC) — **không phải đếm trùng**.
+- PL ↔ ngày QC nhất quán 100 %. 5 dòng tồn = 0 tấn.
+- **131 dòng ngày NT trước ngày gia công** (518,4 t; >3 ngày: 9 dòng) = lỗi nhập SPM, không phải lỗi dashboard.
+- **Waiting: 2.546,1 t (44 %, 734 dòng) đã chờ >90 ngày** → con số Waiting đúng nhưng dễ hiểu sai;
+  đã thêm dòng phân tuổi ngay dưới KPI, **không đổi con số**.
+
+Đã sửa (chỉ `qc.html`, `index.html`, `app.html`; KHÔNG đụng `qcdata.js`/`doc.html`/Apps Script):
+| Việc | Chi tiết |
+|---|---|
+| Trang chủ | `index.html` → chuyển hướng `qc.html`; bản cũ lưu `index_backup_1108.html` |
+| Tab **06 Dự án** (khôi phục) | View "tiến độ & tồn so với BOM" của bản 11/08 bị Doc Control đè `rDU` → mất. Giữ lại qua `var rPJ=rDU;` trước chỗ đè; HTML chép nguyên văn từ bản cũ. Tab sau đánh số lại 07→11 |
+| Doc Control | nút **🔍 Tra cứu hàng loạt · import Excel** mở `app.html?embed=1` trong khung (nạp lười, lần bấm đầu) |
+| `app.html` | chế độ `?embed=1`: ẩn header, theo theme trang mẹ. Mở độc lập thì y như cũ |
+| Tổng quan | dưới KPI Waiting: ">90 ngày: X t (Y %)" + "≤30 · 31–90" |
+| Tab 09 Dữ liệu | khối **SỨC KHOẺ DỮ LIỆU** tự kiểm 7 mục mỗi lần mở |
+| Nhãn | 3 thẻ dải tháng ghi rõ cơ sở ngày (NT vs gia công) — **chỉ đổi chữ, không đổi số** |
+
+Kiểm thử: KPI bản cũ vs bản mới 6/6 KHỚP; bảng tab Dự án giống từng ký tự bản cũ; `/?qc=kientv` →
+`/qc.html?qc=kientv` còn giữ bộ lọc; không lỗi JS. Còn để nguyên: mô-đun Doc Control bị lặp 2 lần
+trong `qc.html` (`rDU` bị gán ~dòng 5500 và ~5850) — gộp là việc RIÊNG.
+
+**Chờ user:** (1) Waiting có nên tách riêng phần >90 ngày khỏi KPI không (hiện chỉ thêm ngữ cảnh);
+(2) dọn 131 dòng ngày NT < ngày gia công và các cây chờ >90 ngày trên SPM.
+
+---
 
 **MỚI 28/09 (vòng 4): đã dựng xong APP TRA CỨU riêng biệt** theo yêu cầu của user
 ("một app riêng biệt, đa chức năng, tương tác được, import list vào được, giao diện chuyên nghiệp").
@@ -190,7 +224,8 @@ code yet. Do not make major code changes until I approve the architecture."
   và mục 3–5 của `SECURITY_MODEL.md` §4).
 
 ## 5. TODO
-- **(MỚI, cao)** Đồng bộ `index.html` ↔ `qc.html` hoặc chuyển hướng — sau khi user chốt link chính thức.
+- ~~Đồng bộ `index.html` ↔ `qc.html`~~ — **XONG 29/09** (chuyển hướng).
+- **(MỚI 29/09)** User xác nhận cách hiển thị Waiting >90 ngày; dọn SPM 131 dòng ngày NT < ngày gia công.
 - **(MỚI, cao)** Lấy `spm_flatten.py` thật; sửa hoặc tắt `.github/workflows/capnhat.yml`.
 - **(MỚI, cao)** Xử lý lộ khoá `'anha2026'` + quyết định repo public/private.
 - **(MỚI, trung bình)** Bỏ poll lại 1,26 MB mỗi 180 giây (`PERFORMANCE_PLAN.md` A1).
@@ -220,10 +255,12 @@ code yet. Do not make major code changes until I approve the architecture."
 | Bug | Vùng ảnh hưởng | Trạng thái | Ghi chú |
 |---|---|---|---|
 | Drill-down KHSX theo Hạng mục **tắt âm thầm** | `qc.html` `KH_HASZONE` (dòng 4110) | **MỞ** | `qcdata.js` không có mảng `Z`; nguyên nhân gốc = lệch `spm_flatten.py` |
-| `index.html` (trang chủ Pages) thiếu Doc Control + KHSX | `index.html` | **MỞ** | thiếu **188 hàm**, 9 tab thay vì 10; logic lõi thì giống hệt |
+| `index.html` (trang chủ Pages) thiếu Doc Control + KHSX | `index.html` | **ĐÃ SỬA 29/09** | `index.html` chuyển hướng sang `qc.html`; bản cũ = `index_backup_1108.html` |
+| Tab "Dự án: tiến độ & tồn" biến mất khỏi `qc.html` | `qc.html` `rDU` | **ĐÃ SỬA 29/09** | khôi phục thành tab 06 qua `rPJ` |
+| Mô-đun Doc Control lặp 2 lần trong `qc.html` | `qc.html` ~5500/~5850 | **MỞ** | chạy đúng (bản sau thắng); gộp là việc riêng |
 | Dashboard cảnh báo **báo thừa cột "Chưa có DIR"** | hệ 1 `capNhatCanhBao` | **MỞ — chờ xác nhận** | Không áp ngưỡng `AD` như `taoDataQC` → dự án dùng chung cột DIR/VIR (`VIOLA_TED`, `EVAPCO - GREGORY - DUCTING`, có thể cả `10725-011`) bị đếm thừa. Cột "Chưa đủ HS" vẫn ĐÚNG |
 | Hệ 1 và hệ 2 đếm "nợ final" **khác định nghĩa** | `capNhatCanhBao` ↔ `quetMotDuAn_` | **MỞ — chờ xác nhận** | Hệ 1 tách riêng DIR/VIR; hệ 2 chỉ tính khi **cả hai** rỗng → số 2 file không so trực tiếp được |
-| Khoá `'anha2026'` lộ trong mã client trên repo công khai | `qc.html:2277`, `index.html:1957` | **MỞ** | ai cũng ghi đè được bảng phân công QC |
+| Khoá `'anha2026'` lộ trong mã client trên repo công khai | `qc.html:2277` (+ `index_backup_1108.html`) | **MỞ** | ai cũng ghi đè được bảng phân công QC |
 | 3 chỗ nhét dữ liệu Sheet vào `innerHTML` không escape | `qc.html` NCR list / `secGalRender` / bảng KHSX | **MỞ** | XSS lưu trữ từ người sửa được Sheet |
 | `capnhat.yml` có thể ghi đè `qcdata.js` bằng cấu trúc sai | `.github/workflows/capnhat.yml` | **MỞ** | chưa từng chạy, nhưng vẫn kích hoạt được |
 | `__pycache__/*.pyc` bị commit; repo không có `.gitignore` | repo | **MỞ** | dọn dẹp |
@@ -333,6 +370,7 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
 ## 11. RECENT CHANGES
 | Date | Change | Files | Reason |
 |---|---|---|---|
+| 29/09 | Rà soát số liệu dashboard (khớp 6/6 KPI); `index.html`→chuyển hướng; khôi phục tab 06 Dự án; Doc Control nhúng app tra cứu; khối Sức khoẻ dữ liệu; phân tuổi Waiting | `qc.html`, `index.html`, `index_backup_1108.html`, `app.html` | User yêu cầu nâng cấp dashboard + đưa app vào Doc Control |
 | 28/09 | **Rà soát toàn hệ thống; dựng lại kiến trúc từ mã nguồn; lập bộ 7 tài liệu. KHÔNG sửa mã ứng dụng.** | 7 file `.md` | User yêu cầu audit trước khi duyệt kiến trúc |
 | 27/09 | `qcdata.js` cập nhật (commit `fba9e18`, đẩy từ PC) | `qcdata.js` | cập nhật số liệu hằng ngày |
 | 27/09 | ban-8: thêm khoá `VIOLA_KCT` vào BD_PACK; hệ 1 `'27/09 gre-duct'` khai GREGORY DUCTING; fix `#ERROR!` NHAT KY (`=== ` → `*** `) | (gói bàn giao) | VIOLA_KCT không ghép được packing; dự án mới chưa khai |

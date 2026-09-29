@@ -6,6 +6,14 @@
 <meta name="theme-color" content="#B81009">
 <meta name="description" content="Tra cứu tình trạng hồ sơ QC theo mã cấu kiện — Nhà máy An Hạ, DDC.">
 <title>Tra cứu hồ sơ QC — Nhà máy An Hạ</title>
+<script>
+/* Che do NHUNG (goi tu tab Doc Control cua qc.html bang iframe ?embed=1):
+   an thanh tieu de rieng, theo nen sang/toi cua trang cha. */
+(function(){ if(!/[?&]embed=1/.test(location.search))return;
+  var h=document.documentElement; h.classList.add('embed');
+  try{ var t=parent.document.documentElement.dataset.theme; if(t) h.dataset.theme=(t==='dark'?'dark':'light'); }catch(e){}
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -253,6 +261,9 @@ tbody tr:hover td.stick{background:var(--row)}
   .srch .fld{font-size:15px;padding:14px 15px 14px 44px}.srch .kb{display:none}
   .stat .v{font-size:24px}.plot{height:290px}
 }
+.embed .hdr{display:none}
+.embed .tabs{top:0}
+.embed main{padding-top:14px}
 @media print{
   .hdr,.tabs,#toast,.btn,.chip{display:none!important}
   .card{box-shadow:none;border-color:#ccc;break-inside:avoid}
