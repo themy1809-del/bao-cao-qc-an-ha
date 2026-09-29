@@ -400,6 +400,50 @@ function parseCSV(t){var R=[],row=[],cur='',q=false;for(var i=0;i<t.length;i++){
 function gurl(id,p){return 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:csv&headers=0&cb='+Date.now()+'&'+p;}
 function gfetch(u){return fetch(u,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
   .then(function(t){if(!t||/<html/i.test(t.slice(0,300)))throw new Error('Sheet chưa chia sẻ công khai');return parseCSV(t);});}
+
+/* ==================================================================
+   DOC GOOGLE SHEET — HAI LOP DU PHONG.
+   fetch() thang toi gviz HAY BI TRINH DUYET CHAN (CORS). Chinh qc.html
+   cua he thong nay cung phai co lop JSONP du phong (_khJsonp) vi ly do
+   do. Nen o day: thu fetch truoc, hong thi chuyen sang JSONP — JSONP
+   nap bang the <script> nen KHONG dinh CORS.
+   ================================================================== */
+function gjsonp(id,p){
+  return new Promise(function(res,rej){
+    var cb='__gv'+Math.random().toString(36).slice(2), sc, xong=false;
+    var tm=setTimeout(function(){don();rej(new Error('Hết thời gian chờ Google (30s)'));},30000);
+    function don(){ if(xong)return; xong=true; clearTimeout(tm);
+      try{delete window[cb];}catch(e){window[cb]=undefined;}
+      if(sc&&sc.parentNode)sc.parentNode.removeChild(sc); }
+    window[cb]=function(d){ don();
+      if(!d||d.status==='error'){
+        var m=(d&&d.errors&&d.errors[0]&&(d.errors[0].detailed_message||d.errors[0].message))||'Google trả về lỗi';
+        rej(new Error(String(m).replace(/<[^>]*>/g,'').slice(0,160))); return; }
+      var t=d.table||{}, out=[];
+      (t.rows||[]).forEach(function(r){
+        out.push((r.c||[]).map(function(c){
+          if(!c)return '';
+          if(c.f!=null)return String(c.f);       /* ban DA DINH DANG: ngay ra dd/mm/yyyy */
+          return c.v==null?'':String(c.v);
+        }));
+      });
+      res(out);
+    };
+    sc=document.createElement('script');
+    sc.src='https://docs.google.com/spreadsheets/d/'+id+
+      '/gviz/tq?tqx=out:json;responseHandler:'+cb+'&headers=0&cb='+Date.now()+'&'+p;
+    sc.onerror=function(){don();rej(new Error('Không tải được — sheet chưa chia sẻ «Bất kỳ ai có link», hoặc mất mạng'));};
+    document.head.appendChild(sc);
+  });
+}
+/* Ham DUY NHAT nen dung de doc sheet: tu chay het cac lop du phong */
+function gload(id,p){
+  return gfetch(gurl(id,p)).catch(function(e1){
+    return gjsonp(id,p).catch(function(e2){
+      throw new Error(String(e2.message||e2)+' · lớp 1: '+String(e1.message||e1));
+    });
+  });
+}
 var ds=function(d){return DDC_CORE.dstr(d);};
 var _tt;
 function toast(m){var e=$('toast');e.textContent=m;e.classList.add('on');clearTimeout(_tt);_tt=setTimeout(function(){e.classList.remove('on');},2600);}
@@ -456,8 +500,8 @@ function buoc(m,layout){
 function taiReg(){
   $('duBody').innerHTML='<div class="pjs">'+Array(4).join('x').split('x').map(function(){
     return '<div class="pj"><div class="nm"><div class="sk" style="width:72%"></div><div class="sk" style="width:44%;height:9px;margin-top:7px"></div></div></div>';}).join('')+'</div>';
-  gfetch(gurl(REG_ID,'sheet='+encodeURIComponent('DANH MUC')))
-   .catch(function(){return gfetch(gurl(REG_ID,'gid='+REG_GID));})
+  gload(REG_ID,'sheet='+encodeURIComponent('DANH MUC'))
+   .catch(function(){return gload(REG_ID,'gid='+REG_GID);})
    .then(function(reg){
       var hdr=(reg[0]||[]).map(function(x){return DDC_CORE.norm(x);});
       function fi(s){for(var i=0;i<hdr.length;i++)if(hdr[i].indexOf(s)>=0)return i;return -1;}
@@ -492,16 +536,16 @@ function taiPJ(i){
   var rg=REGS[i]; if(!rg||(PJ[rg.sid]&&PJ[rg.sid].st==='loading'))return;
   PJ[rg.sid]={ma:rg.ma,sid:rg.sid,st:'loading',ms:[],idx:{},dwg:{}}; veDU();
   var tab='CHECK_LIST';
-  gfetch(gurl(rg.sid,'sheet='+encodeURIComponent('DOI CHIEU')+'&tq='+encodeURIComponent('limit 5')))
+  gload(rg.sid,'sheet='+encodeURIComponent('DOI CHIEU')+'&tq='+encodeURIComponent('limit 5'))
    .then(function(dc){for(var r=0;r<dc.length;r++){var v=String(dc[r][0]||'').trim();if(v&&!/tab du lieu/i.test(v)){tab=v;break;}}},function(){})
-   .then(function(){return gfetch(gurl(rg.sid,'sheet='+encodeURIComponent(tab)+'&tq='+encodeURIComponent('limit 8')));})
+   .then(function(){return gload(rg.sid,'sheet='+encodeURIComponent(tab)+'&tq='+encodeURIComponent('limit 8'));})
    .then(function(probe){
       var layout=DDC_CORE.detectLayout(probe); if(!layout)throw new Error('Layout chưa hỗ trợ');
       var M=DDC_CORE.buildMap(probe,layout),k,idxs=[];
       for(k in M){if(k.charAt(0)!=='_'&&M[k]>=0&&idxs.indexOf(M[k])<0)idxs.push(M[k]);}
       idxs.sort(function(a,b){return a-b;});
       var q='select '+idxs.map(colL).join(',')+' where '+colL(M.pn)+' is not null';
-      return gfetch(gurl(rg.sid,'sheet='+encodeURIComponent(tab)+'&tq='+encodeURIComponent(q)))
+      return gload(rg.sid,'sheet='+encodeURIComponent(tab)+'&tq='+encodeURIComponent(q))
              .then(function(rows){return {rows:rows,layout:layout,M:M,idxs:idxs};});
    })
    .then(function(o){
