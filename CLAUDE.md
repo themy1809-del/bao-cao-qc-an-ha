@@ -38,7 +38,7 @@ Toàn bộ là trang tĩnh; **không có backend riêng, không có đăng nhậ
 
 | File | Vai trò | Commit cuối |
 |---|---|---|
-| `qc.html` | **Dashboard DUY NHẤT** — 11 tab (thêm 06 Dự án 29/09), Doc Control nhúng `app.html?embed=1`, khối Sức khoẻ dữ liệu ở tab 09 | 29/09/2026 |
+| `qc.html` | **Dashboard DUY NHẤT** — 11 tab (thêm 06 Dự án 29/09), Doc Control nhúng `app.html?embed=1`, khối Sức khoẻ dữ liệu ở tab 09; lớp giao diện `ux2909` cuối file: cổng vai trò `?vai=`, nhãn trạng thái KPI, chú giải, tóm tắt nhanh | 29/09/2026 |
 | `index.html` | **Chỉ chuyển hướng** sang `qc.html` (từ 29/09) | 29/09/2026 |
 | `index_backup_1108.html` | Bản lưu `index.html` 11/08 cũ (không ai link tới) | 29/09/2026 |
 | `doc.html` | Giao diện Document Control độc lập | 20/09/2026 |

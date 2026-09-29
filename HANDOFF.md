@@ -36,6 +36,27 @@ Current deployment / environment:
 
 ## 2. CURRENT TASK
 
+**MỚI 29/09 (vòng 7): giao diện đa người dùng — "ai nhìn cũng hiểu".** Chỉ thêm lớp trình bày
+(khối `<style id="ux2909">` + script cuối `qc.html`), **không đổi cách tính số nào** — KPI 6/6 khớp,
+`QCDATA.check` không đổi, bảng tab Dự án giống từng ký tự.
+| Việc | Chi tiết |
+|---|---|
+| Sửa tràn ngang | Trước: điện thoại 390px bị phình 637–916px ở 6 tab; màn rộng 1500px bị phình ở Tổng quan + Báo cáo ngày. Nguyên nhân: ô lưới `.r2/.r23/.kpis` mặc định `min-width:auto`. Sau: 11/11 tab đúng bề rộng ở 390 / 1280 / 1500px |
+| Dòng phụ KPI | bỏ cắt "…" → xuống dòng (trước đó phần phân tuổi Waiting bị cắt mất) |
+| Bỏ huy hiệu nổi | "BẢN MỚI 20/9 v100 · COMPONENT CONTROL ✓" cố định góc phải, đè lên bảng/biểu đồ ở mọi tab |
+| Nhãn trạng thái KPI | ✓/✕/! + chữ, **chỉ** cho KPI có ngưỡng thật trong mã (bảng `KST`) — nhiều KPI dùng lớp `b` chỉ để tô màu nhấn, không gắn nhãn. NCR: nếu chưa đọc được sheet live thì ghi "? Chưa đọc được NCR live" thay vì "không có phiếu" |
+| Số CHƯA ĐẠT ở theme tối | trước hiện màu XANH LÁ (màu nhấn theme tối) → nay đỏ |
+| Tóm tắt nhanh | đầu tab Tổng quan: Cần chú ý / Đang tốt / Tồn chờ NT — đọc lại chính các KPI đã vẽ |
+| Chú giải thuật ngữ | nút "ⓘ Chú giải" + ⓘ cạnh nhãn KPI; 19 mục, chỉ ghi điều đọc được trong mã |
+| Cổng vai trò | Ban Giám đốc / Quản lý QC / QC viên / Sản xuất / Hồ sơ — đổi thứ tự menu + trang mở đầu; link riêng `?vai=gd|qlqc|qcv|sx|hs`; nhớ trên máy (`localStorage qcVaiTro_v1`). Lần đầu vào (link không tham số) hiện thẻ mời chọn, không chặn trang. Link `?qc=…` cũ vẫn chạy |
+| Biểu đồ công đoạn | thẻ hẹp thì xếp dọc thanh + vòng tỉ trọng, không cắt nhãn |
+
+**Chưa làm (cần duyệt vì là đổi biểu đồ):** 2 biểu đồ 2 trục tung (sản lượng ngày + %; NCR số vụ + kg)
+nên tách làm 2; vòng "Top dự án" 7 lát nhãn bị cắt → nên đổi sang thanh ngang; ô chọn ngày hiện
+theo ngôn ngữ trình duyệt.
+
+---
+
 **MỚI 29/09 (vòng 6): rà soát số liệu + nâng cấp dashboard** theo yêu cầu "kiểm tra rà soát số liệu,
 nâng cấp, đưa dữ liệu vào tab Doc Control, thêm bớt bỏ để vận hành chuyên nghiệp".
 

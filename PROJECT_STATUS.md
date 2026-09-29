@@ -4,6 +4,10 @@
 ## STATUS
 
 ### DONE
+**Hệ 3 — vòng 7 (29/09): giao diện đa người dùng** — sửa tràn ngang 11/11 tab (390/1280/1500px),
+bỏ huy hiệu nổi đè nội dung, nhãn trạng thái KPI có icon+chữ, Tóm tắt nhanh, Chú giải thuật ngữ,
+cổng vai trò `?vai=gd|qlqc|qcv|sx|hs`. Số liệu không đổi (KPI 6/6 khớp).
+
 **Hệ 3 — vòng 6 (29/09): rà soát số liệu + nâng cấp dashboard**
 - Số liệu `qcdata.js` 28/09 (18.826 dòng, 115 dự án) đếm lại độc lập: `check` khớp, `proj`↔`rows` 115/115,
   KPI Tổng quan tháng 9 **khớp 6/6**, dải NT/SX 82,8 % khớp.

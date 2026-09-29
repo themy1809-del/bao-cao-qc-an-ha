@@ -348,7 +348,7 @@ body.tvmode #hdrStick{position:static;box-shadow:none}
 body.tvmode .view>.kpis{position:static}
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#0F766E;color:#fff;font:600 11px system-ui;padding:3px 8px;border-radius:8px;opacity:.9">BẢN MỚI 20/9 v100 · COMPONENT CONTROL ✓</div><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
+<body><!-- 29/09: bỏ huy hiệu "BẢN MỚI 20/9 v100" nổi góc phải — nó đè lên bảng/biểu đồ ở mọi tab --><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
 <script src="apiurl.js"></script>
@@ -6128,5 +6128,241 @@ function _dataHealth(){
 })();
 /* Trang da ve lan dau TRUOC khi khoi nay chay -> ve lai tab dang mo mot lan de ap dung phan moi */
 try{ if(typeof CUR!=='undefined'&&typeof render==='function') render(CUR); }catch(e){console.error(e);}
+</script>
+<!-- ============================================================
+   29/09 — GIAO DIỆN ĐA NGƯỜI DÙNG · AI NHÌN CŨNG HIỂU
+   Chỉ THÊM lớp trình bày. KHÔNG đổi cách tính bất kỳ con số nào.
+   1) Chống tràn ngang (điện thoại + màn hình rộng); dòng phụ KPI không bị cắt "…"
+   2) Nhãn trạng thái KPI có icon + chữ (không chỉ dựa vào màu) — chỉ gắn cho KPI
+      có ngưỡng thật trong mã (danh sách _KST), không gắn cho KPI chỉ tô màu nhấn.
+   3) Chú giải thuật ngữ: ⓘ cạnh nhãn KPI + bảng "Chú giải" trên đầu trang.
+   4) Cổng VAI TRÒ: mỗi nhóm (Giám đốc / QC / Xưởng / Hồ sơ) mở đúng trang của mình;
+      link riêng ?vai=gd|qlqc|qcv|sx|hs ; nhớ lựa chọn trên máy.
+   5) "Tóm tắt nhanh" đầu trang Tổng quan: đọc lại chính các KPI đã vẽ.
+   Mọi chữ đưa vào innerHTML đều qua _dhEsc (SECURITY_MODEL §S3).
+   ============================================================ -->
+<style id="ux2909">
+.r2>*,.r23>*,.r3>*,.kpis>*,.view>*,.main>*{min-width:0}
+.card,.panel{max-width:100%}
+.kpi .sub{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.4}
+.kst{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.02em;padding:2px 8px;border-radius:999px;margin-top:5px;text-transform:none;white-space:nowrap}
+.kst.ok{background:rgba(21,128,61,.12);color:var(--good)}
+.kst.no{background:rgba(192,57,43,.12);color:var(--bad)}
+.kpi.stno .v{color:var(--bad)!important} .kpi.stno::before{background:var(--bad)!important} /* ở theme tối màu nhấn là xanh lá -> số CHƯA ĐẠT từng hiện màu xanh */
+.kst.nt{background:rgba(100,116,139,.14);color:var(--mut)}
+.kpi .lbl .ki{display:inline-block;margin-left:5px;font-size:11px;line-height:1;opacity:.55;cursor:help;text-transform:none;letter-spacing:0}
+.kpi .lbl .ki:hover{opacity:1;color:var(--acc)}
+.uxbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
+.uxchip{display:inline-flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:4px 11px;font-family:inherit;font-weight:700;font-size:11.5px;cursor:pointer;box-shadow:var(--sh)}
+.uxchip:hover{border-color:var(--acc);color:var(--acc)}
+.uxchip b{color:var(--acc)}
+#vaiCard,#glCard{display:none}
+#vaiCard .q,#glCard .q,#tqQuick .q{white-space:normal;overflow:visible;text-overflow:clip}
+#vaiCard.on,#glCard.on{display:block}
+.vaiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:10px}
+.vaiOpt{text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;cursor:pointer;font-family:inherit;color:var(--ink);transition:border-color .15s,transform .15s}
+.vaiOpt:hover{border-color:var(--acc);transform:translateY(-1px)}
+.vaiOpt.on{border-color:var(--acc);box-shadow:0 0 0 3px rgba(226,35,26,.12)}
+.vaiOpt .t{font-weight:800;font-size:13px}
+.vaiOpt .d{font-size:11px;color:var(--mut);margin-top:3px;line-height:1.4}
+.vaiOpt .tb{font-size:10px;color:var(--mut);margin-top:6px;font-weight:700}
+.vaiFoot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;font-size:11px;color:var(--mut)}
+.nav-grp{font-size:9px;font-weight:800;letter-spacing:.08em;color:var(--acc);margin:8px 0 4px 10px;text-transform:uppercase}
+.nav-grp.k{color:var(--mut)}
+.nav-item.oth{opacity:.72}
+.glGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:4px 18px;margin-top:8px}
+.glIt{padding:7px 8px;border-radius:8px;font-size:12px;line-height:1.45}
+.glIt b{display:block;font-size:12px}
+.glIt span{color:var(--mut)}
+.glIt.hl{background:var(--chipBg);outline:1.5px solid var(--chipBd)}
+#tqQuick{display:none;border-left:4px solid var(--ink)}
+/* Biểu đồ công đoạn + vòng tỉ trọng: thẻ hẹp thì xếp dọc thay vì bóp nhỏ nhãn */
+div:has(>#cMix){flex-wrap:wrap}
+#cMix{min-width:300px}#cMixDonut{min-width:220px}
+#tqQuick .qrow{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;font-size:12.5px;line-height:1.5;margin-top:4px}
+#tqQuick .qh{font-weight:800;font-size:11px;letter-spacing:.06em;text-transform:uppercase;min-width:112px}
+#tqQuick .qh.no{color:var(--bad)} #tqQuick .qh.ok{color:var(--good)} #tqQuick .qh.nt{color:var(--mut)}
+@media(max-width:680px){.vaiGrid{grid-template-columns:1fr 1fr}.glGrid{grid-template-columns:1fr}#tqQuick .qh{min-width:0;width:100%}}
+</style>
+<script>
+(function(){
+var esc=(typeof _dhEsc==='function')?_dhEsc:function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+
+/* ---------- 3. CHÚ GIẢI — chỉ ghi điều đã đọc được trong mã ---------- */
+var GL=[
+ ['NT','Nghiệm thu — QC kiểm và chấp nhận (accept).'],
+ ['SX / gia công','Sản xuất — khối lượng xưởng đã làm xong, tính theo ngày gia công.'],
+ ['t','Tấn. Mọi khối lượng trên dashboard đều tính bằng tấn.'],
+ ['Fitup (t)','Tấn công đoạn lắp ghép QC đã nghiệm thu đạt, theo ngày nghiệm thu, trong tháng mới nhất.'],
+ ['Welding (t)','Tấn công đoạn hàn QC đã nghiệm thu đạt, theo ngày nghiệm thu, trong tháng mới nhất.'],
+ ['Painting (t)','Tấn công đoạn sơn QC đã nghiệm thu đạt, theo ngày nghiệm thu, trong tháng mới nhất.'],
+ ['Final DIM (t)','Tấn hàn có ghi chú "acc" — đã kiểm kích thước cuối và đạt — trong tháng mới nhất.'],
+ ['Waiting (t)','Tấn đã gia công nhưng CHƯA được QC nghiệm thu. Tính toàn bộ, không theo tháng. Dòng dưới cho biết đã chờ bao lâu.'],
+ ['FPY','Đạt ngay lần đầu = (tấn đạt − tấn có ghi mã lỗi) ÷ tấn đã kiểm. Mốc 98 %.'],
+ ['Tỷ lệ QC NT/SX','Trong số tấn SX gia công trong tháng, bao nhiêu % đã được QC nghiệm thu. Mục tiêu ≥ 95 %.'],
+ ['KL QC nghiệm thu (t)','Tổng Fitup + Welding + Painting nghiệm thu trong tháng, theo ngày nghiệm thu — gồm cả hàng làm từ tháng trước.'],
+ ['Sản lượng SX gia công (t)','Tổng tấn gia công trong tháng, theo ngày gia công; không tính hàng Miễn QC.'],
+ ['KL FPY bị lỗi (t)','Tấn đã nghiệm thu nhưng có ghi mã lỗi trong cột ghi chú SPM.'],
+ ['Khối lượng lỗi (t)','Tấn bị QC đánh rớt (reject / không đạt).'],
+ ['NCR (phiếu)','Số phiếu báo không phù hợp (NCR) lập trong tháng, đọc trực tiếp từ sheet NCR.'],
+ ['Accept','Trạng thái NT: QC đã chấp nhận.'],
+ ['QC ngoài','Dòng SPM được nghiệm thu không phải bởi QC An Hạ (nhóm "QC khác" trong dữ liệu).'],
+ ['Miễn QC','Hàng không cần QC nghiệm thu; không tính vào SX khi so tỷ lệ NT/SX.'],
+ ['Xưởng / Tổ','AH2, AH3, AH4, AH6, AH9 = xưởng; mã dạng AH2.TO1TP = tổ trong xưởng.']
+];
+var GLK={};GL.forEach(function(g){GLK[g[0].toLowerCase()]=g[0];});
+function glKey(lbl){var l=String(lbl||'').replace(/<[^>]*>/g,'').trim().toLowerCase();
+  if(GLK[l])return GLK[l];
+  if(/^fpy/.test(l))return 'FPY';
+  if(/^nt\/sx|^tỷ lệ qc nt\/sx/.test(l))return 'Tỷ lệ QC NT/SX';
+  return null;}
+window._glOpen=function(k){var c=document.getElementById('glCard');if(!c)return;c.classList.add('on');
+  var v=document.getElementById('vaiCard');if(v)v.classList.remove('on');
+  c.querySelectorAll('.glIt').forEach(function(x){x.classList.toggle('hl',x.getAttribute('data-k')===k);});
+  c.scrollIntoView({behavior:'smooth',block:'nearest'});};
+window._glTog=function(){var c=document.getElementById('glCard');if(!c)return;if(c.classList.contains('on'))c.classList.remove('on');else _glOpen('');};
+
+/* ---------- 2. NHÃN TRẠNG THÁI — chỉ KPI có ngưỡng thật ---------- */
+var KST={ /* nhãn KPI -> [chữ khi g, chữ khi b] */
+ 'Tỷ lệ QC NT/SX':['✓ Đạt mục tiêu','✕ Chưa đạt 95%'],
+ 'NT/SX công đoạn chính':['✓ Đạt mục tiêu','✕ Chưa đạt 95%'],
+ 'FPY TB xưởng':['✓ Đạt mốc 98%','✕ Dưới 98%'],
+ 'FPY ngày':['✓ Đạt mốc 98%','✕ Dưới 98%'],
+ 'FPY':['✓ Đạt mốc 98%','✕ Dưới 98%'],
+ 'FPY (đạt ngay lần đầu)':['✓ Đạt mốc 98%','✕ Dưới 98%'],
+ 'Tỷ lệ rớt':['✓ Trong ngưỡng 3%','✕ Vượt 3%'],
+ 'KL FPY bị lỗi (t)':['✓ Không có lỗi','! Có lỗi mã'],
+ 'Lỗi mã trong SPM (t)':['✓ Không có lỗi','! Có lỗi mã'],
+ 'Khối lượng lỗi (t)':['✓ Không có rớt','! Có hàng rớt'],
+ 'KL rớt (t)':['✓ Không có rớt','! Có hàng rớt'],
+ 'Rớt (t)':['✓ Không có rớt','! Có hàng rớt'],
+ 'NCR (phiếu)':['✓ Không có phiếu','! Có phiếu NCR']
+};
+if(typeof kpi==='function'){ var _k0=kpi;
+  kpi=function(cls,v,lbl,sub,click){
+    var h=_k0.apply(this,arguments);
+    try{
+      var L=String(lbl==null?'':lbl), st=KST[L], c=String(cls||'').split(/\s+/);
+      var gk=glKey(L);
+      if(gk) h=h.replace('<div class="lbl">'+L+'</div>','<div class="lbl">'+L+'<span class="ki" title="'+esc(gk+': '+(GL.filter(function(g){return g[0]===gk;})[0]||['',''])[1])+'" onclick="event.stopPropagation();_glOpen(\''+gk.replace(/'/g,'')+'\')">ⓘ</span></div>');
+      /* NCR: chỉ khẳng định khi đọc được sheet NCR live; nếu đang dùng bản lưu tĩnh thì nói rõ */
+      var ncrOld=(L==='NCR (phiếu)')&&!/live/i.test(String((window.NCRDATA||{}).source||''));
+      if(st&&ncrOld){
+        h=h.replace(/<\/div>$/,'<span class="kst nt">? Chưa đọc được NCR live</span></div>');
+      }else if(st&&(c.indexOf('g')>=0||c.indexOf('b')>=0)){
+        var ok=c.indexOf('g')>=0;
+        if(!ok)h=h.replace('<div class="kpi ','<div class="kpi stno ');
+        h=h.replace(/<\/div>$/,'<span class="kst '+(ok?'ok':'no')+'">'+esc(ok?st[0]:st[1])+'</span></div>');
+      }
+    }catch(e){}
+    return h;
+  };
+}
+
+/* ---------- 4. VAI TRÒ ---------- */
+var VAI={
+ gd:{n:'Ban Giám đốc',d:'Bức tranh tháng: sản lượng, mục tiêu, dự án, hồ sơ.',v:['tq','kp','pj','du']},
+ qlqc:{n:'Quản lý QC',d:'Sản lượng, chất lượng, năng suất QC, đối soát dữ liệu.',v:['tq','nd','qc','cl','du','dl']},
+ qcv:{n:'QC viên',d:'Nghiệm thu hôm nay, năng suất của mình, tra cứu hồ sơ cấu kiện.',v:['nd','qc','du']},
+ sx:{n:'Sản xuất / Xưởng',d:'Tồn chờ nghiệm thu theo xưởng & tổ, kế hoạch sản xuất.',v:['xt','nd','kh','ql']},
+ hs:{n:'Hồ sơ / Doc Control',d:'Hồ sơ cấu kiện, quá hạn, nâng Rev, tra cứu hàng loạt.',v:['du','pj','ql']}
+};
+var VK='qcVaiTro_v1';
+function getVai(){var m=location.search.match(/[?&]vai=([a-z]+)/);if(m&&(VAI[m[1]]||m[1]==='all')){try{localStorage.setItem(VK,m[1]);}catch(e){}return m[1];}
+  try{return localStorage.getItem(VK)||'';}catch(e){return '';}}
+function vname(k){return k&&VAI[k]?VAI[k].n:'Xem tất cả';}
+function tabName(k){var r=(typeof VIEWS!=='undefined')?VIEWS.filter(function(x){return x[0]===k;})[0]:null;return r?r[2]:k;}
+function applyNav(k){
+  var box=document.getElementById('navBox');if(!box||typeof VIEWS==='undefined')return;
+  box.querySelectorAll('.nav-grp').forEach(function(x){x.remove();});
+  var mine=k&&VAI[k]?VAI[k].v:null;
+  var ord=VIEWS.map(function(x){return x[0];});
+  var first=mine?mine.concat(ord.filter(function(x){return mine.indexOf(x)<0;})):ord;
+  if(mine){var g=document.createElement('div');g.className='nav-grp';g.textContent='Trang của bạn';box.appendChild(g);}
+  first.forEach(function(id,i){var n=document.getElementById('nb_'+id);if(!n)return;
+    if(mine&&i===mine.length){var g2=document.createElement('div');g2.className='nav-grp k';g2.textContent='Trang khác';box.appendChild(g2);}
+    n.classList.toggle('oth',!!mine&&mine.indexOf(id)<0);box.appendChild(n);});
+}
+function vaiCardHTML(cur,first){
+  var link=location.origin+location.pathname;
+  return '<h3>'+(first?'Bạn là ai? Chọn để dashboard mở đúng trang bạn cần':'Chế độ xem theo vai trò')+'</h3>'
+   +'<div class="q">Chỉ đổi thứ tự trang và trang mở đầu — mọi số liệu giữ nguyên, các trang khác vẫn mở được. Lựa chọn được nhớ trên máy này.</div>'
+   +'<div class="vaiGrid">'+Object.keys(VAI).map(function(k){var o=VAI[k];
+      return '<button class="vaiOpt'+(cur===k?' on':'')+'" data-vai="'+k+'"><div class="t">'+esc(o.n)+'</div><div class="d">'+esc(o.d)+'</div><div class="tb">'+o.v.map(function(x){return esc(tabName(x));}).join(' · ')+'</div></button>';}).join('')
+   +'<button class="vaiOpt'+(cur==='all'||!cur?' on':'')+'" data-vai="all"><div class="t">Xem tất cả</div><div class="d">Đủ 11 trang theo thứ tự gốc.</div></button></div>'
+   +'<div class="vaiFoot">Link riêng cho từng nhóm (gửi Zalo/email): '+Object.keys(VAI).map(function(k){return '<button class="uxchip" data-cp="'+k+'" title="'+esc(link+'?vai='+k)+'">⧉ '+esc(VAI[k].n)+'</button>';}).join('')
+   +(first?'':' <button class="uxchip" data-close="1">Đóng</button>')+'</div>';
+}
+function setVai(k,go){
+  try{localStorage.setItem(VK,k);}catch(e){}
+  applyNav(k==='all'?'':k); paintBar(k);
+  var c=document.getElementById('vaiCard');if(c)c.classList.remove('on');
+  if(go&&VAI[k]&&typeof setView==='function')setView(VAI[k].v[0]);
+}
+function paintBar(k){var b=document.getElementById('vaiBtn');if(b)b.innerHTML='Đang xem: <b>'+esc(vname(k==='all'?'':k))+'</b> ▾';}
+window._vaiTog=function(){var c=document.getElementById('vaiCard');if(!c)return;
+  if(c.classList.contains('on')){c.classList.remove('on');return;}
+  c.innerHTML=vaiCardHTML(getVai(),false);c.classList.add('on');
+  var g=document.getElementById('glCard');if(g)g.classList.remove('on');
+  c.scrollIntoView({behavior:'smooth',block:'nearest'});};
+
+/* ---------- 5. TÓM TẮT NHANH (Tổng quan) ---------- */
+function quick(){
+  var box=document.getElementById('tqQuick');if(!box)return;
+  var no=[],ok=[];
+  document.querySelectorAll('#tqKpis .kpi, #tqMonthKpis .kpi').forEach(function(k){
+    var s=k.querySelector('.kst');if(!s||s.classList.contains('nt'))return;
+    var l=k.querySelector('.lbl'),v=k.querySelector('.v');
+    var ln=l?l.firstChild.textContent:'', u=/\(t\)/.test(ln)?' t':(/\(phiếu\)/.test(ln)?' phiếu':'');
+    var t='<b>'+esc(ln.replace(/\s*\(t\)|\s*\(phiếu\)/,''))+'</b> '+esc(v?v.textContent:'')+u;
+    (s.classList.contains('no')?no:ok).push(t);
+  });
+  var wt='';var w=[].slice.call(document.querySelectorAll('#tqKpis .kpi')).filter(function(k){return /^Waiting/.test((k.querySelector('.lbl')||{}).textContent||'');})[0];
+  if(w){var m=(w.querySelector('.sub')||{}).textContent||'';var mm=m.match(/>90 ngày:\s*([\d.,]+ t \([\d.,]+%\))/);
+    wt='<b>Waiting</b> '+esc(w.querySelector('.v').textContent)+' t'+(mm?' — trong đó <b>'+esc(mm[1])+'</b> đã chờ quá 90 ngày':'');}
+  if(!no.length&&!ok.length){box.style.display='none';return;}
+  box.innerHTML='<h3>Tóm tắt nhanh — tháng mới nhất</h3>'
+   +(no.length?'<div class="qrow"><span class="qh no">✕ Cần chú ý ('+no.length+')</span>'+no.join(' · ')+'</div>':'')
+   +(ok.length?'<div class="qrow"><span class="qh ok">✓ Đang tốt ('+ok.length+')</span>'+ok.join(' · ')+'</div>':'')
+   +(wt?'<div class="qrow"><span class="qh nt">◷ Tồn chờ NT</span>'+wt+'</div>':'');
+  box.style.display='block';
+}
+if(typeof rTQ==='function'){var _q0=rTQ;rTQ=function(){_q0.apply(this,arguments);try{quick();}catch(e){console.error('quick',e);}};}
+
+/* ---------- Dựng khung ---------- */
+function mount(){
+  var tq=document.getElementById('v_tq');
+  if(tq&&!document.getElementById('tqQuick')){var q=document.createElement('div');q.className='card';q.id='tqQuick';tq.insertBefore(q,tq.firstChild);}
+  var meta=document.getElementById('meta');
+  if(meta&&!document.getElementById('vaiBtn')){
+    var bar=document.createElement('div');bar.className='uxbar';
+    bar.innerHTML='<button class="uxchip" id="vaiBtn" onclick="_vaiTog()"></button><button class="uxchip" onclick="_glTog()">ⓘ Chú giải thuật ngữ</button>';
+    meta.parentNode.appendChild(bar);}
+  var top=document.querySelector('.main .top');
+  if(top&&!document.getElementById('vaiCard')){
+    var v=document.createElement('div');v.className='card';v.id='vaiCard';top.parentNode.insertBefore(v,top.nextSibling);
+    var g=document.createElement('div');g.className='card';g.id='glCard';
+    g.innerHTML='<h3>Chú giải thuật ngữ</h3><div class="q">Bấm ⓘ cạnh một chỉ số để nhảy tới giải thích của nó.</div><div class="glGrid">'
+      +GL.map(function(x){return '<div class="glIt" data-k="'+esc(x[0])+'"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>';}).join('')
+      +'</div><div class="vaiFoot"><button class="uxchip" onclick="_glTog()">Đóng</button></div>';
+    v.parentNode.insertBefore(g,v.nextSibling);
+    v.addEventListener('click',function(e){
+      var o=e.target.closest('[data-vai]');if(o){setVai(o.getAttribute('data-vai'),true);return;}
+      var cp=e.target.closest('[data-cp]');if(cp){var u=location.origin+location.pathname+'?vai='+cp.getAttribute('data-cp');
+        var done=function(){var t=cp.textContent;cp.textContent='✓ Đã chép link';setTimeout(function(){cp.textContent=t;},1600);};
+        if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(u).then(done,function(){prompt('Chép link này:',u);});else prompt('Chép link này:',u);return;}
+      if(e.target.closest('[data-close]'))v.classList.remove('on');
+    });
+  }
+  var k=getVai();
+  applyNav(k==='all'?'':k); paintBar(k);
+  /* Lần đầu vào (chưa chọn, link không kèm tham số): mời chọn vai trò, không chặn trang */
+  if(!k&&!location.search){var c=document.getElementById('vaiCard');if(c){c.innerHTML=vaiCardHTML('',true);c.classList.add('on');}}
+  /* Có vai trò -> mở trang đầu của vai trò (chỉ khi đang ở trang mặc định) */
+  if(k&&VAI[k]&&typeof CUR!=='undefined'&&CUR==='tq'&&VAI[k].v[0]!=='tq'&&typeof setView==='function')setView(VAI[k].v[0]);
+}
+try{mount();}catch(e){console.error('ux mount',e);}
+try{ if(typeof CUR!=='undefined'&&typeof render==='function') render(CUR); }catch(e){console.error(e);}
+})();
 </script>
 </body></html>
