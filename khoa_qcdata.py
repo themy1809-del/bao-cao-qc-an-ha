@@ -22,9 +22,10 @@ nguoi_dung.csv (KHONG BAO GIO dua len GitHub — da co trong .gitignore), 4 cot:
 
 Mat ma: PBKDF2-SHA256 (600.000 vong) -> khoa rieng tung nguoi; AES-256-GCM.
 Moi lan chay sinh KHOA DU LIEU MOI -> xoa 1 nguoi khoi CSV roi chay lai la nguoi do het vao.
+Khoa rieng tung nguoi chi doi khi doi mat khau -> doi mat khau = buoc nguoi do dang nhap lai.
 Dinh dang phai khop voi dangnhap.html (fmt "qcenc-1").
 """
-import base64, csv, getpass, gzip, hashlib, json, os, re, secrets, shutil, sys, unicodedata
+import base64, csv, getpass, gzip, hashlib, json, os, re, secrets, shutil, sys, time, unicodedata
 
 try:
     from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -108,13 +109,16 @@ def khoa(text_goc, ds):
     ct = AESGCM(k_dl).encrypt(iv, than, None)
     users = []
     for ten, mk, vai, ho in ds:
-        salt = secrets.token_bytes(16)
+        # Muoi CO DINH theo ten -> khoa rieng (kek) chi doi khi DOI MAT KHAU.
+        # Nho vay nguoi da dang nhap / da "ghi nho" khong bi day ra moi lan PC khoa ban du lieu moi.
+        # (Khoa du lieu k_dl van sinh MOI moi lan; xoa ten khoi CSV = het vao.)
+        salt = hashlib.sha256(('qc-an-ha-muoi|' + ten).encode('utf-8')).digest()[:16]
         ivu = secrets.token_bytes(12)
         goi = json.dumps({'k': b64(k_dl), 'vai': vai, 'ten': ho, 'u': ten}, ensure_ascii=False).encode('utf-8')
         users.append({'id': ma_ten(ten), 's': b64(salt), 'iv': b64(ivu),
                       'w': b64(AESGCM(kek(mk, salt)).encrypt(ivu, goi, None))})
     users.sort(key=lambda u: u['id'])  # khong lo thu tu trong CSV
-    enc = {'fmt': 'qcenc-1', 'v': secrets.token_hex(8), 'updated': obj.get('updated', ''),
+    enc = {'fmt': 'qcenc-1', 'v': secrets.token_hex(8), 'ts': int(time.time()), 'updated': obj.get('updated', ''),
            'iter': ITER, 'users': users, 'iv': b64(iv), 'ct': b64(ct)}
     return ('// qcdata.js - DA KHOA. Mo bang dangnhap.html. Tao boi khoa_qcdata.py\n'
             'window.QCDATA_ENC=' + json.dumps(enc, separators=(',', ':')) + ';\n'), obj

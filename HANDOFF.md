@@ -45,8 +45,8 @@ Current deployment / environment:
   20 dự án kèm mốc gần nhất (bấm dòng → `khDrill`). Chỉ trình bày lại `_khLive` bằng đúng công thức `_khTq`/`_khLiveDraw`.
   5 tab con cũ giữ nguyên. Đối chiếu trên dữ liệu mẫu đúng cấu trúc sheet: quá hạn, đến hạn 7 ngày, tiến độ chung,
   phân bổ, ráp HT — khớp tab cũ. **Chưa chạy với sheet thật** (máy phát triển bị chặn Google).
-- **Đăng nhập (khoa_qcdata.py / dangnhap.html / qc_khoa.js)**: chỉ ở nhánh `claude/audit-existing-system-hjmvx9`,
-  CHƯA gắn, CHƯA lên `main` — chờ user cho phép.
+- **Đăng nhập** (user cho phép 29/09): đã gắn vào `qc.html` + `kiem_tra_waiting.html`, đã lên `main`, **chưa bật** —
+  tự bật khi PC đẩy `qcdata.js` đã khoá bằng `khoa_qcdata.py`. 18/18 kịch bản kiểm thử đạt. Hướng dẫn: `HUONG_DAN_DANG_NHAP.md`.
 
 ---
 

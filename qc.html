@@ -351,6 +351,7 @@ body.tvmode .view>.kpis{position:static}
 <body><!-- 29/09: bỏ huy hiệu "BẢN MỚI 20/9 v100" nổi góc phải — nó đè lên bảng/biểu đồ ở mọi tab --><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
 <script src="qcdata.js"></script>
+<script src="qc_khoa.js"></script><!-- 29/09: chot chan dang nhap — qcdata.js chua khoa thi khong lam gi -->
 <script src="apiurl.js"></script>
 <script src="ncr_data.js"></script>
 <script src="khsx_data.js"></script>
@@ -895,7 +896,7 @@ function uiScale(d){_ui=Math.max(0.8,Math.min(1.35,Math.round((_ui+d*0.05)*100)/
 setTimeout(_applyUi,0);
 /* Tu dong lam moi: dinh ky tai qcdata.js (chong cache), neu du lieu doi -> reload. Chay tren ban web https; ban local file:// tu bo qua. */
 (function(){
-  function _sig(o){return (o&&o.rows?o.rows.length:0)+'|'+(o&&o.check?o.check.f+'_'+o.check.w+'_'+o.check.p:'')+'|'+((o&&o.updated)||'');}
+  function _sig(o){return (o&&o.rows?o.rows.length:0)+'|'+(o&&o.check?o.check.f+'_'+o.check.w+'_'+o.check.p:'')+'|'+((o&&o.updated)||'')+'|'+((o&&o.v)||'');}/* o.v: phien ban file DA KHOA (qc_khoa.js) */
   var _base=null;
   function _fs(cb){try{fetch('qcdata.js?_cb='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){var i=t.indexOf('{'),j=t.lastIndexOf('}');if(i<0||j<=i){cb(null);return;}try{cb(_sig(JSON.parse(t.slice(i,j+1))));}catch(e){cb(null);}}).catch(function(){cb(null);});}catch(e){cb(null);}}
   _fs(function(s){_base=s;});
@@ -6356,6 +6357,9 @@ function mount(){
   if(meta&&!document.getElementById('vaiBtn')){
     var bar=document.createElement('div');bar.className='uxbar';
     bar.innerHTML='<button class="uxchip" id="vaiBtn" onclick="_vaiTog()"></button><button class="uxchip" onclick="_glTog()">ⓘ Chú giải thuật ngữ</button>';
+    /* Đang ở chế độ dữ liệu ĐÃ KHOÁ -> hiện người đăng nhập + nút đăng xuất */
+    if(window.QC_KHOA&&QC_KHOA.bat){var us=QC_KHOA.user||{};var ch=document.createElement('button');ch.className='uxchip';ch.title='Đăng xuất và xoá dữ liệu đã giải mã trên máy này';
+      ch.innerHTML='👤 '+esc(us.ten||us.u||'Đã đăng nhập')+' · <b>Đăng xuất</b>';ch.onclick=function(){if(typeof qcDangXuat==='function')qcDangXuat();};bar.appendChild(ch);}
     meta.parentNode.appendChild(bar);}
   var top=document.querySelector('.main .top');
   if(top&&!document.getElementById('vaiCard')){

@@ -64,7 +64,7 @@ button.go:disabled{opacity:.6;cursor:wait}
   </div>
   <div class="foot">Quên mật khẩu hoặc chưa có tài khoản: liên hệ quản lý QC nhà máy An Hạ.</div>
 </main>
-<script src="qcdata.js"></script>
+<script>/* luôn lấy bản mới nhất — tránh trình duyệt đưa bản cũ trong bộ đệm */document.write('<script src="qcdata.js?t='+Date.now()+'"><\/script>');</script>
 <script>
 (function(){
 var E=window.QCDATA_ENC, NHO='qcNho_v1', NGAY=30;
@@ -100,8 +100,8 @@ async function mo(id,kek,moi){
   var txt=await gunzip(await aes(b64d(goi.k),b64d(E.iv),b64d(E.ct)));
   var o=JSON.parse(txt);if(!o||!o.rows||!o.rows.length)throw new Error('du lieu rong');
   var luu=false;
-  try{sessionStorage.setItem('qcPlain',txt);sessionStorage.setItem('qcPlainV',E.v);luu=true;}catch(e){
-    try{sessionStorage.removeItem('qcPlain');sessionStorage.removeItem('qcPlainV');}catch(e2){}}
+  try{sessionStorage.setItem('qcPlain',txt);sessionStorage.setItem('qcPlainV',E.v);sessionStorage.setItem('qcPlainTs',String(E.ts||0));luu=true;}catch(e){
+    try{sessionStorage.removeItem('qcPlain');sessionStorage.removeItem('qcPlainV');sessionStorage.removeItem('qcPlainTs');}catch(e2){}}
   if(!luu)window.name='QCPLAIN1|'+E.v+'|'+txt;   /* dự phòng khi bộ nhớ phiên đầy */
   try{sessionStorage.setItem('qcUser',JSON.stringify({ten:goi.ten,vai:goi.vai,u:goi.u}));
       sessionStorage.setItem('qcKek',JSON.stringify({id:id,k:b64e(kek)}));}catch(e){}
@@ -116,6 +116,10 @@ async function mo(id,kek,moi){
   var c=null;
   try{c=JSON.parse(sessionStorage.getItem('qcKek')||'null');}catch(e){}
   if(!c){try{var r=JSON.parse(localStorage.getItem(NHO)||'null');if(r&&r.exp>Date.now())c=r;else localStorage.removeItem(NHO);}catch(e){}}
+  /* cầu chì: nếu bị chuyển qua lại quá 3 lần trong 1 phút thì dừng, không tự mở khoá nữa */
+  var L=[];try{L=JSON.parse(sessionStorage.getItem('qcLoop')||'[]').filter(function(t){return Date.now()-t<60000;});}catch(e){}
+  L.push(Date.now());try{sessionStorage.setItem('qcLoop',JSON.stringify(L));}catch(e){}
+  if(L.length>3){say('Trình duyệt đang giữ bản dữ liệu cũ. Nhấn Ctrl+F5 (điện thoại: tải lại trang) rồi đăng nhập.','bad');c=null;}
   if(c&&c.id&&c.k){
     say('Đang mở khoá…','nt');go.disabled=true;
     try{await mo(c.id,b64d(c.k),false);location.replace(NEXT);return;}

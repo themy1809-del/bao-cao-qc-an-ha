@@ -5,7 +5,7 @@
 
 ### DONE
 **Hệ 3 — vòng 8 (29/09):** tab Chất lượng (xu hướng 12 tháng, lỗi theo tổ, bỏ biểu đồ 2 trục, 8M thanh ngang)
-và Bảng điều khiển KHSX (trang mở đầu tab KHSX). Số liệu đối chiếu khớp. Đăng nhập: code ở nhánh dev, chưa bật.
+và Bảng điều khiển KHSX (trang mở đầu tab KHSX). Số liệu đối chiếu khớp. Đăng nhập: đã lên web, chờ PC khoá `qcdata.js` là tự bật (HUONG_DAN_DANG_NHAP.md).
 
 **Hệ 3 — vòng 7 (29/09): giao diện đa người dùng** — sửa tràn ngang 11/11 tab (390/1280/1500px),
 bỏ huy hiệu nổi đè nội dung, nhãn trạng thái KPI có icon+chữ, Tóm tắt nhanh, Chú giải thuật ngữ,

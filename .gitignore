@@ -14,3 +14,9 @@ Thumbs.db
 
 # Anh chup man hinh dung de kiem thu, khong thuoc san pham
 *_screenshot.png
+
+# Dang nhap (29/09): danh sach nguoi dung + mat khau CHI nam tren PC, khong bao gio len GitHub
+nguoi_dung.csv
+nguoi_dung*.csv
+!nguoi_dung_MAU.csv
+qcdata.js.tmp

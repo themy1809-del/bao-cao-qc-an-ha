@@ -51,6 +51,7 @@ Toàn bộ là trang tĩnh; **không có backend riêng, không có đăng nhậ
 | `.github/workflows/capnhat.yml` | tự sinh qcdata.js khi upload `Update spm/spm.xlsx` — **chưa từng chạy** | 11/08/2026 |
 | **`app.html`** | **APP TRA CỨU riêng biệt** (mới 28/09) — tra 1 mã / tra danh sách / import Excel / xuất Excel / duyệt bản vẽ / tổng quan. Chỉ đọc gviz. | 28/09/2026 |
 | **`ddc_core.js`** | Bộ đọc bảng gốc dùng chung — tách **nguyên văn** từ `doc.html`. | 28/09/2026 |
+| `dangnhap.html` / `qc_khoa.js` / `khoa_qcdata.py` | **Đăng nhập** (29/09): PC mã hoá `qcdata.js`; trình duyệt giải mã. Chưa khoá thì không làm gì. Xem `HUONG_DAN_DANG_NHAP.md` | 29/09/2026 |
 
 > **Khi sửa `app.html`:** đây là file ĐỘC LẬP, không ảnh hưởng `qc.html`/`doc.html`.
 > Logic đọc dữ liệu nằm ở `ddc_core.js` — **đừng viết lại**, hãy gọi `DDC_CORE.*`.
@@ -122,6 +123,8 @@ Do not invent missing business rules.
   "KL đã đi hàng") — luôn dò cột theo TÊN không dấu.
 - **Hệ 3:** `qcdata.js` hiện KHÔNG có mảng `Z` → mọi code đụng `D.Z`/`r[14]`
   phải giữ chốt chặn kiểu `KH_HASZONE` (`qc.html:4110`), đừng bỏ.
+- **Hệ 3 — đăng nhập:** trang mới đọc `qcdata.js` phải đặt `<script src="qc_khoa.js">` NGAY SAU nó.
+  Đổi định dạng mã hoá thì sửa ĐỒNG THỜI `khoa_qcdata.py` + `dangnhap.html`. Không dùng `window.stop()` trong chốt chặn.
 - **Hệ 3:** đừng thêm chỗ nào nhét dữ liệu Sheet vào `innerHTML` mà không escape —
   đã có 3 chỗ hở (xem `SECURITY_MODEL.md` §S3).
 

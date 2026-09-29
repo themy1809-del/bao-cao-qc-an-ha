@@ -85,6 +85,7 @@ select,input[type=text]{border:1px solid var(--line);border-radius:7px;padding:5
 <div id="out"></div>
 
 <script src="qcdata.js"></script>
+<script src="qc_khoa.js"></script>
 <script>
 var D=window.QCDATA,ITEMS=[],FL={st:null,x:'',to:'',m:'',pj:'',age:null},SORT='ag';
 function iso(s){s=String(s==null?'':s).trim();var m=s.match(/(\d{4})-(\d{2})-(\d{2})/);if(m)return m[1]+'-'+m[2]+'-'+m[3];m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return m[3]+'-'+('0'+m[1]).slice(-2)+'-'+('0'+m[2]).slice(-2);return'';}
