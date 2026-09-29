@@ -157,9 +157,9 @@ Dữ liệu từ Sheet (ai sửa được Sheet thì chèn được mã) đi th�
 
 | Nơi | Trường không escape |
 |---|---|
-| `qc.html:2558` (danh sách NCR live) | `r[0]` tên dự án, `r[1]` xưởng, `r[4]` mã lỗi, `r[5]`, `r[6]` — lấy từ Sheet `1DqerGEB…` |
-| `qc.html` `secGalRender()` | `p.name`, `s3.n`, `s3.to`, `s3.tt`, và `s3.img` đưa thẳng vào `src=` |
-| `qc.html` `_khPjBuild` / các bảng KHSX | nhiều trường lấy từ Sheet KHSX |
+| `qc.html` `renderNCR` (danh sách NCR live) | **ĐÃ SỬA 29/09** — escape qua `ES()` cho mọi trường từ Sheet `1DqerGEB…` |
+| `qc.html` `secGalRender()` | **ĐÃ SỬA 29/09** — `_sgE()` escape mọi trường; `_sgImg()` chỉ nhận ảnh `data:image`/`https`/đường dẫn tương đối (chặn `javascript:`); dấu nháy trong tên tổ không còn phá `onclick`. Thử cài mã độc: không chạy. *(Ghi chú: thẻ `secGalCard` hiện không có trong HTML nên khối này đang không hiển thị.)* |
+| `qc.html` `_khPjBuild` / các bảng KHSX | **CÒN MỞ** ở 5 tab con cũ (nhiều trường lấy từ Sheet KHSX). Tab con mới "Bảng điều khiển" (khối `kh2909`) đã escape |
 
 (Ngược lại, khối Document Control **có** escape qua `_dcEsc()`, và bảng dữ liệu chi tiết `rDL()`
 **có** escape memo — nên rủi ro tập trung ở 3 chỗ trên.)
