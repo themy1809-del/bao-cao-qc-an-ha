@@ -6081,9 +6081,9 @@ function _waitAge(rows){
         if(l&&/^Waiting/.test(l.textContent)){
           var sub=ks[i].querySelector('.sub'); if(!sub)break;
           var p90=A.t[3]/A.tot*100;
-          sub.innerHTML+='<div style="margin-top:4px;font-weight:700;color:'+(p90>=25?'var(--bad)':'var(--warn)')+'">'+
-            'trong đó &gt;90 ngày: '+_dhN(A.t[3])+' t ('+Math.round(p90)+'%)</div>'+
-            '<div style="font-size:10.5px;opacity:.8">≤30 ngày: '+_dhN(A.t[0]+A.t[1])+' t · 31–90: '+_dhN(A.t[2])+' t</div>';
+          /* 30/09: gọn 1 dòng (user: chiếm mặt bằng) — chi tiết tuổi tồn để ở chú thích khi rê chuột */
+          sub.innerHTML+='<div style="margin-top:2px;font-weight:700;color:'+(p90>=25?'var(--bad)':'var(--warn)')+'" title="≤30 ngày: '+_dhN(A.t[0]+A.t[1])+' t · 31–90 ngày: '+_dhN(A.t[2])+' t · >90 ngày: '+_dhN(A.t[3])+' t">'+
+            '&gt;90 ngày: '+_dhN(A.t[3])+' t ('+Math.round(p90)+'%)</div>';
           break;}}
     }catch(e){console.error('waitAge',e);}
   };
@@ -6194,12 +6194,23 @@ try{ if(typeof CUR!=='undefined'&&typeof render==='function') render(CUR); }catc
 .glIt b{display:block;font-size:12px}
 .glIt span{color:var(--mut)}
 .glIt.hl{background:var(--chipBg);outline:1.5px solid var(--chipBd)}
-#tqQuick{display:none;border-left:4px solid var(--ink)}
+/* 30/09 — gọn mặt bằng trang Tổng quan (user: "quá chiếm mặt bằng") */
+#tqKpis .kpi,#tqMonthKpis .kpi{padding:9px 13px!important}
+#tqKpis .kpi .sub,#tqMonthKpis .kpi .sub{margin-top:2px;line-height:1.3}
+#tqKpis,#tqMonthKpis .kpis{gap:9px!important}
+#tqMonthKpis .kpis{margin:0 0 9px!important}
+@media(min-width:901px){
+  .kpi .kst{position:absolute;top:27px;right:10px;margin:0;max-width:48%;overflow:hidden;text-overflow:ellipsis}
+  #tqBrief[style*="block"]{display:grid!important;grid-template-columns:1fr 1fr;column-gap:26px;padding-top:9px!important;padding-bottom:9px!important}
+  #tqBrief>div:first-child{grid-column:1/-1}
+}
+#tqQuick{display:none;border-left:4px solid var(--bad);padding:8px 14px!important}
 /* Biểu đồ công đoạn + vòng tỉ trọng: thẻ hẹp thì xếp dọc thay vì bóp nhỏ nhãn */
 div:has(>#cMix){flex-wrap:wrap}
 #cMix{min-width:300px}#cMixDonut{min-width:220px}
-#tqQuick .qrow{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;font-size:12.5px;line-height:1.5;margin-top:4px}
-#tqQuick .qh{font-weight:800;font-size:11px;letter-spacing:.06em;text-transform:uppercase;min-width:112px}
+#tqQuick .qrow{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;font-size:12.5px;line-height:1.5}
+#tqQuick .qsep{color:var(--line);margin:0 4px}
+#tqQuick .qh{font-weight:800;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 #tqQuick .qh.no{color:var(--bad)} #tqQuick .qh.ok{color:var(--good)} #tqQuick .qh.nt{color:var(--mut)}
 @media(max-width:680px){.vaiGrid{grid-template-columns:1fr 1fr}.glGrid{grid-template-columns:1fr}#tqQuick .qh{min-width:0;width:100%}}
 </style>
@@ -6242,20 +6253,20 @@ window._glOpen=function(k){var c=document.getElementById('glCard');if(!c)return;
 window._glTog=function(){var c=document.getElementById('glCard');if(!c)return;if(c.classList.contains('on'))c.classList.remove('on');else _glOpen('');};
 
 /* ---------- 2. NHÃN TRẠNG THÁI — chỉ KPI có ngưỡng thật ---------- */
-var KST={ /* nhãn KPI -> [chữ khi g, chữ khi b] */
- 'Tỷ lệ QC NT/SX':['✓ Đạt mục tiêu','✕ Chưa đạt 95%'],
- 'NT/SX công đoạn chính':['✓ Đạt mục tiêu','✕ Chưa đạt 95%'],
- 'FPY TB xưởng':['✓ Đạt mốc 98%','✕ Dưới 98%'],
- 'FPY ngày':['✓ Đạt mốc 98%','✕ Dưới 98%'],
- 'FPY':['✓ Đạt mốc 98%','✕ Dưới 98%'],
- 'FPY (đạt ngay lần đầu)':['✓ Đạt mốc 98%','✕ Dưới 98%'],
- 'Tỷ lệ rớt':['✓ Trong ngưỡng 3%','✕ Vượt 3%'],
- 'KL FPY bị lỗi (t)':['✓ Không có lỗi','! Có lỗi mã'],
- 'Lỗi mã trong SPM (t)':['✓ Không có lỗi','! Có lỗi mã'],
- 'Khối lượng lỗi (t)':['✓ Không có rớt','! Có hàng rớt'],
- 'KL rớt (t)':['✓ Không có rớt','! Có hàng rớt'],
- 'Rớt (t)':['✓ Không có rớt','! Có hàng rớt'],
- 'NCR (phiếu)':['✓ Không có phiếu','! Có phiếu NCR']
+var KST={ /* nhãn KPI -> [chữ ngắn khi g, chữ ngắn khi b, câu đầy đủ khi g, câu đầy đủ khi b] (30/09: nhãn ngắn cho gọn) */
+ 'Tỷ lệ QC NT/SX':['✓ Đạt','✕ Chưa đạt','Đạt mục tiêu ≥ 95%','Chưa đạt mục tiêu ≥ 95%'],
+ 'NT/SX công đoạn chính':['✓ Đạt','✕ Chưa đạt','Đạt mục tiêu ≥ 95%','Chưa đạt mục tiêu ≥ 95%'],
+ 'FPY TB xưởng':['✓ Đạt','✕ Dưới 98%','Đạt mốc 98%','Dưới mốc 98%'],
+ 'FPY ngày':['✓ Đạt','✕ Dưới 98%','Đạt mốc 98%','Dưới mốc 98%'],
+ 'FPY':['✓ Đạt','✕ Dưới 98%','Đạt mốc 98%','Dưới mốc 98%'],
+ 'FPY (đạt ngay lần đầu)':['✓ Đạt','✕ Dưới 98%','Đạt mốc 98%','Dưới mốc 98%'],
+ 'Tỷ lệ rớt':['✓ Đạt','✕ Vượt 3%','Trong ngưỡng 3%','Vượt ngưỡng 3%'],
+ 'KL FPY bị lỗi (t)':['✓ Không','! Có lỗi','Không có lỗi mã','Có hàng ghi mã lỗi'],
+ 'Lỗi mã trong SPM (t)':['✓ Không','! Có lỗi','Không có lỗi mã','Có hàng ghi mã lỗi'],
+ 'Khối lượng lỗi (t)':['✓ Không','! Có rớt','Không có hàng rớt','Có hàng bị rớt'],
+ 'KL rớt (t)':['✓ Không','! Có rớt','Không có hàng rớt','Có hàng bị rớt'],
+ 'Rớt (t)':['✓ Không','! Có rớt','Không có hàng rớt','Có hàng bị rớt'],
+ 'NCR (phiếu)':['✓ Không','! Có phiếu','Không có phiếu NCR trong tháng','Có phiếu NCR trong tháng']
 };
 if(typeof kpi==='function'){ var _k0=kpi;
   kpi=function(cls,v,lbl,sub,click){
@@ -6267,11 +6278,11 @@ if(typeof kpi==='function'){ var _k0=kpi;
       /* NCR: chỉ khẳng định khi đọc được sheet NCR live; nếu đang dùng bản lưu tĩnh thì nói rõ */
       var ncrOld=(L==='NCR (phiếu)')&&!/live/i.test(String((window.NCRDATA||{}).source||''));
       if(st&&ncrOld){
-        h=h.replace(/<\/div>$/,'<span class="kst nt">? Chưa đọc được NCR live</span></div>');
+        h=h.replace(/<\/div>$/,'<span class="kst nt" title="Chưa đọc được sheet NCR trực tiếp — số phiếu có thể chưa đầy đủ">? Chưa live</span></div>');
       }else if(st&&(c.indexOf('g')>=0||c.indexOf('b')>=0)){
         var ok=c.indexOf('g')>=0;
         if(!ok)h=h.replace('<div class="kpi ','<div class="kpi stno ');
-        h=h.replace(/<\/div>$/,'<span class="kst '+(ok?'ok':'no')+'">'+esc(ok?st[0]:st[1])+'</span></div>');
+        h=h.replace(/<\/div>$/,'<span class="kst '+(ok?'ok':'no')+'" title="'+esc(ok?st[2]:st[3])+'">'+esc(ok?st[0]:st[1])+'</span></div>');
       }
     }catch(e){}
     return h;
@@ -6340,10 +6351,10 @@ function quick(){
   if(w){var m=(w.querySelector('.sub')||{}).textContent||'';var mm=m.match(/>90 ngày:\s*([\d.,]+ t \([\d.,]+%\))/);
     wt='<b>Waiting</b> '+esc(w.querySelector('.v').textContent)+' t'+(mm?' — trong đó <b>'+esc(mm[1])+'</b> đã chờ quá 90 ngày':'');}
   if(!no.length&&!ok.length){box.style.display='none';return;}
-  box.innerHTML='<h3>Tóm tắt nhanh — tháng mới nhất</h3>'
-   +(no.length?'<div class="qrow"><span class="qh no">✕ Cần chú ý ('+no.length+')</span>'+no.join(' · ')+'</div>':'')
-   +(ok.length?'<div class="qrow"><span class="qh ok">✓ Đang tốt ('+ok.length+')</span>'+ok.join(' · ')+'</div>':'')
-   +(wt?'<div class="qrow"><span class="qh nt">◷ Tồn chờ NT</span>'+wt+'</div>':'');
+  /* 30/09: gọn 1 dòng (user: chiếm mặt bằng) — chỉ nêu việc cần chú ý + tồn lâu; chỉ số đạt đã có nhãn ✓ trên thẻ */
+  box.innerHTML='<div class="qrow">'
+   +(no.length?'<span class="qh no">✕ Cần chú ý</span>'+no.join(' · '):'<span class="qh ok">✓ Tất cả chỉ số có mục tiêu đều đạt</span>')
+   +(wt?'<span class="qsep">|</span><span class="qh nt">◷ Tồn chờ NT</span>'+wt:'')+'</div>';
   box.style.display='block';
 }
 if(typeof rTQ==='function'){var _q0=rTQ;rTQ=function(){_q0.apply(this,arguments);try{quick();}catch(e){console.error('quick',e);}};}

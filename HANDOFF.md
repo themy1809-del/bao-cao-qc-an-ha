@@ -45,6 +45,8 @@ Current deployment / environment:
   20 dự án kèm mốc gần nhất (bấm dòng → `khDrill`). Chỉ trình bày lại `_khLive` bằng đúng công thức `_khTq`/`_khLiveDraw`.
   5 tab con cũ giữ nguyên. Đối chiếu trên dữ liệu mẫu đúng cấu trúc sheet: quá hạn, đến hạn 7 ngày, tiến độ chung,
   phân bổ, ráp HT — khớp tab cũ. **Chưa chạy với sheet thật** (máy phát triển bị chặn Google).
+- **30/09**: user "quá chiếm mặt bằng" → Tổng quan gọn ~216px: Tóm tắt nhanh còn 1 dòng (chỉ mục cần chú ý + tồn >90 ngày),
+  thẻ Waiting 1 dòng tuổi tồn (chi tiết ở tooltip), nhãn trạng thái KPI ngắn đặt cạnh con số, Nhận định điều hành 2 cột.
 - **30/09**: user "không cần thiết" → **tắt chế độ xem theo vai trò** (bỏ nút "Đang xem", thẻ "Bạn là ai?", nhóm menu;
   link `?vai=` cũ vẫn mở bình thường, tham số bị bỏ qua; cột `vai` trong `nguoi_dung.csv` không còn tác dụng).
   User "không ổn, chart riêng ra" → biểu đồ 2 trục tung tách thành **2 biểu đồ riêng**, mỗi cái có trục ngày/tháng + tiêu đề
