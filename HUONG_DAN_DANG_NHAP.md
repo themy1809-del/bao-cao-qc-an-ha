@@ -25,7 +25,7 @@ Người xem nhập tên + mật khẩu ở `dangnhap.html`, trình duyệt củ
    |---|---|
    | `ten_dang_nhap` | chữ thường không dấu, số, `.` `_` `-` (vd `kientv`) |
    | `mat_khau` | **từ 10 ký tự**, mỗi người một mật khẩu riêng |
-   | `vai` | trang mở đầu: `gd` Giám đốc · `qlqc` Quản lý QC · `qcv` QC viên · `sx` Xưởng · `hs` Hồ sơ · `all` |
+   | `vai` | ghi `all` (từ 30/09 chế độ xem theo vai trò đã tắt, cột này không còn tác dụng — vẫn phải có cho đúng mẫu) |
    | `ho_ten` | tên hiện trên dashboard |
 
    `nguoi_dung.csv` **không bao giờ lên GitHub** (đã chặn trong `.gitignore`). Cất file này cẩn thận.

@@ -601,12 +601,12 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
     <div id="clWarn" style="display:none"></div>
     <!-- 29/09: xu huong chat luong 12 thang + loi ma theo to (render o khoi cl2909 cuoi file) -->
     <div class="r2" id="clTrendRow">
-      <div class="card"><h3>Xu hướng chất lượng — 12 tháng gần nhất</h3><div class="q" id="clTrendQ">FPY theo tháng nghiệm thu · dưới: tấn lỗi mã và tấn rớt</div><div id="cClTrend" class="ch" style="height:320px"></div></div>
+      <div class="card"><h3>Xu hướng chất lượng — 12 tháng gần nhất</h3><div class="q" id="clTrendQ">FPY theo tháng nghiệm thu · dưới: tấn lỗi mã và tấn rớt</div><div id="cClTrend" class="ch" style="height:200px"></div><div class="cg-lbl" style="margin:12px 0 2px">Tấn lỗi mã và tấn rớt theo tháng</div><div id="cClTrend2" class="ch" style="height:170px"></div></div>
       <div class="card"><h3>Lỗi mã theo tổ sản xuất</h3><div class="q" id="clToQ">Kỳ đang lọc · FPY tổ = (đạt − lỗi mã) ÷ đã kiểm, cùng công thức với FPY toàn nhà máy</div><div class="tw" style="max-height:320px"><table id="tClTo"></table></div></div>
     </div>
     <div class="card" id="ncrCard"><h3>NCR theo bộ mã lỗi (10/2025 → nay)</h3><div class="q">Nguồn: Google Sheet NCR — đọc trực tiếp khi mở trang (offline dùng bản lưu) · KL: kg · toàn kỳ, không theo bộ lọc</div>
       <div id="ncrSum" style="display:flex;gap:7px;flex-wrap:wrap;margin:2px 0 10px"></div>
-      <div class="r2"><div><div class="cg-lbl">NCR theo Xưởng — số vụ, tách theo nhóm công đoạn</div><div id="cNcrX" class="ch short"></div></div><div><div class="cg-lbl">Diễn biến NCR theo tháng — số vụ &amp; khối lượng</div><div id="cNcrM" class="ch short"></div></div></div>
+      <div class="r2"><div><div class="cg-lbl">NCR theo Xưởng — số vụ, tách theo nhóm công đoạn</div><div id="cNcrX" class="ch short"></div></div><div><div class="cg-lbl">Diễn biến NCR theo tháng — số vụ</div><div id="cNcrM" class="ch short"></div><div class="cg-lbl" style="margin-top:8px">Khối lượng NCR theo tháng (kg)</div><div id="cNcrMk" class="ch short"></div></div></div>
       <div class="r2" style="margin-top:10px"><div><div class="cg-lbl">Pareto theo công đoạn lỗi</div><div id="cNcrStage" class="ch short"></div></div><div><div class="cg-lbl">Nguyên nhân gốc rễ (8M)</div><div id="cNcrNN" class="ch short"></div></div></div>
       <div class="r2" style="margin-top:10px">
         <div><div class="cg-lbl">Lỗi lặp lại — cùng dự án, cùng mã (≥ 2 lần)</div><div class="tw" style="max-height:300px"><table id="tNcrRep"></table></div></div>
@@ -2564,16 +2564,18 @@ function renderNCR(){
     series:GRPS.map((g,gi)=>({name:g[0],type:'bar',stack:'n',barMaxWidth:34,itemStyle:{color:g[1],borderRadius:gi===GRPS.length-1?[3,3,0,0]:0},data:xks.map(x=>XW[x].g[g[0]]||0)})).concat([{name:'_t',type:'bar',stack:'n',itemStyle:{color:'transparent'},tooltip:{show:false},label:{show:true,position:'top',fontWeight:800,fontSize:11,color:'#64748B',formatter:p=>XW[xks[p.dataIndex]].n+(XW[xks[p.dataIndex]].open?' ('+XW[xks[p.dataIndex]].open+' mở)':'')},data:xks.map(()=>0)}])});
   var MO={};rows.forEach(r=>{var m=(r[2]||'').slice(0,7);if(!m)return;var o=MO[m]=MO[m]||{n:0,k:0};o.n++;o.k+=r[3];});
   var mks=Object.keys(MO).sort();
-  /* 29/09: bo bieu do 2 truc tung -> 2 khung xep doc, cung truc thang: tren = so vu, duoi = KL (kg) */
-  var _mx=mks.map(moVN);
-  setOpt('cNcrM',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:ps=>{var m=mks[ps[0].dataIndex],o=MO[m];return '<b>'+moVN(m)+'</b><br>'+o.n+' vụ · '+fmk(Math.round(o.k))+' kg';}},
-    axisPointer:{link:[{xAxisIndex:'all'}]},
-    title:[{text:'Số vụ',left:4,top:0,textStyle:{fontSize:10.5,fontWeight:800,color:'#64748B'}},{text:'Khối lượng (kg)',left:4,top:'52%',textStyle:{fontSize:10.5,fontWeight:800,color:'#64748B'}}],
-    grid:[{left:44,right:12,top:18,height:'30%'},{left:44,right:12,top:'62%',bottom:22}],
-    xAxis:[{type:'category',gridIndex:0,data:_mx,axisLabel:{show:false},axisTick:{show:false}},{type:'category',gridIndex:1,data:_mx,axisLabel:{fontWeight:700,fontSize:10}}],
-    yAxis:[{type:'value',gridIndex:0,minInterval:1,splitNumber:2,splitLine:{lineStyle:{opacity:.4}},axisLabel:{fontSize:10}},{type:'value',gridIndex:1,splitNumber:2,splitLine:{lineStyle:{opacity:.4}},axisLabel:{fontSize:10,formatter:v=>fmt(v)}}],
-    series:[{name:'Số vụ',type:'bar',xAxisIndex:0,yAxisIndex:0,barMaxWidth:24,itemStyle:{color:'#2563EB',borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontWeight:800,fontSize:10,color:'#64748B'},data:mks.map(m=>MO[m].n)},
-      {name:'KL (kg)',type:'bar',xAxisIndex:1,yAxisIndex:1,barMaxWidth:24,itemStyle:{color:'#64748B',borderRadius:[3,3,0,0]},data:mks.map(m=>Math.round(MO[m].k))}]});
+  /* 30/09: NCR theo tháng — 2 biểu đồ riêng (số vụ / kg), mỗi cái có trục tháng riêng (user: "chart riêng ra") */
+  var _mx=mks.map(moVN), _tt=function(ps){var m=mks[ps[0].dataIndex],o=MO[m];return '<b>'+moVN(m)+'</b><br>'+o.n+' vụ · '+fmk(Math.round(o.k))+' kg';};
+  setOpt('cNcrM',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:_tt},
+    grid:{left:8,right:12,top:16,bottom:4,containLabel:true},
+    xAxis:{type:'category',data:_mx,axisLabel:{fontWeight:700,fontSize:10}},
+    yAxis:{type:'value',minInterval:1,splitNumber:2,splitLine:{lineStyle:{opacity:.4}},axisLabel:{fontSize:10}},
+    series:[{name:'Số vụ',type:'bar',barMaxWidth:24,itemStyle:{color:'#2563EB',borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontWeight:800,fontSize:10,color:'#64748B'},data:mks.map(m=>MO[m].n)}]});
+  setOpt('cNcrMk',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:_tt},
+    grid:{left:8,right:12,top:10,bottom:4,containLabel:true},
+    xAxis:{type:'category',data:_mx,axisLabel:{fontWeight:700,fontSize:10}},
+    yAxis:{type:'value',splitNumber:2,splitLine:{lineStyle:{opacity:.4}},axisLabel:{fontSize:10,formatter:v=>fmt(v)}},
+    series:[{name:'KL (kg)',type:'bar',barMaxWidth:24,itemStyle:{color:'#64748B',borderRadius:[3,3,0,0]},data:mks.map(m=>Math.round(MO[m].k))}]});
   var RP={};rows.forEach(r=>{var key=r[0]+'||'+(r[4]||'');var o=RP[key]=RP[key]||{p:r[0],c:r[4],n:0,k:0,last:''};o.n++;o.k+=r[3];if(r[2]>o.last)o.last=r[2];});
   var reps=Object.values(RP).filter(o=>o.n>=2).sort((a,b)=>b.n-a.n);
   document.getElementById('tNcrRep').innerHTML=reps.length?'<thead><tr><th>Dự án</th><th>Mã lỗi</th><th class="n">Số lần</th><th class="n">KL (kg)</th><th>Gần nhất</th></tr></thead><tbody>'+
@@ -6351,9 +6353,10 @@ function mount(){
   var tq=document.getElementById('v_tq');
   if(tq&&!document.getElementById('tqQuick')){var q=document.createElement('div');q.className='card';q.id='tqQuick';tq.insertBefore(q,tq.firstChild);}
   var meta=document.getElementById('meta');
-  if(meta&&!document.getElementById('vaiBtn')){
+  if(meta&&!document.getElementById('glBtn')){
     var bar=document.createElement('div');bar.className='uxbar';
-    bar.innerHTML='<button class="uxchip" id="vaiBtn" onclick="_vaiTog()"></button><button class="uxchip" onclick="_glTog()">ⓘ Chú giải thuật ngữ</button>';
+    /* 30/09: bo nut "Dang xem: <vai tro>" — user: che do xem theo vai tro khong can thiet */
+    bar.innerHTML='<button class="uxchip" id="glBtn" onclick="_glTog()">ⓘ Chú giải thuật ngữ</button>';
     /* Đang ở chế độ dữ liệu ĐÃ KHOÁ -> hiện người đăng nhập + nút đăng xuất */
     if(window.QC_KHOA&&QC_KHOA.bat){var us=QC_KHOA.user||{};var ch=document.createElement('button');ch.className='uxchip';ch.title='Đăng xuất và xoá dữ liệu đã giải mã trên máy này';
       ch.innerHTML='👤 '+esc(us.ten||us.u||'Đã đăng nhập')+' · <b>Đăng xuất</b>';ch.onclick=function(){if(typeof qcDangXuat==='function')qcDangXuat();};bar.appendChild(ch);}
@@ -6374,12 +6377,9 @@ function mount(){
       if(e.target.closest('[data-close]'))v.classList.remove('on');
     });
   }
-  var k=getVai();
-  applyNav(k==='all'?'':k); paintBar(k);
-  /* Lần đầu vào (chưa chọn, link không kèm tham số): mời chọn vai trò, không chặn trang */
-  if(!k&&!location.search){var c=document.getElementById('vaiCard');if(c){c.innerHTML=vaiCardHTML('',true);c.classList.add('on');}}
-  /* Có vai trò -> mở trang đầu của vai trò (chỉ khi đang ở trang mặc định) */
-  if(k&&VAI[k]&&typeof CUR!=='undefined'&&CUR==='tq'&&VAI[k].v[0]!=='tq'&&typeof setView==='function')setView(VAI[k].v[0]);
+  /* 30/09: TAT che do xem theo vai tro (user: khong can thiet) — menu giu thu tu goc, luon mo Tong quan,
+     khong con the "Ban la ai?". Link cu co ?vai=... van mo binh thuong (tham so bi bo qua). */
+  applyNav('');
 }
 try{mount();}catch(e){console.error('ux mount',e);}
 try{ if(typeof CUR!=='undefined'&&typeof render==='function') render(CUR); }catch(e){console.error(e);}
@@ -6391,7 +6391,7 @@ try{ if(typeof CUR!=='undefined'&&typeof render==='function') render(CUR); }catc
    không thêm định nghĩa nghiệp vụ mới. Chữ từ dữ liệu đều escape.
    ============================================================ -->
 <style id="cl2909">
-#cNcrX,#cNcrM{height:260px!important}
+#cNcrX{height:300px!important}#cNcrM,#cNcrMk{height:130px!important}
 #cNcrStage,#cNcrNN{height:230px!important}
 #tClTo td.fpy{font-weight:800}
 </style>
@@ -6404,33 +6404,37 @@ function trend(){
   var G={};Fnodate().forEach(function(r){var m=String(r[3]||'').slice(0,7);if(!m)return;(G[m]=G[m]||[]).push(r);});
   var ms=Object.keys(G).sort().slice(-12);
   var q=document.getElementById('clTrendQ');
-  if(!ms.length){if(q)q.textContent='Chưa có dữ liệu nghiệm thu theo bộ lọc hiện tại.';setOpt('cClTrend',{series:[]});return;}
+  if(!ms.length){if(q)q.textContent='Chưa có dữ liệu nghiệm thu theo bộ lọc hiện tại.';setOpt('cClTrend',{series:[]});setOpt('cClTrend2',{series:[]});return;}
   var S=ms.map(function(m){return fpyCalc(G[m]);});
   var fp=S.map(function(o){return o.fpy==null?null:+o.fpy.toFixed(2);});
   var lo=Math.min.apply(null,fp.filter(function(v){return v!=null;}).concat([98]));
   var ymin=Math.max(0,Math.floor(lo)-1);
   var last=S[S.length-1],prev=S.length>1?S[S.length-2]:null;
-  if(q)q.innerHTML='FPY theo tháng nghiệm thu · vạch xanh = mốc 98% · dưới: tấn lỗi mã và tấn rớt · theo bộ lọc xưởng/dự án/QC (không theo kỳ)'
+  if(q)q.innerHTML='FPY theo tháng nghiệm thu · vạch xanh = mốc 98% · theo bộ lọc xưởng/dự án/QC (không theo kỳ)'
     +(last&&last.fpy!=null?' · tháng '+ES(moVN(ms[ms.length-1]))+': <b style="color:'+(last.fpy>=98?'var(--good)':'var(--bad)')+'">'+P1(last.fpy)+'</b>'
       +(prev&&prev.fpy!=null?' ('+(last.fpy>=prev.fpy?'▲':'▼')+' '+Math.abs(last.fpy-prev.fpy).toFixed(1).replace('.',',')+' điểm so tháng trước)':''):'');
   var X=ms.map(moVN);
+  var TTf=function(ps){var i=ps[0].dataIndex,o=S[i];
+      return '<b>'+ES(moVN(ms[i]))+'</b><br>FPY: <b>'+P1(o.fpy)+'</b><br>Đã kiểm: '+fm1(o.a+o.j)+' t<br>Lỗi mã: '+fm1(o.e)+' t · '+o.n+' món<br>Rớt: '+fm1(o.j)+' t';};
+  /* 30/09: tách 2 biểu đồ riêng (user) — FPY % và tấn lỗi, mỗi cái có trục tháng riêng */
   setOpt('cClTrend',{
-    tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){var i=ps[0].dataIndex,o=S[i];
-      return '<b>'+ES(moVN(ms[i]))+'</b><br>FPY: <b>'+P1(o.fpy)+'</b><br>Đã kiểm: '+fm1(o.a+o.j)+' t<br>Lỗi mã: '+fm1(o.e)+' t · '+o.n+' món<br>Rớt: '+fm1(o.j)+' t';}},
-    axisPointer:{link:[{xAxisIndex:'all'}]},
-    legend:{top:'53%',right:6,data:['Lỗi mã (t)','Rớt (t)'],itemWidth:12,itemHeight:8,textStyle:{fontSize:10.5,fontWeight:700}},
-    title:[{text:'FPY (%)',left:4,top:0,textStyle:{fontSize:10.5,fontWeight:800,color:'#64748B'}},{text:'Tấn lỗi',left:4,top:'53%',textStyle:{fontSize:10.5,fontWeight:800,color:'#64748B'}}],
-    grid:[{left:46,right:14,top:20,height:'36%'},{left:46,right:14,top:'64%',bottom:22}],
-    xAxis:[{type:'category',gridIndex:0,data:X,axisLabel:{show:false},axisTick:{show:false}},{type:'category',gridIndex:1,data:X,axisLabel:{fontSize:10,fontWeight:700}}],
-    yAxis:[{type:'value',gridIndex:0,min:ymin,max:100,splitNumber:3,axisLabel:{fontSize:10,formatter:function(v){return v+'%';}},splitLine:{lineStyle:{opacity:.4}}},
-           {type:'value',gridIndex:1,splitNumber:2,axisLabel:{fontSize:10},splitLine:{lineStyle:{opacity:.4}}}],
-    series:[
-      {name:'FPY',type:'line',xAxisIndex:0,yAxisIndex:0,data:fp,connectNulls:false,symbol:'circle',symbolSize:8,lineStyle:{width:2,color:'#334155'},
+    tooltip:{trigger:'axis',confine:true,axisPointer:{type:'line'},formatter:TTf},
+    grid:{left:8,right:18,top:30,bottom:6,containLabel:true},
+    xAxis:{type:'category',data:X,axisLabel:{fontSize:10,fontWeight:700}},
+    yAxis:{type:'value',name:'FPY %',min:ymin,max:100,splitNumber:3,nameTextStyle:{fontSize:10},axisLabel:{fontSize:10,formatter:function(v){return v+'%';}},splitLine:{lineStyle:{opacity:.4}}},
+    series:[{name:'FPY',type:'line',data:fp,connectNulls:false,symbol:'circle',symbolSize:8,lineStyle:{width:2,color:'#334155'},
         itemStyle:{color:function(p){return p.value!=null&&p.value<98?'#C0392B':'#334155';},borderColor:'#fff',borderWidth:2},
         label:{show:true,position:'top',fontSize:10,fontWeight:700,formatter:function(p){return (p.dataIndex===fp.length-1||(p.value!=null&&p.value<98))?String(p.value).replace('.',','):'';}},
-        markLine:{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#15803D',width:1.5},label:{formatter:'98%',color:'#15803D',fontWeight:700,fontSize:10},data:[{yAxis:98}]}},
-      {name:'Lỗi mã (t)',type:'bar',stack:'e',xAxisIndex:1,yAxisIndex:1,barMaxWidth:22,itemStyle:{color:'#D97706',borderColor:'transparent',borderWidth:1},data:S.map(function(o){return +o.e.toFixed(1);})},
-      {name:'Rớt (t)',type:'bar',stack:'e',xAxisIndex:1,yAxisIndex:1,barMaxWidth:22,itemStyle:{color:'#C0392B',borderRadius:[3,3,0,0]},data:S.map(function(o){return +o.j.toFixed(1);})}
+        markLine:{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#15803D',width:1.5},label:{position:'insideEndTop',formatter:'mốc 98%',color:'#15803D',fontWeight:700,fontSize:10},data:[{yAxis:98}]}}]});
+  setOpt('cClTrend2',{
+    tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:TTf},
+    legend:{top:0,right:6,itemWidth:12,itemHeight:8,textStyle:{fontSize:10.5,fontWeight:700}},
+    grid:{left:8,right:18,top:26,bottom:6,containLabel:true},
+    xAxis:{type:'category',data:X,axisLabel:{fontSize:10,fontWeight:700}},
+    yAxis:{type:'value',name:'tấn',splitNumber:2,nameTextStyle:{fontSize:10},axisLabel:{fontSize:10},splitLine:{lineStyle:{opacity:.4}}},
+    series:[
+      {name:'Lỗi mã (t)',type:'bar',stack:'e',barMaxWidth:22,itemStyle:{color:'#D97706'},data:S.map(function(o){return +o.e.toFixed(1);})},
+      {name:'Rớt (t)',type:'bar',stack:'e',barMaxWidth:22,itemStyle:{color:'#C0392B',borderRadius:[3,3,0,0]},data:S.map(function(o){return +o.j.toFixed(1);})}
     ]});
 }
 function toTable(){
@@ -6734,19 +6738,32 @@ if(typeof setOpt==='function'){var _so=setOpt;
           if(se.label)se.label.color=dk?'#e6ece8':'#334155';}
       });
       var ya=opt.yAxis, sr=opt.series||[];
+      var id2=String(id)+'__2', el=document.getElementById(id), el2=document.getElementById(id2), cap=document.getElementById(id2+'_t');
       if(Array.isArray(ya)&&ya.length===2&&sr.some(function(x){return x&&x.yAxisIndex===1;})&&opt.xAxis&&!Array.isArray(opt.xAxis)){
-        var g=opt.grid||{}, L=g.left!=null?g.left:8, R=12;
-        var xa=opt.xAxis, x0=Object.assign({},xa,{gridIndex:0,axisLabel:Object.assign({},xa.axisLabel||{},{show:false}),axisTick:{show:false}}), x1=Object.assign({},xa,{gridIndex:1});
-        var top=(g.top!=null?g.top:30);
-        opt.grid=[{left:L,right:R,top:top,height:'40%',containLabel:true},{left:L,right:R,top:'64%',bottom:g.bottom!=null?g.bottom:8,containLabel:true}];
-        opt.xAxis=[x0,x1];
-        var y1=Object.assign({},ya[1],{gridIndex:1,splitLine:{lineStyle:{opacity:.4}},splitNumber:3});delete y1.max;/* khung riêng -> tự co giãn, không cần trần cũ của kiểu 2 trục */
-        opt.yAxis=[Object.assign({},ya[0],{gridIndex:0}),y1];
-        sr.forEach(function(x){if(!x)return;var i=x.yAxisIndex===1?1:0;x.xAxisIndex=i;x.yAxisIndex=i;
-          if(x.markLine){x.markLine.label=Object.assign({},x.markLine.label||{},{position:'insideEndTop',fontSize:10,formatter:function(q){return q.value+(i===1&&/%/.test(String((ya[1]||{}).name||''))?'%':'');}});}});
-        opt.axisPointer=Object.assign({},opt.axisPointer||{},{link:[{xAxisIndex:'all'}]});
-        var el=document.getElementById(id);if(el){var hh=el.offsetHeight||parseInt(el.style.height,10)||0;if(hh&&hh<380)el.style.height='380px';}
-      }
+        /* 30/09: tách thành 2 BIỂU ĐỒ RIÊNG (mỗi cái có trục ngày + tiêu đề riêng) thay vì 2 khung trong 1 biểu đồ */
+        var y1=ya[1]||{}, pct=/%/.test(String(y1.name||'')+String((y1.axisLabel||{}).formatter||''));
+        var strip=function(x){var o=Object.assign({},x);delete o.yAxisIndex;delete o.xAxisIndex;return o;};
+        var s0=sr.filter(function(x){return x&&x.yAxisIndex!==1;}).map(strip);
+        var s1=sr.filter(function(x){return x&&x.yAxisIndex===1;}).map(function(x){var o=strip(x);
+          if(o.markLine)o.markLine=Object.assign({},o.markLine,{label:Object.assign({},o.markLine.label||{},{position:'insideEndTop',fontSize:10,formatter:function(q){return q.value+(pct?'%':'');}})});return o;});
+        var yb=Object.assign({},y1,{position:'left',splitNumber:3,splitLine:{lineStyle:{opacity:.4}}});delete yb.max;delete yb.gridIndex;
+        var lg=Object.assign({},opt.legend||{},{top:0});delete lg.data;
+        var g0=opt.grid||{};
+        var opt2={tooltip:{trigger:'axis',confine:true,valueFormatter:function(v){return v==null?'—':String(v).replace('.',',')+(pct?'%':'');}},
+          legend:lg,grid:{left:g0.left!=null?g0.left:8,right:16,top:34,bottom:8,containLabel:true},
+          xAxis:Object.assign({},opt.xAxis),yAxis:yb,series:s1};
+        opt.yAxis=ya[0]; opt.series=s0;
+        if(el&&!el2){
+          cap=document.createElement('div');cap.id=id2+'_t';cap.className='cg-lbl';cap.style.margin='14px 0 2px';
+          el2=document.createElement('div');el2.id=id2;el2.className=el.className;el2.style.cssText='width:100%;height:230px';
+          el.parentNode.insertBefore(cap,el.nextSibling);el.parentNode.insertBefore(el2,cap.nextSibling);
+        }
+        if(el2){cap.textContent=(y1.name&&String(y1.name).trim()?String(y1.name).trim():(pct?'Tỷ lệ (%)':''))+' — '+s1.map(function(x){return x.name;}).filter(Boolean).join(' · ');
+          cap.style.display='';el2.style.display='';}
+        var r=_so.apply(this,arguments);
+        if(el2){try{_so(id2,opt2);}catch(e2){console.error('tach bieu do',e2);}}
+        return r;
+      } else if(el2){el2.style.display='none';if(cap)cap.style.display='none';}
     }}catch(e){console.error('KHSX/setOpt',e);}
     return _so.apply(this,arguments);
   };
