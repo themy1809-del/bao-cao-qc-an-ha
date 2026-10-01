@@ -6194,6 +6194,10 @@ try{ if(typeof CUR!=='undefined'&&typeof render==='function') render(CUR); }catc
 .glIt b{display:block;font-size:12px}
 .glIt span{color:var(--mut)}
 .glIt.hl{background:var(--chipBg);outline:1.5px solid var(--chipBd)}
+/* 01/10 — biểu đồ sản lượng theo ngày/tháng giãn kín khung (user: "trống chân dưới");
+   cùng cách với biểu đồ "Sản lượng theo xưởng" (flex:1, height:auto) */
+.card:has(>#cTime){display:flex;flex-direction:column}
+#cTime{flex:1 1 auto;height:auto!important;min-height:300px}
 /* 30/09 — gọn mặt bằng trang Tổng quan (user: "quá chiếm mặt bằng") */
 #tqKpis .kpi,#tqMonthKpis .kpi{padding:9px 13px!important}
 #tqKpis .kpi .sub,#tqMonthKpis .kpi .sub{margin-top:2px;line-height:1.3}
