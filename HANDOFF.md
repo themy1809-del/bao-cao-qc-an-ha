@@ -45,6 +45,9 @@ Current deployment / environment:
   20 dự án kèm mốc gần nhất (bấm dòng → `khDrill`). Chỉ trình bày lại `_khLive` bằng đúng công thức `_khTq`/`_khLiveDraw`.
   5 tab con cũ giữ nguyên. Đối chiếu trên dữ liệu mẫu đúng cấu trúc sheet: quá hạn, đến hạn 7 ngày, tiến độ chung,
   phân bổ, ráp HT — khớp tab cũ. **Chưa chạy với sheet thật** (máy phát triển bị chặn Google).
+- **01/10 (2)**: dữ liệu mới lên (01/10/2026, 19.015 dòng). User "Tổng quan chart quá tệ, trở lại lúc cũ" → 2 biểu đồ Tổng quan
+  (`cTime` sản lượng ngày, `cNcrMini` NCR 6 tháng) **trở lại dạng ban đầu** (1 biểu đồ); lớp tách 2 biểu đồ nay chỉ áp cho KHSX (`cKh*`).
+  Lưu ý: đầu tháng, kỳ mặc định "Tháng mới nhất" chỉ có 1–vài ngày → biểu đồ "15 ngày gần nhất" chỉ có 1 cột (chờ user chốt cách xử lý).
 - **01/10**: xem `CAP_NHAT_VA_PUSH.bat` thật trên PC → nó chạy `spm_flatten.py` ở THƯ MỤC GỐC PC (khác bản trong repo —
   bản repo ghi `Z` vào qcdata.js, bản đang chạy thì không: đây là gốc lệch pha 2C.2), copy `qcdata.js` sang
   `qc_dashboard_public` rồi `git add -A / commit / pull --rebase / push`. Bản mới `cong_cu_pc/CAP_NHAT_VA_PUSH.bat`:

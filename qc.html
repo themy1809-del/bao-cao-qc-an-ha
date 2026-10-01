@@ -485,7 +485,7 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
     <div class="r23" style="grid-template-columns:1fr 1.15fr .95fr">
       <div class="card" style="display:flex;flex-direction:column"><h3>Sản lượng theo xưởng</h3><div class="q" id="tqXQ">Bấm cột xưởng để lọc</div><div id="cX" class="ch" style="flex:1 1 auto;height:auto;min-height:170px"></div></div>
       <div class="card"><h3>Top dự án đang hoạt động</h3><div class="q">Tấn đã nghiệm thu trong tháng mới nhất · bấm thanh để lọc theo dự án</div><div id="cPjDonut5" style="width:100%;height:280px"></div><div id="tqIns" style="display:none"></div></div>
-      <div class="card clickable" onclick="setView('cl')" title="Bấm để mở tab Chất lượng — phân tích NCR đầy đủ" style="display:none"><h3>NCR — 6 tháng gần nhất</h3><div class="q" id="ncrMiniQ">Trên = số vụ · dưới = khối lượng (kg) · bấm để xem chi tiết</div><div id="cNcrMini" style="width:100%;height:280px"></div></div>
+      <div class="card clickable" onclick="setView('cl')" title="Bấm để mở tab Chất lượng — phân tích NCR đầy đủ" style="display:none"><h3>NCR — 6 tháng gần nhất</h3><div class="q" id="ncrMiniQ">Cột = số vụ · đường = kg · bấm để xem chi tiết</div><div id="cNcrMini" style="width:100%;height:280px"></div></div>
     </div>
   </section>
 
@@ -1568,7 +1568,7 @@ function rTQ(){
     var MO={};N.rows.forEach(function(r){var m=(r[2]||'').slice(0,7);if(m){var o=MO[m]=MO[m]||{n:0,k:0,open:0};o.n++;o.k+=r[3];if(String(r[6]||'').toUpperCase().indexOf('OPEN')>-1)o.open++;}});
     var ks=Object.keys(MO).sort().slice(-6);
     var opn=0,opk=0;N.rows.forEach(function(r){if(String(r[6]||'').toUpperCase().indexOf('OPEN')>-1){opn++;opk+=r[3];}});
-    var q=document.getElementById('ncrMiniQ');if(q)q.innerHTML='Trên = số vụ (số trong ngoặc = đang mở) · dưới = khối lượng (kg)'+(opn?' · <b style="color:var(--bad)">'+opn+' phiếu đang mở · '+Math.round(opk).toLocaleString('vi-VN')+' kg</b>':'')+' · bấm để xem chi tiết';
+    var q=document.getElementById('ncrMiniQ');if(q)q.innerHTML='Cột = số vụ (số trong ngoặc = đang mở) · đường = kg'+(opn?' · <b style="color:var(--bad)">'+opn+' phiếu đang mở · '+Math.round(opk).toLocaleString('vi-VN')+' kg</b>':'')+' · bấm để xem chi tiết';
     setOpt('cNcrMini',{tooltip:{trigger:'axis',confine:true,axisPointer:{type:'shadow'},formatter:function(ps){var m=ks[ps[0].dataIndex],o=MO[m];return '<b>'+moVN(m)+'</b><br>'+o.n+' vụ · '+Math.round(o.k).toLocaleString('vi-VN')+' kg'+(o.open?' · <b style="color:#DC2626">'+o.open+' đang mở</b>':'');}},
       legend:{show:false},grid:{left:8,right:42,top:16,bottom:6,containLabel:true},
       xAxis:{type:'category',data:ks.map(moVN),axisLabel:{fontWeight:700}},
@@ -6741,7 +6741,7 @@ if(typeof _khFail==='function'){var _f=_khFail;_khFail=function(){_f.apply(this,
 /* Màu + tách biểu đồ 2 trục — chỉ cho biểu đồ của KHSX */
 if(typeof setOpt==='function'){var _so=setOpt;
   setOpt=function(id,opt,onClick){
-    try{ if(/^(cKh|cTime$|cNcrMini$)/.test(String(id))&&opt){ /* 29/09: them 2 bieu do 2 truc cua Tong quan */
+    try{ if(/^cKh/.test(String(id))&&opt){ /* 01/10: user yeu cau 2 bieu do Tong quan (cTime, cNcrMini) TRO LAI dang ban dau -> chi con ap dung cho KHSX */
       var dk=document.documentElement.dataset.theme==='dark';
       (opt.series||[]).forEach(function(se){
         if(se&&se.name==='Còn lại'&&se.itemStyle&&String(se.itemStyle.color).toUpperCase()==='#EF6B63'){
