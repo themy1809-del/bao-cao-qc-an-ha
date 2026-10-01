@@ -45,6 +45,11 @@ Current deployment / environment:
   20 dự án kèm mốc gần nhất (bấm dòng → `khDrill`). Chỉ trình bày lại `_khLive` bằng đúng công thức `_khTq`/`_khLiveDraw`.
   5 tab con cũ giữ nguyên. Đối chiếu trên dữ liệu mẫu đúng cấu trúc sheet: quá hạn, đến hạn 7 ngày, tiến độ chung,
   phân bổ, ráp HT — khớp tab cũ. **Chưa chạy với sheet thật** (máy phát triển bị chặn Google).
+- **01/10**: xem `CAP_NHAT_VA_PUSH.bat` thật trên PC → nó chạy `spm_flatten.py` ở THƯ MỤC GỐC PC (khác bản trong repo —
+  bản repo ghi `Z` vào qcdata.js, bản đang chạy thì không: đây là gốc lệch pha 2C.2), copy `qcdata.js` sang
+  `qc_dashboard_public` rồi `git add -A / commit / pull --rebase / push`. Bản mới `cong_cu_pc/CAP_NHAT_VA_PUSH.bat`:
+  thêm bước khoá (`khoa_qcdata.py`) khi có `nguoi_dung.csv`, khoá lỗi thì `git checkout -- qcdata.js`; bỏ nhắc huy hiệu cũ.
+  Lần chạy 30/09 lỗi "SAI KIEU PIVOT" (Pivot chỉ 2 cột nhãn dòng) — chờ user xuất lại SPM. `spm_flat.csv` user gửi = đúng dữ liệu 28/09.
 - **30/09**: user "quá chiếm mặt bằng" → Tổng quan gọn ~216px: Tóm tắt nhanh còn 1 dòng (chỉ mục cần chú ý + tồn >90 ngày),
   thẻ Waiting 1 dòng tuổi tồn (chi tiết ở tooltip), nhãn trạng thái KPI ngắn đặt cạnh con số, Nhận định điều hành 2 cột.
 - **30/09**: user "không cần thiết" → **tắt chế độ xem theo vai trò** (bỏ nút "Đang xem", thẻ "Bạn là ai?", nhóm menu;

@@ -36,6 +36,11 @@ Người xem nhập tên + mật khẩu ở `dangnhap.html`, trình duyệt củ
 
 ## Làm MỖI LẦN cập nhật dữ liệu
 
+> **Cách dễ nhất (01/10/2026):** thay file `CAP_NHAT_VA_PUSH.bat` trên PC bằng bản mới ở
+> `cong_cu_pc/CAP_NHAT_VA_PUSH.bat` (tự về máy trong thư mục `qc_dashboard_public` sau lần chạy kế tiếp).
+> Bản mới tự chạy `khoa_qcdata.py` khi có `qc_dashboard_public\nguoi_dung.csv`; khoá lỗi thì **không** đẩy dữ liệu chưa khoá.
+> Chưa có `nguoi_dung.csv` thì chạy y như bản cũ. Nếu dùng file .bat này thì bỏ qua lệnh tay bên dưới.
+
 Sau khi sinh `qcdata.js` như mọi khi, **trước khi đẩy lên**:
 ```
 python khoa_qcdata.py
