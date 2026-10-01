@@ -484,7 +484,7 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
     <div class="r23"><div class="card"><h3 id="tqTimeTtl">Sản lượng nghiệm thu theo ngày</h3><div style="display:flex;gap:6px;margin:3px 0 2px"><button class="qf on" id="tfdA" onclick="setTimeFD(false)">Công đoạn</button><button class="qf" id="tfdB" onclick="setTimeFD(true)">Final DIM</button></div><div class="q" id="tqTimeQ">Bấm cột để lọc theo kỳ</div><div id="cTime" class="ch"></div></div><div class="card"><h3>Sản lượng theo công đoạn</h3><div class="q" id="tqMixQ">So với mục tiêu 4.500 t/tháng · bấm để lọc</div><div style="display:flex;gap:6px;align-items:stretch"><div id="cMix" class="ch" style="flex:1.5"></div><div id="cMixDonut" class="ch" style="flex:1"></div></div></div></div>
     <div class="r23" style="grid-template-columns:1fr 1.15fr .95fr">
       <div class="card" style="display:flex;flex-direction:column"><h3>Sản lượng theo xưởng</h3><div class="q" id="tqXQ">Bấm cột xưởng để lọc</div><div id="cX" class="ch" style="flex:1 1 auto;height:auto;min-height:170px"></div></div>
-      <div class="card"><h3>Top dự án đang hoạt động</h3><div class="q">Tấn đã nghiệm thu trong tháng mới nhất · bấm thanh để lọc theo dự án</div><div id="cPjDonut5" style="width:100%;height:280px"></div><div id="tqIns" style="display:none"></div></div>
+      <div class="card"><h3>Top dự án đang hoạt động</h3><div class="q">Đã NT trong kỳ · <b>Chờ NT</b> · <b>Còn lại BOM</b> · bấm để lọc</div><div id="cPjDonut5" style="width:100%;height:280px"></div><div id="tqIns" style="display:none"></div></div>
       <div class="card clickable" onclick="setView('cl')" title="Bấm để mở tab Chất lượng — phân tích NCR đầy đủ" style="display:none"><h3>NCR — 6 tháng gần nhất</h3><div class="q" id="ncrMiniQ">Cột = số vụ · đường = kg · bấm để xem chi tiết</div><div id="cNcrMini" style="width:100%;height:280px"></div></div>
     </div>
   </section>
@@ -1499,9 +1499,9 @@ function rTQ(){
     var pf=function(v){return v==null?'—':v.toFixed(1).replace('.',',')+'%';};
     var ncrN=0,ncrK=0;try{var NN=window.NCRDATA;if(NN&&NN.rows)NN.rows.forEach(function(rr){if(String(rr[2]||'').slice(0,7)===lm){ncrN++;ncrK+=(+rr[3]||0);}});}catch(e){}
     el.innerHTML='<div class="kpis" style="margin:3px 0 12px">'
-      +kpi(r31==null?'a':(r31>=95?'g':'b'),pf(r31),'Tỷ lệ QC NT/SX',(sxT>0?'<b>'+fm1(sxAT)+'</b> / '+fm1(sxT)+' t SX tháng này đã NT · ':'')+'mục tiêu ≥ 95%')
-      +kpi('a',fm1(aT),'KL QC nghiệm thu (t)','trong tháng · theo ngày NT, gồm cả hàng làm từ tháng trước')
-      +kpi('a',fm1(sxT),'Sản lượng SX gia công (t)','cùng tháng · theo ngày gia công')
+      +kpi(r31==null?'a':(r31>=95?'g':'b'),pf(r31),'Tỷ lệ QC NT/SX','mục tiêu ≥ 95%')
+      +kpi('a',fm1(aT),'KL QC nghiệm thu (t)','trong tháng')
+      +kpi('a',fm1(sxT),'Sản lượng SX gia công (t)','cùng kỳ')
       +kpi(eT>0.05?'b':'g',fm1(eT),'KL FPY bị lỗi (t)','lỗi mã trong tháng')
       +kpi(jT>0.05?'b':'g',fm1(jT),'Khối lượng lỗi (t)',rej.length+' lượt')
       +kpi(ncrN>0?'b':'g',ncrN,'NCR (phiếu)',ncrN>0?(ncrK.toLocaleString('vi-VN')+' kg trong tháng'):'không có phiếu trong tháng')
@@ -1659,16 +1659,24 @@ function rTQ(){
       return ls.join('\n');
     };
     var _dark=document.documentElement.dataset.theme==='dark';
-    /* 29/09: vong tron 6 lat (nhan ten bi cat, so kho doc) -> thanh ngang xep hang, cung du lieu top 5 + Khac */
-    var bars=data.slice().reverse();
     setOpt('cPjDonut5',{
-      title:{text:'Top 5 dự án'+(lm?' · tháng '+moVN(lm):'')+' · tổng '+fm1(tot)+' t · '+arr.length+' dự án',left:0,top:0,textStyle:{fontSize:11.5,fontWeight:800}},
-      tooltip:{trigger:'item',confine:true,formatter:function(p){return '<b>'+p.name+'</b><br>'+fm1(p.value)+' t · '+(tot>0?Math.round(p.value/tot*100):0)+'% tấn nghiệm thu tháng';}},
-      grid:{left:8,right:92,top:26,bottom:4,containLabel:true},
-      xAxis:{type:'value',show:false},
-      yAxis:{type:'category',data:bars.map(function(d){return d.name;}),axisTick:{show:false},axisLine:{show:false},axisLabel:{fontSize:11,fontWeight:700,width:190,overflow:'truncate',color:(_dark?'#cbd5e1':'#334155')}},
-      series:[{type:'bar',barMaxWidth:18,data:bars.map(function(d){return {value:d.value,name:d.name,_pi:d._pi,itemStyle:{color:d._pi==null?'#94A3B8':'#2563EB',borderRadius:[0,4,4,0]}};}),
-        label:{show:true,position:'right',fontSize:11,fontWeight:800,color:(_dark?'#e2e8f0':'#1e293b'),formatter:function(p){return fm1(p.value)+' t · '+(tot>0?Math.round(p.value/tot*100):0)+'%';}}}]},
+      title:{text:'Top 5 dự án'+(lm?' · tháng '+moVN(lm):''),left:'center',top:2,textStyle:{fontSize:12.5,fontWeight:800}},
+      tooltip:{trigger:'item',confine:true,valueFormatter:function(v){return fm1(v)+' t';}},
+      animationDuration:3000,animationEasing:'cubicOut',
+      graphic:[{type:'text',left:'center',top:'56%',z:10,style:{
+        text:'{a|'+fm1(tot)+'}\n{b|tấn đã nghiệm thu}\n{c|'+arr.length+' dự án}',
+        textAlign:'center',textVerticalAlign:'middle',
+        rich:{a:{fontSize:23,fontWeight:800,fill:(_dark?'#e2e8f0':'#1e293b'),lineHeight:27},
+              b:{fontSize:10.5,fontWeight:600,fill:(_dark?'#94a3b8':'#64748b'),lineHeight:15},
+              c:{fontSize:10,fill:(_dark?'#64748b':'#94a3b8'),lineHeight:14}}}}],
+      series:[{type:'pie',radius:['46%','68%'],center:['50%','56%'],avoidLabelOverlap:true,
+        itemStyle:{borderColor:(_dark?'#0f172a':'#fff'),borderWidth:3,borderRadius:8,shadowBlur:16,shadowColor:'rgba(30,41,59,.28)',shadowOffsetY:7},
+        label:{show:true,formatter:function(p){return wrapWords(p.name,19,2)+'\n{v|'+fm1(p.value)+' t · '+p.percent.toFixed(0)+'%}';},
+          fontSize:11.5,fontWeight:700,lineHeight:15,
+          rich:{v:{fontSize:11,fontWeight:800,fill:(_dark?'#94a3b8':'#64748b'),lineHeight:16}}},
+        labelLine:{length:14,length2:10,smooth:.2},
+        emphasis:{scale:true,scaleSize:10,itemStyle:{shadowBlur:26,shadowColor:'rgba(30,41,59,.45)'},label:{fontSize:12.5}},
+        data:data}]},
       function(p){if(p.data&&p.data._pi!=null)tog('pj',p.data._pi);});
   })();
   if(document.getElementById('pendPanel').style.display==='block')renderPend();
@@ -6072,7 +6080,7 @@ function _waitAge(rows){
 }
 
 /* ---------- Tong quan: ghi them tuoi ton duoi the Waiting (KHONG doi con so) ---------- */
-(function(){ if(typeof rTQ!=='function')return; var _b=rTQ;
+(function(){ return; /* 01/10: user 'quay ve ban goc cho Tong quan' -> TAT dong tuoi ton duoi the Waiting */ if(typeof rTQ!=='function')return; var _b=rTQ;
   rTQ=function(){ _b.apply(this,arguments);
     try{
       var pend=Fnodate().filter(isTon), A=_waitAge(pend); if(A.tot<=0.05)return;
@@ -6194,20 +6202,12 @@ try{ if(typeof CUR!=='undefined'&&typeof render==='function') render(CUR); }catc
 .glIt b{display:block;font-size:12px}
 .glIt span{color:var(--mut)}
 .glIt.hl{background:var(--chipBg);outline:1.5px solid var(--chipBd)}
-/* 30/09 — gọn mặt bằng trang Tổng quan (user: "quá chiếm mặt bằng") */
-#tqKpis .kpi,#tqMonthKpis .kpi{padding:9px 13px!important}
-#tqKpis .kpi .sub,#tqMonthKpis .kpi .sub{margin-top:2px;line-height:1.3}
-#tqKpis,#tqMonthKpis .kpis{gap:9px!important}
-#tqMonthKpis .kpis{margin:0 0 9px!important}
-@media(min-width:901px){
-  .kpi .kst{position:absolute;top:27px;right:10px;margin:0;max-width:48%;overflow:hidden;text-overflow:ellipsis}
-  #tqBrief[style*="block"]{display:grid!important;grid-template-columns:1fr 1fr;column-gap:26px;padding-top:9px!important;padding-bottom:9px!important}
-  #tqBrief>div:first-child{grid-column:1/-1}
-}
+/* 01/10 — user "quay về bản gốc cho Tổng quan": thẻ KPI Tổng quan như bản gốc (không nhãn ✓/✕, không ⓘ, dòng phụ 1 dòng) */
+#v_tq .kpi .kst,#v_tq .kpi .lbl .ki{display:none!important}
+#v_tq .kpi .sub{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+@media(min-width:901px){.kpi .kst{position:absolute;top:27px;right:10px;margin:0;max-width:48%;overflow:hidden;text-overflow:ellipsis}}
 #tqQuick{display:none;border-left:4px solid var(--bad);padding:8px 14px!important}
-/* Biểu đồ công đoạn + vòng tỉ trọng: thẻ hẹp thì xếp dọc thay vì bóp nhỏ nhãn */
-div:has(>#cMix){flex-wrap:wrap}
-#cMix{min-width:300px}#cMixDonut{min-width:220px}
+/* 01/10: bỏ xếp dọc biểu đồ công đoạn + vòng — user 'quay về bản gốc cho Tổng quan' (thanh + vòng nằm cạnh nhau như gốc) */
 #tqQuick .qrow{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;font-size:12.5px;line-height:1.5}
 #tqQuick .qsep{color:var(--line);margin:0 4px}
 #tqQuick .qh{font-weight:800;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
@@ -6362,16 +6362,16 @@ if(typeof rTQ==='function'){var _q0=rTQ;rTQ=function(){_q0.apply(this,arguments)
 /* ---------- Dựng khung ---------- */
 function mount(){
   var tq=document.getElementById('v_tq');
-  if(tq&&!document.getElementById('tqQuick')){var q=document.createElement('div');q.className='card';q.id='tqQuick';tq.insertBefore(q,tq.firstChild);}
+  /* 01/10: user 'quay ve ban goc cho Tong quan' -> khong tao khung Tom tat nhanh */
   var meta=document.getElementById('meta');
   if(meta&&!document.getElementById('glBtn')){
-    var bar=document.createElement('div');bar.className='uxbar';
+    var bar=document.createElement('span');bar.className='uxbar';bar.style.cssText='display:inline-flex;margin:0;gap:6px'; /* 01/10: nằm chung hàng công cụ, không thêm hàng dưới tiêu đề */
     /* 30/09: bo nut "Dang xem: <vai tro>" — user: che do xem theo vai tro khong can thiet */
     bar.innerHTML='<button class="uxchip" id="glBtn" onclick="_glTog()">ⓘ Chú giải thuật ngữ</button>';
     /* Đang ở chế độ dữ liệu ĐÃ KHOÁ -> hiện người đăng nhập + nút đăng xuất */
     if(window.QC_KHOA&&QC_KHOA.bat){var us=QC_KHOA.user||{};var ch=document.createElement('button');ch.className='uxchip';ch.title='Đăng xuất và xoá dữ liệu đã giải mã trên máy này';
       ch.innerHTML='👤 '+esc(us.ten||us.u||'Đã đăng nhập')+' · <b>Đăng xuất</b>';ch.onclick=function(){if(typeof qcDangXuat==='function')qcDangXuat();};bar.appendChild(ch);}
-    meta.parentNode.appendChild(bar);}
+    var tools=document.querySelector('.main .top .tools');(tools||meta.parentNode).appendChild(bar);}
   var top=document.querySelector('.main .top');
   if(top&&!document.getElementById('vaiCard')){
     var v=document.createElement('div');v.className='card';v.id='vaiCard';top.parentNode.insertBefore(v,top.nextSibling);

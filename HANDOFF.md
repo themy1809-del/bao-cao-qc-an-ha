@@ -45,6 +45,10 @@ Current deployment / environment:
   20 dự án kèm mốc gần nhất (bấm dòng → `khDrill`). Chỉ trình bày lại `_khLive` bằng đúng công thức `_khTq`/`_khLiveDraw`.
   5 tab con cũ giữ nguyên. Đối chiếu trên dữ liệu mẫu đúng cấu trúc sheet: quá hạn, đến hạn 7 ngày, tiến độ chung,
   phân bổ, ráp HT — khớp tab cũ. **Chưa chạy với sheet thật** (máy phát triển bị chặn Google).
+- **01/10 (3)**: user "QUAY VỀ BẢN GỐC CHO TỔNG QUAN" → tab Tổng quan **về đúng bản gốc** (`556cb61`): bỏ nhãn ✓/✕ và ⓘ trên thẻ KPI,
+  bỏ Tóm tắt nhanh, bỏ dòng tuổi tồn dưới Waiting, "Top dự án" về lại biểu đồ vòng, chữ phụ KPI tháng như gốc, bỏ xếp dọc biểu đồ công đoạn.
+  Nút "Chú giải" chuyển lên thanh công cụ trên cùng. Đối chiếu tự động với bản gốc: 56/56 dòng chữ, 6/6 biểu đồ giống hệt, KPI lệch 0.
+  Các tab khác KHÔNG đổi (nhãn trạng thái/ⓘ vẫn còn ở tab khác).
 - **01/10 (2)**: dữ liệu mới lên (01/10/2026, 19.015 dòng). User "Tổng quan chart quá tệ, trở lại lúc cũ" → 2 biểu đồ Tổng quan
   (`cTime` sản lượng ngày, `cNcrMini` NCR 6 tháng) **trở lại dạng ban đầu** (1 biểu đồ); lớp tách 2 biểu đồ nay chỉ áp cho KHSX (`cKh*`).
   Lưu ý: đầu tháng, kỳ mặc định "Tháng mới nhất" chỉ có 1–vài ngày → biểu đồ "15 ngày gần nhất" chỉ có 1 cột (chờ user chốt cách xử lý).
