@@ -4,6 +4,9 @@
 ## STATUS
 
 ### DONE
+**Hệ 4 — đồng bộ theo bản đồ cột (04/10, MỚI):** code + hướng dẫn ở `cong_cu_pc/dong_bo_ban_do/`.
+Chờ user cài trên BanDoCheckList + máy công ty và chạy thử lần đầu. 14 lỗi khai báo bản đồ cần người phụ trách sửa.
+
 **Hệ 3 — vòng 8 (29/09):** tab Chất lượng (xu hướng 12 tháng, lỗi theo tổ, bỏ biểu đồ 2 trục, 8M thanh ngang)
 và Bảng điều khiển KHSX (trang mở đầu tab KHSX). Số liệu đối chiếu khớp. Đăng nhập: đã lên web, chờ PC khoá `qcdata.js` là tự bật (HUONG_DAN_DANG_NHAP.md).
 

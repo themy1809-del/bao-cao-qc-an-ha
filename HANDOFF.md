@@ -36,6 +36,15 @@ Current deployment / environment:
 
 ## 2. CURRENT TASK
 
+**MỚI 04/10: HỆ 4 "ĐỒNG BỘ THEO BẢN ĐỒ CỘT"** — `cong_cu_pc/dong_bo_ban_do/` (đọc `HUONG_DAN.md`).
+- Nguồn khai báo: Google Sheet **BanDoCheckList** (tab Data Qc Doc 80 dòng/57 dự án, NDT 66 dòng, CongDoan NT).
+- PC `KEO_BANDO.vbs` (17:30) mở checklist trên Z: chỉ đọc → Apps Script `DONGBO_BANDO.gs` ('04/10 ban-1')
+  GẮN VÀO chính BanDoCheckList ghi mỗi dự án 1 tab (+ tab `NDT - <dự án>`), NHAT KY DONG BO, TONG HOP DONG BO.
+- Độc lập hệ 1/2/3: không đụng KEO_DULIEU, BD_EP, dashboard. Không ghi vào 4 tab bản đồ.
+- Đã chạy thử logic server bằng Node trên dữ liệu bản đồ thật: 119 việc, 77 tab, 14 lỗi bản đồ (bảng ở HUONG_DAN §5).
+  **CHƯA chạy trên máy công ty** (VBS chưa thử trên Windows/Excel thật). URL /exec + KHOA: UNKNOWN — user tự điền.
+
+
 **MỚI 29/09 (vòng 8): nâng cấp tab Chất lượng + Bảng điều khiển KHSX** (đã lên `main`).
 - Tab 07 Chất lượng (khối `cl2909`): xu hướng FPY 12 tháng + tấn lỗi mã/rớt; lỗi mã theo tổ (dùng `fpyCalc`);
   NCR theo tháng bỏ 2 trục tung → 2 khung; 8M vòng → thanh ngang; tên dự án đầy đủ; escape dữ liệu Sheet NCR.
