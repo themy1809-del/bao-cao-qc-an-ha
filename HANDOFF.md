@@ -36,6 +36,12 @@ Current deployment / environment:
 
 ## 2. CURRENT TASK
 
+**09/10 (6) — BẪY SPM EXPORT: "Export to Excel" chỉ xuất TỐI ĐA 7 cấp ROWS + Memo.** Cấp thứ 8–9 bị BỎ HẲN (không có trong file,
+kể cả sharedStrings) dù màn hình SPM hiện đủ. Đã thử 3 lần: mất QC User+QC Status, rồi mất QC Workshop+QC Date.
+**Bố cục CHUẨN (đã xác minh đủ dữ liệu):** `Project > Phase > Workshop > Work Date > QC Workshop > QC User > QC Date > Memo`
+(bỏ Zone + QC Status; script tự suy trạng thái từ QC Workshop như bản cũ). Kết quả ghép 01/09–09/10: 19.563 dòng, tổng F/W/P
+**lệch 0** so với main, 2.102/2.102 dòng accept T9–T10 có tên QC, 67 Phase. Thêm trường nào vào ROWS thì phải bỏ bớt 1 trường.
+
 **09/10: QC theo Hạng mục (Zone) — sửa `spm_flatten.py` (repo), CHỜ user chạy thử trên PC.**
 - User muốn bảng hạng mục trong `khDrill` (vd lắp thử "Milestone 1 LT …" của WOLF SUMMIT) có cột QC thay vì "chưa có Zone trong SPM".
   User sẽ kéo trường **Zone** vào ROWS của Pivot SPM (ngay sau Project).
