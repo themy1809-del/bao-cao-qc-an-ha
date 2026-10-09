@@ -72,6 +72,9 @@ Current deployment / environment:
   dự án/xưởng/tổ/ngày làm) để không đếm 2 lần; `proj`: BOM theo file mới (không có giữ cũ), F/W/P cộng lại từ dòng.
   Thử: SPM 01/09–09/10 ghép vào qcdata 08/10 → 19.520 dòng, 117 dự án, +46,6 t F / +132,7 t W (≈1 ngày SX), proj↔dòng lệch 0/117,
   dashboard 0 lỗi. **Chưa đẩy**: file này thiếu QC User (2.061 dòng accept T9–T10 sẽ mất tên QC) → chờ user xuất lại có QC User.
+  → **User đã chạy trên PC 09/10 09:51** (`main` 8091567): qcdata.js trên `main` **giống hệt từng dòng** bản thử (19.520 dòng, 117 DA,
+  107 Zone, proj lệch 0). Tồn: T9–T10 **thiếu tên QC** (QC User trống) → lần xuất sau From 9/1 có QC User sẽ tự thay. `qc.html` bảng
+  Phase/Zone vẫn ở nhánh, chờ user "gộp vào main".
 
 **MỚI 29/09 (vòng 8): nâng cấp tab Chất lượng + Bảng điều khiển KHSX** (đã lên `main`).
 - Tab 07 Chất lượng (khối `cl2909`): xu hướng FPY 12 tháng + tấn lỗi mã/rớt; lỗi mã theo tổ (dùng `fpyCalc`);

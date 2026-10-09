@@ -307,7 +307,7 @@ def _mmd(v):
 if _wds:
     print('   [DOC SPM] %d dong | WorkDate %s -> %s'%(len(flatFull),min(_wds,key=_mmd),max(_wds,key=_mmd)))
 if _lastn>=200 and len(flatFull)<_lastn*0.6:
-    print('   [i] Luu y: lan nay it hon lan truoc (%d vs %d dong). Neu CO Y export loc thi bo qua; neu khong, kiem tra lai bo loc roi chay lai.'%(len(flatFull),_lastn))
+    print('   [i] File SPM nay it dong hon lan truoc (%d vs %d). File THEO THANG thi binh thuong -> xem dong [GHEP THEO KY] ben duoi.'%(len(flatFull),_lastn))
 open(os.path.join(ODIR,'spm_data.js'),'w',encoding='utf-8').write('window.SPM_DATA='+json.dumps(out,ensure_ascii=False)+';')
 with open(os.path.join(ODIR,'spm_project.csv'),'w',newline='',encoding='utf-8-sig') as fp:
     w=csv.writer(fp); w.writerow(['Project','BOM_caduan_t','Fitup_t','Welding_t','Painting_t','Final_t','Ton_Fitup','Ton_Welding','Ton_Painting','Ton_Final','PhanTram','TrangThai'])
