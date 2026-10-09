@@ -36,6 +36,18 @@ Current deployment / environment:
 
 ## 2. CURRENT TASK
 
+**09/10: QC theo Hạng mục (Zone) — sửa `spm_flatten.py` (repo), CHỜ user chạy thử trên PC.**
+- User muốn bảng hạng mục trong `khDrill` (vd lắp thử "Milestone 1 LT …" của WOLF SUMMIT) có cột QC thay vì "chưa có Zone trong SPM".
+  User sẽ kéo trường **Zone** vào ROWS của Pivot SPM (ngay sau Project).
+- `spm_flatten.py` nay **tự dò** cột Workshop (tỉ lệ giá trị chứa `AHx` cao nhất) → có Zone hay không đều chạy;
+  chỉ ghi `Z` + `r[14]` khi Pivot có Zone (không có thì `qcdata.js` y như cũ, 14 phần tử).
+- Thêm quy tắc **"Miễn QC"** (bản PC có, bản repo thiếu): tổ `TO1TO/TO1XG/TO1TI` chưa QC (không QCDate, không QCUser), chỉ có Fitup
+  → khớp **487/487** dòng `Miễn QC` trong `qcdata.js` 08/10, 0 dòng thừa.
+- Mới: `cong_cu_pc/so_sanh_qcdata.py cu.js moi.js` — so tổng F/W/P, số dòng theo phân loại, lệch theo dự án, liệt kê Zone.
+- Dashboard ghép Zone ↔ Hạng mục KHSX bằng `_khN` (khớp TÊN Y HỆT, chỉ bỏ hoa/thường + khoảng trắng). Tên Zone trong SPM phải gõ trùng tên KHSX.
+- Thử với Pivot giả lập 2 kiểu (có/không Zone): đúng cột, đúng Miễn QC, tổng khớp. **Chưa chạy với spm.xlsx thật.**
+- Bản PC có thể còn khác biệt chưa biết → bắt buộc chạy ra thư mục thử + `so_sanh_qcdata.py` trước khi thay.
+
 **MỚI 29/09 (vòng 8): nâng cấp tab Chất lượng + Bảng điều khiển KHSX** (đã lên `main`).
 - Tab 07 Chất lượng (khối `cl2909`): xu hướng FPY 12 tháng + tấn lỗi mã/rớt; lỗi mã theo tổ (dùng `fpyCalc`);
   NCR theo tháng bỏ 2 trục tung → 2 khung; 8M vòng → thanh ngang; tên dự án đầy đủ; escape dữ liệu Sheet NCR.

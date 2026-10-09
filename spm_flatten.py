@@ -26,6 +26,7 @@ def find_input():
     sys.exit("Khong tim thay file SPM (*.xlsx) trong 'Update spm'.")
 INP=find_input(); ODIR=(sys.argv[2] if len(sys.argv)>2 else HERE).strip().strip('"').strip() or HERE
 CANON=['AH1','AH2','AH3','AH4','AH6','AH9']
+MIEN_QC_TO={'TO1TO','TO1XG','TO1TI'}   # to khong qua QC o cong doan Fitup
 PROC=['Fitup','Welding','Painting','Final']            # thu tu xuat ra (Final=0 neu file khong co)
 STAGE_KW=[('BOM','bom'),('Fitup','fitup'),('Welding','welding'),('Painting','painting'),('Final','final')]
 AHD=re.compile(r'AH[123469]')
@@ -123,7 +124,16 @@ _clsm={_c:_clsfy(_samp[_c]) for _c in range(1,ND)}
 _dateC=sorted([c for c in _clsm if _clsm[c]=='date'])
 _qcwsC=sorted([c for c in _clsm if _clsm[c]=='qcws'])
 _userC=sorted([c for c in _clsm if _clsm[c]=='user'])
-L_PROJ,L_ZONE,L_WS=0,1,2
+# Workshop = cot co nhieu gia tri chua 'AHx' nhat (khong phai cot QCWorkshop .QC/.VP).
+# Zone (Hang muc) = cot nam GIUA Project va Workshop neu co -> co Zone hay khong deu chay.
+def _ahRate(c):
+    v=_samp.get(c) or []
+    return (sum(1 for x in v if AHD.search(x.upper()))/len(v)) if v else 0
+_wsC=[c for c in range(1,ND) if _clsm[c] not in ('qcws','date','user','status') and _ahRate(c)>0.5]
+L_PROJ=0
+L_WS=max(_wsC,key=lambda c:(_ahRate(c),-c)) if _wsC else 2   # ti le 'AHx' cao nhat (Zone co chu AH cung khong nham)
+L_ZONE=1 if L_WS>=2 else None
+print("   [DO CAP] Project=c0 Zone=%s Workshop=c%s"%(('c%d'%L_ZONE) if L_ZONE is not None else 'KHONG CO',L_WS))
 L_WD=_dateC[0] if _dateC else 3
 L_QCDATE=(_dateC[-1] if len(_dateC)>=2 else None)
 L_QCWS=_qcwsC[0] if _qcwsC else 4
@@ -157,8 +167,13 @@ for row in allrows[DATA0:]:
                     _pl='Rớt' if 'reject' in _stv else ('Đã QC (AH)' if 'accept' in _stv else 'Chưa QC')
                 else:
                     _pl='Đã QC (AH)' if _qc.upper().startswith('AH') else ('Chưa QC' if not _qc.strip() else 'QC khác')
+                # Miễn QC: to Tole/Xa go/Tien (TO1TO/TO1XG/TO1TI) chua QC, chi co Fitup -> khong can QC
+                # (khop 487/487 dong 'Miễn QC' trong qcdata.js 08/10/2026)
+                if _pl not in ('Đã QC (AH)','Rớt') and _ft in MIEN_QC_TO and not (fctx[L_QCDATE] if L_QCDATE is not None else '') \
+                   and not ((fctx[L_QCU] if L_QCU is not None else '') or '').strip() and not _fw[1] and not _fw[2]:
+                    _pl='Miễn QC'
                 _memo=(fctx[L_MEMO] if (L_MEMO is not None and L_MEMO!=L_STATUS and L_MEMO not in (L_QCU,L_QCDATE,L_QCWS,L_WD)) else '') or ''
-                flatFull.append([fctx[L_PROJ] or '',fctx[L_ZONE] or '',_fx,_ft,fctx[L_QCDATE] or '',_qc,((fctx[L_QCU] if L_QCU is not None else '') or ''),_pl,_statusRaw]+[round(x/1000,3) for x in _fw]+[fctx[L_WD] or '']+[gq(row,'Fitup'),gq(row,'Welding'),gq(row,'Painting'),_memo])
+                flatFull.append([fctx[L_PROJ] or '',(fctx[L_ZONE] if L_ZONE is not None else '') or '',_fx,_ft,fctx[L_QCDATE] or '',_qc,((fctx[L_QCU] if L_QCU is not None else '') or ''),_pl,_statusRaw]+[round(x/1000,3) for x in _fw]+[fctx[L_WD] or '']+[gq(row,'Fitup'),gq(row,'Welding'),gq(row,'Painting'),_memo])
                 bomAH[fctx[L_PROJ] or '']+=_bom
     c0=cset(row[L_PROJ])
     if c0 is not None: ctxp=c0
@@ -285,12 +300,13 @@ _R=[]
 for fr in flatFull:
     _R.append([_ixq(_Pm,_P,fr[0]),_ixq(_Xm,_X,fr[2]),_ixq(_Tm,_T,fr[3]),_isoq(fr[4]),_isoq(fr[13]),
                _ixq(_Qm,_Q,(fr[6] or '—')),_ixq(_PLm,_PL,fr[7]),
-               round(fr[9],3),round(fr[10],3),round(fr[11],3),int(fr[14]),int(fr[15]),int(fr[16]),fr[17],
-               _ixq(_Zm,_Z,(fr[1] or '(chua ghi)'))])   # [14] Zone = Hang muc (cho drill-down KHSX)
+               round(fr[9],3),round(fr[10],3),round(fr[11],3),int(fr[14]),int(fr[15]),int(fr[16]),fr[17]]+
+              ([_ixq(_Zm,_Z,(fr[1] or '(chua ghi)'))] if L_ZONE is not None else []))   # [14] Zone = Hang muc (chi khi Pivot co Zone)
 _projq=[{'name':r['proj'],'bom':r['bom'],'f':r['st']['Fitup'],'w':r['st']['Welding'],'p':r['st']['Painting'],
          'tf':r['ton']['Fitup'],'tw':r['ton']['Welding'],'tp':r['ton']['Painting'],'pct':r['pct'],'status':r['status']} for r in byProjL]
-_qcobj={'updated':out['updated'],'source':os.path.basename(INP),'P':_P,'X':_X,'T':_T,'Q':_Q,'PL':_PL,'Z':_Z,'rows':_R,'proj':_projq,
+_qcobj={'updated':out['updated'],'source':os.path.basename(INP),'P':_P,'X':_X,'T':_T,'Q':_Q,'PL':_PL,'rows':_R,'proj':_projq,
         'check':{'f':round(sum(x[7] for x in _R),1),'w':round(sum(x[8] for x in _R),1),'p':round(sum(x[9] for x in _R),1)}}
+if L_ZONE is not None: _qcobj['Z']=_Z      # khong co Zone -> khong ghi Z (dashboard tu an cot QC theo hang muc)
 _qc_txt='window.QCDATA='+json.dumps(_qcobj,ensure_ascii=False,separators=(',',':'))+';'
 _qc_tmp=os.path.join(ODIR,'qcdata.js.tmp')
 with open(_qc_tmp,'w',encoding='utf-8') as _qf:
@@ -333,4 +349,5 @@ for _fn in ('spm_data.js','spm_project.csv','spm_flat.csv','spm_to.csv'):
 try: open(_sigf,'w',encoding='utf-8').write(_sig)
 except Exception: pass
 print("OK  do cot tu dong: BOM_w=%d  Fitup_w=%d  ...  Final=%s  | row-label=%d cap  | data tu dong %d"%(BOMW,STG_W['Fitup'],('co' if 'Final' in STG_W else 'KHONG'),ND,DATA0+1))
+print("    Zone (hang muc): %s"%(("%d gia tri -> cot QC theo hang muc tren dashboard SE CO SO"%len(_Z)) if L_ZONE is not None else "KHONG CO trong Pivot -> keo truong Zone vao ROWS ngay sau Project"))
 print("    spm_flat.csv = %d dong (TOAN BO AH, co cot PhanLoaiQC + QC user) | %s"%(len(flatFull),("Da luu ban moi DuLieu_SPM/ (%s)"%_ts) if _changed else "SPM khong doi -> khong tao backup moi"))

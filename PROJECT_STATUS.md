@@ -113,6 +113,8 @@ cổng vai trò `?vai=gd|qlqc|qcv|sx|hs`. Số liệu không đổi (KPI 6/6 kh�
 **Mới phát hiện 28/09 (đều đang MỞ, chưa sửa):**
 - Drill-down KHSX theo Hạng mục **tắt âm thầm** — `qcdata.js` không có mảng `Z`,
   `KH_HASZONE` (`qc.html:4110`) = false. Nguyên nhân gốc: `spm_flatten.py` lệch bản thật.
+  → **09/10**: `spm_flatten.py` (repo) đã sửa: tự dò Zone + quy tắc Miễn QC (khớp 487/487). Chờ user thêm Zone vào Pivot SPM,
+    chạy thử trên PC và so bằng `cong_cu_pc/so_sanh_qcdata.py`.
 - ~~`index.html` thiếu 188 hàm so với `qc.html`~~ — **ĐÃ SỬA 29/09** (chuyển hướng).
 - `qc.html` chứa mô-đun Doc Control **lặp 2 lần** (`rDU` gán ~dòng 5500 và ~5850); chạy đúng, gộp là việc riêng.
 - **(hệ 1)** Dashboard cảnh báo **báo thừa cột "Chưa có DIR"** cho dự án dùng chung
