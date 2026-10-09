@@ -60,6 +60,10 @@ Current deployment / environment:
   cột Tình trạng QC. Không có `D.Z` → hiện 1 dòng hướng dẫn. Dữ liệu SPM qua `esc2()`.
   Kiểm: 15 khối script `node --check` OK; Playwright với SPM thật 09/10: WOLF tổng NT Fitup 141,9 t (= KPI drill), 0 lỗi JS;
   với `qcdata.js` hiện tại: `QCDATA.check` + 12 KPI Tổng quan **giống hệt bản trước sửa (lệch 0)**.
+- **09/10 (4)**: user "thêm đối chiếu sx, ráp HT, fitup, hàn HT, welding" → bảng Phase/Zone thêm cặp
+  **Ráp HT ↔ NT Fitup** và **Hàn HT ↔ NT Welding** (SX = mọi dòng SPM của dự án/hạng mục; NT kèm % so SX).
+  Đã thử thêm cột BOM theo Phase từ SPM rồi **BỎ**: BOM SPM theo Phase = đúng bằng NT Fitup (SPM chỉ ghi BOM cho cấu kiện đã NT fitup)
+  → không phải khối lượng thiết kế, hiện ra sẽ gây hiểu nhầm. KPI Tổng quan vẫn lệch 0.
 
 **MỚI 29/09 (vòng 8): nâng cấp tab Chất lượng + Bảng điều khiển KHSX** (đã lên `main`).
 - Tab 07 Chất lượng (khối `cl2909`): xu hướng FPY 12 tháng + tấn lỗi mã/rớt; lỗi mã theo tổ (dùng `fpyCalc`);

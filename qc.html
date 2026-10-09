@@ -4365,7 +4365,7 @@ function _khRenderPZ(p){
     var Z=M[z]||(M[z]={_t:_khBlank(),x:{}});
     var o=Z.x[x]||(Z.x[x]=_khBlank());
     var tf=r[7]||0,tw=r[8]||0,tp=r[9]||0;
-    [o,Z._t].forEach(function(t){ t.n++;
+    [o,Z._t].forEach(function(t){ t.n++; t.sf=(t.sf||0)+tf; t.sw=(t.sw||0)+tw; t.sp=(t.sp||0)+tp;   /* SX = moi dong SPM (to da lam) */
       if(typeof isReject==='function'&&isReject(r)){t.rej+=tf+tw+tp;return;}
       if(typeof isTon==='function'&&isTon(r)){t.wait+=tf+tw+tp;return;}
       if(!isAcc(r))return; t.f+=tf;t.w+=tw;t.p+=tp;
@@ -4378,7 +4378,7 @@ function _khRenderPZ(p){
   _khPzKeys=ks;
   if(bar) bar.innerHTML='<button class="qf'+(_khPzLT?'':' on')+'" onclick="khPzLT(0)">Tất cả ('+Object.keys(M).length+')</button> '+
     '<button class="qf'+(_khPzLT?' on':'')+'" onclick="khPzLT(1)">Chỉ lắp thử ('+nLT+')</button>'+
-    '<span class="muted" style="font-size:11.5px;margin-left:8px">tên lấy nguyên từ SPM · bấm dòng để bung theo xưởng · lắp thử = tên có "LẮP THỬ" / "LT" / "TRIAL"</span>';
+    '<span class="muted" style="font-size:11.5px;margin-left:8px">tên lấy nguyên từ SPM · <b>Ráp HT / Hàn HT</b> = tấn tổ đã làm (mọi dòng SPM) · <b>NT</b> = phần QC đã accept, % so với SX · bấm dòng để bung theo xưởng · lắp thử = tên có "LẮP THỬ" / "LT" / "TRIAL"</span>';
   if(!ks.length){ tb.innerHTML='<tbody><tr><td class="muted" style="padding:12px">'+(_khPzLT?'Dự án không có Phase / Zone lắp thử trong SPM.':'Dự án chưa có dòng SPM trong phạm vi đang xem.')+'</td></tr></tbody>'; return; }
   var nz=function(v,st){return v>0?'<td class="n" style="'+(st||'')+'">'+fm1(v)+'</td>':'<td class="n muted" style="'+(st||'').replace(/color:[^;]+;?|font-weight:[^;]+;?/g,'')+'">·</td>';};
   var stt=function(q){
@@ -4388,21 +4388,28 @@ function _khRenderPZ(p){
     if(q.w>0) return '<span class="tag g">Đã NT hàn</span>';
     if(q.f>0) return '<span class="tag" style="color:var(--f)">Đã NT fitup</span>';
     return '<span class="tag">Chưa có NT</span>'; };
-  var cells=function(q){ return nz(q.f,'border-left:2px solid var(--ink);color:var(--f);font-weight:700')+nz(q.w,'color:var(--w);font-weight:700')+
-    nz(q.p,'color:var(--p);font-weight:700')+nz(q.fd,'color:var(--fd);font-weight:700')+
+  var pct=function(nt,sx){ return sx>0?' <span class="muted" style="font-size:10px;font-weight:600">'+Math.round(Math.min(nt/sx,9.99)*100)+'%</span>':''; };
+  var ntc=function(nt,sx,c){ return nt>0?'<td class="n" style="color:'+c+';font-weight:700">'+fm1(nt)+pct(nt,sx)+'</td>':'<td class="n muted">·</td>'; };
+  var sxc=function(v,bl){ return '<td class="n"'+(bl?' style="border-left:2px solid var(--ink)"':'')+'>'+(v>0?fm1(v):'<span class="muted">·</span>')+'</td>'; };
+  var cells=function(q){ return sxc(q.sf||0,true)+ntc(q.f,q.sf,'var(--f)')+sxc(q.sw||0,true)+ntc(q.w,q.sw,'var(--w)')+
+    nz(q.p,'border-left:2px solid var(--ink);color:var(--p);font-weight:700')+nz(q.fd,'color:var(--fd);font-weight:700')+
     nz(q.wait,'border-left:2px solid var(--ink);color:var(--warn);font-weight:700')+nz(q.rej,'color:var(--bad);font-weight:700')+
     '<td style="border-left:2px solid var(--ink)">'+stt(q)+'</td>'; };
   var h='<thead><tr><th rowspan="2" style="vertical-align:bottom">Phase · Zone (SPM) · xưởng</th>'+
-    '<th colspan="4" class="n" style="text-align:center;border-left:2px solid var(--ink)">Nghiệm thu ACCEPT (t)</th>'+
+    '<th colspan="2" class="n" style="text-align:center;border-left:2px solid var(--ink)">Ráp (t)</th>'+
+    '<th colspan="2" class="n" style="text-align:center;border-left:2px solid var(--ink)">Hàn (t)</th>'+
+    '<th colspan="2" class="n" style="text-align:center;border-left:2px solid var(--ink)">NT khác (t)</th>'+
     '<th colspan="2" class="n" style="text-align:center;border-left:2px solid var(--ink)">Chưa đạt (t)</th>'+
     '<th rowspan="2" style="vertical-align:bottom;border-left:2px solid var(--ink)">Tình trạng QC</th></tr><tr>'+
-    '<th class="n" style="border-left:2px solid var(--ink);color:var(--f)">Fitup</th><th class="n" style="color:var(--w)">Welding</th>'+
-    '<th class="n" style="color:var(--p)">Painting</th><th class="n" style="color:var(--fd)">Final DIM</th>'+
+    '<th class="n" style="border-left:2px solid var(--ink)">Ráp HT</th><th class="n" style="color:var(--f)">NT Fitup</th>'+
+    '<th class="n" style="border-left:2px solid var(--ink)">Hàn HT</th><th class="n" style="color:var(--w)">NT Welding</th>'+
+    '<th class="n" style="border-left:2px solid var(--ink);color:var(--p)">Painting</th><th class="n" style="color:var(--fd)">Final DIM</th>'+
     '<th class="n" style="border-left:2px solid var(--ink);color:var(--warn)">Chờ NT</th><th class="n" style="color:var(--bad)">Rớt</th></tr></thead><tbody>';
   var S=_khBlank();
   ks.forEach(function(k,ii){
     var Z=M[k], q=Z._t, op=!!_khPzOpen[k], pr=k.split(' | '), lt=_khIsLT(k);
     S.f+=q.f;S.w+=q.w;S.p+=q.p;S.fd+=q.fd;S.wait+=q.wait;S.rej+=q.rej;
+    S.sf=(S.sf||0)+(q.sf||0); S.sw=(S.sw||0)+(q.sw||0);
     h+='<tr class="clickable" style="cursor:pointer;background:var(--rowH)" onclick="khPzTog('+ii+')">'+
       '<td class="pjn"><span style="color:var(--acc);font-weight:800;margin-right:6px">'+(op?'▾':'▸')+'</span>'+
       (lt?'<span class="tag" style="color:#fff;background:var(--f);margin-right:6px">LẮP THỬ</span>':'')+
@@ -4411,7 +4418,9 @@ function _khRenderPZ(p){
       h+='<tr><td style="padding-left:30px"><span class="tag b">'+esc2(x)+'</span></td>'+cells(Z.x[x])+'</tr>'; });
   });
   h+='<tr style="font-weight:800;background:var(--chipBg)"><td>TỔNG '+ks.length+' Phase · Zone</td>'+
-    '<td class="n" style="border-left:2px solid var(--ink)">'+fm1(S.f)+'</td><td class="n">'+fm1(S.w)+'</td><td class="n">'+fm1(S.p)+'</td><td class="n">'+fm1(S.fd)+'</td>'+
+    '<td class="n" style="border-left:2px solid var(--ink)">'+fm1(S.sf||0)+'</td><td class="n">'+fm1(S.f)+pct(S.f,S.sf)+'</td>'+
+    '<td class="n" style="border-left:2px solid var(--ink)">'+fm1(S.sw||0)+'</td><td class="n">'+fm1(S.w)+pct(S.w,S.sw)+'</td>'+
+    '<td class="n" style="border-left:2px solid var(--ink)">'+fm1(S.p)+'</td><td class="n">'+fm1(S.fd)+'</td>'+
     '<td class="n" style="border-left:2px solid var(--ink)">'+fm1(S.wait)+'</td><td class="n">'+fm1(S.rej)+'</td><td style="border-left:2px solid var(--ink)"></td></tr>';
   tb.innerHTML=h+'</tbody>';
 }
