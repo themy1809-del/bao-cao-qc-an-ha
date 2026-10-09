@@ -64,6 +64,14 @@ Current deployment / environment:
   **Ráp HT ↔ NT Fitup** và **Hàn HT ↔ NT Welding** (SX = mọi dòng SPM của dự án/hạng mục; NT kèm % so SX).
   Đã thử thêm cột BOM theo Phase từ SPM rồi **BỎ**: BOM SPM theo Phase = đúng bằng NT Fitup (SPM chỉ ghi BOM cho cấu kiện đã NT fitup)
   → không phải khối lượng thiết kế, hiện ra sẽ gây hiểu nhầm. KPI Tổng quan vẫn lệch 0.
+- **09/10 (5) — QUAN TRỌNG**: user xuất SPM **theo tháng** (Setting From/To). `qcdata.js` đang chạy là kết quả **GHÉP dần**
+  (vd Phú Quốc BOM 1.142 t nhưng Fitup cộng dồn 6.874 t) → bản PC có ghép, bản repo trước đây THAY SẠCH (sẽ mất lịch sử).
+  SPM lọc: dòng có **ngày làm HOẶC ngày QC** trong [From,To] (kiểm 2.528/2.528 dòng).
+  `spm_flatten.py` thêm **GHÉP THEO KỲ** (tự động khi file mới bắt đầu muộn hơn dữ liệu cũ ≥ 2 tháng; ép bằng `--ghep` / `--thay-sach`):
+  giữ dòng cũ ngoài kỳ, thay dòng trong kỳ, trừ phần "Chưa QC" cũ (làm trước kỳ) đã được NT trong kỳ (= NT mới − NT cũ cùng
+  dự án/xưởng/tổ/ngày làm) để không đếm 2 lần; `proj`: BOM theo file mới (không có giữ cũ), F/W/P cộng lại từ dòng.
+  Thử: SPM 01/09–09/10 ghép vào qcdata 08/10 → 19.520 dòng, 117 dự án, +46,6 t F / +132,7 t W (≈1 ngày SX), proj↔dòng lệch 0/117,
+  dashboard 0 lỗi. **Chưa đẩy**: file này thiếu QC User (2.061 dòng accept T9–T10 sẽ mất tên QC) → chờ user xuất lại có QC User.
 
 **MỚI 29/09 (vòng 8): nâng cấp tab Chất lượng + Bảng điều khiển KHSX** (đã lên `main`).
 - Tab 07 Chất lượng (khối `cl2909`): xu hướng FPY 12 tháng + tấn lỗi mã/rớt; lỗi mã theo tổ (dùng `fpyCalc`);

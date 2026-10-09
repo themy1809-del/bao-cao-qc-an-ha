@@ -24,6 +24,9 @@ def find_input():
             b=os.path.basename(f).lower()
             if 'spm' in b and not b.startswith('~'): return f
     sys.exit("Khong tim thay file SPM (*.xlsx) trong 'Update spm'.")
+# Co: --ghep (ghep vao qcdata.js cu) | --thay-sach (ghi de toan bo). Khong co co -> TU DONG (xem MERGE ben duoi)
+FLAGS=[a.lower() for a in sys.argv[1:] if a.startswith('--')]
+sys.argv=[sys.argv[0]]+[a for a in sys.argv[1:] if not a.startswith('--')]
 INP=find_input(); ODIR=(sys.argv[2] if len(sys.argv)>2 else HERE).strip().strip('"').strip() or HERE
 CANON=['AH1','AH2','AH3','AH4','AH6','AH9']
 MIEN_QC_TO={'TO1TO','TO1XG','TO1TI'}   # to khong qua QC o cong doan Fitup
@@ -302,7 +305,7 @@ _wds=[fr[13] for fr in flatFull if fr[13]]
 def _mmd(v):
     m=re.match(r'(\d{1,2})/(\d{1,2})/(\d{4})',str(v)); return (int(m.group(3)),int(m.group(1)),int(m.group(2))) if m else (0,0,0)
 if _wds:
-    print('   [THAY SACH] Nap MOI %d dong | WorkDate %s -> %s (ghi de toan bo, KHONG giu ban cu)'%(len(flatFull),min(_wds,key=_mmd),max(_wds,key=_mmd)))
+    print('   [DOC SPM] %d dong | WorkDate %s -> %s'%(len(flatFull),min(_wds,key=_mmd),max(_wds,key=_mmd)))
 if _lastn>=200 and len(flatFull)<_lastn*0.6:
     print('   [i] Luu y: lan nay it hon lan truoc (%d vs %d dong). Neu CO Y export loc thi bo qua; neu khong, kiem tra lai bo loc roi chay lai.'%(len(flatFull),_lastn))
 open(os.path.join(ODIR,'spm_data.js'),'w',encoding='utf-8').write('window.SPM_DATA='+json.dumps(out,ensure_ascii=False)+';')
@@ -333,6 +336,85 @@ for fr in flatFull:
               ([_ixq(_Zm,_Z,(fr[1] or '(chua ghi)'))] if _HASZ else []))   # [14] Zone = Hang muc (chi khi Pivot co Zone)
 _projq=[{'name':r['proj'],'bom':r['bom'],'f':r['st']['Fitup'],'w':r['st']['Welding'],'p':r['st']['Painting'],
          'tf':r['ton']['Fitup'],'tw':r['ton']['Welding'],'tp':r['ton']['Painting'],'pct':r['pct'],'status':r['status']} for r in byProjL]
+# ===================== GHEP THEO KY (SPM xuat tung thang) =====================
+# SPM 'From..To' lay dong co NGAY LAM hoac NGAY QC trong khoang -> file moi = trang thai MOI NHAT cua khoang [F,T].
+#  1) Giu dong cu co ca ngay lam & ngay QC NGOAI [F,T]; bo dong cu trong khoang (file moi thay the).
+#  2) Dong cu 'Chua QC' (lam truoc F) nay da duoc QC trong [F,T] -> tru phan moi nghiem thu them (khong dem 2 lan).
+#  3) proj: BOM lay theo file moi (khong co thi giu cu); F/W/P = cong lai tu dong da ghep (giong ban PC).
+_MODE='thay-sach'; _OLD=None
+_oldp=os.path.join(ODIR,'qcdata.js')
+if '--thay-sach' not in FLAGS and os.path.exists(_oldp):
+    try:
+        _t=open(_oldp,encoding='utf-8').read(); _OLD=json.loads(_t[_t.index('{'):_t.rindex('}')+1])
+        if not _OLD.get('rows'): _OLD=None
+    except Exception as _e:
+        _OLD=None; print('   [!] Khong doc duoc qcdata.js cu (%s) -> khong ghep duoc'%_e)
+_acts=[max(r[3] or '',r[4] or '') for r in _R if (r[3] or r[4])]
+_KF=min(_acts) if _acts else ''; _KT=max(_acts) if _acts else ''
+if _OLD is not None:
+    _owd=[r[4] for r in _OLD['rows'] if r[4]]
+    _omin=min(_owd) if _owd else ''
+    if '--ghep' in FLAGS: _MODE='ghep'
+    elif _omin and _KF and _omin < _KF[:8]+'01' and (int(_KF[:4])*12+int(_KF[5:7]))-(int(_omin[:4])*12+int(_omin[5:7]))>=2:
+        _MODE='ghep'      # file moi bat dau muon hon du lieu cu >= 2 thang -> la file THEO KY
+if '--ghep' in FLAGS and _OLD is None:
+    sys.exit("\n[LOI] --ghep nhung khong doc duoc qcdata.js cu (chua co / da KHOA). Du lieu cu GIU NGUYEN.")
+if _MODE=='ghep':
+    _OP,_OX,_OT,_OQ,_OPL=_OLD['P'],_OLD['X'],_OLD['T'],_OLD['Q'],_OLD['PL']; _OZ=_OLD.get('Z')
+    _inr=lambda d: bool(d) and _KF<=d<=_KT
+    _kept=[]; _oldAcc=defaultdict(lambda:[0.0]*6); _wait=[]
+    for r in _OLD['rows']:
+        k=(_OP[r[0]],_OX[r[1]],_OT[r[2]],r[4])
+        if _inr(r[3]) or _inr(r[4]):
+            if r[4] and r[4]<_KF and _OPL[r[6]]!='Chưa QC':       # dong cu da QC trong ky, lam truoc ky
+                a=_oldAcc[k]
+                for i in range(6): a[i]+=r[7+i]
+            continue
+        _kept.append(r)
+        if _OPL[r[6]]=='Chưa QC' and r[4] and r[4]<_KF: _wait.append(len(_kept)-1)
+    _newAcc=defaultdict(lambda:[0.0]*6)
+    for r in _R:
+        if r[4] and r[4]<_KF:
+            a=_newAcc[(_P[r[0]],_X[r[1]],_T[r[2]],r[4])]
+            for i in range(6): a[i]+=r[7+i]
+    _delta={k:[max(v[i]-_oldAcc[k][i],0) for i in range(6)] for k,v in _newAcc.items()}
+    _tru=0.0; _bo=set()
+    for ix in _wait:
+        r=_kept[ix]=list(_kept[ix]); k=(_OP[r[0]],_OX[r[1]],_OT[r[2]],r[4]); d=_delta.get(k)
+        if not d: continue
+        for i in range(6):
+            m=min(r[7+i],d[i]); r[7+i]=round(r[7+i]-m,3) if i<3 else int(round(r[7+i]-m)); d[i]-=m
+            if i<3: _tru+=m
+        if r[7]+r[8]+r[9]<=0.0005: _bo.add(ix)
+    _HASZ=_HASZ or bool(_OZ)
+    _M=[]
+    for ix,r in enumerate(_kept):
+        if ix in _bo: continue
+        z=(_OZ[r[14]] if (_OZ and len(r)>14) else '(chua ghi)')
+        _M.append([_ixq(_Pm,_P,_OP[r[0]]),_ixq(_Xm,_X,_OX[r[1]]),_ixq(_Tm,_T,_OT[r[2]]),r[3],r[4],
+                   _ixq(_Qm,_Q,_OQ[r[5]]),_ixq(_PLm,_PL,_OPL[r[6]])]+list(r[7:14])+([_ixq(_Zm,_Z,z)] if _HASZ else []))
+    if _HASZ:
+        for r in _R:
+            if len(r)<15: r.append(_ixq(_Zm,_Z,'(chua ghi)'))
+    print('   [GHEP THEO KY] File moi: %s -> %s | giu %d dong cu ngoai ky, bo %d dong cu trong ky, them %d dong moi'
+          %(_KF,_KT,len(_M),len(_OLD['rows'])-len(_kept),len(_R)))
+    print('                  Tru %.1f t "Chua QC" cu da duoc nghiem thu trong ky (%d dong cu het cho -> bo)'%(_tru/1.0,len(_bo)))
+    _R=_M+_R
+    _pf=defaultdict(lambda:[0.0,0.0,0.0])
+    for r in _R:
+        a=_pf[_P[r[0]]]; a[0]+=r[7]; a[1]+=r[8]; a[2]+=r[9]
+    _bom={q['name']:q['bom'] for q in (_OLD.get('proj') or [])}
+    _bom.update({q['name']:q['bom'] for q in _projq if q['bom']>0})
+    _projq=[]
+    for nm,(f,w,pp) in _pf.items():
+        b=_bom.get(nm,0); pct=round(pp/b*100) if b else 0
+        _projq.append({'name':nm,'bom':b,'f':round(f,1),'w':round(w,1),'p':round(pp,1),
+                       'tf':round(max(0,b-f),1),'tw':round(max(0,b-w),1),'tp':round(max(0,b-pp),1),'pct':pct,'status':status(pct,b)})
+    _projq.sort(key=lambda x:-x['tp'])
+    _wds2=[r[4] for r in _R if r[4]]
+    print('                  Sau ghep: %d dong | ngay lam %s -> %s'%(len(_R),min(_wds2) if _wds2 else '-',max(_wds2) if _wds2 else '-'))
+else:
+    print('   [THAY SACH] Ghi de toan bo bang file moi%s'%('' if _OLD is None else ' (file moi phu du lich su cu, hoac dung --thay-sach)'))
 _qcobj={'updated':out['updated'],'source':os.path.basename(INP),'P':_P,'X':_X,'T':_T,'Q':_Q,'PL':_PL,'rows':_R,'proj':_projq,
         'check':{'f':round(sum(x[7] for x in _R),1),'w':round(sum(x[8] for x in _R),1),'p':round(sum(x[9] for x in _R),1)}}
 if _HASZ: _qcobj['Z']=_Z      # khong co Zone -> khong ghi Z (dashboard tu an cot QC theo hang muc)
