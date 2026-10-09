@@ -4283,8 +4283,11 @@ function khDrill(p){
     var Z=ZM[_khN(zkey)]; if(!Z)return null;
     return x?(Z[x]||null):Z._t;
   };
+  /* 09/10: co Zone nhung KHONG hang muc nao trung ten Phase/Zone SPM -> gop 4 cot thanh 1 o chi xuong bang Phase/Zone */
+  var ZHIT=!!ZM && im.some(function(k){ return !!qz(k); });
   var ntCells=function(q){
     if(!ZM) return '<td class="n muted" colspan="4" style="border-left:2px solid var(--ink);text-align:center;font-size:11px">chưa có Zone trong SPM</td>';
+    if(!ZHIT) return '<td class="n muted" colspan="4" style="border-left:2px solid var(--ink);text-align:center;font-size:11px">tên khác Phase SPM — xem bảng <b>QC theo Phase / Zone</b> ↓</td>';
     if(!q) return '<td class="n muted" style="border-left:2px solid var(--ink)">·</td><td class="n muted">·</td><td class="n muted">·</td><td class="n muted">·</td>';
     var nz=function(v,c){return v>0?'<td class="n" style="color:'+c+';font-weight:700">'+fm1(v)+'</td>':'<td class="n muted">·</td>';};
     return (q.f>0?'<td class="n" style="border-left:2px solid var(--ink);color:var(--f);font-weight:700">'+fm1(q.f)+'</td>'
@@ -4339,7 +4342,9 @@ function khDrill(p){
   });
   document.getElementById('tKhDrillI').innerHTML=h2+'</tbody>';
   var zn=document.getElementById('khZoneNote');
-  if(zn) zn.innerHTML = ZM
+  if(zn) zn.innerHTML = (ZM&&!ZHIT)
+    ? 'Tên hạng mục ở sheet <b>không trùng</b> tên Phase / Zone trong SPM nên bảng trên không ghép được số QC — số QC nghiệm thu nằm ở bảng <b>QC theo Phase / Zone</b> ngay bên dưới.'
+    : ZM
     ? 'Cột QC ở bảng hạng mục ghép theo <b>Zone</b> trong SPM — tên Zone phải trùng tên hạng mục ở sheet thì mới ra số; tên khác nhau thì xem bảng <b>QC theo Phase / Zone</b> bên dưới.'
     : '<b style="color:var(--bad)">Bảng hạng mục chưa có cột QC:</b> <code>qcdata.js</code> hiện chưa kèm trường Zone. Chạy lại <code>spm_flatten.py</code> (bản đã vá) với file SPM mới nhất là cột Accept Fitup / Accept Weld / Chờ NT sẽ tự hiện.';
   try{ _khRenderPZ(p); }catch(e){}

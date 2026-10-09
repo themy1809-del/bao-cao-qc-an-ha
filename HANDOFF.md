@@ -75,6 +75,9 @@ Current deployment / environment:
   → **User đã chạy trên PC 09/10 09:51** (`main` 8091567): qcdata.js trên `main` **giống hệt từng dòng** bản thử (19.520 dòng, 117 DA,
   107 Zone, proj lệch 0). Tồn: T9–T10 **thiếu tên QC** (QC User trống) → lần xuất sau From 9/1 có QC User sẽ tự thay. `qc.html` bảng
   Phase/Zone vẫn ở nhánh, chờ user "gộp vào main".
+  → 09/10: đã gộp lên `main` (0df9986). Tiếp: bảng hạng mục KHSX khi **không hạng mục nào trùng tên** Phase/Zone SPM → gộp 4 cột QC
+  thành 1 ô "tên khác Phase SPM — xem bảng QC theo Phase / Zone ↓" (biến `ZHIT`), thay vì cả cột "·". KHÔNG ghép tên gần đúng
+  (1 Phase SPM có thể trải nhiều Milestone → gán số sẽ sai). KPI lệch 0.
 
 **MỚI 29/09 (vòng 8): nâng cấp tab Chất lượng + Bảng điều khiển KHSX** (đã lên `main`).
 - Tab 07 Chất lượng (khối `cl2909`): xu hướng FPY 12 tháng + tấn lỗi mã/rớt; lỗi mã theo tổ (dùng `fpyCalc`);
