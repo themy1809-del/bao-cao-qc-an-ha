@@ -44,6 +44,10 @@ def shortpj(s):
     s=re.sub(r'^((?:DGRP|[0-9][\w.\-/]*)\s+)+','',s,flags=re.I)
     s=re.sub(r'\s*[\(].*$','',s).strip()
     return (s[:26]).strip() or str(s)[:26]
+def _hm(ctx):      # Hang muc = Phase (neu co) ; Zone (neu co) -> 'PHASE | ZONE'
+    a=(ctx[L_PHASE] if L_PHASE is not None else '') or ''
+    b=(ctx[L_ZONE] if L_ZONE is not None else '') or ''
+    return (a+' | '+b) if (a and b) else (a or b)
 def num(v): return v if isinstance(v,(int,float)) else 0
 def sstr(v): return '' if v is None else str(v).strip()
 try:
@@ -141,6 +145,29 @@ L_QCU=_userC[0] if _userC else None   # khong co cot nguoi kiem -> de trong, KHO
 _statC=sorted([c for c in _clsm if _clsm[c]=='status']); L_STATUS=_statC[0] if _statC else None
 L_MEMO=ND-1
 print("   [DO CAP] WorkDate=c%s QCWorkshop=c%s QCUser=c%s QCDate=c%s Status=c%s"%(L_WD,L_QCWS,L_QCU,L_QCDATE,L_STATUS))
+L_PHASE=None
+# ===== UU TIEN: dong 'RowAreaHeaders: Project, Phase, Zone, Workshop, ...' (SPM xuat kem) -> lay cot THEO TEN =====
+_RAH=None
+for _r in allrows[:HR]:
+    for _c in _r:
+        if isinstance(_c,str) and _c.strip().lower().startswith('rowareaheaders'):
+            _RAH=[x.strip().lower() for x in _c.split(':',1)[1].split(',')]
+if _RAH and len(_RAH)==ND:
+    _ix=lambda *names: next((i for i,h in enumerate(_RAH) if h in names),None)
+    L_PROJ=_ix('project') or 0
+    L_PHASE=_ix('phase'); L_ZONE=_ix('zone'); L_WS=_ix('workshop')
+    L_WD=_ix('work date','workdate'); L_QCWS=_ix('qc workshop','qcworkshop')
+    L_QCDATE=_ix('qc date','qcdate'); L_QCU=_ix('qc user','qcuser')
+    L_STATUS=_ix('qc status','qcstatus','status'); L_MEMO=_ix('memo')
+    if L_WS is None or L_WD is None or L_QCWS is None:
+        sys.exit("\n[LOI] Pivot thieu truong Workshop / Work Date / QC Workshop trong ROWS. Keo vao roi xuat lai.")
+    if L_MEMO is None: L_MEMO=ND-1
+    # cot QC User / QC Status co ten nhung KHONG co gia tri nao -> coi nhu khong co
+    if L_QCU is not None and not _samp.get(L_QCU): L_QCU=None
+    if L_STATUS is not None and not _samp.get(L_STATUS): L_STATUS=None
+    print("   [DO CAP theo TEN] %s"%', '.join(_RAH))
+    print("   [DO CAP] Phase=%s Zone=%s Workshop=c%s"%(L_PHASE,L_ZONE,L_WS))
+    if L_QCU is None: print("   [!] QC User TRONG (khong co gia tri) -> thong ke theo nguoi QC se thieu. Kiem tra Pivot SPM.")
 
 ctxp=None; cur_xu=cur_to=None
 projBOM={}; byTo={}; byProj={}; byToProj=defaultdict(lambda:defaultdict(float)); qcW=defaultdict(lambda:defaultdict(float))
@@ -150,6 +177,7 @@ for row in allrows[DATA0:]:
     if ND>len(row): row=row+[None]*(ND-len(row))
     # ===== FLAT row-level: chi AH (Workshop chua AHx), kem QC user + phan loai QC + BOM =====
     fsub=False
+    if _RAH and all(row[_i] in (None,'') for _i in range(ND)): fctx[L_MEMO]=None   # dong la khong memo -> khong ke thua memo dong truoc
     for _i in range(ND):
         _cv=row[_i]
         if _cv not in (None,''):
@@ -173,7 +201,7 @@ for row in allrows[DATA0:]:
                    and not ((fctx[L_QCU] if L_QCU is not None else '') or '').strip() and not _fw[1] and not _fw[2]:
                     _pl='Miễn QC'
                 _memo=(fctx[L_MEMO] if (L_MEMO is not None and L_MEMO!=L_STATUS and L_MEMO not in (L_QCU,L_QCDATE,L_QCWS,L_WD)) else '') or ''
-                flatFull.append([fctx[L_PROJ] or '',(fctx[L_ZONE] if L_ZONE is not None else '') or '',_fx,_ft,fctx[L_QCDATE] or '',_qc,((fctx[L_QCU] if L_QCU is not None else '') or ''),_pl,_statusRaw]+[round(x/1000,3) for x in _fw]+[fctx[L_WD] or '']+[gq(row,'Fitup'),gq(row,'Welding'),gq(row,'Painting'),_memo])
+                flatFull.append([fctx[L_PROJ] or '',_hm(fctx),_fx,_ft,fctx[L_QCDATE] or '',_qc,((fctx[L_QCU] if L_QCU is not None else '') or ''),_pl,_statusRaw]+[round(x/1000,3) for x in _fw]+[fctx[L_WD] or '']+[gq(row,'Fitup'),gq(row,'Welding'),gq(row,'Painting'),_memo])
                 bomAH[fctx[L_PROJ] or '']+=_bom
     c0=cset(row[L_PROJ])
     if c0 is not None: ctxp=c0
@@ -296,17 +324,18 @@ _P=[];_X=[];_T=[];_Q=[];_PL=[];_Z=[];_Pm={};_Xm={};_Tm={};_Qm={};_PLm={};_Zm={}
 def _ixq(mp,lst,v):
     if v not in mp: mp[v]=len(lst);lst.append(v)
     return mp[v]
+_HASZ=(L_ZONE is not None or L_PHASE is not None)
 _R=[]
 for fr in flatFull:
     _R.append([_ixq(_Pm,_P,fr[0]),_ixq(_Xm,_X,fr[2]),_ixq(_Tm,_T,fr[3]),_isoq(fr[4]),_isoq(fr[13]),
                _ixq(_Qm,_Q,(fr[6] or '—')),_ixq(_PLm,_PL,fr[7]),
                round(fr[9],3),round(fr[10],3),round(fr[11],3),int(fr[14]),int(fr[15]),int(fr[16]),fr[17]]+
-              ([_ixq(_Zm,_Z,(fr[1] or '(chua ghi)'))] if L_ZONE is not None else []))   # [14] Zone = Hang muc (chi khi Pivot co Zone)
+              ([_ixq(_Zm,_Z,(fr[1] or '(chua ghi)'))] if _HASZ else []))   # [14] Zone = Hang muc (chi khi Pivot co Zone)
 _projq=[{'name':r['proj'],'bom':r['bom'],'f':r['st']['Fitup'],'w':r['st']['Welding'],'p':r['st']['Painting'],
          'tf':r['ton']['Fitup'],'tw':r['ton']['Welding'],'tp':r['ton']['Painting'],'pct':r['pct'],'status':r['status']} for r in byProjL]
 _qcobj={'updated':out['updated'],'source':os.path.basename(INP),'P':_P,'X':_X,'T':_T,'Q':_Q,'PL':_PL,'rows':_R,'proj':_projq,
         'check':{'f':round(sum(x[7] for x in _R),1),'w':round(sum(x[8] for x in _R),1),'p':round(sum(x[9] for x in _R),1)}}
-if L_ZONE is not None: _qcobj['Z']=_Z      # khong co Zone -> khong ghi Z (dashboard tu an cot QC theo hang muc)
+if _HASZ: _qcobj['Z']=_Z      # khong co Zone -> khong ghi Z (dashboard tu an cot QC theo hang muc)
 _qc_txt='window.QCDATA='+json.dumps(_qcobj,ensure_ascii=False,separators=(',',':'))+';'
 _qc_tmp=os.path.join(ODIR,'qcdata.js.tmp')
 with open(_qc_tmp,'w',encoding='utf-8') as _qf:
@@ -349,5 +378,5 @@ for _fn in ('spm_data.js','spm_project.csv','spm_flat.csv','spm_to.csv'):
 try: open(_sigf,'w',encoding='utf-8').write(_sig)
 except Exception: pass
 print("OK  do cot tu dong: BOM_w=%d  Fitup_w=%d  ...  Final=%s  | row-label=%d cap  | data tu dong %d"%(BOMW,STG_W['Fitup'],('co' if 'Final' in STG_W else 'KHONG'),ND,DATA0+1))
-print("    Zone (hang muc): %s"%(("%d gia tri -> cot QC theo hang muc tren dashboard SE CO SO"%len(_Z)) if L_ZONE is not None else "KHONG CO trong Pivot -> keo truong Zone vao ROWS ngay sau Project"))
+print("    Zone (hang muc): %s"%(("%d gia tri -> cot QC theo hang muc tren dashboard SE CO SO"%len(_Z)) if _HASZ else "KHONG CO trong Pivot -> keo truong Zone vao ROWS ngay sau Project"))
 print("    spm_flat.csv = %d dong (TOAN BO AH, co cot PhanLoaiQC + QC user) | %s"%(len(flatFull),("Da luu ban moi DuLieu_SPM/ (%s)"%_ts) if _changed else "SPM khong doi -> khong tao backup moi"))

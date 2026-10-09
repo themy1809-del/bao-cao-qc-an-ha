@@ -47,6 +47,13 @@ Current deployment / environment:
 - Dashboard ghép Zone ↔ Hạng mục KHSX bằng `_khN` (khớp TÊN Y HỆT, chỉ bỏ hoa/thường + khoảng trắng). Tên Zone trong SPM phải gõ trùng tên KHSX.
 - Thử với Pivot giả lập 2 kiểu (có/không Zone): đúng cột, đúng Miễn QC, tổng khớp. **Chưa chạy với spm.xlsx thật.**
 - Bản PC có thể còn khác biệt chưa biết → bắt buộc chạy ra thư mục thử + `so_sanh_qcdata.py` trước khi thay.
+- **09/10 (2)**: user gửi `spm.xlsx` mới có **Phase + Zone**. Pivot nay kèm dòng `RowAreaHeaders: Project, Phase, Zone, Workshop,
+  Work Date, QC Workshop, QC Date, QC User, QC Status, Memo` → script **đọc cột theo TÊN** (ưu tiên), không có thì dò như cũ.
+  Hạng mục `Z` = `"PHASE | ZONE"`. Chạy thật: đúng (tổng AH Fitup 6.765,9 t = đếm tay từ dòng tổng Workshop).
+  **KHÔNG ĐẨY ĐƯỢC file này**: (1) chỉ có ngày làm ~T8–T10/2026 (2.528 dòng, 40 dự án vs 19.380 dòng / 117 dự án) → đẩy là mất lịch sử;
+  (2) cột **QC User trống hoàn toàn** → mất thống kê theo người QC. T9/2026 khớp gần đúng (F 5.183 vs 5.246 t).
+  Tên Phase ≠ tên hạng mục KHSX (WOLF: SPM "STEEL STRUCTURE MODULE" vs KHSX "Milestone 1 LT PLENUM MODULE A") →
+  bảng hạng mục `khDrill` (khớp tên y hệt) sẽ KHÔNG ra số; cần bảng QC riêng theo Phase/Zone (đề xuất, chờ duyệt).
 
 **MỚI 29/09 (vòng 8): nâng cấp tab Chất lượng + Bảng điều khiển KHSX** (đã lên `main`).
 - Tab 07 Chất lượng (khối `cl2909`): xu hướng FPY 12 tháng + tấn lỗi mã/rớt; lỗi mã theo tổ (dùng `fpyCalc`);
