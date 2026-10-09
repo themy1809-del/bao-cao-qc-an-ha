@@ -53,7 +53,13 @@ Current deployment / environment:
   **KHÔNG ĐẨY ĐƯỢC file này**: (1) chỉ có ngày làm ~T8–T10/2026 (2.528 dòng, 40 dự án vs 19.380 dòng / 117 dự án) → đẩy là mất lịch sử;
   (2) cột **QC User trống hoàn toàn** → mất thống kê theo người QC. T9/2026 khớp gần đúng (F 5.183 vs 5.246 t).
   Tên Phase ≠ tên hạng mục KHSX (WOLF: SPM "STEEL STRUCTURE MODULE" vs KHSX "Milestone 1 LT PLENUM MODULE A") →
-  bảng hạng mục `khDrill` (khớp tên y hệt) sẽ KHÔNG ra số; cần bảng QC riêng theo Phase/Zone (đề xuất, chờ duyệt).
+  bảng hạng mục `khDrill` (khớp tên y hệt) sẽ KHÔNG ra số → làm bảng QC riêng theo Phase/Zone (dưới đây).
+- **09/10 (3) — user duyệt ("oke")**: `qc.html` thêm bảng **"QC nghiệm thu theo Phase / Zone (SPM) → xưởng"** trong `khDrill`
+  (`_khRenderPZ`, `khPzTog`, `khPzLT`, `_khIsLT`; khung `#khPzBar` + `#tKhDrillPZ`). Cùng quy tắc `_khSpmByZone`
+  (accept / Chờ NT / Rớt / Final DIM). Nhãn **LẮP THỬ** (tên có "lắp thử"/"LT"/"trial"), nút "Chỉ lắp thử", bung theo xưởng,
+  cột Tình trạng QC. Không có `D.Z` → hiện 1 dòng hướng dẫn. Dữ liệu SPM qua `esc2()`.
+  Kiểm: 15 khối script `node --check` OK; Playwright với SPM thật 09/10: WOLF tổng NT Fitup 141,9 t (= KPI drill), 0 lỗi JS;
+  với `qcdata.js` hiện tại: `QCDATA.check` + 12 KPI Tổng quan **giống hệt bản trước sửa (lệch 0)**.
 
 **MỚI 29/09 (vòng 8): nâng cấp tab Chất lượng + Bảng điều khiển KHSX** (đã lên `main`).
 - Tab 07 Chất lượng (khối `cl2909`): xu hướng FPY 12 tháng + tấn lỗi mã/rớt; lỗi mã theo tổ (dùng `fpyCalc`);

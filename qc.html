@@ -812,6 +812,10 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
           <b>Chờ NT</b> &amp; <b>Rớt</b> cộng cả ba công đoạn · <b>Chưa NT</b> = SLPB − Fitup accept ·
           <span id="khZoneNote"></span>
         </div>
+        <!-- 09/10: QC theo Phase / Zone lay thang tu SPM (khong can trung ten hang muc KHSX) -->
+        <div class="cg-lbl" style="margin:16px 0 4px">QC nghiệm thu theo Phase / Zone (SPM) → xưởng</div>
+        <div id="khPzBar" style="margin:0 0 8px"></div>
+        <div class="tw" style="max-height:380px"><table id="tKhDrillPZ"></table></div>
       </div>
     <div class="card">
       <h3>Kế hoạch theo mốc ngày — nguồn DDC An Hạ (live)</h3>
@@ -4336,9 +4340,80 @@ function khDrill(p){
   document.getElementById('tKhDrillI').innerHTML=h2+'</tbody>';
   var zn=document.getElementById('khZoneNote');
   if(zn) zn.innerHTML = ZM
-    ? 'Cột QC ở bảng hạng mục ghép theo <b>Zone</b> trong SPM — tên Zone phải trùng tên hạng mục ở sheet thì mới ra số.'
+    ? 'Cột QC ở bảng hạng mục ghép theo <b>Zone</b> trong SPM — tên Zone phải trùng tên hạng mục ở sheet thì mới ra số; tên khác nhau thì xem bảng <b>QC theo Phase / Zone</b> bên dưới.'
     : '<b style="color:var(--bad)">Bảng hạng mục chưa có cột QC:</b> <code>qcdata.js</code> hiện chưa kèm trường Zone. Chạy lại <code>spm_flatten.py</code> (bản đã vá) với file SPM mới nhất là cột Accept Fitup / Accept Weld / Chờ NT sẽ tự hiện.';
+  try{ _khRenderPZ(p); }catch(e){}
   try{ document.getElementById('khDrillCard').scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+}
+/* 09/10: bang QC theo Phase / Zone cua SPM (D.Z = "PHASE | ZONE") — doc lap voi ten hang muc KHSX.
+   Cung quy tac voi _khSpmByZone: Rot (isReject) · Cho NT (isTon) · accept (isAcc) · Final DIM = han + ghi chu "acc". */
+var _khPzOpen={}, _khPzLT=false, _khPzKeys=[];
+function _khIsLT(z){ return /lắp thử|lap thu|\bLT\b|trial/i.test(String(z||'')); }
+function khPzTog(i){ var k=_khPzKeys[i]; if(k==null)return; if(_khPzOpen[k])delete _khPzOpen[k]; else _khPzOpen[k]=1; _khRenderPZ(_khDrillP); }
+function khPzLT(on){ _khPzLT=!!on; _khRenderPZ(_khDrillP); }
+function _khRenderPZ(p){
+  var tb=document.getElementById('tKhDrillPZ'), bar=document.getElementById('khPzBar'); if(!tb)return;
+  if(!KH_HASZONE){
+    if(bar)bar.innerHTML='';
+    tb.innerHTML='<tbody><tr><td class="muted" style="padding:12px;font-size:12px">Chưa có Phase / Zone: <code>qcdata.js</code> chưa kèm trường Zone — cần xuất SPM có Phase + Zone trong ROWS rồi chạy <code>spm_flatten.py</code> bản mới.</td></tr></tbody>';
+    return;
+  }
+  var pk=_khN(p), RS=_khQcRows(), M={};
+  for(var i=0;i<RS.length;i++){
+    var r=RS[i]; if(_khN(D.P[r[0]])!==pk)continue;
+    var z=String(D.Z[r[14]]||'(chưa ghi)'), x=_khX(D.X[r[1]]);
+    var Z=M[z]||(M[z]={_t:_khBlank(),x:{}});
+    var o=Z.x[x]||(Z.x[x]=_khBlank());
+    var tf=r[7]||0,tw=r[8]||0,tp=r[9]||0;
+    [o,Z._t].forEach(function(t){ t.n++;
+      if(typeof isReject==='function'&&isReject(r)){t.rej+=tf+tw+tp;return;}
+      if(typeof isTon==='function'&&isTon(r)){t.wait+=tf+tw+tp;return;}
+      if(!isAcc(r))return; t.f+=tf;t.w+=tw;t.p+=tp;
+      if(tw>0&&r[13]&&/acc/i.test(''+r[13]))t.fd+=tw; });
+  }
+  var ks=Object.keys(M), nLT=ks.filter(_khIsLT).length;
+  if(_khPzLT) ks=ks.filter(_khIsLT);
+  ks.sort(function(a,b){ var la=_khIsLT(a),lb=_khIsLT(b); if(la!==lb)return la?-1:1;
+    var A=M[a]._t,B=M[b]._t; return (B.f+B.w+B.p+B.wait)-(A.f+A.w+A.p+A.wait); });
+  _khPzKeys=ks;
+  if(bar) bar.innerHTML='<button class="qf'+(_khPzLT?'':' on')+'" onclick="khPzLT(0)">Tất cả ('+Object.keys(M).length+')</button> '+
+    '<button class="qf'+(_khPzLT?' on':'')+'" onclick="khPzLT(1)">Chỉ lắp thử ('+nLT+')</button>'+
+    '<span class="muted" style="font-size:11.5px;margin-left:8px">tên lấy nguyên từ SPM · bấm dòng để bung theo xưởng · lắp thử = tên có "LẮP THỬ" / "LT" / "TRIAL"</span>';
+  if(!ks.length){ tb.innerHTML='<tbody><tr><td class="muted" style="padding:12px">'+(_khPzLT?'Dự án không có Phase / Zone lắp thử trong SPM.':'Dự án chưa có dòng SPM trong phạm vi đang xem.')+'</td></tr></tbody>'; return; }
+  var nz=function(v,st){return v>0?'<td class="n" style="'+(st||'')+'">'+fm1(v)+'</td>':'<td class="n muted" style="'+(st||'').replace(/color:[^;]+;?|font-weight:[^;]+;?/g,'')+'">·</td>';};
+  var stt=function(q){
+    if(q.rej>0) return '<span class="tag r">Có rớt</span>';
+    if(q.wait>0) return '<span class="tag o">Đang chờ NT</span>';
+    if(q.p>0) return '<span class="tag g">Đã NT sơn</span>';
+    if(q.w>0) return '<span class="tag g">Đã NT hàn</span>';
+    if(q.f>0) return '<span class="tag" style="color:var(--f)">Đã NT fitup</span>';
+    return '<span class="tag">Chưa có NT</span>'; };
+  var cells=function(q){ return nz(q.f,'border-left:2px solid var(--ink);color:var(--f);font-weight:700')+nz(q.w,'color:var(--w);font-weight:700')+
+    nz(q.p,'color:var(--p);font-weight:700')+nz(q.fd,'color:var(--fd);font-weight:700')+
+    nz(q.wait,'border-left:2px solid var(--ink);color:var(--warn);font-weight:700')+nz(q.rej,'color:var(--bad);font-weight:700')+
+    '<td style="border-left:2px solid var(--ink)">'+stt(q)+'</td>'; };
+  var h='<thead><tr><th rowspan="2" style="vertical-align:bottom">Phase · Zone (SPM) · xưởng</th>'+
+    '<th colspan="4" class="n" style="text-align:center;border-left:2px solid var(--ink)">Nghiệm thu ACCEPT (t)</th>'+
+    '<th colspan="2" class="n" style="text-align:center;border-left:2px solid var(--ink)">Chưa đạt (t)</th>'+
+    '<th rowspan="2" style="vertical-align:bottom;border-left:2px solid var(--ink)">Tình trạng QC</th></tr><tr>'+
+    '<th class="n" style="border-left:2px solid var(--ink);color:var(--f)">Fitup</th><th class="n" style="color:var(--w)">Welding</th>'+
+    '<th class="n" style="color:var(--p)">Painting</th><th class="n" style="color:var(--fd)">Final DIM</th>'+
+    '<th class="n" style="border-left:2px solid var(--ink);color:var(--warn)">Chờ NT</th><th class="n" style="color:var(--bad)">Rớt</th></tr></thead><tbody>';
+  var S=_khBlank();
+  ks.forEach(function(k,ii){
+    var Z=M[k], q=Z._t, op=!!_khPzOpen[k], pr=k.split(' | '), lt=_khIsLT(k);
+    S.f+=q.f;S.w+=q.w;S.p+=q.p;S.fd+=q.fd;S.wait+=q.wait;S.rej+=q.rej;
+    h+='<tr class="clickable" style="cursor:pointer;background:var(--rowH)" onclick="khPzTog('+ii+')">'+
+      '<td class="pjn"><span style="color:var(--acc);font-weight:800;margin-right:6px">'+(op?'▾':'▸')+'</span>'+
+      (lt?'<span class="tag" style="color:#fff;background:var(--f);margin-right:6px">LẮP THỬ</span>':'')+
+      '<b>'+esc2(pr[0])+'</b>'+(pr.length>1?' <span class="muted">· '+esc2(pr.slice(1).join(' | '))+'</span>':'')+'</td>'+cells(q)+'</tr>';
+    if(op) Object.keys(Z.x).sort(function(a,b){var A=Z.x[a],B=Z.x[b];return (B.f+B.w+B.p+B.wait)-(A.f+A.w+A.p+A.wait);}).forEach(function(x){
+      h+='<tr><td style="padding-left:30px"><span class="tag b">'+esc2(x)+'</span></td>'+cells(Z.x[x])+'</tr>'; });
+  });
+  h+='<tr style="font-weight:800;background:var(--chipBg)"><td>TỔNG '+ks.length+' Phase · Zone</td>'+
+    '<td class="n" style="border-left:2px solid var(--ink)">'+fm1(S.f)+'</td><td class="n">'+fm1(S.w)+'</td><td class="n">'+fm1(S.p)+'</td><td class="n">'+fm1(S.fd)+'</td>'+
+    '<td class="n" style="border-left:2px solid var(--ink)">'+fm1(S.wait)+'</td><td class="n">'+fm1(S.rej)+'</td><td style="border-left:2px solid var(--ink)"></td></tr>';
+  tb.innerHTML=h+'</tbody>';
 }
 function esc2(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 
