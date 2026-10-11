@@ -122,7 +122,7 @@ cổng vai trò `?vai=gd|qlqc|qcv|sx|hs`. Số liệu không đổi (KPI 6/6 kh�
 - **(hệ 1 ↔ hệ 2)** Hai hệ đếm "nợ final" **khác định nghĩa** → số của
   "TRUNG TAM CANH BAO" và "TRUNG TAM KIEM TRA BC & REV" không so trực tiếp được.
 - Khoá `'anha2026'` lộ trong mã client trên repo công khai → ai cũng ghi đè được bảng phân công QC.
-  → **11/10**: đã bỏ khỏi `qc.html` (hỏi mã khi Lưu). CHỜ user đổi `ASSIGN_TOKEN` trong Apps Script + New version.
+  → **11/10**: đã bỏ khỏi `qc.html` (hỏi mã khi Lưu). user ĐÃ đổi `ASSIGN_TOKEN` + New version (deployment gốc) — xong.
 - 3 chỗ nhét dữ liệu Google Sheet vào `innerHTML` **không escape** (XSS lưu trữ).
 - `.github/workflows/capnhat.yml` có thể ghi đè `qcdata.js` bằng cấu trúc sai (mất `Miễn QC`).
 - `__pycache__/*.pyc` bị commit; repo không có `.gitignore`.

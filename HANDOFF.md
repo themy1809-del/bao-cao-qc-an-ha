@@ -46,6 +46,10 @@ Current deployment / environment:
   lưu không khớp thì xoá để hỏi lại). **User PHẢI đổi `ASSIGN_TOKEN` trong Apps Script mail + Deploy → Manage → New version**
   (giữ URL) thì mã cũ mới hết tác dụng. 2 file backup HTML vẫn chứa chuỗi cũ — vô hại sau khi đổi token.
   Kiểm: node --check 15 khối OK; Playwright: huỷ → không gửi, nhập → gửi đúng mã, KPI Tổng quan lệch 0.
+- 11/10: user ĐÃ đổi `ASSIGN_TOKEN` trong Apps Script và cập nhật New version cho deployment GỐC `AKfycbwXuN…Y_jx4g`
+  (lỡ bấm New deployment → đã hướng dẫn Archive bản thừa, KHÔNG đụng bản gốc). User xác nhận "ok" sau khi thử Lưu phân công.
+  Còn mở: repo công khai (`qcdata.js` ai cũng tải) → bật đăng nhập/mã hoá khi user muốn; chuyển bat+PAT sang máy công ty;
+  tự động xuất SPM (pywinauto, `DO_NUT_SPM.py` chờ chạy trên máy công ty); xin IT quyền đọc DB SPM.
 
 **09/10 (6) — BẪY SPM EXPORT: "Export to Excel" chỉ xuất TỐI ĐA 7 cấp ROWS + Memo.** Cấp thứ 8–9 bị BỎ HẲN (không có trong file,
 kể cả sharedStrings) dù màn hình SPM hiện đủ. Đã thử 3 lần: mất QC User+QC Status, rồi mất QC Workshop+QC Date.
