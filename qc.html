@@ -2298,13 +2298,24 @@ function asgAddDim(){
   var msg=document.getElementById('asgMsg');
   if(msg){msg.style.color='#1f6b46';msg.textContent='Đã thêm team kích thước từ SPM: +'+(Object.keys(_ASGE).length-n0)+' người (tổng '+Object.keys(_ASGE).length+'). Xóa người thừa bằng nút ✕ rồi bấm Lưu.';msg.dataset.hold='1';setTimeout(function(){delete msg.dataset.hold;},4000);}
 }
+/* 11/10/2026: KHONG ghi cung ma bao ve trong ma nguon (repo cong khai) — hoi khi bam Luu, nho trong tab hien tai */
+function _asgKey(reset){
+  var k='';
+  if(reset){ try{ sessionStorage.removeItem('asgKey'); }catch(e){} return ''; }
+  try{ k=sessionStorage.getItem('asgKey')||''; }catch(e){}
+  if(!k){ k=(window.prompt('Nhập MÃ BẢO VỆ phân công QC (người quản lý giữ):')||'').trim();
+    if(k){ try{ sessionStorage.setItem('asgKey',k); }catch(e){} } }
+  return k;
+}
 function asgSave(){
   var msg=document.getElementById('asgMsg');
   if(!window.QC_ASSIGN_API){if(msg)msg.textContent='Chưa cấu hình Web App.';return;}
+  var key=_asgKey(); if(!key){ if(msg){msg.style.color='#b4690e';msg.textContent='Đã huỷ — chưa nhập mã bảo vệ nên chưa lưu.';} return; }
   _asgEnsure();var cfg=_ASGE,n0=Object.keys(cfg).length;
   if(msg){msg.dataset.hold='1';msg.style.color='#b4690e';msg.textContent='Đang lưu '+n0+' người…';}
-  fetch(window.QC_ASSIGN_API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({key:'anha2026',cfg:cfg})})
+  fetch(window.QC_ASSIGN_API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({key:key,cfg:cfg})})
    .then(function(){setTimeout(function(){asgFetch(function(){var n=_ASG?Object.keys(_ASG).length:0;
+     if(n!==n0){ _asgKey(true); }   /* khong khop -> co the sai ma: xoa ma da nho, lan sau hoi lai */
      if(msg){msg.style.color=(n===n0)?'#1f6b46':'#c0392b';msg.textContent=(n===n0)?('✔ Đã lưu & xác nhận '+n+' người — mail hằng ngày sẽ nhắc đúng tồn waiting theo phạm vi này.'):('Lưu xong nhưng máy chủ trả về '+n+'/'+n0+' — thử Lưu lại / kiểm tra mạng.');delete msg.dataset.hold;}
      _ASGE=null;asgRender();try{render(CUR);}catch(e){}});},1600);})
    .catch(function(e){if(msg){msg.style.color='#c0392b';msg.textContent='Lỗi gửi: '+e;delete msg.dataset.hold;}});

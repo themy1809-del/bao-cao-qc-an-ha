@@ -36,6 +36,17 @@ Current deployment / environment:
 
 ## 2. CURRENT TASK
 
+**11/10 — AN TOÀN (user: "hãy làm cho tôi an toàn"):**
+- Quét repo + TOÀN BỘ lịch sử: KHÔNG có PAT (`ghp_`/`github_pat_`), không có file Excel/CSV/mật khẩu nào từng bị commit.
+- PC (máy CÁ NHÂN đang chạy bat + push): `credential.helper=manager` → PAT nằm trong Windows Credential Manager (tốt).
+  Khuyến nghị: PAT fine-grained, chỉ repo này, Contents RW, có hạn; sau chuyển sang máy công ty → PAT riêng, xoá PAT cũ.
+- `.gitignore` thêm: `*.xlsx *.xls *.xlsm`, `Update spm/*` (trừ DOC_TOI_DAY.txt), `spm_*.csv`, `spm_data.js`, `BAN_DO_SPM.txt`,
+  `cau_hinh_ai.txt`, `.env`, `*.pem`, `*.key` — vì `qc_dashboard_public` trên PC có thư mục `Update spm` và bat dùng `git add -A`.
+- `qc.html`: BỎ mã cứng `'anha2026'` khỏi `asgSave()`; hỏi mã bằng `prompt` (hàm mới `_asgKey`, nhớ trong sessionStorage của tab,
+  lưu không khớp thì xoá để hỏi lại). **User PHẢI đổi `ASSIGN_TOKEN` trong Apps Script mail + Deploy → Manage → New version**
+  (giữ URL) thì mã cũ mới hết tác dụng. 2 file backup HTML vẫn chứa chuỗi cũ — vô hại sau khi đổi token.
+  Kiểm: node --check 15 khối OK; Playwright: huỷ → không gửi, nhập → gửi đúng mã, KPI Tổng quan lệch 0.
+
 **09/10 (6) — BẪY SPM EXPORT: "Export to Excel" chỉ xuất TỐI ĐA 7 cấp ROWS + Memo.** Cấp thứ 8–9 bị BỎ HẲN (không có trong file,
 kể cả sharedStrings) dù màn hình SPM hiện đủ. Đã thử 3 lần: mất QC User+QC Status, rồi mất QC Workshop+QC Date.
 **Bố cục CHUẨN (đã xác minh đủ dữ liệu):** `Project > Phase > Workshop > Work Date > QC Workshop > QC User > QC Date > Memo`

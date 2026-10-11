@@ -20,3 +20,19 @@ nguoi_dung.csv
 nguoi_dung*.csv
 !nguoi_dung_MAU.csv
 qcdata.js.tmp
+
+# 11/10/2026: CHAN du lieu SPM / Excel / bi mat — repo CONG KHAI, git add -A trong CAP_NHAT_VA_PUSH.bat se day het
+*.xlsx
+*.xls
+*.xlsm
+Update spm/*
+!Update spm/DOC_TOI_DAY.txt
+spm_flat.csv
+spm_project.csv
+spm_to.csv
+spm_data.js
+BAN_DO_SPM.txt
+cau_hinh_ai.txt
+.env
+*.pem
+*.key
