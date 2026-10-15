@@ -171,6 +171,9 @@ if _RAH and len(_RAH)==ND:
     print("   [DO CAP theo TEN] %s"%', '.join(_RAH))
     print("   [DO CAP] Phase=%s Zone=%s Workshop=c%s"%(L_PHASE,L_ZONE,L_WS))
     if L_QCU is None: print("   [!] QC User TRONG (khong co gia tri) -> thong ke theo nguoi QC se thieu. Kiem tra Pivot SPM.")
+    # 15/10/2026: SPM Export chi xuat 7 cap + Memo — cap thu 8, 9 bi BO TRONG. Thieu ngay -> ghep sai, xoa lich su.
+    if L_QCDATE is None or not _samp.get(L_QCDATE) or not _samp.get(L_WD):
+        sys.exit("\n[LOI] Cot Work Date / QC Date TRONG trong file SPM (SPM chi xuat 7 cap + Memo).\n   -> Xep lai Pivot: Project > Phase > Workshop > Work Date > QC Workshop > QC User > QC Date > Memo, xuat lai.\n   (Du lieu cu duoc GIU NGUYEN, khong ghi de.)")
 
 ctxp=None; cur_xu=cur_to=None
 projBOM={}; byTo={}; byProj={}; byToProj=defaultdict(lambda:defaultdict(float)); qcW=defaultdict(lambda:defaultdict(float))
@@ -418,6 +421,12 @@ else:
 _qcobj={'updated':out['updated'],'source':os.path.basename(INP),'P':_P,'X':_X,'T':_T,'Q':_Q,'PL':_PL,'rows':_R,'proj':_projq,
         'check':{'f':round(sum(x[7] for x in _R),1),'w':round(sum(x[8] for x in _R),1),'p':round(sum(x[9] for x in _R),1)}}
 if _HASZ: _qcobj['Z']=_Z      # khong co Zone -> khong ghi Z (dashboard tu an cot QC theo hang muc)
+# 15/10/2026: CHOT CHAN — ghep ma lam MAT du lieu cu thi DUNG, khong ghi (ep bang --ep neu that su muon)
+if _MODE=='ghep' and '--ep' not in FLAGS:
+    _of=(_OLD.get('check') or {}).get('f') or 0
+    if len(_R) < len(_OLD['rows'])*0.9 or (_of and _qcobj['check']['f'] < _of*0.97):
+        sys.exit("\n[LOI] Ket qua ghep lam GIAM du lieu bat thuong: %d -> %d dong, Fitup %s -> %s t.\n   File SPM co the thieu cot / sai bo cuc. KHONG ghi de. (Du lieu cu duoc GIU NGUYEN.)"
+                 %(len(_OLD['rows']),len(_R),_of,_qcobj['check']['f']))
 _qc_txt='window.QCDATA='+json.dumps(_qcobj,ensure_ascii=False,separators=(',',':'))+';'
 _qc_tmp=os.path.join(ODIR,'qcdata.js.tmp')
 with open(_qc_tmp,'w',encoding='utf-8') as _qf:

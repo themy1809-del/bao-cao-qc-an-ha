@@ -36,6 +36,18 @@ Current deployment / environment:
 
 ## 2. CURRENT TASK
 
+**15/10 — CÁCH 2: XỬ LÝ SPM TRÊN GOOGLE (IT không cho cài Python/Git trên máy công ty).**
+- Mới: `cong_cu_pc/SPM_TU_DONG.gs` (Apps Script độc lập, `v2026-10-15-goc`) + `cong_cu_pc/HUONG_DAN_SPM_GOOGLE.md`.
+  Luồng: Export SPM → kéo vào Drive `SPM_UPLOAD` → trigger 30' → `spmXuLy_` (chuyển nguyên văn `spm_flatten.py`, nhánh
+  RowAreaHeaders + GHÉP THEO KỲ, `pyRound_` = round nửa-chẵn của Python) → đọc/đẩy `qcdata.js` qua GitHub API (Git Data API)
+  → mail báo. PAT trong Script Properties `GITHUB_TOKEN`. Cần bật Advanced Service **Drive API** (đổi xlsx → Sheet tạm).
+- **Đối chiếu Node vs Python trên 3 file SPM thật: GIỐNG HỆT 100%** (05/09–09/10 ghép 19.563 dòng; ca trừ "Chưa QC" 223,2 t;
+  chế độ thay sạch). Mail có dòng `GIONG HET / KHAC` so với bản trên web để chạy song song.
+- Mặc định `CHE_DO='THU'` (không đẩy). Chuyển `'THAT'` sau 3–5 ngày GIONG HET, rồi bỏ bat trên máy cá nhân + xoá PAT cũ.
+- **Vá lỗ hổng chung** (cả `spm_flatten.py` lẫn `.gs`): file SPM mất cột Work Date/QC Date (SPM chỉ xuất 7 cấp + Memo) trước
+  đây sẽ ghép SAI và XOÁ lịch sử (19.570 → 3.979 dòng). Nay: cột ngày trống → dừng; ghép làm giảm >10% dòng hoặc >3% Fitup
+  → dừng không ghi (Python ép bằng `--ep`). Đã thử: file lỗi bị chặn ở cả 2 bản; file tốt vẫn giống hệt.
+
 **11/10 — AN TOÀN (user: "hãy làm cho tôi an toàn"):**
 - Quét repo + TOÀN BỘ lịch sử: KHÔNG có PAT (`ghp_`/`github_pat_`), không có file Excel/CSV/mật khẩu nào từng bị commit.
 - PC (máy CÁ NHÂN đang chạy bat + push): `credential.helper=manager` → PAT nằm trong Windows Credential Manager (tốt).
