@@ -83,6 +83,12 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .bld .top{inset:0;transform:translateZ(var(--h));border-radius:3px;
   background:repeating-linear-gradient(90deg,var(--roofHi) 0 3px,var(--roof) 3px 18px);
   outline:1px solid rgba(255,255,255,.08);transition:filter .2s}
+.world.anh .ground{background:var(--nen) 0 0/100% 100% no-repeat;box-shadow:0 0 0 10px #8fa395,0 40px 80px rgba(0,0,0,.5)}
+.world.anh .bld .top{background:var(--nen) calc(-1 * var(--L)) calc(-1 * var(--T))/var(--NW) var(--NH) no-repeat;outline:2px solid rgba(255,255,255,.55)}
+.world.anh .bld.flat .top{opacity:0}
+.world.anh .bld.ghost .top{background:transparent}
+.world.anh .bld:not(.flat) .n,.world.anh .bld:not(.flat) .s{background:#9aa5b5}
+.world.anh .bld:not(.flat) .wv,.world.anh .bld:not(.flat) .e{background:#7d899b}
 .bld .top::after{content:'';position:absolute;inset:0;background:var(--heat,transparent);mix-blend-mode:normal;opacity:.55;border-radius:3px}
 .bld .n,.bld .s{left:0;width:100%;height:var(--h);transform-origin:top;transform:rotateX(90deg);background:var(--side1)}
 .bld .s{top:100%}
@@ -123,9 +129,9 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .av .bd{position:absolute;bottom:-4px;right:-6px;font-size:8.5px;font-weight:900;padding:0 4px;border-radius:6px;background:var(--ok);color:#fff;line-height:13px}
 .av .bd.tn{background:var(--brand)}
 .avL{width:54px;height:54px;font-size:15px;margin:0}
-.legend3{position:absolute;left:12px;bottom:10px;font-size:11.5px;color:var(--mut);display:flex;gap:12px;flex-wrap:wrap;pointer-events:none}
+.legend3{position:absolute;left:12px;bottom:10px;background:rgba(12,17,28,.82);color:#cfd6e3!important;padding:5px 10px;border-radius:9px;font-size:11.5px;color:var(--mut);display:flex;gap:12px;flex-wrap:wrap;pointer-events:none}
 .legend3 i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
-.hint3{position:absolute;right:12px;bottom:10px;font-size:11px;color:var(--mut);pointer-events:none}
+.hint3{position:absolute;right:12px;bottom:10px;background:rgba(12,17,28,.82);color:#cfd6e3!important;padding:5px 10px;border-radius:9px;font-size:11px;color:var(--mut);pointer-events:none}
 
 /* ======= Panel chi tiet ======= */
 .panel{padding:14px;position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}
@@ -368,7 +374,10 @@ function hrLoad(){
 /* ---------- canh 3D ---------- */
 var W=document.getElementById('world'),ST=document.getElementById('stage');
 var cam={rx:56,rz:-28,s:.62},spin=false,spinT=null;
-function fitScale(){var w=ST.clientWidth,h=ST.clientHeight;return Math.max(.26,Math.min(w/1640,h/900)*1.05);}
+var NEN=PB.NEN||{w:1440,h:800,src:''};
+W.style.width=NEN.w+'px';W.style.height=NEN.h+'px';W.style.margin=(-NEN.h/2)+'px 0 0 '+(-NEN.w/2)+'px';
+if(NEN.src){W.style.setProperty('--nen','url("'+NEN.src.replace(/["\\()]/g,'')+'")');W.style.setProperty('--NW',NEN.w+'px');W.style.setProperty('--NH',NEN.h+'px');}
+function fitScale(){var w=ST.clientWidth,h=ST.clientHeight;return Math.max(.26,Math.min(w/(NEN.w+200),h/(NEN.h+100))*1.05);}
 function applyCam(){W.style.setProperty('--rx',cam.rx+'deg');W.style.setProperty('--rz',cam.rz+'deg');W.style.setProperty('--s',cam.s);}
 function heat(v,mx){if(!(v>0)||!(mx>0))return 'transparent';var a=Math.min(1,v/mx);
   /* xanh nhat -> vang -> do (muc tai) */
@@ -385,6 +394,7 @@ function figHtml(qi,p,g,sub){
   return '<div class="fig">'+(p?avHtml(p,g,true):'<span class="av avL" title="'+esc(nm)+'">'+esc(nm.slice(0,2).toUpperCase())+'</span>')
     +'<div class="figN">'+esc(shortNm)+'</div>'+(sub?'<div class="figS">'+sub+'</div>':'')+'</div>';}
 function veXuong(id){
+  W.classList.remove('anh');
   var k=KHU[id],x=k.spmX&&S.X[k.spmX],plan=nguoiKhu(id);
   var FX=60,FY=60,FW=1320,FH=680; /* san xuong */
   var h='<div class="floor" style="left:'+FX+'px;top:'+FY+'px;width:'+FW+'px;height:'+FH+'px"></div>'
@@ -431,22 +441,24 @@ function veCanh(){
   document.getElementById('colSeg').style.display=VIEW==='site'?'':'none';
   if(VIEW!=='site'){veXuong(VIEW);return;}
   var mx=0;PB.KHU.forEach(function(k){mx=Math.max(mx,khuVal(k));});
-  var h='';
-  /* duong noi bo (theo so do tong mat bang) */
+  var h='';W.classList.toggle('anh',!!NEN.src);
+  if(!NEN.src){
+  /* duong noi bo (ve tay khi khong co anh nen) */
   [[0,248,1440,8],[0,768,1440,10],[640,240,12,540],[874,240,8,540],[1232,240,10,540],[958,0,10,250],[500,0,8,250]].forEach(function(r){
     h+='<div class="road" style="left:'+r[0]+'px;top:'+r[1]+'px;width:'+r[2]+'px;height:'+r[3]+'px"></div>';});
   h+='<div class="roadLbl" style="left:540px;top:252px">Đg. Sáng Tạo</div><div class="roadLbl" style="left:700px;top:772px">Đg. Khát Vọng</div>'
     +'<div class="roadLbl" style="left:1238px;top:470px;writing-mode:vertical-rl">Đg. Chất Lượng</div>'
     +'<div class="roadLbl" style="left:40px;top:20px">Đường nội bộ KCN An Hạ</div>';
+  }
   PB.PHU.forEach(function(k){
-    var flat=/kho/i.test(k.ten);
-    h+='<div class="bld'+(flat?' flat':'')+'" style="left:'+k.x+'px;top:'+k.y+'px;width:'+k.w+'px;height:'+k.h+'px;--h:'+(flat?1:16)+'px;cursor:default">'
+    var flat=!!k.phang;
+    h+='<div class="bld'+(flat?' flat':'')+'" style="left:'+k.x+'px;top:'+k.y+'px;width:'+k.w+'px;height:'+k.h+'px;--h:'+(flat?1:16)+'px;--L:'+k.x+'px;--T:'+k.y+'px;cursor:default">'
       +'<div class="fc top" style="'+(flat?'':'background:#2f5d46')+'"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'
       +'<div class="bb" style="--h:'+(flat?4:20)+'px"><div class="bbIn" style="animation:none"><div style="font-size:12px;font-weight:700;color:var(--mut);white-space:nowrap;transform:translate(0,0)">'+esc(k.ten)+'</div></div></div></div>';});
   PB.KHU.forEach(function(k){
     var ds=nguoiKhu(k.id),co=ds.filter(function(e){return !e.g.vang;});
     var x=k.spmX&&S.X[k.spmX];var v=khuVal(k);
-    h+='<div class="bld'+(SEL===k.id?' sel':'')+(k.chuaRoViTri?' ghost':'')+'" data-khu="'+esc(k.id)+'" style="left:'+k.x+'px;top:'+k.y+'px;width:'+k.w+'px;height:'+k.h+'px;--h:'+k.cao+'px">'
+    h+='<div class="bld'+(SEL===k.id?' sel':'')+(k.chuaRoViTri?' ghost':'')+'" data-khu="'+esc(k.id)+'" style="left:'+k.x+'px;top:'+k.y+'px;width:'+k.w+'px;height:'+k.h+'px;--h:'+k.cao+'px;--L:'+k.x+'px;--T:'+k.y+'px">'
       +'<div class="fc top" style="--heat:'+heat(v,mx)+'"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'
       +'<div class="ring"></div>'
       +'<div class="bb"><div class="bbIn" data-khu="'+esc(k.id)+'" style="animation-delay:-'+((k.x+k.y)%32)/10+'s"><div class="tag3">'
@@ -519,7 +531,7 @@ function vePanel(){
     h+='<div class="sec">Dự án × công đoạn — QC phụ trách tại '+esc(k.spmX)+'</div>';
     topK(x.pj,10).forEach(function(pi){var xc=S.PJ[pi].xcd[k.spmX];
       h+='<div style="padding:7px 0;border-bottom:1px solid var(--line2)"><div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:12.5px">'+esc(D.P[pi])+'</b><b class="n">'+fm(x.pj[pi],1)+' t</b></div>'+cdRow(xc)+'</div>';});
-  }else{h+='<div class="note">Khu này không có trong SPM — chỉ hiển thị phân công theo sơ đồ, không có số tấn nghiệm thu.'+(k.chuaRoViTri?'<br><b>Vị trí AH8 trên bản đồ là ước lượng</b> (tổng mặt bằng không có AH8) — cần xác nhận.':'')+'</div>';}
+  }else{h+='<div class="note">Khu này không có trong SPM — chỉ hiển thị phân công theo sơ đồ, không có số tấn nghiệm thu.'+(k.chuaRoViTri?'<br><b>Vị trí AH8 trên bản đồ là ước lượng</b> (ảnh tổng mặt bằng không ghi AH8) — cần xác nhận.':'')+'</div>';}
   el.innerHTML=h;
 }
 document.getElementById('panel').addEventListener('click',function(e){
@@ -588,7 +600,7 @@ document.getElementById('tAsg').addEventListener('click',function(e){var r=e.tar
 function veNote(){
   var chua=Object.keys(NGUOI).map(function(k){return NGUOI[k];}).filter(function(p){return p.qi<0;}).map(function(p){return titleCase(p.ten)+(p.spm?' ('+p.spm+')':'');});
   document.getElementById('noteSrc').innerHTML='<b>Nguồn:</b> phân công = '+esc(PB.nguon)+' (file <code>phan_bo_qc.js</code>); số liệu = SPM trong <code>qcdata.js</code> (phân loại "Đã QC (AH)", theo ngày QC). '
-    +'Mặt bằng 3D vẽ theo tổng mặt bằng NM An Hạ, tỉ lệ gần đúng. '
+    +'Mặt bằng 3D dựng trên ảnh tổng mặt bằng NM An Hạ (<code>so_do_nha_may.webp</code>); khối xưởng đặt theo vị trí trên ảnh. '
     +(chua.length?'<br><b>Chưa nối được với SPM</b> (không có mã trong SPM): '+esc(chua.join(', '))+'.':'')
     +'<br><b>Ảnh chân dung</b>: bấm "🖼 Ảnh nhân sự" và dán link Sheet nhân sự — link chỉ lưu trong trình duyệt máy đang xem, không đưa lên GitHub.';
 }
