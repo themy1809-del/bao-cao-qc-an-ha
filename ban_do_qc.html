@@ -446,7 +446,10 @@ var cam={rx:56,rz:-28,s:.62},spin=false,spinT=null;
 var NEN=PB.NEN||{w:1440,h:800,src:''};
 W.style.width=NEN.w+'px';W.style.height=NEN.h+'px';W.style.margin=(-NEN.h/2)+'px 0 0 '+(-NEN.w/2)+'px';
 if(NEN.src){W.style.setProperty('--nen','url("'+NEN.src.replace(/["\\()]/g,'')+'")');W.style.setProperty('--NW',NEN.w+'px');W.style.setProperty('--NH',NEN.h+'px');}
-function fitScale(){var w=ST.clientWidth,h=ST.clientHeight;return Math.max(.26,Math.min(w/(NEN.w+120),h/(NEN.h+60))*1.22);}
+var WD=null; /* kich thuoc mat bang ben trong xuong (dung doc) */
+function fitScale(){var w=ST.clientWidth,h=ST.clientHeight;
+  if(VIEW!=='site'&&WD)return Math.max(.2,Math.min(w/(WD.w+60),h/(WD.h*1.02+60)));
+  return Math.max(.26,Math.min(w/(NEN.w+120),h/(NEN.h+60))*1.22);}
 function applyCam(){W.style.setProperty('--rx',cam.rx+'deg');W.style.setProperty('--rz',cam.rz+'deg');W.style.setProperty('--s',cam.s);}
 function heat(v,mx){if(!(v>0)||!(mx>0))return 'transparent';var a=Math.min(1,v/mx);
   /* xanh nhat -> vang -> do (muc tai) */
@@ -528,7 +531,9 @@ function veXuong(id){
   W.classList.remove('anh');
   var qiS=SELQ&&NGUOI[SELQ]?NGUOI[SELQ].qi:-9; /* dang chon 1 QC -> chi hien hinh nguoi do */
   var k=KHU[id],plan=nguoiKhu(id),NL=Math.max(1,k.line||1),TOL=PB.TO_LINE||{};
-  var FX=60,FY=60,FW=1320,FH=680;W.style.width='1440px';W.style.height='800px';W.style.margin='-400px 0 0 -720px';
+  /* xuong la nha dai: mat bang DUNG DOC, cac line chay doc theo chieu dai nha */
+  var FX=50,FY=50,FW=880,FH=1180;WD={w:FW+100,h:FH+150};
+  W.style.width=WD.w+'px';W.style.height=WD.h+'px';W.style.margin=(-WD.h/2)+'px 0 0 '+(-WD.w/2)+'px';
   /* MAT BANG: NL lan LINE chay doc; trong moi line tu duoi len: Fitup -> Han -> Final; cuoi xuong (ben phai) vung Son dung chung */
   /* chieu dai line chia theo khau: Fitup nhieu nhat (45%) · Han giua (30%) · Final tren (25%) — theo user 27/10 */
   var G=14,HD=46,SW=Math.round(FW*0.2),LW=FW-SW-G,LNW=(LW-G*(NL-1))/NL,ZT=FH-HD-G*2,ZHd=ZT*.25,ZHw=ZT*.30,ZHf=ZT*.45;
@@ -550,8 +555,8 @@ function veXuong(id){
       if(act||v[2]>0.5)(ds[key]=ds[key]||[]).push({tk:tk,so:so,v:v,act:act,c:c});if(act)mx=Math.max(mx,v[0],v[1]);});});
   Object.keys(ds).forEach(function(key){var c=key.slice(-1),li=c==='p'?0:+key.slice(0,-1),z=zone(li,c),kk=KHAU.filter(function(a){return a[0]===c;})[0];
     var arr=ds[key].sort(function(a,b){return (b.act-a.act)||(Math.max(b.v[0],b.v[1])-Math.max(a.v[0],a.v[1]))||(b.v[2]-a.v[2]);});
-    var cap=c==='p'?6:(c==='f'?6:4),du=arr.length-cap;arr=arr.slice(0,cap);
-    var n=arr.length,pad=8,cols=c==='p'?1:Math.min(c==='f'?3:2,n),rows=Math.ceil(n/cols);
+    var cap=c==='p'?7:(c==='f'?6:(c==='w'?4:3)),du=arr.length-cap;arr=arr.slice(0,cap);
+    var n=arr.length,pad=8,cols=1,rows=Math.ceil(n/cols);
     var bw=(z.w-pad*(cols+1))/cols,bh=(z.h-pad*(rows+1))/rows;
     arr.forEach(function(e,i){var cc=i%cols,rr=Math.floor(i/cols),L=z.x+pad+cc*(bw+pad),T=z.y+pad+rr*(bh+pad);
       var val=Math.max(e.v[0],e.v[1]),hh=e.act?5+Math.round(40*val/(mx||1)):3;
@@ -659,7 +664,7 @@ document.getElementById('camSeg').addEventListener('click',function(e){var b=e.t
   if(k==='fs'){var cd=ST.closest('.stageCard');try{if(document.fullscreenElement)document.exitFullscreen();else if(cd.requestFullscreen)cd.requestFullscreen();}catch(er){}return;}
   setCamBtn(k);W.classList.remove('drag');
   if(k==='spin'){if(cam.rx<30)cam.rx=56;applyCam();setTimeout(startSpin,260);return;}stopSpin();
-  if(k==='top'){cam.rx=0;cam.rz=0;}else{cam.rx=56;cam.rz=-28;}cam.s=fitScale();applyCam();});
+  if(k==='top'){cam.rx=0;cam.rz=0;}else if(VIEW!=='site'){cam.rx=32;cam.rz=0;}else{cam.rx=56;cam.rz=-28;}cam.s=fitScale();applyCam();});
 document.getElementById('colSeg').addEventListener('click',function(e){var b=e.target.closest('[data-col]');if(!b)return;COLMODE=b.getAttribute('data-col');
   [].forEach.call(this.querySelectorAll('.btn'),function(x){x.classList.toggle('on',x===b);});veCanh();});
 
@@ -684,8 +689,8 @@ function theQC(){var p=NGUOI[SELQ];if(!p)return '';var tt=qThucTe(p),q=p.qi>=0&&
   else h+='<div class="muted" style="margin-top:8px;font-size:12px">Không có lượt nghiệm thu trong SPM '+KY+' ngày.</div>';
   return h+'<div class="muted" style="font-size:11px;margin-top:6px">Trên bản đồ: viền xanh liền = xưởng được giao · viền xanh đứt = xưởng đang nghiệm thu nhiều nhất (nếu khác).</div></div>';}
 /* ---------- panel chi tiet 1 khu ---------- */
-function chon(id){if(!KHU[id])return;SEL=id;VIEW=id;stopSpin();setCamBtn('iso');cam.rx=44;cam.rz=-6;cam.s=fitScale()*0.88;applyCam();veCanh();vePanel();}
-function raNgoai(){SEL=null;VIEW='site';cam.rx=56;cam.rz=-28;cam.s=fitScale();applyCam();veCanh();vePanel();}
+function chon(id){if(!KHU[id])return;SEL=id;VIEW=id;stopSpin();setCamBtn('iso');cam.rx=32;cam.rz=0;veCanh();cam.s=fitScale();applyCam();veCanh();vePanel();}
+function raNgoai(){SEL=null;VIEW='site';WD=null;cam.rx=56;cam.rz=-28;cam.s=fitScale();applyCam();veCanh();vePanel();}
 document.getElementById('btnBack').addEventListener('click',raNgoai);
 document.getElementById('ngaySeg').addEventListener('click',function(e){var b=e.target.closest('[data-ng]');if(!b)return;var g=b.getAttribute('data-ng');
   if(g==='ky')CHE='ky';else if(g==='ngay')CHE='ngay';else{CHE='ngay';var i=NGAYS.indexOf(NGAY)+(+g);if(i>=0&&i<NGAYS.length)NGAY=NGAYS[i];}
@@ -979,7 +984,7 @@ document.getElementById('btnHr').addEventListener('click',function(){var b=docum
 document.getElementById('hrSave').addEventListener('click',function(){var v=document.getElementById('hrUrl').value.trim();if(!v)return;ls('qcHrSheet',v);document.getElementById('hrMsg').textContent='Đang đọc…';hrLoad();});
 document.getElementById('hrClear').addEventListener('click',function(){ls('qcHrSheet',null);HR={};document.getElementById('hrUrl').value='';document.getElementById('hrMsg').textContent='Đã bỏ link.';veLai();});
 window.addEventListener('resize',function(){if(!spin){cam.s=fitScale();applyCam();}});
-document.addEventListener('fullscreenchange',function(){setTimeout(function(){cam.s=fitScale()*(VIEW==='site'?1:0.97);applyCam();},120);});
+document.addEventListener('fullscreenchange',function(){setTimeout(function(){cam.s=fitScale();applyCam();},120);});
 
 var th=ls('bdqcTheme');if(th==='light'||th==='dark')document.documentElement.dataset.theme=th;
 if(!(D.rows&&D.rows.length)){document.getElementById('subLine').textContent='Không đọc được qcdata.js (chưa đăng nhập hoặc thiếu file).';}
