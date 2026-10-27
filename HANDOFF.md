@@ -519,7 +519,7 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Kiểm độc lập Hàn KH14 + tồn + năng lực, Sơn AH2/AH9 — khớp. User dặn: làm KHUNG trước, chỉnh chi tiết sau.
   **27/10 (user: "mỗi team mỗi sơ đồ riêng")**: `phan_bo_qc.js` có `TEAMS` = Kích thước (PDF 13/10, Fitup) · Hàn (Sheet nhân sự cột WORKSHOP, Hàn) ·
   Sơn & Đóng gói (Sheet nhân sự không ghi xưởng → khu **TẠM** theo SPM, `tam:1`). Trang có nút chọn team: bản đồ, bảng phân bổ, KPI, tải theo công đoạn của team.
-  Lệch phát hiện: Trần Văn Dương có trong PDF team Kích thước (vắng, thuộc AH9) nhưng Sheet nhân sự ghi QC Hàn — UNKNOWN — NEED USER CONFIRMATION.
+  Trần Văn Dương: user xác nhận 27/10 là QC Hàn → đã bỏ khỏi Team Kích thước. **Team Kích thước = 24 người** (khớp PDF; thay cho số 25 xác nhận trước đó).
   Sheet nhân sự ghi mã SPM Phạm Tấn Dương = `duongpt1`, SPM thật dùng `duongpt`.
   Kiểm độc lập 27/10, 14 ngày: AH4 KH 255,7 · AH3 234,7 · AH9 102,4 · AH2 21,7 · AH6 12,3 t — khớp. KHSX còn nhiều KL quá hạn/chưa có ngày (AH3 945 t, AH2 669 t) → có thể KHSX chưa cập nhật.
   Bộ đọc KHSX trong trang là bản gọn RIÊNG (không dùng chung `_khBuild` của qc.html vì nó nằm nội tuyến) — gộp là việc riêng.

@@ -58,8 +58,8 @@ window.PHAN_BO_QC = {
     {ten:'NGUYỄN VĂN KIÊN',       spm:'kiennv',   khu:'AH2MR', cd:'—',               da:'DANIELI', gc:'kiêm từ AH2', kiem:1},
     {ten:'NGUYỄN NGỌC TÍNH',      spm:'tinhnn',   khu:'AH8',   cd:'Lắp thử',         da:'EVAPCO — AH8', gc:'chuyển từ AH4'},
     {ten:'BÙI VÂN ĐIỆP',          spm:'diepbv',   khu:'AH9',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1},
-    {ten:'NGUYỄN PHAN ĐĂNG QUANG',spm:'quangnpd', khu:'AH6',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1},
-    {ten:'TRẦN VĂN DƯƠNG',        spm:'duongtv',  khu:'AH9',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1}
+    {ten:'NGUYỄN PHAN ĐĂNG QUANG',spm:'quangnpd', khu:'AH6',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1}
+    /* 27/10: TRAN VAN DUONG (duongtv) bo khoi Team Kich thuoc theo user — la QC Han (xem TEAMS 'han') */
   ],
   /* ===== MOI TEAM 1 SO DO RIENG (27/10/2026) =====
      cd    = cong doan team ky NT trong SPM: f=Fitup (cot 7), w=Han (cot 8), p=Son (cot 9)
