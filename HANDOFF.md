@@ -530,6 +530,12 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Rủi ro đã nêu với user: repo công khai → ảnh + tên QC ai cũng xem được.
   Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
   Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
+  **Rà soát 4 tác tử (27/10): thiết kế · màu sắc · kỹ thuật · QC số liệu** — QC số liệu 22/24 khớp độc lập. Đã sửa:
+  - Lỗi: tên dự án "[object Object]" (khoá `p` trùng); ghép dự án KHSX↔SPM chỉ dự phòng theo MÃ có chữ số và DUY NHẤT; `_num` theo `_khParseNum` của qc.html (dấu chấm nghìn); kéo cảm ứng (pointercancel + capture); Final DIM theo ĐÚNG `_fdName` của qc.html (trước đếm rộng hơn ~253 t/30 ngày); "Cộng" tồn xưởng cộng đủ mọi tổ.
+  - Hiệu năng: `fm` dùng Intl.NumberFormat cache (~2×); `tocDo` tính 1 lần trong taiTinh; `veDA10` chỉ vẽ khi đọc xong KHSX dự án. Xoá mã thừa (spark, shortPj, lineCuaQC, mini…).
+  - Màu: chữ trên ô khâu có màu riêng (tương phản ≥5,6:1); chấm trạng thái viền đôi; token theo theme `--sel --idle --tn --fT --wT --pT`; thiếu việc = xám; mái xưởng thang xám→cam→đỏ (không trùng màu khâu); Lắp thử #475569 (teal là Final DIM ở qc.html); ma trận có ký hiệu ▲/✓ (mù màu).
+  - Dễ đọc: thẻ xưởng gọn (chi tiết khi rê chuột), che poster trên ảnh nền, ảnh QC lỗi vẫn có chữ viết tắt, chú giải xuống chân bản đồ, bảng điện thoại có cột đầu cố định, chữ ≥11,5px, nhãn "NT thực tế/ngày" + ngưỡng ghi TẠM.
+  CHƯA làm (cần user quyết): tách tồn chờ NT >90 ngày (57% tồn toàn nhà máy là hàng >90 ngày); "tấn" cộng 3 khâu; ngưỡng lệch phân công; AH1 Sơn ngoài bảng tải; xưởng BC/thầu phụ trong KHSX.
   **10 dự án đang gia công — QC đáp ứng?** (user 27/10): đọc live KHSX tab "1-Báo Cáo Dự Án" (gid 731881045). Trạng thái "Đang gia công" nằm ở cột tiêu đề "Ghi Chú" → dò cột theo GIÁ TRỊ.
   Top 10 theo SX tháng (SPM, tháng của ngày dữ liệu mới nhất). **Hiển thị = MA TRẬN Xưởng × Dự án** (user: "phân bổ về xưởng để nhìn tổng quan", "chuyên nghiệp"): ô = ngày tồn chờ NT (màu) + SX·NT·tồn tháng; cột cuối = cả xưởng; dòng cuối = cả dự án. Cột: Tổng KL/Đã xuất/Còn lại (tab dự án, kg→t), còn lại F/H/S (tab Data), SX/NT tháng, tồn chờ NT, ngày tồn = tồn ÷ NT bình quân/ngày.
   Ngưỡng TẠM: không đáp ứng = ngày tồn >14 hoặc NT<70% SX; đáp ứng = NT≥90% SX và ≤7 ngày — UNKNOWN — NEED USER CONFIRMATION. Kiểm 27/10 (bản chụp KHSX 22/10): 4 đáp ứng · 2 theo sát · 4 không (Bison 25,4 · Viola SS 27,5 · Gregory SS 44,8 ngày · Kone 69%).
