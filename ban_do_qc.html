@@ -215,6 +215,7 @@ tr.click:hover td{background:var(--surf2)}
       <div class="sub" id="subLine">Nhà máy An Hạ · Team QC Kích thước · đang tải…</div>
     </div>
     <div class="sp"></div>
+    <div class="seg" id="teamSeg" title="Mỗi team một sơ đồ phân bổ riêng"></div>
     <div class="seg noprint" id="kySeg" title="Kỳ tính số liệu nghiệm thu thực tế từ SPM">
       <button class="btn" data-ky="7">7 ngày</button>
       <button class="btn on" data-ky="30">30 ngày</button>
@@ -319,11 +320,19 @@ function qIndex(code){code=String(code||'').toLowerCase();if(!code)return -1;if(
   for(var k in QIX){if(k.indexOf(code)===0&&/^\d+$/.test(k.slice(code.length)))return QIX[k];}return -1;}
 
 /* ---------- gom nhan su: 1 nguoi co the o nhieu khu (kiem nhiem) ---------- */
-var NGUOI={}; /* key = ten khong dau */
-PB.NGUOI.forEach(function(p){var k=bo(p.ten);var o=NGUOI[k]=NGUOI[k]||{key:k,ten:p.ten,spm:p.spm,moi:0,tn:0,vang:0,giao:[]};
-  if(p.moi)o.moi=1;if(p.tn)o.tn=1;if(p.vang)o.vang=1;if(p.spm&&!o.spm)o.spm=p.spm;o.giao.push(p);});
-Object.keys(NGUOI).forEach(function(k){NGUOI[k].qi=qIndex(NGUOI[k].spm);});
-var Q2N={};Object.keys(NGUOI).forEach(function(k){if(NGUOI[k].qi>=0)Q2N[NGUOI[k].qi]=NGUOI[k];});
+function gomNguoi(list){var M={}; /* key = ten khong dau */
+  list.forEach(function(p){var k=bo(p.ten);var o=M[k]=M[k]||{key:k,ten:p.ten,spm:p.spm,moi:0,tn:0,vang:0,giao:[]};
+    if(p.moi)o.moi=1;if(p.tn)o.tn=1;if(p.vang)o.vang=1;if(p.spm&&!o.spm)o.spm=p.spm;o.giao.push(p);});
+  Object.keys(M).forEach(function(k){M[k].qi=qIndex(M[k].spm);});return M;}
+/* moi team 1 so do rieng; Team Kich thuoc dung mang NGUOI goc */
+var TEAMS=(PB.TEAMS||[{id:'kt',ten:'Team QC Kích thước',ngan:'Kích thước',cd:'f',loc:'fitup'}]).map(function(t){var o={};for(var k in t)o[k]=t[k];
+  if(!o.NGUOI)o.NGUOI=PB.NGUOI;if(!o.capNhat)o.capNhat=PB.capNhat;if(!o.nguon)o.nguon=PB.nguon;return o;});
+/* Q2N: ten day du cua moi ma SPM co trong BAT KY so do nao (de hien ten thay vi ma) */
+var Q2N={};(function(){var all=[];TEAMS.forEach(function(t){all=all.concat(t.NGUOI.map(function(p){var c={};for(var k in p)c[k]=p[k];c._team=t.id;return c;}));});
+  var M=gomNguoi(all);Object.keys(M).forEach(function(k){if(M[k].qi>=0)Q2N[M[k].qi]=M[k];});})();
+var TEAM=TEAMS[0],NGUOI={};
+function chonTeam(id){TEAM=TEAMS.filter(function(t){return t.id===id;})[0]||TEAMS[0];NGUOI=gomNguoi(TEAM.NGUOI);CDSEL=TEAM.cd;ls('bdqcTeam',TEAM.id);
+  var sg=document.getElementById('teamSeg');if(sg)[].forEach.call(sg.querySelectorAll('.btn'),function(b){b.classList.toggle('on',b.getAttribute('data-team')===TEAM.id);});}
 var KHU={};PB.KHU.forEach(function(k){KHU[k.id]=k;});
 
 /* ---------- so lieu thuc te SPM theo ky ---------- */
@@ -588,7 +597,7 @@ function vePanel(){
     topK(x.pj,10).forEach(function(pi){var xc=S.PJ[pi].xcd[k.spmX];
       h+='<div style="padding:7px 0;border-bottom:1px solid var(--line2)"><div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:12.5px">'+esc(D.P[pi])+'</b><b class="n">'+fm(x.pj[pi],1)+' t</b></div>'+cdRow(xc)+'</div>';});
   }else{h+='<div class="note">Khu này không có trong SPM — chỉ hiển thị phân công theo sơ đồ, không có số tấn nghiệm thu.'+(k.chuaRoViTri?'<br><b>Vị trí AH8 trên bản đồ là ước lượng</b> (ảnh tổng mặt bằng không ghi AH8) — cần xác nhận.':'')+'</div>';}
-  h+='<div class="sec">QC phụ trách theo sơ đồ ('+esc(PB.capNhat)+')</div><div class="ppl">';
+  h+='<div class="sec">QC phụ trách theo sơ đồ ('+esc(TEAM.capNhat)+')</div><div class="ppl">';
   ds.forEach(function(e){var p=e.p,g=e.g,q=p.qi>=0&&S.Q[p.qi],lx=lech(p);
     h+='<div class="p1">'+avHtml(p,g,true)+'<div style="min-width:0"><div class="nm">'+esc(titleCase(p.ten))+' <span class="muted" style="font-weight:600;font-size:11px">'+esc(p.spm||'chưa có mã SPM')+'</span></div>'
       +'<div class="ds">'+esc(g.cd)+' · '+esc(g.da)+'</div>'
@@ -607,17 +616,17 @@ document.getElementById('panel').addEventListener('click',function(e){
 function veKpi(){
   var ds=Object.keys(NGUOI).map(function(k){return NGUOI[k];});
   var co=ds.filter(function(p){return !p.vang;}).length,moi=ds.filter(function(p){return p.moi;}).length;
-  var kiem=PB.NGUOI.filter(function(g){return g.kiem;}).length;
+  var kiem=TEAM.NGUOI.filter(function(g){return g.kiem;}).length;
   var lechN=ds.filter(function(p){return !p.vang&&lech(p);}).length;
   var t=S.tot;
   document.getElementById('kpis').innerHTML=[
     ['Nhân sự team',ds.length,'có mặt '+co+' · vắng '+(ds.length-co)],
     ['Nhân sự mới',moi,'đã phân người kèm'],
     ['Kiêm nhiệm',kiem,'lượt kiêm khu khác'],
-    ['Tấn NT '+KY+' ngày',fm(t.f+t.w+t.p,1),'Fitup '+fm(t.f,1)+' · Hàn '+fm(t.w,1)+' · Sơn '+fm(t.p,1)],
+    ['Tấn NT '+CDT[TEAM.cd].ten+' '+KY+' ngày',fm(t[TEAM.cd],1),'toàn nhà máy · Fitup '+fm(t.f,1)+' · Hàn '+fm(t.w,1)+' · Sơn '+fm(t.p,1)],
     ['Lệch phân công',lechN,'QC NT nhiều nhất ở xưởng khác với sơ đồ']
   ].map(function(a,i){return '<div class="card kpi'+(i===4&&a[1]?' gold':'')+'"><span>'+a[0]+'</span><b'+(i===4&&a[1]?' style="color:var(--warn)"':'')+'>'+a[1]+'</b><small>'+a[2]+'</small></div>';}).join('');
-  document.getElementById('subLine').innerHTML='Nhà máy An Hạ · Team QC Kích thước · phân bổ theo sơ đồ <b>'+esc(PB.capNhat)+'</b> · số liệu SPM <b>'+dVN(LIMD)+' → '+dVN(MAXD)+'</b> (dữ liệu '+esc(D.updated||'—')+')';
+  document.getElementById('subLine').innerHTML='Nhà máy An Hạ · <b>'+esc(TEAM.ten)+'</b> · phân bổ theo sơ đồ <b>'+esc(TEAM.capNhat)+'</b> · số liệu SPM <b>'+dVN(LIMD)+' → '+dVN(MAXD)+'</b> (dữ liệu '+esc(D.updated||'—')+')';
 }
 function veBangAsg(){
   var h='<thead><tr><th>Khu</th><th>QC</th><th>Công đoạn</th><th>Dự án / Line (giao)</th><th>Ghi chú</th><th class="n">Tấn NT</th><th>Xưởng NT thực tế</th><th>Tổ chính</th><th>Dự án NT nhiều nhất</th></tr></thead><tbody>';
@@ -632,7 +641,7 @@ function veBangAsg(){
        +'<td style="font-size:11.5px">'+(q&&!g.kiem?topK(q.pj,1).map(function(pi){return esc(D.P[pi]);}).join(''):'')+'</td></tr>';});
   });
   document.getElementById('tAsg').innerHTML=h+'</tbody>';
-  document.getElementById('qAsg').textContent='Cột trái = phân công theo sơ đồ '+PB.capNhat+'. Cột phải = thực tế nghiệm thu trong SPM '+KY+' ngày gần nhất (khớp theo mã SPM). Ô vàng = xưởng NT nhiều nhất khác với khu được giao.';
+  document.getElementById('qAsg').textContent='Cột trái = phân công theo sơ đồ '+TEAM.capNhat+'. Cột phải = thực tế nghiệm thu trong SPM '+KY+' ngày gần nhất (khớp theo mã SPM). Ô vàng = xưởng NT nhiều nhất khác với khu được giao.';
 }
 function veBangTo(){
   var xs=(D.X||[]).slice().sort();var h='<thead><tr><th>Xưởng</th><th>Tổ gia công</th><th>QC phụ trách thực tế (tấn NT)</th><th class="n">Dự án</th><th class="n">Tấn NT</th><th style="min-width:120px">Fitup / Hàn / Sơn</th></tr></thead><tbody>';
@@ -664,9 +673,13 @@ document.getElementById('tAsg').addEventListener('click',function(e){var r=e.tar
 
 function veNote(){
   var chua=Object.keys(NGUOI).map(function(k){return NGUOI[k];}).filter(function(p){return p.qi<0;}).map(function(p){return titleCase(p.ten)+(p.spm?' ('+p.spm+')':'');});
-  document.getElementById('noteSrc').innerHTML='<b>Nguồn:</b> phân công = '+esc(PB.nguon)+' (file <code>phan_bo_qc.js</code>); số liệu = SPM trong <code>qcdata.js</code> (phân loại "Đã QC (AH)", theo ngày QC). '
+  var khongKhu=Object.keys(NGUOI).map(function(k){return NGUOI[k];}).filter(function(p){return !p.giao.some(function(g){return KHU[g.khu];});}).map(function(p){return titleCase(p.ten)+' — '+p.giao[0].cd;});
+  var tam=TEAM.NGUOI.some(function(g){return g.tam;});
+  document.getElementById('noteSrc').innerHTML='<b>Nguồn:</b> phân công = '+esc(TEAM.nguon)+' (file <code>phan_bo_qc.js</code>); số liệu = SPM trong <code>qcdata.js</code> (phân loại "Đã QC (AH)", theo ngày QC). '
     +'Mặt bằng 3D dựng trên ảnh tổng mặt bằng NM An Hạ (<code>so_do_nha_may.webp</code>); khối xưởng đặt theo vị trí trên ảnh. '
     +(chua.length?'<br><b>Chưa nối được với SPM</b> (không có mã trong SPM): '+esc(chua.join(', '))+'.':'')
+    +(khongKhu.length?'<br><b>Chưa có khu vực</b> (không hiện trên bản đồ): '+esc(khongKhu.join(', '))+'.':'')
+    +(tam?'<br><b style="color:var(--warn)">Khu vực của '+esc(TEAM.ten)+' là TẠM</b>, đặt theo xưởng nghiệm thu nhiều nhất trong SPM — gửi sơ đồ phân bổ thật để cập nhật.':'')
     +'<br><b>Ảnh chân dung</b>: bấm "🖼 Ảnh nhân sự" và dán link Sheet nhân sự — link chỉ lưu trong trình duyệt máy đang xem, không đưa lên GitHub.';
 }
 /* ================= TAI QC THEO KE HOACH SAN XUAT (KHSX) =================
@@ -723,6 +736,8 @@ var CDT={f:{ten:'Fitup',kh:'Ráp hoàn thiện',rem:2,b:3,e:4,spm:7,mau:'var(--f
          w:{ten:'Hàn',kh:'Hàn hoàn thiện',rem:5,b:7,e:8,spm:8,mau:'var(--w)',roster:null},
          p:{ten:'Sơn',kh:'Sơn hoàn thiện',rem:6,b:9,e:10,spm:9,mau:'var(--p)',roster:null}};
 var CDS=['f','w','p'],CDSEL='f';
+/* cong doan cua team dang chon -> tinh theo nguoi trong so do team; cong doan khac -> theo QC thuc te trong SPM */
+function rosterFor(c){if(c!==TEAM.cd)return null;return TEAM.loc?new RegExp(TEAM.loc,'i'):/./;}
 function taiTinh(){
   if(!KHR){TAI=null;return;}
   var hn=homNay(),het=ngayCong(hn,WIN-1),lam=Math.max(1,Math.round(WIN*6/7));
@@ -745,7 +760,7 @@ function taiTinh(){
       if(r[6]===plOK&&r[3]&&r[3]>=LIMD){var o=gx(x,c);o.f+=v;o.qx[r[5]]=(o.qx[r[5]]||0)+v;((days[x+c]=days[x+c]||{}))[r[3]]=1;if(op)op[c].nt+=v;}});});
   Object.keys(X).forEach(function(x){CDS.forEach(function(c){var o=gx(x,c),t=CDT[c];
     o.ngay=Object.keys(days[x+c]||{}).length;o.cap=o.ngay?o.f/o.ngay:0;
-    if(t.roster)PB.KHU.forEach(function(k){if(k.spmX!==x)return;nguoiKhu(k.id).forEach(function(e){if(!e.g.vang&&!e.g.kiem&&t.roster.test(e.g.cd))o.qcs.push(e.p);});});
+    var ro=rosterFor(c);if(ro)PB.KHU.forEach(function(k){if(k.spmX!==x)return;nguoiKhu(k.id).forEach(function(e){if(!e.g.vang&&!e.g.kiem&&ro.test(e.g.cd))o.qcs.push(e.p);});});
     o.nqc=o.qcs.length;o.nact=Object.keys(o.qx).filter(function(q){return o.qx[q]>=1;}).length;
     o.can=(o.kh+o.ton)/lam;o.tai=o.cap>0?o.can/o.cap:0;
     /* xuong khong co luot NT cong doan nay trong ky: khong tinh % */
@@ -785,12 +800,12 @@ function veTai(){
   var xs2=xs.slice().sort(function(a,b){return hang(TAI.X[b][CDSEL])-hang(TAI.X[a][CDSEL]);});
   h+='<div class="tw"><table><thead><tr><th>Xưởng</th><th class="n" title="QC theo sơ đồ / QC thực tế có NT công đoạn này tại xưởng trong kỳ">QC (sơ đồ / thực tế)</th><th class="n">Năng lực NT (t/ngày)</th><th class="n">KH '+esc(C.kh.toLowerCase())+' '+WIN+' ngày tới (t)</th><th class="n">Tồn chờ NT (t)</th><th class="n">Cần (t/ngày)</th><th style="min-width:150px">Tải</th><th class="n">KH quá hạn chưa xong (t)</th><th class="n">Chưa có ngày KH (t)</th></tr></thead><tbody>';
   xs2.forEach(function(x){var o=TAI.X[x][CDSEL];var w=Math.min(100,o.tai/2*100);
-    h+='<tr class="click" data-khu="'+esc(x)+'"><td style="font-weight:900;color:var(--gold2)">'+esc(x)+'</td><td class="n">'+(C.roster?o.nqc:'—')+' / '+o.nact+'</td><td class="n">'+fm(o.cap,1)+'</td><td class="n">'+fm(o.kh,1)+'</td><td class="n">'+fm(o.ton,1)+'</td><td class="n"><b>'+fm(o.can,1)+'</b></td>'
+    h+='<tr class="click" data-khu="'+esc(x)+'"><td style="font-weight:900;color:var(--gold2)">'+esc(x)+'</td><td class="n">'+(rosterFor(CDSEL)?o.nqc:'—')+' / '+o.nact+'</td><td class="n">'+fm(o.cap,1)+'</td><td class="n">'+fm(o.kh,1)+'</td><td class="n">'+fm(o.ton,1)+'</td><td class="n"><b>'+fm(o.can,1)+'</b></td>'
      +'<td>'+chipTai(o)+'<div class="bar" style="position:relative"><i style="width:'+w+'%;background:'+TTN[o.tt][1]+'"></i><span style="position:absolute;left:50%;top:-2px;bottom:-2px;border-left:1.5px dashed var(--mut)" title="100% = vừa đủ năng lực"></span></div></td>'
      +'<td class="n"'+(o.qh>0.5?' style="color:var(--warn)"':'')+'>'+fm(o.qh,1)+'</td><td class="n muted">'+fm(o.kd,1)+'</td></tr>';});
   h+='</tbody></table></div>';
   /* goi y dieu phoi cho cong doan dang chon */
-  var dau=function(o){return C.roster?o.nqc:o.nact;};
+  var dau=function(o){return rosterFor(CDSEL)?o.nqc:o.nact;};
   var qua=xs2.filter(function(x){var t=TAI.X[x][CDSEL].tt;return t==='qua'||t==='khong';}),thieu=xs2.filter(function(x){return TAI.X[x][CDSEL].tt==='thieu';}).reverse();
   var gy=[];
   qua.forEach(function(x){var o=TAI.X[x][CDSEL],n=dau(o);var thieuNguoi=o.cap>0&&n>0?Math.ceil(n*(o.tai-1)):0;
@@ -802,17 +817,17 @@ function veTai(){
     if(o.qh>Math.max(o.kh,20))w.push(fm(o.qh,1)+' t KH đã quá hạn nhưng chưa ghi xong');
     if(o.kd>Math.max(o.kh,20))w.push(fm(o.kd,1)+' t chưa có ngày KH');
     if(o.tt==='thieu'||w.length)gy.push('<b>'+esc(y)+'</b> tải '+Math.round(o.tai*100)+'% ('+TTN[o.tt][0].toLowerCase()+')'+(w.length?' — <span style="color:var(--warn)">lưu ý '+w.join(', ')+'</span>: KHSX có thể chưa cập nhật, xác nhận với SX trước khi rút QC.':'.'));});
-  if(C.roster)xs2.forEach(function(x){var o=TAI.X[x][CDSEL];if(o.nqc===0&&(o.kh+o.ton)>1)gy.push('<b>'+esc(x)+'</b> có '+fm(o.kh+o.ton,1)+' t việc '+esc(C.ten)+' nhưng <b>chưa có QC '+esc(C.ten)+'</b> trong sơ đồ.');});
+  if(rosterFor(CDSEL))xs2.forEach(function(x){var o=TAI.X[x][CDSEL];if(o.nqc===0&&(o.kh+o.ton)>1)gy.push('<b>'+esc(x)+'</b> có '+fm(o.kh+o.ton,1)+' t việc '+esc(C.ten)+' nhưng <b>chưa có QC '+esc(C.ten)+'</b> trong sơ đồ.');});
   if(gy.length)h+='<div class="sec">Gợi ý điều phối — '+esc(C.ten)+'</div><ul style="margin:0;padding-left:18px;line-height:1.7">'+gy.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ul>';
   /* tung QC: Fitup theo so do; Han/Son theo QC thuc te trong SPM (so do hien chi co Team Kich thuoc) */
   h+='<div class="sec">Từng QC '+esc(C.ten)+' — đang làm so với cần</div><div class="tw"><table><thead><tr><th>QC</th><th>Xưởng</th><th class="n">Đang làm (t/ngày)</th><th class="n">Ngày có NT / '+KY+'</th><th class="n">Cần mỗi người (t/ngày)</th><th>Nhận xét</th></tr></thead><tbody>';
   xs2.forEach(function(x){var o=TAI.X[x][CDSEL];
-    var ds=C.roster?o.qcs.map(function(p){return {qi:p.qi,ten:titleCase(p.ten),ma:p.spm,moi:p.moi};})
+    var ds=rosterFor(CDSEL)?o.qcs.map(function(p){return {qi:p.qi,ten:titleCase(p.ten),ma:p.spm,moi:p.moi};})
       :topK(o.qx,8).filter(function(q){return o.qx[q]>=1;}).map(function(q){return {qi:+q,ten:qName(+q),ma:D.Q[q],moi:0};});
-    var n=C.roster?o.nqc:o.nact;
+    var n=rosterFor(CDSEL)?o.nqc:o.nact;
     ds.forEach(function(p){var v=tocDo(p.qi,CDSEL),need=n?o.can/n:0;
       h+='<tr><td><b>'+esc(p.ten)+'</b> <span class="muted" style="font-size:11px">'+esc(p.ma||'')+'</span>'+(p.moi?' <span class="chip moi">Mới</span>':'')+'</td><td>'+esc(x)+'</td><td class="n">'+(v?fm(v.v,1):'—')+'</td><td class="n">'+(v?v.n:0)+'</td><td class="n"><b>'+fm(need,1)+'</b></td><td>'+nhanXet(need,v)+'</td></tr>';});});
-  h+='</tbody></table></div><div class="muted" style="font-size:11.5px;margin-top:4px">'+(C.roster?'Fitup: cần mỗi người = nhu cầu xưởng ÷ số QC Fitup được giao trong sơ đồ (Team Kích thước).':esc(C.ten)+': sơ đồ hiện chỉ có Team Kích thước, nên lấy QC thực tế có nghiệm thu '+esc(C.ten.toLowerCase())+' tại xưởng trong SPM; cần mỗi người = nhu cầu xưởng ÷ số QC đó.')+' Ngưỡng: &gt;115% quá tải · &lt;60% dư năng lực.</div>';
+  h+='</tbody></table></div><div class="muted" style="font-size:11.5px;margin-top:4px">'+(rosterFor(CDSEL)?esc(C.ten)+': cần mỗi người = nhu cầu xưởng ÷ số QC được giao trong sơ đồ '+esc(TEAM.ten)+'.':esc(C.ten)+': đang xem '+esc(TEAM.ten)+' nên công đoạn này lấy QC thực tế có nghiệm thu '+esc(C.ten.toLowerCase())+' tại xưởng trong SPM; cần mỗi người = nhu cầu xưởng ÷ số QC đó. Chọn team tương ứng để xem theo sơ đồ.')+' Ngưỡng: &gt;115% quá tải · &lt;60% dư năng lực.</div>';
   /* 3) DU AN TON — ca 3 cong doan */
   var sc=function(o){return CDS.reduce(function(a,c){return a+o[c].qh+o[c].cho;},0);};
   var ps=Object.keys(TAI.P).map(function(k){return TAI.P[k];}).filter(function(o){return CDS.some(function(c){return o[c].con>0.5||o[c].cho>0.5;});}).sort(function(a,b){return sc(b)-sc(a);}).slice(0,30);
@@ -837,6 +852,9 @@ window.addEventListener('resize',function(){if(!spin){cam.s=fitScale();applyCam(
 
 var th=ls('bdqcTheme');if(th==='light'||th==='dark')document.documentElement.dataset.theme=th;
 if(!(D.rows&&D.rows.length)){document.getElementById('subLine').textContent='Không đọc được qcdata.js (chưa đăng nhập hoặc thiếu file).';}
+(function(){var sg=document.getElementById('teamSeg');sg.innerHTML=TEAMS.map(function(t){return '<button class="btn" data-team="'+esc(t.id)+'">Team '+esc(t.ngan||t.ten)+'</button>';}).join('');
+  sg.addEventListener('click',function(e){var b=e.target.closest('[data-team]');if(!b)return;chonTeam(b.getAttribute('data-team'));taiTinh();veLai();});})();
+chonTeam(ls('bdqcTeam')||'kt');
 tinh();cam.s=fitScale();applyCam();veLai();hrLoad();khTai();
 document.getElementById('winSeg').addEventListener('click',function(e){var b=e.target.closest('[data-win]');if(!b)return;WIN=+b.getAttribute('data-win');taiTinh();veLai();});
 document.getElementById('taiBody').addEventListener('click',function(e){var cd=e.target.closest('[data-cd]');if(cd){CDSEL=cd.getAttribute('data-cd');veTai();return;}var r=e.target.closest('[data-khu]');if(r&&KHU[r.getAttribute('data-khu')]){chon(r.getAttribute('data-khu'));document.getElementById('stage').scrollIntoView({behavior:'smooth',block:'center'});}});

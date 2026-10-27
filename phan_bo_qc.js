@@ -60,5 +60,40 @@ window.PHAN_BO_QC = {
     {ten:'BÙI VÂN ĐIỆP',          spm:'diepbv',   khu:'AH9',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1},
     {ten:'NGUYỄN PHAN ĐĂNG QUANG',spm:'quangnpd', khu:'AH6',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1},
     {ten:'TRẦN VĂN DƯƠNG',        spm:'duongtv',  khu:'AH9',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1}
+  ],
+  /* ===== MOI TEAM 1 SO DO RIENG (27/10/2026) =====
+     cd    = cong doan team ky NT trong SPM: f=Fitup (cot 7), w=Han (cot 8), p=Son (cot 9)
+     loc   = (tuy chon) chi tinh tai cho nguoi co cong doan (cd) khop mau nay — Team Kich thuoc: chi nguoi lam Fitup
+     tam   = 1 khi khu vuc la TAM tinh theo SPM (chua co so do that) */
+  TEAMS: [
+    {id:'kt', ten:'Team QC Kích thước', ngan:'Kích thước', cd:'f', loc:'fitup', capNhat:'13/10/2026',
+     nguon:'Sơ đồ Team QC Kích thước 13/10/2026 (PDF)', NGUOI:null /* = NGUOI o tren */},
+    {id:'han', ten:'Team QC Hàn', ngan:'Hàn', cd:'w', capNhat:'27/10/2026',
+     nguon:'Sheet nhân sự QC_HR_DATA_CENTER — cột WORKSHOP (chưa có sơ đồ PDF riêng)',
+     NGUOI:[
+      {ten:'LÊ VIẾT TRỌNG',       spm:'tronglv',  khu:'AH9', cd:'Hàn', da:'—', gc:'Trưởng nhóm', tn:1},
+      {ten:'TRẦN XUÂN PHÁT',      spm:'phattx',   khu:'AH2', cd:'Hàn', da:'—', gc:''},
+      {ten:'HUỲNH HỒNG QUÂN',     spm:'quanhh',   khu:'AH2', cd:'Hàn', da:'—', gc:''},
+      {ten:'TRẦN MINH TIẾN',      spm:'tientm',   khu:'AH2', cd:'Hàn', da:'—', gc:''},
+      {ten:'NGUYỄN DUY KHANG',    spm:'khangnd',  khu:'AH3', cd:'Hàn', da:'—', gc:''},
+      {ten:'PHẠM HOÀNG LONG',     spm:'longph1',  khu:'AH3', cd:'Hàn', da:'—', gc:''},
+      {ten:'VÕ HOÀNG SANG',       spm:'sangvh',   khu:'AH4', cd:'Hàn', da:'—', gc:''},
+      {ten:'VÕ TUẤN VŨ',          spm:'vuvt',     khu:'AH4', cd:'Hàn', da:'—', gc:''},
+      {ten:'TRẦN NGUYỄN ĐẠI PHÁT',spm:'phattnd',  khu:'AH6', cd:'Hàn', da:'—', gc:''},
+      {ten:'NGUYỄN NGỌC CHUNG',   spm:'chungnn',  khu:'AH9', cd:'Hàn', da:'—', gc:''},
+      {ten:'TRẦN VĂN DƯƠNG',      spm:'duongtv',  khu:'AH9', cd:'Hàn', da:'—', gc:''}
+     ]},
+    {id:'son', ten:'Team QC Sơn & Đóng gói', ngan:'Sơn', cd:'p', capNhat:'27/10/2026',
+     nguon:'Sheet nhân sự QC_HR_DATA_CENTER (không ghi xưởng) — khu vực TẠM theo xưởng nghiệm thu sơn nhiều nhất trong SPM 30 ngày',
+     NGUOI:[
+      {ten:'TRỊNH VĂN QUÂN',      spm:'quantrinh',khu:'AH2', cd:'Sơn', da:'—', gc:'Trưởng nhóm · cũng NT nhiều ở AH3', tn:1, tam:1},
+      {ten:'NGÔ VĂN ĐỨC',         spm:'ducnv2',   khu:'AH2', cd:'Sơn', da:'—', gc:'', tam:1},
+      {ten:'TRỊNH HỮU LỢI',       spm:'loith',    khu:'AH2', cd:'Sơn', da:'—', gc:'', tam:1},
+      {ten:'HOÀNG NGỌC TUÂN',     spm:'tuanhn',   khu:'AH2', cd:'Sơn', da:'—', gc:'', tam:1},
+      {ten:'NGUYỄN ANH TUẤN',     spm:'tuanna1',  khu:'AH3', cd:'Sơn', da:'—', gc:'', tam:1},
+      {ten:'NGUYỄN HOÀNG LONG',   spm:'longnh1',  khu:'',    cd:'Sơn', da:'—', gc:'chưa có lượt NT trong SPM'},
+      {ten:'ĐÀO NHỰT HUY',        spm:'huydn1',   khu:'',    cd:'Đóng gói', da:'—', gc:'chưa có lượt NT trong SPM'},
+      {ten:'HUỲNH VĂN THON',      spm:'thonhv',   khu:'',    cd:'Đóng gói', da:'—', gc:'chưa có lượt NT trong SPM'}
+     ]}
   ]
 };

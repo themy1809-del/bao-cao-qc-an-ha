@@ -517,6 +517,10 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   **27/10 (user: "tính hết")**: mở rộng đủ 3 công đoạn — Fitup (ráp HT ↔ SPM r[7]), Hàn (hàn HT ↔ r[8]), Sơn (sơn HT ↔ r[9]).
   Hàn/Sơn: sơ đồ chỉ có Team Kích thước nên "từng QC" lấy QC thực tế trong SPM. Xưởng không có lượt NT công đoạn đó → nhãn "Không NT tại xưởng"/"Có việc, chưa ai NT" (không tính %).
   Kiểm độc lập Hàn KH14 + tồn + năng lực, Sơn AH2/AH9 — khớp. User dặn: làm KHUNG trước, chỉnh chi tiết sau.
+  **27/10 (user: "mỗi team mỗi sơ đồ riêng")**: `phan_bo_qc.js` có `TEAMS` = Kích thước (PDF 13/10, Fitup) · Hàn (Sheet nhân sự cột WORKSHOP, Hàn) ·
+  Sơn & Đóng gói (Sheet nhân sự không ghi xưởng → khu **TẠM** theo SPM, `tam:1`). Trang có nút chọn team: bản đồ, bảng phân bổ, KPI, tải theo công đoạn của team.
+  Lệch phát hiện: Trần Văn Dương có trong PDF team Kích thước (vắng, thuộc AH9) nhưng Sheet nhân sự ghi QC Hàn — UNKNOWN — NEED USER CONFIRMATION.
+  Sheet nhân sự ghi mã SPM Phạm Tấn Dương = `duongpt1`, SPM thật dùng `duongpt`.
   Kiểm độc lập 27/10, 14 ngày: AH4 KH 255,7 · AH3 234,7 · AH9 102,4 · AH2 21,7 · AH6 12,3 t — khớp. KHSX còn nhiều KL quá hạn/chưa có ngày (AH3 945 t, AH2 669 t) → có thể KHSX chưa cập nhật.
   Bộ đọc KHSX trong trang là bản gọn RIÊNG (không dùng chung `_khBuild` của qc.html vì nó nằm nội tuyến) — gộp là việc riêng.
   AH8 không có trên tổng mặt bằng → vị trí trên bản đồ là ước lượng. Vũ Đại Phong, Lê Minh Trí chưa có mã SPM.
