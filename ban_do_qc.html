@@ -974,7 +974,7 @@ function taiTinh(){
   var hn=homNay(),het=ngayCong(hn,WIN-1),lam=Math.max(1,Math.round(WIN*6/7));
   var X={},P={};
   function gx(x,c){var o=X[x]=X[x]||{};return o[c]=o[c]||{x:x,c:c,kh:0,qh:0,sau:0,kd:0,ton:0,cap:0,ngay:0,f:0,nqc:0,qcs:[],qx:{}};}
-  function gp(pj){return P[pj]=P[pj]||{p:pj,x:{},kt:'',f:{con:0,qh:0,cho:0,nt:0},w:{con:0,qh:0,cho:0,nt:0},p:{con:0,qh:0,cho:0,nt:0}};}
+  function gp(pj){return P[pj]=P[pj]||{ten:pj,x:{},kt:'',f:{con:0,qh:0,cho:0,nt:0},w:{con:0,qh:0,cho:0,nt:0},p:{con:0,qh:0,cho:0,nt:0}};}
   KHR.forEach(function(r){var x=chuanX(r[1]),op=gp(r[0]);
     CDS.forEach(function(c){var t=CDT[c],rem=r[t.rem],b=r[t.b]||'',e=r[t.e]||'';if(!(rem>0.0005))return;
       op[c].con+=rem;if(x)op.x[x]=(op.x[x]||0)+rem;if(c==='f'&&e>op.kt)op.kt=e;
@@ -1064,7 +1064,7 @@ function veTai(){
   var ps=Object.keys(TAI.P).map(function(k){return TAI.P[k];}).filter(function(o){return CDS.some(function(c){return o[c].con>0.5||o[c].cho>0.5;});}).sort(function(a,b){return sc(b)-sc(a);}).slice(0,30);
   var tri=function(o,k,mau){return CDS.map(function(c){var v=o[c][k];return '<span style="color:'+(v>0.5?mau:'var(--mut)')+'">'+fm(v,1)+'</span>';}).join(' / ');};
   h+='<div class="sec">Dự án — còn tồn bao nhiêu (Fitup / Hàn / Sơn, tấn)</div><div class="tw"><table><thead><tr><th>Dự án</th><th>Xưởng</th><th class="n">Còn lại theo KH</th><th class="n">trong đó quá hạn</th><th class="n">Tồn chờ NT (SPM)</th><th class="n">Đã NT '+KY+' ngày</th><th>KT ráp HT (KH)</th></tr></thead><tbody>';
-  ps.forEach(function(o){h+='<tr><td style="font-weight:700;min-width:220px">'+esc(o.p)+'</td><td>'+topK(o.x,3).map(function(x){return '<span class="chip">'+esc(x)+'</span>';}).join('')+'</td><td class="n">'+tri(o,'con','var(--ink)')+'</td><td class="n">'+tri(o,'qh','var(--bad)')+'</td><td class="n">'+tri(o,'cho','var(--warn)')+'</td><td class="n">'+tri(o,'nt','var(--ok)')+'</td><td>'+(o.kt?dVN(o.kt)+(o.kt<TAI.hn&&o.f.con>0.5?' <span class="chip" style="color:var(--bad)">trễ</span>':''):'<span class="muted">—</span>')+'</td></tr>';});
+  ps.forEach(function(o){h+='<tr><td style="font-weight:700;min-width:220px">'+esc(o.ten)+'</td><td>'+topK(o.x,3).map(function(x){return '<span class="chip">'+esc(x)+'</span>';}).join('')+'</td><td class="n">'+tri(o,'con','var(--ink)')+'</td><td class="n">'+tri(o,'qh','var(--bad)')+'</td><td class="n">'+tri(o,'cho','var(--warn)')+'</td><td class="n">'+tri(o,'nt','var(--ok)')+'</td><td>'+(o.kt?dVN(o.kt)+(o.kt<TAI.hn&&o.f.con>0.5?' <span class="chip" style="color:var(--bad)">trễ</span>':''):'<span class="muted">—</span>')+'</td></tr>';});
   h+='</tbody></table></div><div class="note">Sắp theo tổng (quá hạn KH + tồn chờ NT) của 3 công đoạn. Số "còn lại / quá hạn" lấy từ KHSX — nếu KHSX chưa cập nhật thì quá hạn sẽ cao hơn thực tế; đối chiếu cột "Đã NT" từ SPM.</div>';
   el.innerHTML=h;
 }
