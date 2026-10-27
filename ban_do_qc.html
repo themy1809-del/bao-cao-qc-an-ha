@@ -52,7 +52,7 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .seg .btn.on{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#1a1405}
 .card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
 .gold{border:1.5px solid color-mix(in srgb,var(--gold) 70%,transparent)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpis{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
 .kpi{padding:12px 14px}
 .kpi b{display:block;font-size:28px;font-weight:900;line-height:1.1;color:var(--ink)}
 .kpi span{font-size:11.5px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
@@ -122,7 +122,7 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 @keyframes ring{from{transform:translateZ(2px) scale(.3);opacity:1}to{transform:translateZ(2px) scale(1.6);opacity:0}}
 /* bang ten dung (billboard) — luon quay mat ve nguoi xem */
 .bb{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
-  transform:translateZ(calc(var(--h) + 6px)) rotateZ(calc(-1 * var(--rz))) rotateX(calc(-1 * var(--rx))) scale(calc(var(--bbk,.9) / var(--s)));transform-origin:0 0;pointer-events:none}
+  transform:translateZ(calc(var(--h) + 6px)) rotateZ(calc(-1 * var(--rz))) rotateX(calc(-1 * var(--rx))) scale(calc(var(--bbk,.62) / var(--s)));transform-origin:0 0;pointer-events:none}
 /* bang ten giu co chu de doc khi phong to / thu nho ban do */
 .stageCard:fullscreen{border-radius:0;display:flex;flex-direction:column}
 .stageCard:fullscreen .stage{height:auto;flex:1}
@@ -251,15 +251,6 @@ tr.click:hover td{background:var(--surf2)}
     <span class="muted" id="hrMsg" style="font-size:12px"></span>
   </div>
 
-  <div class="kpis" id="kpis"></div>
-
-  <div class="card sect gold" style="margin:0 0 14px">
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h3 style="margin:0">Tải QC theo KHSX — Fitup · Hàn · Sơn</h3><div class="sp"></div>
-      <div class="seg noprint" id="winSeg" title="Khoảng kế hoạch tính tải"><button class="btn" data-win="7">7 ngày tới</button><button class="btn on" data-win="14">14 ngày tới</button><button class="btn" data-win="30">30 ngày tới</button></div></div>
-    <div class="q" id="qTai" style="margin-top:6px"></div>
-    <div id="taiBody"></div>
-  </div>
-
   <div class="grid">
     <div class="card stageCard gold">
       <div class="stageBar">
@@ -289,6 +280,16 @@ tr.click:hover td{background:var(--surf2)}
     </div>
     <aside class="card panel gold" id="panel"></aside>
   </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="card sect gold" style="margin:0 0 14px">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h3 style="margin:0">Tải QC theo KHSX — Fitup · Hàn · Sơn</h3><div class="sp"></div>
+      <div class="seg noprint" id="winSeg" title="Khoảng kế hoạch tính tải"><button class="btn" data-win="7">7 ngày tới</button><button class="btn on" data-win="14">14 ngày tới</button><button class="btn" data-win="30">30 ngày tới</button></div></div>
+    <div class="q" id="qTai" style="margin-top:6px"></div>
+    <div id="taiBody"></div>
+  </div>
+
 
   <div class="card sect">
     <h3>Bảng phân bổ QC — kế hoạch &amp; thực tế</h3>
