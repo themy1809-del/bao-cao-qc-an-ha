@@ -38,7 +38,7 @@ window.PHAN_BO_QC = {
     {ten:'NGUYỄN VĂN KIÊN',       spm:'kiennv',   khu:'AH2',   cd:'Fitup · Final',   da:'Line 1 – AH2', gc:'kiêm Danieli AH2 MR'},
     {ten:'KHƯƠNG HỒNG QUÂN',      spm:'quankh',   khu:'AH2',   cd:'Fitup · Final',   da:'Cẩu KONE – Line 3', gc:''},
     {ten:'NGUYỄN VĂN TRÌNH',      spm:'trinhnv',  khu:'AH2',   cd:'Fitup · Final',   da:'Cẩu KONE · Ducting EVAPCO', gc:''},
-    {ten:'NGUYỄN TRÍ HẢO',        spm:'haont',    khu:'AH2',   cd:'—',               da:'—', gc:'', vang:1},
+    {ten:'NGUYỄN TRÍ HẢO',        spm:'haont',    khu:'AH2',   cd:'Fitup · Final',   da:'chưa giao line', gc:'đã đi làm lại (27/10)'},
     {ten:'PHAN TRƯỜNG ĐÔNG',      spm:'dongpt',   khu:'AH3',   cd:'Fitup',           da:'SVĐ Hùng Vương', gc:'bàn giao lắp thử buồng bi AH9 cho Mỹ'},
     {ten:'HUỲNH NGỌC TƯỜNG',      spm:'tuonghn',  khu:'AH3',   cd:'Final',           da:'Hùng Vương', gc:'kiêm lắp thử kết cấu WOLF SUMMIT'},
     {ten:'TRẦN KHẮC CƯỜNG',       spm:'cuongtk',  khu:'AH3',   cd:'Fitup · Final',   da:'EVAPCO · Phú Quốc', gc:'hỗ trợ Phú Quốc phần còn lại'},
