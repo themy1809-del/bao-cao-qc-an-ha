@@ -52,7 +52,7 @@ window.PHAN_BO_QC = {
     {ten:'ĐỖ TẤN VŨ', anh:'1EfLJsAR60I_qnX_NFV7UoQIHR56es3QZ',             spm:'vudt1',    khu:'AH4',   cd:'Fitup',           da:'EVAPCO', gc:'', moi:1},
     {ten:'PHẠM TẤN DƯƠNG', anh:'1pQPh2dOFvv9bdroySfoo7GhjUdDgr8zm',        spm:'duongpt',  khu:'AH4',   cd:'Fitup',           da:'EVAPCO', gc:'từ AH9 · hỗ trợ Hòa Final', moi:1},
     {ten:'TRẦN QUỐC THÁI', anh:'1WWyMTCTVQPevIbp19aHkZnAZ2NbfzSsJ',        spm:'thaitq',   khu:'AH6',   cd:'Final',           da:'Toàn xưởng AH6', gc:'', moi:1},
-    {ten:'NGUYỄN HOÀNG GIANG', anh:'1-Myh3ANpXmrJkXO4d2Oq526ER3BaNwT_',    spm:'giangnh',  khu:'AH6',   cd:'Fitup',           da:'Xưởng AH6 · TED AH6', gc:'', moi:1},
+    {ten:'NGUYỄN HOÀNG GIANG', anh:'1-Myh3ANpXmrJkXO4d2Oq526ER3BaNwT_',    spm:'giangnh',  khu:'AH6',   cd:'Fitup',           da:'Xưởng AH6 · TED AH6', gc:'vắng mặt (27/10)', moi:1, vang:1},
     {ten:'ĐẬU THẾ MỸ', anh:'1234bPm7_ykiu3h4Y_AagE0GU0kwDmWCO',            spm:'mydt',     khu:'AH9',   cd:'Lắp thử',         da:'Buồng bi AH9 · sắp xếp AH6/AH9', gc:'Trưởng nhóm', tn:1},
     {ten:'TRỊNH VĂN TRÒN', anh:'1szmUH4lCL6GruZ2HC40e7g7NN7-uMxgx',        spm:'trontv',   khu:'AH9',   cd:'Final',           da:'Final · Line 1, Line 2 (tất cả dự án AH9)', gc:'cập nhật 27/10'},
     {ten:'BÙI ANH TRƯỞNG', anh:'1BY4xeLRaCogn9PSWxFsyVSJ-t15vIynR',        spm:'truongba', khu:'AH9',   cd:'Fitup',           da:'Fitup · Line 2', gc:'cập nhật 27/10 · trước: Tổ RHT2, RHT3 · TED 2 tổ gia công'},
