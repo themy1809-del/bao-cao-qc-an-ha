@@ -246,6 +246,35 @@ tr.click:hover td{background:var(--surf2)}
 .tag3 .kv3 .kn{font-weight:800;color:#e5ebf3}
 .tto td{padding:7px 7px}
 .tto td.qcn{font-size:12px;color:var(--ink2);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mxsum{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch;margin:6px 0 12px}
+.mxk{border:1px solid var(--line);border-radius:10px;padding:8px 14px;background:var(--surf2);min-width:120px}
+.mxk b{display:block;font-size:30px;font-weight:900;line-height:1}
+.mxk span{font-size:12.5px;color:var(--mut);font-weight:600}
+.mxk.bad b{color:var(--bad)}.mxk.warn b{color:var(--warn)}.mxk.ok b{color:var(--ok)}
+.mxleg{display:flex;flex-direction:column;justify-content:center;gap:3px;font-size:12px;color:var(--mut);margin-left:auto}
+.mxleg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.mxleg i.bad{background:color-mix(in srgb,var(--bad) 55%,transparent)}.mxleg i.warn{background:color-mix(in srgb,var(--warn) 55%,transparent)}.mxleg i.ok{background:color-mix(in srgb,var(--ok) 55%,transparent)}
+.mxw{overflow:auto;border:1px solid var(--line);border-radius:12px}
+table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
+.mx th,.mx td{border-bottom:1px solid var(--line);border-right:1px solid var(--line2);padding:8px 10px;text-align:center;vertical-align:middle}
+.mx thead th{position:sticky;top:0;background:var(--surf);z-index:2;text-transform:none;letter-spacing:0;min-width:128px;vertical-align:top}
+.mx .mx0{position:sticky;left:0;background:var(--surf);z-index:3;text-align:left;min-width:90px;font-size:15px}
+.mx tbody th.mx0 b{font-size:18px;color:var(--gold2)}
+.mxc{font-size:11px;color:var(--mut);font-weight:700}
+.mxc .ut{color:var(--bad)}
+.mxt{font-size:13px;font-weight:800;color:var(--ink);line-height:1.25;margin:2px 0 6px;min-height:32px}
+.mxp{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;border:1.5px solid currentColor}
+.mxp.bad,.mx b.bad{color:var(--bad)}.mxp.warn,.mx b.warn{color:var(--warn)}.mxp.ok,.mx b.ok{color:var(--ok)}
+.mxv b{display:block;font-size:22px;font-weight:900;line-height:1.05;font-variant-numeric:tabular-nums}
+.mx .u{font-size:10.5px;color:var(--mut)}
+.mxs{font-size:11.5px;color:var(--ink2);margin-top:3px;font-variant-numeric:tabular-nums}
+.mxv.bad{background:color-mix(in srgb,var(--bad) 14%,transparent)}.mxv.bad b{color:var(--bad)}
+.mxv.warn{background:color-mix(in srgb,var(--warn) 12%,transparent)}.mxv.warn b{color:var(--warn)}
+.mxv.ok{background:color-mix(in srgb,var(--ok) 11%,transparent)}.mxv.ok b{color:var(--ok)}
+.mxe{background:repeating-linear-gradient(135deg,transparent 0 6px,rgba(127,127,127,.06) 6px 12px)}
+.mx .mxr{border-left:2px solid var(--line);min-width:130px}
+.mxf td,.mxf th{background:var(--surf2);border-top:2px solid var(--line)}
+.mxf td b{display:block;font-size:20px;font-weight:900;line-height:1.05}
 .pjsum{display:flex;gap:22px;flex-wrap:wrap;font-size:16px;margin:4px 0 12px}
 .pjsum b{font-size:28px;font-weight:900;margin-right:4px}
 .pjg{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
@@ -1072,34 +1101,43 @@ function veDA10(){
   var mon=String(MAXD||'').slice(0,7),plOK=D.PL.indexOf('Đã QC (AH)'),plMien=D.PL.indexOf('Miễn QC'),plCho=D.PL.indexOf('Chưa QC');
   var PI={};(D.P||[]).forEach(function(n,i){PI[n]=i;PI[String(n).split(' ')[0]]=PI[String(n).split(' ')[0]]===undefined?i:PI[String(n).split(' ')[0]];});
   var A={};
-  D.rows.forEach(function(r){var o=A[r[0]]=A[r[0]]||{sx:[0,0,0],nt:[0,0,0],ton:[0,0,0],q:{},nd:{}};
-    if(r[4]&&r[4].slice(0,7)===mon&&r[6]!==plMien){o.sx[0]+=+r[7]||0;o.sx[1]+=+r[8]||0;o.sx[2]+=+r[9]||0;}
-    if(r[3]&&r[3].slice(0,7)===mon&&r[6]===plOK){o.nt[0]+=+r[7]||0;o.nt[1]+=+r[8]||0;o.nt[2]+=+r[9]||0;o.nd[r[3]]=1;var v=(+r[7]||0)+(+r[8]||0)+(+r[9]||0);o.q[r[5]]=(o.q[r[5]]||0)+v;}
-    if(r[6]===plCho){o.ton[0]+=+r[7]||0;o.ton[1]+=+r[8]||0;o.ton[2]+=+r[9]||0;}});
+  D.rows.forEach(function(r){var o=A[r[0]]=A[r[0]]||{sx:[0,0,0],nt:[0,0,0],ton:[0,0,0],q:{},nd:{},x:{}};var v=(+r[7]||0)+(+r[8]||0)+(+r[9]||0);
+    var ox=o.x[D.X[r[1]]]=o.x[D.X[r[1]]]||{sx:0,nt:0,ton:0,nd:{},q:{}};
+    if(r[4]&&r[4].slice(0,7)===mon&&r[6]!==plMien){o.sx[0]+=+r[7]||0;o.sx[1]+=+r[8]||0;o.sx[2]+=+r[9]||0;ox.sx+=v;}
+    if(r[3]&&r[3].slice(0,7)===mon&&r[6]===plOK){o.nt[0]+=+r[7]||0;o.nt[1]+=+r[8]||0;o.nt[2]+=+r[9]||0;o.nd[r[3]]=1;o.q[r[5]]=(o.q[r[5]]||0)+v;ox.nt+=v;ox.nd[r[3]]=1;ox.q[r[5]]=(ox.q[r[5]]||0)+v;}
+    if(r[6]===plCho){o.ton[0]+=+r[7]||0;o.ton[1]+=+r[8]||0;o.ton[2]+=+r[9]||0;ox.ton+=v;}});
   var S3=function(a){return a[0]+a[1]+a[2];};
   var ds=PJR.filter(function(x){return _n(x.tt)==='đang gia công';}).map(function(x){var pi=PI[x.p];if(pi===undefined)pi=PI[x.p.split(' ')[0]];
       var a=pi!==undefined?A[pi]:null;return {x:x,pi:pi,a:a,sx:a?S3(a.sx):0};});
   var tong=ds.length;ds.sort(function(u,v){return v.sx-u.sx;});ds=ds.slice(0,10);
   q.innerHTML='KHSX '+esc(PJ_LUC)+' · <b>'+tong+'</b> dự án "Đang gia công" — 10 dự án sản xuất nhiều nhất tháng <b>'+mon.split('-').reverse().join('/')+'</b> (SPM đến '+dVN(MAXD)+'). Khối lượng phân bổ lấy từ tab "1-Báo Cáo Dự Án"; còn lại theo khâu từ tab Data.';
-  /* THE theo du an (de doc): ten + danh gia · 2 so lon (ngay ton, NT/SX) · hang so phu · QC */
-  var dem={ok:0,theo:0,khong:0},the=[];
-  ds.forEach(function(e){var a=e.a||{sx:[0,0,0],nt:[0,0,0],ton:[0,0,0],q:{},nd:{}},sx=S3(a.sx),nt=S3(a.nt),ton=S3(a.ton),nd=Object.keys(a.nd).length,tb=nd?nt/nd:0;
-    var tl=sx>0.05?nt/sx:(nt>0?9:0),ngay=tb>0?ton/tb:(ton>0.5?99:0);
-    var dg=(ngay>14||tl<0.7)?['khong','Không đáp ứng','var(--bad)',0]:((tl>=0.9&&ngay<=7)?['ok','Đáp ứng','var(--ok)',2]:['theo','Theo sát','var(--warn)',1]);dem[dg[0]]++;
-    var kp=TAI&&TAI.P[e.x.p];
+  /* MA TRAN XUONG x DU AN: phan bo 10 du an ve xuong de nhin tong the. O = ngay ton cho NT (to mau) + SX/NT thang */
+  function danhGia(ngay,tl){return (ngay>14||tl<0.7)?['khong','Không đáp ứng','bad']:((tl>=0.9&&ngay<=7)?['ok','Đáp ứng','ok']:['theo','Theo sát','warn']);}
+  function chiSo(sx,nt,ton,nd){var tb=nd?nt/nd:0;return {sx:sx,nt:nt,ton:ton,tl:sx>0.05?nt/sx:(nt>0?9:0),ngay:tb>0?ton/tb:(ton>0.5?99:0)};}
+  function hienNgay(n){return n>=99?'∞':fm(n,1);}
+  var cols=ds.map(function(e){var a=e.a||{sx:[0,0,0],nt:[0,0,0],ton:[0,0,0],q:{},nd:{},x:{}};
+    var k=chiSo(S3(a.sx),S3(a.nt),S3(a.ton),Object.keys(a.nd).length);k.dg=danhGia(k.ngay,k.tl);
     var ma=e.x.p.split(' ')[0],ten=e.x.p.slice(ma.length).replace(/^\s*(DGRP|DG XK|DG TN|DG|D2|DMT)\s+/,'').trim()||e.x.p;
-    var mauNgay=ngay>14?'var(--bad)':(ngay>7?'var(--warn)':'var(--ok)'),mauTl=tl<0.7?'var(--bad)':(tl<0.9?'var(--warn)':'var(--ok)');
-    var c='<div class="pjc" style="--dg:'+dg[2]+'"><div class="pjh"><div style="min-width:0"><div class="pjm">'+esc(ma)+(e.x.cdt?' · '+esc(e.x.cdt):'')+(/ưu tiên/i.test(e.x.uu)?' · <b style="color:var(--bad)">ƯU TIÊN</b>':'')+'</div><div class="pjt">'+esc(ten)+'</div></div>'
-      +'<span class="pjv">'+dg[1]+'</span></div>'
-      +'<div class="pjk"><div><b style="color:'+mauNgay+'">'+(ngay>=99?'∞':fm(ngay,1))+'</b><span>ngày tồn chờ NT</span></div><div><b style="color:'+mauTl+'">'+(sx>0.05?Math.round(tl*100)+'%':'—')+'</b><span>NT / SX tháng</span></div></div>'
-      +'<div class="pjs"><div><span>Còn lại</span><b>'+fm(e.x.con,0)+' t</b></div><div><span>SX tháng</span><b>'+fm(sx,0)+' t</b></div><div><span>NT tháng</span><b>'+fm(nt,0)+' t</b></div><div><span>Tồn chờ NT</span><b style="color:'+(ton>0.5?'var(--warn)':'inherit')+'">'+fm(ton,0)+' t</b></div></div>'
-      +(kp?'<div class="pjf">Còn lại theo khâu: <b style="color:var(--f)">Fitup '+fm(kp.f.con,0)+'</b> · <b style="color:var(--w)">Hàn '+fm(kp.w.con,0)+'</b> · <b style="color:var(--p)">Sơn '+fm(kp.p.con,0)+'</b> t</div>':'')
-      +'<div class="pjf">QC: '+(topK(a.q,3).map(function(qq){return esc(qName(+qq).split(' ').slice(-2).join(' '));}).join(', ')||'—')+'</div></div>';
-    the.push([dg[3],ngay,c]);});
-  the.sort(function(u,v){return u[0]-v[0]||v[1]-u[1];});
-  var h='<div class="pjsum"><span style="color:var(--bad)"><b>'+dem.khong+'</b> không đáp ứng</span><span style="color:var(--warn)"><b>'+dem.theo+'</b> theo sát</span><span style="color:var(--ok)"><b>'+dem.ok+'</b> đáp ứng</span></div>'
-    +'<div class="pjg">'+the.map(function(t){return t[2];}).join('')+'</div>'
-    +'<div class="note">Ngày tồn = tồn chờ NT ÷ tấn QC nghiệm thu bình quân mỗi ngày trong tháng. Ngưỡng (tạm, chờ xác nhận): <b>không đáp ứng</b> = tồn &gt; 14 ngày hoặc NT &lt; 70% SX; <b>đáp ứng</b> = NT ≥ 90% SX và tồn ≤ 7 ngày; còn lại theo sát. Tấn = Fitup + Hàn + Sơn.</div>';
+    return {e:e,a:a,k:k,ma:ma,ten:ten};});
+  cols.sort(function(u,v){var o={khong:0,theo:1,ok:2};return o[u.k.dg[0]]-o[v.k.dg[0]]||v.k.ngay-u.k.ngay;});
+  var dem={ok:0,theo:0,khong:0};cols.forEach(function(c){dem[c.k.dg[0]]++;});
+  var XS=(D.X||[]).slice().sort().filter(function(x){return cols.some(function(c){var o=c.a.x[x];return o&&(o.sx>0.05||o.nt>0.05||o.ton>0.5);});});
+  var h='<div class="mxsum"><div class="mxk bad"><b>'+dem.khong+'</b><span>dự án không đáp ứng</span></div><div class="mxk warn"><b>'+dem.theo+'</b><span>theo sát</span></div><div class="mxk ok"><b>'+dem.ok+'</b><span>đáp ứng</span></div>'
+    +'<div class="mxleg"><span><i class="bad"></i>tồn &gt; 14 ngày hoặc NT &lt; 70% SX</span><span><i class="warn"></i>theo sát</span><span><i class="ok"></i>NT ≥ 90% SX, tồn ≤ 7 ngày</span></div></div>';
+  h+='<div class="mxw"><table class="mx"><thead><tr><th class="mx0">Xưởng \\ Dự án</th>'
+    +cols.map(function(c){return '<th><div class="mxc">'+esc(c.ma)+(/ưu tiên/i.test(c.e.x.uu)?' · <b class="ut">ƯU TIÊN</b>':'')+'</div><div class="mxt" title="'+esc(c.e.x.p)+'">'+esc(c.ten)+'</div><span class="mxp '+c.k.dg[2]+'">'+c.k.dg[1]+'</span></th>';}).join('')
+    +'<th class="mxr">Cả xưởng</th></tr></thead><tbody>';
+  XS.forEach(function(x){var sx=0,nt=0,ton=0,nd={};
+    h+='<tr><th class="mx0"><b>'+esc(x)+'</b></th>'+cols.map(function(c){var o=c.a.x[x];
+        if(!o||(o.sx<=0.05&&o.nt<=0.05&&o.ton<=0.5))return '<td class="mxe"></td>';
+        sx+=o.sx;nt+=o.nt;ton+=o.ton;for(var d in o.nd)nd[d]=1;
+        var k=chiSo(o.sx,o.nt,o.ton,Object.keys(o.nd).length),dg=danhGia(k.ngay,k.tl);
+        return '<td class="mxv '+dg[2]+'" title="'+esc(c.e.x.p)+' tại '+esc(x)+' — QC: '+esc(topK(o.q,3).map(function(q){return qName(+q);}).join(', '))+'"><b>'+hienNgay(k.ngay)+'</b><span class="u">ngày tồn</span><div class="mxs">SX '+fm(o.sx,0)+' · NT '+fm(o.nt,0)+' · tồn '+fm(o.ton,0)+' t</div></td>';}).join('');
+    var k=chiSo(sx,nt,ton,Object.keys(nd).length),dg=danhGia(k.ngay,k.tl);
+    h+='<td class="mxr mxv '+dg[2]+'"><b>'+hienNgay(k.ngay)+'</b><span class="u">ngày tồn</span><div class="mxs">NT/SX '+(sx>0.05?Math.round(k.tl*100)+'%':'—')+' · tồn '+fm(ton,0)+' t</div></td></tr>';});
+  h+='<tr class="mxf"><th class="mx0">Cả dự án</th>'+cols.map(function(c){var k=c.k;
+      return '<td><b class="'+k.dg[2]+'">'+hienNgay(k.ngay)+'</b><span class="u">ngày tồn</span><div class="mxs">NT/SX '+(k.sx>0.05?Math.round(k.tl*100)+'%':'—')+'<br>còn lại '+fm(c.e.x.con,0)+' t</div></td>';}).join('')+'<td class="mxr"></td></tr>';
+  h+='</tbody></table></div><div class="note">Mỗi ô = dự án tại xưởng trong tháng: <b>số lớn</b> = ngày tồn chờ NT (tồn ÷ tấn NT bình quân/ngày); dòng nhỏ = SX · NT tháng · tồn chờ NT (tấn, Fitup + Hàn + Sơn). Rê chuột vào ô để xem QC nghiệm thu. Ngưỡng màu là tạm, chờ xác nhận.</div>';
   el.innerHTML=h;
 }
 

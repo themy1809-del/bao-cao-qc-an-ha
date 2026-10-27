@@ -531,7 +531,7 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
   Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
   **10 dự án đang gia công — QC đáp ứng?** (user 27/10): đọc live KHSX tab "1-Báo Cáo Dự Án" (gid 731881045). Trạng thái "Đang gia công" nằm ở cột tiêu đề "Ghi Chú" → dò cột theo GIÁ TRỊ.
-  Top 10 theo SX tháng (SPM, tháng của ngày dữ liệu mới nhất). Cột: Tổng KL/Đã xuất/Còn lại (tab dự án, kg→t), còn lại F/H/S (tab Data), SX/NT tháng, tồn chờ NT, ngày tồn = tồn ÷ NT bình quân/ngày.
+  Top 10 theo SX tháng (SPM, tháng của ngày dữ liệu mới nhất). **Hiển thị = MA TRẬN Xưởng × Dự án** (user: "phân bổ về xưởng để nhìn tổng quan", "chuyên nghiệp"): ô = ngày tồn chờ NT (màu) + SX·NT·tồn tháng; cột cuối = cả xưởng; dòng cuối = cả dự án. Cột: Tổng KL/Đã xuất/Còn lại (tab dự án, kg→t), còn lại F/H/S (tab Data), SX/NT tháng, tồn chờ NT, ngày tồn = tồn ÷ NT bình quân/ngày.
   Ngưỡng TẠM: không đáp ứng = ngày tồn >14 hoặc NT<70% SX; đáp ứng = NT≥90% SX và ≤7 ngày — UNKNOWN — NEED USER CONFIRMATION. Kiểm 27/10 (bản chụp KHSX 22/10): 4 đáp ứng · 2 theo sát · 4 không (Bison 25,4 · Viola SS 27,5 · Gregory SS 44,8 ngày · Kone 69%).
   **AH9 mở rộng** (user 27/10): khối `AH9MR` (gop:'AH9') ở góc trên-trái mặt bằng (x62 y100 228×235 trên ảnh nền); bấm mở AH9. Chưa rõ có tách số SPM/line riêng không.
   **LINE (user 27/10): AH3 3 · AH2 3 · AH1 2 · AH6 3 · AH9 2** (`KHU.line` trong phan_bo_qc.js); AH4 chưa có số → tạm 1.
