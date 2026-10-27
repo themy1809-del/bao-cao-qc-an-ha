@@ -16,15 +16,19 @@ window.PHAN_BO_QC = {
   NEN: {src:'so_do_nha_may.webp', w:1440, h:864},
   /* Khu vuc tren mat bang. spmX = ten xuong trong SPM (de doi chieu so lieu that). AH1/AH8/AH2 MR khong co trong SPM. */
   KHU: [
-    {id:'AH9',   ten:'AH9',    mo:'Xuất hàng — Fitup / Final', x:302, y:90,  w:212, h:205, cao:64, spmX:'AH9'},
+    {id:'AH9',   ten:'AH9',    mo:'Xuất hàng — Fitup / Final', x:302, y:90,  w:212, h:205, cao:64, line:2, spmX:'AH9'},
     {id:'AH4',   ten:'AH4',    mo:'Fitup / Final — EVAPCO',     x:985, y:75,  w:375, h:120, cao:58, spmX:'AH4'},
-    {id:'AH1',   ten:'AH1',    mo:'Sơ chế — Cắt · Khoan · Chấn', x:985, y:197, w:375, h:101, cao:54, spmX:''},
-    {id:'AH6',   ten:'AH6',    mo:'Fitup / Final',              x:299, y:313, w:353, h:148, cao:56, spmX:'AH6'},
-    {id:'AH3',   ten:'AH3',    mo:'Fitup / Final — hàn',        x:670, y:303, w:195, h:475, cao:70, spmX:'AH3'},
-    {id:'AH2',   ten:'AH2',    mo:'Fitup / Final',              x:935, y:305, w:280, h:383, cao:70, spmX:'AH2'},
+    {id:'AH1',   ten:'AH1',    mo:'Sơ chế — Cắt · Khoan · Chấn', x:985, y:197, w:375, h:101, cao:54, line:2, spmX:''},
+    {id:'AH6',   ten:'AH6',    mo:'Fitup / Final',              x:299, y:313, w:353, h:148, cao:56, line:3, spmX:'AH6'},
+    {id:'AH3',   ten:'AH3',    mo:'Fitup / Final — hàn',        x:670, y:303, w:195, h:475, cao:70, line:3, spmX:'AH3'},
+    {id:'AH2',   ten:'AH2',    mo:'Fitup / Final',              x:935, y:305, w:280, h:383, cao:70, line:3, spmX:'AH2'},
     {id:'AH2MR', ten:'AH2 MR', mo:'Gia công lắp thử DANIELI (Mock-up area)', x:935, y:690, w:280, h:86, cao:46, spmX:''},
     {id:'AH8',   ten:'AH8',    mo:'Lắp thử EVAPCO', x:1240, y:326, w:148, h:248, cao:40, spmX:'', chuaRoViTri:true}
   ],
+  /* So LINE moi xuong (user 27/10): AH3 3 · AH2 3 · AH1 2 · AH6 3 · AH9 2. AH4 chua co so -> 1 (tam).
+     TO_LINE: to gia cong thuoc line nao, khoa 'XUONG.TO' -> so line (vd 'AH2.TO1RH':1).
+     De TRONG = chua co so do to-line -> trang ban do xep TAM luan phien theo khoi luong va ghi ro "xep tam". */
+  TO_LINE: {},
   /* Khu phu tro chi de ve (khong co QC) */
   PHU: [
     {ten:'Kho vật tư (thép tấm & hình)', x:529, y:83,  w:428, h:209, phang:1},
