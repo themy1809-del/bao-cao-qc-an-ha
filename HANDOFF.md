@@ -514,6 +514,9 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   **Tải QC theo KHSX** (27/10): đọc live Sheet KHSX `1kqMlDG4…` gid 0 (tab Data, kg→t) như `qc.html`; chỉ đo công đoạn RÁP HOÀN THIỆN (Fitup).
   Tải = (KH ráp HT N ngày tới, chia đều theo ngày bắt đầu→kết thúc KH + tồn chờ NT Fitup SPM) ÷ (năng lực NT Fitup xưởng × ngày làm N×6/7).
   Ngưỡng >115% quá tải · <60% thiếu việc — **ngưỡng do Claude đặt, UNKNOWN — NEED USER CONFIRMATION**. Final DIM chưa tính (chưa có định mức).
+  **27/10 (user: "tính hết")**: mở rộng đủ 3 công đoạn — Fitup (ráp HT ↔ SPM r[7]), Hàn (hàn HT ↔ r[8]), Sơn (sơn HT ↔ r[9]).
+  Hàn/Sơn: sơ đồ chỉ có Team Kích thước nên "từng QC" lấy QC thực tế trong SPM. Xưởng không có lượt NT công đoạn đó → nhãn "Không NT tại xưởng"/"Có việc, chưa ai NT" (không tính %).
+  Kiểm độc lập Hàn KH14 + tồn + năng lực, Sơn AH2/AH9 — khớp. User dặn: làm KHUNG trước, chỉnh chi tiết sau.
   Kiểm độc lập 27/10, 14 ngày: AH4 KH 255,7 · AH3 234,7 · AH9 102,4 · AH2 21,7 · AH6 12,3 t — khớp. KHSX còn nhiều KL quá hạn/chưa có ngày (AH3 945 t, AH2 669 t) → có thể KHSX chưa cập nhật.
   Bộ đọc KHSX trong trang là bản gọn RIÊNG (không dùng chung `_khBuild` của qc.html vì nó nằm nội tuyến) — gộp là việc riêng.
   AH8 không có trên tổng mặt bằng → vị trí trên bản đồ là ước lượng. Vũ Đại Phong, Lê Minh Trí chưa có mã SPM.
