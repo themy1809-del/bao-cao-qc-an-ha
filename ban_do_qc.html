@@ -226,6 +226,8 @@ tr.click:hover td{background:var(--surf2)}
 .tag3 .kv3 b{color:#fff;font-variant-numeric:tabular-nums}
 .tag3 .kv3 .sq{display:inline-block;width:13px;height:13px;border-radius:3px}
 .tag3 .kv3 .kn{font-weight:800;color:#e5ebf3}
+.tto td{padding:7px 7px}
+.tto td.qcn{font-size:12px;color:var(--ink2);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .foot{color:var(--mut);font-size:11.5px;margin:16px 0 4px;text-align:center}
 
 @media print{
@@ -338,7 +340,7 @@ tr.click:hover td{background:var(--surf2)}
 'use strict';
 var D=window.QCDATA||{rows:[],P:[],X:[],T:[],Q:[],PL:[]};
 var PB=window.PHAN_BO_QC||{KHU:[],PHU:[],NGUOI:[]};
-var KY=30, COLMODE='t', SEL=null, VIEW='site', HR={}, SELQ=null, QFIND=''; /* HR: tenChuan -> {img,st,spm} */
+var MOIM=false, KY=30, COLMODE='t', SEL=null, VIEW='site', HR={}, SELQ=null, QFIND=''; /* HR: tenChuan -> {img,st,spm} */
 
 /* ---------- tien ich ---------- */
 function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -688,12 +690,18 @@ function vePanel(){
   if(x){h+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center">'
       +[['Fitup',x.f,'var(--f)'],['Hàn',x.w,'var(--w)'],['Sơn',x.p,'var(--p)']].map(function(a){return '<div class="card" style="padding:7px;box-shadow:none"><div style="font-size:18px;font-weight:900;color:'+a[2]+'">'+fm(a[1],1)+'</div><div class="muted" style="font-size:11px">'+a[0]+' (tấn)</div></div>';}).join('')+'</div>';}
   if(x){
-    h+='<div class="sec">Từng tổ — '+(CHE==='ngay'?'ngày '+dVN(NGAY):KY+' ngày')+' (tấn)</div><table><thead><tr><th>Tổ</th><th class="n">SX</th><th class="n">NT</th><th class="n">Tồn</th></tr></thead><tbody>';
-    var sumSx=0,sumNt=0,sumTon=0;
+    /* gon: moi to 1 dong; to khong phat sinh trong ngay gom lai, bam de mo */
+    h+='<div class="sec">Từng tổ — '+(CHE==='ngay'?'ngày '+dVN(NGAY):KY+' ngày')+' (tấn)</div><table class="tto"><thead><tr><th>Tổ</th><th class="n">SX</th><th class="n">NT</th><th class="n">Tồn</th><th>QC nghiệm thu</th></tr></thead><tbody>';
+    var sumSx=0,sumNt=0,sumTon=0,im=[];
+    var dong=function(tk,so,ton,tt){var qs=topK(so.q,2);
+      return '<tr><td><span title="'+tt[1]+'" style="color:'+tt[0]+'">●</span> <b>'+esc(tk.split('.').slice(1).join('.'))+'</b></td><td class="n">'+fm(so.sx,1)+'</td><td class="n"><b>'+fm(so.nt,1)+'</b></td><td class="n"'+(ton>0.05?' style="color:var(--warn)"':'')+'>'+fm(ton,1)+'</td>'
+        +'<td class="qcn">'+(qs.length?qs.map(function(q){return esc(qName(+q).split(' ').slice(-2).join(' '));}).join(', '):'<span class="muted">—</span>')+'</td></tr>';};
     cacTo(k.spmX).forEach(function(tk){var so=toSo(tk),ton=TON[tk]||0,tt=trangThai(so);sumSx+=so.sx;sumNt+=so.nt;sumTon+=ton;
-      h+='<tr><td><b>'+esc(tk.split('.').slice(1).join('.'))+'</b> <span title="'+tt[1]+'" style="color:'+tt[0]+'">●</span></td><td class="n">'+fm(so.sx,1)+'</td><td class="n"><b>'+fm(so.nt,1)+'</b></td><td class="n"'+(ton>0.05?' style="color:var(--warn)"':'')+'>'+fm(ton,1)+'</td></tr>'
-       +'<tr class="sub"><td colspan="4">'+spark(tk)+' '+(topK(so.q,3).map(function(q){return '<span class="chip">'+esc(qName(+q))+' '+fm(so.q[q],1)+'</span>';}).join('')||'<span class="muted" style="font-size:11px">chưa có QC nghiệm thu</span>')+'</td></tr>';});
-    h+='<tr><td><b>Cộng</b></td><td class="n"><b>'+fm(sumSx,1)+'</b></td><td class="n"><b>'+fm(sumNt,1)+'</b></td><td class="n"><b>'+fm(sumTon,1)+'</b></td></tr></tbody></table><div class="muted" style="font-size:11px;margin-top:4px">Biểu đồ nhỏ = 14 ngày gần nhất: cột xám SX, cột vàng NT. Chấm màu = tình trạng (xanh theo kịp · cam chậm · đỏ có SX chưa NT).</div>';
+      if(so.sx<=0.05&&so.nt<=0.05){im.push(dong(tk,so,ton,tt));return;}
+      h+=dong(tk,so,ton,tt);});
+    if(im.length)h+='<tr class="click" data-moim="1"><td colspan="5" class="muted" style="font-size:12px">'+(MOIM?'▾':'▸')+' '+im.length+' tổ không phát sinh '+(CHE==='ngay'?'ngày này':'trong kỳ')+'</td></tr>'+(MOIM?im.join(''):'');
+    h+='<tr><td><b>Cộng</b></td><td class="n"><b>'+fm(sumSx,1)+'</b></td><td class="n"><b>'+fm(sumNt,1)+'</b></td><td class="n"><b>'+fm(sumTon,1)+'</b></td><td></td></tr></tbody></table>'
+      +'<div class="muted" style="font-size:11px;margin-top:4px"><span style="color:#16A34A">●</span> NT kịp SX · <span style="color:#F59E0B">●</span> chậm · <span style="color:#E2231A">●</span> có SX chưa NT</div>';
     h+='<div class="sec">Dự án × công đoạn — QC phụ trách tại '+esc(k.spmX)+'</div>';
     topK(x.pj,10).forEach(function(pi){var xc=S.PJ[pi].xcd[k.spmX];
       h+='<div style="padding:7px 0;border-bottom:1px solid var(--line2)"><div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:12.5px">'+esc(D.P[pi])+'</b><b class="n">'+fm(x.pj[pi],1)+' t</b></div>'+cdRow(xc)+'</div>';});
@@ -712,6 +720,7 @@ function vePanel(){
 document.getElementById('panel').addEventListener('click',function(e){
   if(e.target.closest('[data-close]')){raNgoai();return;}
   if(e.target.closest('[data-boq]')){SELQ=null;veCanh();vePanel();return;}
+  if(e.target.closest('[data-moim]')){MOIM=!MOIM;vePanel();return;}
   var r=e.target.closest('[data-khu]');if(r){chon(r.getAttribute('data-khu'));return;}
   var q=e.target.closest('[data-qc]');if(q)chonQC(q.getAttribute('data-qc'));});
 document.getElementById('panel').addEventListener('input',function(e){if(e.target.id!=='qcFind')return;QFIND=e.target.value;var l=document.getElementById('qcList');if(l)l.innerHTML=dsQC();});
