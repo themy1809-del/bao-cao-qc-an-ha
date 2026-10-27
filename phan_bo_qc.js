@@ -6,6 +6,7 @@
    - cd   : cong doan · da : du an / line · gc : ghi chu
    - moi  : nhan su moi · tn : truong nhom · kiem : kiem nhiem tu khu khac
    - vang : dang vang mat (ra site / nghi) — KHONG ghi ly do ca nhan vao day (repo cong khai)
+   - anh  : ma file anh chan dung tren Google Drive (user yeu cau gan co dinh 27/10) — CHI ma file anh, KHONG SDT / ngay sinh / link Sheet nhan su
    KHONG dua so dien thoai / ngay sinh / anh ca nhan vao file nay.
    Anh chan dung lay tu Sheet nhan su qua link nhap tren trang (luu trong may nguoi xem).
 ============================================================================ */
@@ -36,33 +37,33 @@ window.PHAN_BO_QC = {
     {ten:'Phòng họp',                    x:1255, y:636, w:110, h:70}
   ],
   NGUOI: [
-    {ten:'VŨ ĐẠI PHONG',          spm:'',         khu:'AH1',   cd:'Sơ chế',          da:'Cắt – Khoan – Chấn · truy xuất vật liệu', gc:''},
-    {ten:'LÊ MINH TRÍ',           spm:'',         khu:'AH1',   cd:'Sơ chế · Truy xuất', da:'Xưởng AH1', gc:'', moi:1},
-    {ten:'NGUYỄN VĂN HIẾU',       spm:'hieunv2',  khu:'AH2',   cd:'Fitup · Final',   da:'Line 2 – AH2', gc:'kiêm Danieli AH2 MR'},
-    {ten:'NGUYỄN VĂN KIÊN',       spm:'kiennv',   khu:'AH2',   cd:'Fitup · Final',   da:'Line 1 – AH2', gc:'kiêm Danieli AH2 MR'},
-    {ten:'KHƯƠNG HỒNG QUÂN',      spm:'quankh',   khu:'AH2',   cd:'Fitup · Final',   da:'Cẩu KONE – Line 3', gc:''},
-    {ten:'NGUYỄN VĂN TRÌNH',      spm:'trinhnv',  khu:'AH2',   cd:'Fitup · Final',   da:'Cẩu KONE · Ducting EVAPCO', gc:''},
-    {ten:'NGUYỄN TRÍ HẢO',        spm:'haont',    khu:'AH2',   cd:'Fitup · Final',   da:'chưa giao line', gc:'đã đi làm lại (27/10)'},
-    {ten:'PHAN TRƯỜNG ĐÔNG',      spm:'dongpt',   khu:'AH3',   cd:'Fitup',           da:'SVĐ Hùng Vương', gc:'bàn giao lắp thử buồng bi AH9 cho Mỹ'},
-    {ten:'HUỲNH NGỌC TƯỜNG',      spm:'tuonghn',  khu:'AH3',   cd:'Final',           da:'Hùng Vương', gc:'kiêm lắp thử kết cấu WOLF SUMMIT'},
-    {ten:'TRẦN KHẮC CƯỜNG',       spm:'cuongtk',  khu:'AH3',   cd:'Fitup · Final',   da:'EVAPCO · Phú Quốc', gc:'hỗ trợ Phú Quốc phần còn lại'},
-    {ten:'PHẠM TRƯỜNG VŨ',        spm:'vupt',     khu:'AH3',   cd:'Fitup',           da:'SVĐ Hùng Vương · Line 5', gc:'hỗ trợ Final Hùng Vương'},
-    {ten:'NGUYỄN XUÂN HÒA',       spm:'hoanx',    khu:'AH4',   cd:'Final',           da:'EVAPCO', gc:''},
-    {ten:'ĐỖ TẤN VŨ',             spm:'vudt1',    khu:'AH4',   cd:'Fitup',           da:'EVAPCO', gc:'', moi:1},
-    {ten:'PHẠM TẤN DƯƠNG',        spm:'duongpt',  khu:'AH4',   cd:'Fitup',           da:'EVAPCO', gc:'từ AH9 · hỗ trợ Hòa Final', moi:1},
-    {ten:'TRẦN QUỐC THÁI',        spm:'thaitq',   khu:'AH6',   cd:'Final',           da:'Toàn xưởng AH6', gc:'', moi:1},
-    {ten:'NGUYỄN HOÀNG GIANG',    spm:'giangnh',  khu:'AH6',   cd:'Fitup',           da:'Xưởng AH6 · TED AH6', gc:'', moi:1},
-    {ten:'ĐẬU THẾ MỸ',            spm:'mydt',     khu:'AH9',   cd:'Lắp thử',         da:'Buồng bi AH9 · sắp xếp AH6/AH9', gc:'Trưởng nhóm', tn:1},
-    {ten:'TRỊNH VĂN TRÒN',        spm:'trontv',   khu:'AH9',   cd:'Final',           da:'Final · Line 1, Line 2 (tất cả dự án AH9)', gc:'cập nhật 27/10'},
-    {ten:'BÙI ANH TRƯỞNG',        spm:'truongba', khu:'AH9',   cd:'Fitup',           da:'Fitup · Line 2', gc:'cập nhật 27/10 · trước: Tổ RHT2, RHT3 · TED 2 tổ gia công'},
-    {ten:'HỒ TRINH DINH',         spm:'dinhht',   khu:'AH9',   cd:'Fitup',           da:'Fitup · Line 1', gc:'cập nhật 27/10', moi:1},
-    {ten:'HUỲNH HUÂN HUY',        spm:'huyhh',    khu:'AH9',   cd:'—',               da:'TED GCN AH3', gc:'', moi:1},
-    {ten:'HUỲNH NGỌC TƯỜNG',      spm:'tuonghn',  khu:'AH9',   cd:'Lắp thử',         da:'Kết cấu WOLF SUMMIT', gc:'kiêm từ AH3', kiem:1},
-    {ten:'NGUYỄN VĂN HIẾU',       spm:'hieunv2',  khu:'AH2MR', cd:'—',               da:'DANIELI', gc:'kiêm từ AH2', kiem:1},
-    {ten:'NGUYỄN VĂN KIÊN',       spm:'kiennv',   khu:'AH2MR', cd:'—',               da:'DANIELI', gc:'kiêm từ AH2', kiem:1},
-    {ten:'NGUYỄN NGỌC TÍNH',      spm:'tinhnn',   khu:'AH8',   cd:'Lắp thử',         da:'EVAPCO — AH8', gc:'chuyển từ AH4'},
-    {ten:'BÙI VÂN ĐIỆP',          spm:'diepbv',   khu:'AH9',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1},
-    {ten:'NGUYỄN PHAN ĐĂNG QUANG',spm:'quangnpd', khu:'AH6',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1}
+    {ten:'VŨ ĐẠI PHONG', anh:'17u0_0Uf75sj2_WaemSGZxHXt7NgW_ZUO',          spm:'',         khu:'AH1',   cd:'Sơ chế',          da:'Cắt – Khoan – Chấn · truy xuất vật liệu', gc:''},
+    {ten:'LÊ MINH TRÍ', anh:'12v-ZFiWW0H4TgpqWlw7BJIX5EqOc4j5K',           spm:'',         khu:'AH1',   cd:'Sơ chế · Truy xuất', da:'Xưởng AH1', gc:'', moi:1},
+    {ten:'NGUYỄN VĂN HIẾU', anh:'1VNzna2z4qcDzTl5TOB9d_0YEiFV1ysoG',       spm:'hieunv2',  khu:'AH2',   cd:'Fitup · Final',   da:'Line 2 – AH2', gc:'kiêm Danieli AH2 MR'},
+    {ten:'NGUYỄN VĂN KIÊN', anh:'1dV4bPgHPJ0DbBCTZuAddp90guyFRWNBc',       spm:'kiennv',   khu:'AH2',   cd:'Fitup · Final',   da:'Line 1 – AH2', gc:'kiêm Danieli AH2 MR'},
+    {ten:'KHƯƠNG HỒNG QUÂN', anh:'1todgXYbV2VkLtTrC4nepl9A_jfTVQhLt',      spm:'quankh',   khu:'AH2',   cd:'Fitup · Final',   da:'Cẩu KONE – Line 3', gc:''},
+    {ten:'NGUYỄN VĂN TRÌNH', anh:'1vBE3B9OysDcXtAE0TkTwD3i_v9VLWpdf',      spm:'trinhnv',  khu:'AH2',   cd:'Fitup · Final',   da:'Cẩu KONE · Ducting EVAPCO', gc:''},
+    {ten:'NGUYỄN TRÍ HẢO', anh:'1xu1ZSDLKwkZxCgXZXDdlEI41U8D6Z6yU',        spm:'haont',    khu:'AH2',   cd:'Fitup · Final',   da:'chưa giao line', gc:'đã đi làm lại (27/10)'},
+    {ten:'PHAN TRƯỜNG ĐÔNG', anh:'1RrKgn0JlNWxthRACutnbkTh9npv6c82p',      spm:'dongpt',   khu:'AH3',   cd:'Fitup',           da:'SVĐ Hùng Vương', gc:'bàn giao lắp thử buồng bi AH9 cho Mỹ'},
+    {ten:'HUỲNH NGỌC TƯỜNG', anh:'10nNowg5F3x0jAsZpmqTN1pe2oslvPfKK',      spm:'tuonghn',  khu:'AH3',   cd:'Final',           da:'Hùng Vương', gc:'kiêm lắp thử kết cấu WOLF SUMMIT'},
+    {ten:'TRẦN KHẮC CƯỜNG', anh:'159Y8h1KW3Ac5uDWpDSAJgjxoVVa-XgzK',       spm:'cuongtk',  khu:'AH3',   cd:'Fitup · Final',   da:'EVAPCO · Phú Quốc', gc:'hỗ trợ Phú Quốc phần còn lại'},
+    {ten:'PHẠM TRƯỜNG VŨ', anh:'1wGGYJ9aDyNqNxOGqgxfzByHhrfN9BkPB',        spm:'vupt',     khu:'AH3',   cd:'Fitup',           da:'SVĐ Hùng Vương · Line 5', gc:'hỗ trợ Final Hùng Vương'},
+    {ten:'NGUYỄN XUÂN HÒA', anh:'1_ff5MiB0u4fOQDI1vbAXuNBKtbjmH9N2',       spm:'hoanx',    khu:'AH4',   cd:'Final',           da:'EVAPCO', gc:''},
+    {ten:'ĐỖ TẤN VŨ', anh:'1EfLJsAR60I_qnX_NFV7UoQIHR56es3QZ',             spm:'vudt1',    khu:'AH4',   cd:'Fitup',           da:'EVAPCO', gc:'', moi:1},
+    {ten:'PHẠM TẤN DƯƠNG', anh:'1pQPh2dOFvv9bdroySfoo7GhjUdDgr8zm',        spm:'duongpt',  khu:'AH4',   cd:'Fitup',           da:'EVAPCO', gc:'từ AH9 · hỗ trợ Hòa Final', moi:1},
+    {ten:'TRẦN QUỐC THÁI', anh:'1WWyMTCTVQPevIbp19aHkZnAZ2NbfzSsJ',        spm:'thaitq',   khu:'AH6',   cd:'Final',           da:'Toàn xưởng AH6', gc:'', moi:1},
+    {ten:'NGUYỄN HOÀNG GIANG', anh:'1-Myh3ANpXmrJkXO4d2Oq526ER3BaNwT_',    spm:'giangnh',  khu:'AH6',   cd:'Fitup',           da:'Xưởng AH6 · TED AH6', gc:'', moi:1},
+    {ten:'ĐẬU THẾ MỸ', anh:'1234bPm7_ykiu3h4Y_AagE0GU0kwDmWCO',            spm:'mydt',     khu:'AH9',   cd:'Lắp thử',         da:'Buồng bi AH9 · sắp xếp AH6/AH9', gc:'Trưởng nhóm', tn:1},
+    {ten:'TRỊNH VĂN TRÒN', anh:'1szmUH4lCL6GruZ2HC40e7g7NN7-uMxgx',        spm:'trontv',   khu:'AH9',   cd:'Final',           da:'Final · Line 1, Line 2 (tất cả dự án AH9)', gc:'cập nhật 27/10'},
+    {ten:'BÙI ANH TRƯỞNG', anh:'1BY4xeLRaCogn9PSWxFsyVSJ-t15vIynR',        spm:'truongba', khu:'AH9',   cd:'Fitup',           da:'Fitup · Line 2', gc:'cập nhật 27/10 · trước: Tổ RHT2, RHT3 · TED 2 tổ gia công'},
+    {ten:'HỒ TRINH DINH', anh:'1qGhuLoJyAZsYoB1QavdogiMscygCS2GL',         spm:'dinhht',   khu:'AH9',   cd:'Fitup',           da:'Fitup · Line 1', gc:'cập nhật 27/10', moi:1},
+    {ten:'HUỲNH HUÂN HUY', anh:'1TtA0WFW_yTV-WW4mzhgYLHQovJ316oXd',        spm:'huyhh',    khu:'AH9',   cd:'—',               da:'TED GCN AH3', gc:'', moi:1},
+    {ten:'HUỲNH NGỌC TƯỜNG', anh:'10nNowg5F3x0jAsZpmqTN1pe2oslvPfKK',      spm:'tuonghn',  khu:'AH9',   cd:'Lắp thử',         da:'Kết cấu WOLF SUMMIT', gc:'kiêm từ AH3', kiem:1},
+    {ten:'NGUYỄN VĂN HIẾU', anh:'1VNzna2z4qcDzTl5TOB9d_0YEiFV1ysoG',       spm:'hieunv2',  khu:'AH2MR', cd:'—',               da:'DANIELI', gc:'kiêm từ AH2', kiem:1},
+    {ten:'NGUYỄN VĂN KIÊN', anh:'1dV4bPgHPJ0DbBCTZuAddp90guyFRWNBc',       spm:'kiennv',   khu:'AH2MR', cd:'—',               da:'DANIELI', gc:'kiêm từ AH2', kiem:1},
+    {ten:'NGUYỄN NGỌC TÍNH', anh:'1bqTv5ymz58-dKAdOGXHdOlEKKSDyKvs-',      spm:'tinhnn',   khu:'AH8',   cd:'Lắp thử',         da:'EVAPCO — AH8', gc:'chuyển từ AH4'},
+    {ten:'BÙI VÂN ĐIỆP', anh:'1XvUxwFrpN1Fm_2iAmuMLVsC_UOpLnw14',          spm:'diepbv',   khu:'AH9',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1},
+    {ten:'NGUYỄN PHAN ĐĂNG QUANG', anh:'1JRnhsOMycPkqiAPIKMXewxLZ8ipcUkTA',spm:'quangnpd', khu:'AH6',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1}
     /* 27/10: TRAN VAN DUONG (duongtv) bo khoi Team Kich thuoc theo user — la QC Han (xem TEAMS 'han') */
   ],
   /* ===== MOI TEAM 1 SO DO RIENG (27/10/2026) =====
@@ -75,29 +76,29 @@ window.PHAN_BO_QC = {
     {id:'han', ten:'Team QC Hàn', ngan:'Hàn', cd:'w', capNhat:'27/10/2026',
      nguon:'Sheet nhân sự QC_HR_DATA_CENTER — cột WORKSHOP (chưa có sơ đồ PDF riêng)',
      NGUOI:[
-      {ten:'LÊ VIẾT TRỌNG',       spm:'tronglv',  khu:'AH9', cd:'Hàn', da:'—', gc:'Trưởng nhóm', tn:1},
-      {ten:'TRẦN XUÂN PHÁT',      spm:'phattx',   khu:'AH2', cd:'Hàn', da:'—', gc:''},
-      {ten:'HUỲNH HỒNG QUÂN',     spm:'quanhh',   khu:'AH2', cd:'Hàn', da:'—', gc:''},
-      {ten:'TRẦN MINH TIẾN',      spm:'tientm',   khu:'AH2', cd:'Hàn', da:'—', gc:''},
-      {ten:'NGUYỄN DUY KHANG',    spm:'khangnd',  khu:'AH3', cd:'Hàn', da:'—', gc:''},
-      {ten:'PHẠM HOÀNG LONG',     spm:'longph1',  khu:'AH3', cd:'Hàn', da:'—', gc:''},
-      {ten:'VÕ HOÀNG SANG',       spm:'sangvh',   khu:'AH4', cd:'Hàn', da:'—', gc:''},
-      {ten:'VÕ TUẤN VŨ',          spm:'vuvt',     khu:'AH4', cd:'Hàn', da:'—', gc:''},
-      {ten:'TRẦN NGUYỄN ĐẠI PHÁT',spm:'phattnd',  khu:'AH6', cd:'Hàn', da:'—', gc:''},
-      {ten:'NGUYỄN NGỌC CHUNG',   spm:'chungnn',  khu:'AH9', cd:'Hàn', da:'—', gc:''},
-      {ten:'TRẦN VĂN DƯƠNG',      spm:'duongtv',  khu:'AH9', cd:'Hàn', da:'—', gc:''}
+      {ten:'LÊ VIẾT TRỌNG', anh:'1LLZWZO1urUiKwJSnBrCA5lSJ320699n_',       spm:'tronglv',  khu:'AH9', cd:'Hàn', da:'—', gc:'Trưởng nhóm', tn:1},
+      {ten:'TRẦN XUÂN PHÁT', anh:'1SeJYMdeGf_KzLnQ3TtFBV5jHXJydFVYa',      spm:'phattx',   khu:'AH2', cd:'Hàn', da:'—', gc:''},
+      {ten:'HUỲNH HỒNG QUÂN', anh:'1gKMsaUJym8UUpnevzK7e_5Bj5hzKhjiT',     spm:'quanhh',   khu:'AH2', cd:'Hàn', da:'—', gc:''},
+      {ten:'TRẦN MINH TIẾN', anh:'1y5JJYDHZ_wVm4BV-leYkVMJZF4WcK1ds',      spm:'tientm',   khu:'AH2', cd:'Hàn', da:'—', gc:''},
+      {ten:'NGUYỄN DUY KHANG', anh:'1vc1Rxw_RwyU6xYOtRqPNonN2mjO13unc',    spm:'khangnd',  khu:'AH3', cd:'Hàn', da:'—', gc:''},
+      {ten:'PHẠM HOÀNG LONG', anh:'1ZG23sjPYbmE8fC11Y_J4aAqw_I5f16HD',     spm:'longph1',  khu:'AH3', cd:'Hàn', da:'—', gc:''},
+      {ten:'VÕ HOÀNG SANG', anh:'1fbnZU1Nko_LH7-bc6jDmqkcMixuxIYKc',       spm:'sangvh',   khu:'AH4', cd:'Hàn', da:'—', gc:''},
+      {ten:'VÕ TUẤN VŨ', anh:'1HBaFQYOK3jcODNPerDa6o797o_pjUPhJ',          spm:'vuvt',     khu:'AH4', cd:'Hàn', da:'—', gc:''},
+      {ten:'TRẦN NGUYỄN ĐẠI PHÁT', anh:'1SB2Aidt-DjIAYahxNTed2giAQq8F6J9k',spm:'phattnd',  khu:'AH6', cd:'Hàn', da:'—', gc:''},
+      {ten:'NGUYỄN NGỌC CHUNG', anh:'1x2hj6ia4B3gJPs7ak7G_CTuCafO6qu41',   spm:'chungnn',  khu:'AH9', cd:'Hàn', da:'—', gc:''},
+      {ten:'TRẦN VĂN DƯƠNG', anh:'1Ll6aC-2IDYG03BLpjGTAXIlFcYLy8UdD',      spm:'duongtv',  khu:'AH9', cd:'Hàn', da:'—', gc:''}
      ]},
     {id:'son', ten:'Team QC Sơn & Đóng gói', ngan:'Sơn', cd:'p', capNhat:'27/10/2026',
      nguon:'Sheet nhân sự QC_HR_DATA_CENTER (không ghi xưởng) — khu vực TẠM theo xưởng nghiệm thu sơn nhiều nhất trong SPM 30 ngày',
      NGUOI:[
-      {ten:'TRỊNH VĂN QUÂN',      spm:'quantrinh',khu:'AH2', cd:'Sơn', da:'—', gc:'Trưởng nhóm · cũng NT nhiều ở AH3', tn:1, tam:1},
-      {ten:'NGÔ VĂN ĐỨC',         spm:'ducnv2',   khu:'AH2', cd:'Sơn', da:'—', gc:'', tam:1},
-      {ten:'TRỊNH HỮU LỢI',       spm:'loith',    khu:'AH2', cd:'Sơn', da:'—', gc:'', tam:1},
-      {ten:'HOÀNG NGỌC TUÂN',     spm:'tuanhn',   khu:'AH2', cd:'Sơn', da:'—', gc:'', tam:1},
-      {ten:'NGUYỄN ANH TUẤN',     spm:'tuanna1',  khu:'AH3', cd:'Sơn', da:'—', gc:'', tam:1},
-      {ten:'NGUYỄN HOÀNG LONG',   spm:'longnh1',  khu:'',    cd:'Sơn', da:'—', gc:'chưa có lượt NT trong SPM'},
-      {ten:'ĐÀO NHỰT HUY',        spm:'huydn1',   khu:'',    cd:'Đóng gói', da:'—', gc:'chưa có lượt NT trong SPM'},
-      {ten:'HUỲNH VĂN THON',      spm:'thonhv',   khu:'',    cd:'Đóng gói', da:'—', gc:'chưa có lượt NT trong SPM'}
+      {ten:'TRỊNH VĂN QUÂN', anh:'1-swiz-sjBU05y6LhSHq-xgJRLW8AgDe1',      spm:'quantrinh',khu:'AH2', cd:'Sơn', da:'—', gc:'Trưởng nhóm · cũng NT nhiều ở AH3', tn:1, tam:1},
+      {ten:'NGÔ VĂN ĐỨC', anh:'1Nyk981-aUbArGZ9qTrsQR1c3HJtOupe3',         spm:'ducnv2',   khu:'AH2', cd:'Sơn', da:'—', gc:'', tam:1},
+      {ten:'TRỊNH HỮU LỢI', anh:'1midPoIKCEq-THEOWOa29ZcSts24sfKJ9',       spm:'loith',    khu:'AH2', cd:'Sơn', da:'—', gc:'', tam:1},
+      {ten:'HOÀNG NGỌC TUÂN', anh:'1badPdDYTy7N3FnNZR5Bh2UlUUrz9Sm2e',     spm:'tuanhn',   khu:'AH2', cd:'Sơn', da:'—', gc:'', tam:1},
+      {ten:'NGUYỄN ANH TUẤN', anh:'1pKqMaMBIiDB_UY3gGxCP7aWk-IzKcM7E',     spm:'tuanna1',  khu:'AH3', cd:'Sơn', da:'—', gc:'', tam:1},
+      {ten:'NGUYỄN HOÀNG LONG', anh:'1ESpC7JD95eSN-UZcFEJQtLrsZ1O2FN1X',   spm:'longnh1',  khu:'',    cd:'Sơn', da:'—', gc:'chưa có lượt NT trong SPM'},
+      {ten:'ĐÀO NHỰT HUY', anh:'1Nc0lyQkv0fb7j4z0RWVLK8nmZImLjOej',        spm:'huydn1',   khu:'',    cd:'Đóng gói', da:'—', gc:'chưa có lượt NT trong SPM'},
+      {ten:'HUỲNH VĂN THON', anh:'1ZEweu0MtcJqhq-eA9niJm33PYpFTx10J',      spm:'thonhv',   khu:'',    cd:'Đóng gói', da:'—', gc:'chưa có lượt NT trong SPM'}
      ]}
   ]
 };

@@ -378,7 +378,7 @@ function qIndex(code){code=String(code||'').toLowerCase();if(!code)return -1;if(
 /* ---------- gom nhan su: 1 nguoi co the o nhieu khu (kiem nhiem) ---------- */
 function gomNguoi(list){var M={}; /* key = ten khong dau */
   list.forEach(function(p){var k=bo(p.ten);var o=M[k]=M[k]||{key:k,ten:p.ten,spm:p.spm,moi:0,tn:0,vang:0,giao:[]};
-    if(p.moi)o.moi=1;if(p.tn)o.tn=1;if(p.vang)o.vang=1;if(p.spm&&!o.spm)o.spm=p.spm;o.giao.push(p);});
+    if(p.moi)o.moi=1;if(p.tn)o.tn=1;if(p.vang)o.vang=1;if(p.spm&&!o.spm)o.spm=p.spm;if(p.anh&&!o.anh)o.anh=p.anh;o.giao.push(p);});
   Object.keys(M).forEach(function(k){M[k].qi=qIndex(M[k].spm);});return M;}
 /* moi team 1 so do rieng; Team Kich thuoc dung mang NGUOI goc */
 var TEAMS=(PB.TEAMS||[{id:'kt',ten:'Team QC Kích thước',ngan:'Kích thước',cd:'f',loc:'fitup'}]).map(function(t){var o={};for(var k in t)o[k]=t[k];
@@ -431,7 +431,9 @@ function lech(p){
 /* ---------- anh tu Sheet nhan su (tuy chon) ---------- */
 function driveImg(u){var m=String(u||'').match(/\/d\/([\w-]{20,})|[?&]id=([\w-]{20,})/);var id=m&&(m[1]||m[2]);
   return id?'https://drive.google.com/thumbnail?id='+id+'&sz=w200':'';}
-function imgOf(p){var h=HR[p.key];if(!h&&p.spm){for(var k in HR){if(HR[k].spm&&qIndex(HR[k].spm)===p.qi&&p.qi>=0){h=HR[k];break;}}}return h&&h.img?h.img:'';}
+function imgOf(p){var h=HR[p.key];if(!h&&p.spm){for(var k in HR){if(HR[k].spm&&qIndex(HR[k].spm)===p.qi&&p.qi>=0){h=HR[k];break;}}}if(h&&h.img)return h.img;
+  /* anh gan co dinh trong phan_bo_qc.js (ma file Drive) — moi may deu thay, khong can dan link Sheet */
+  return p.anh&&/^[\w-]{20,}$/.test(p.anh)?'https://drive.google.com/thumbnail?id='+p.anh+'&sz=w200':'';}
 function avHtml(p,g,big){var im=imgOf(p);var cls='av'+(big?' avL':'')+(g&&g.vang||p.vang&&!g?' vang':'')+(g&&g.kiem?' kiem':'');
   var bd=p.tn?'<span class="bd tn">TN</span>':(p.moi?'<span class="bd">MỚI</span>':'');
   return '<span class="'+cls+'" title="'+esc(titleCase(p.ten))+'"'+(im?' style="background-image:url(\''+esc(im)+'\')"':'')+'>'+(im?'':esc(ini(p.ten)))+bd+'</span>';}

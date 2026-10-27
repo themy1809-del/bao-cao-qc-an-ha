@@ -525,6 +525,9 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Bản đồ to hơn trên máy tính (cao 78vh, bảng tên giữ cỡ chữ khi phóng/thu, nút ⛶ Toàn màn hình). Khung Tổng quan có **danh sách QC — bấm tên → ghim vị trí** (xưởng được giao + xưởng/tổ đang NT nhiều nhất).
   Bản đồ chuyển lên đầu trang; bảng tên xưởng thu nhỏ (`--bbk` .62). Ảnh chân dung: KHÔNG ghi mã ảnh/ID Sheet nhân sự vào repo
   (bị chặn vì dữ liệu nguồn nhạy cảm) → người xem bấm "🖼 Ảnh nhân sự" dán link Sheet (lưu localStorage). File ảnh Drive đang chia sẻ anyone-reader.
+  **27/10 user yêu cầu "gắn chết"** → đã gắn **mã file ảnh** (cột EMP_IMAGE) vào `phan_bo_qc.js` trường `anh` cho cả 3 team (khớp tên sau chuẩn hoá NFC).
+  KHÔNG gắn link/ID Sheet nhân sự (có SĐT, ngày sinh). Mọi máy đều thấy ảnh; nút "🖼 Ảnh nhân sự" vẫn dùng được và được ưu tiên nếu có.
+  Rủi ro đã nêu với user: repo công khai → ảnh + tên QC ai cũng xem được.
   Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
   Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
   **LINE (user 27/10): AH3 3 · AH2 3 · AH1 2 · AH6 3 · AH9 2** (`KHU.line` trong phan_bo_qc.js); AH4 chưa có số → tạm 1.
