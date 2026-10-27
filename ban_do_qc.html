@@ -228,6 +228,10 @@ tr.click:hover td{background:var(--surf2)}
 .mat .mt2{font-size:14px;font-weight:600;opacity:.95;white-space:nowrap}
 .mat .mt2 b{font-size:20px}
 .mat .mt3{display:flex;gap:4px;margin-top:2px}
+.figs.dung{gap:4px;margin-top:0}
+.figs.dung .fig{min-width:0}
+.figs.dung .avL{width:52px;height:52px;font-size:15px;box-shadow:0 8px 16px rgba(0,0,0,.55)}
+.figs.dung .figN{font-size:12px}
 .av.mini{width:26px;height:26px;font-size:10px;margin:0;border-width:1.5px}
 .plate .top.pl{background:rgba(255,255,255,.05);outline:1px solid rgba(255,255,255,.14);transform:translateZ(1px)}
 .plate.selq .top.pl{outline:4px solid #38bdf8}
@@ -576,9 +580,11 @@ function veXuong(id){
         return p?avHtml(p,null).replace('class="av','title="'+esc(nm)+' · '+fm(o[q],1)+' t" class="av mini'):'<span class="av mini" title="'+esc(nm)+' · '+fm(o[q],1)+' t">'+esc(String(nm).slice(0,2).toUpperCase())+'</span>';}).join('');
       var mat='<div class="mat"><div class="mt1"><b>'+esc(e.tk.split('.').slice(1).join('.'))+'</b><i style="background:'+t2[0]+'" title="'+t2[1]+'"></i></div>'
         +(e.v[1]>0.05?'<div class="mt2"><b>'+fm(e.v[1],1)+'</b> t</div>':'')
-        +(mini?'<div class="mt3">'+mini+'</div>':'')+'</div>';
-      var selB=qiS>=0&&o[String(qiS)],fig='';
-      if(selB){var pS=Q2N[qiS];fig='<div class="bb"><div class="bbIn"><div class="figs">'+figHtml(qiS,pS,pS&&pS.giao.filter(function(z2){return z2.khu===id;})[0],{txt:kk[1]+' '+fm(o[String(qiS)],1)+' t'},false,kk[2])+'</div></div></div>';}
+        +'</div>';
+      /* anh QC DUNG (billboard) — chi anh tron + ten ngan, khong the so; dang chon 1 QC thi chi hien nguoi do */
+      var selB=qiS>=0&&o[String(qiS)],fig='',dsQ=qiS>=0?(selB?[String(qiS)]:[]):qs;
+      if(dsQ.length)fig='<div class="bb"><div class="bbIn" style="animation:none"><div class="figs dung">'+dsQ.map(function(q){var qi=/^n:/.test(q)?-1:+q,p=qi>=0?Q2N[qi]:null;
+          return figHtml(qi,p,p&&p.giao.filter(function(z2){return z2.khu===id;})[0],selB?{ten:tenQ(q),txt:kk[1]+' '+fm(o[q],1)+' t'}:{ten:tenQ(q)},false,kk[2]);}).join('')+'</div></div></div>';
       h+='<div class="bld bay khau'+(e.act?'':' rong')+(selB?' selq':'')+'" data-to="'+esc(e.tk)+'" style="left:'+L+'px;top:'+T+'px;width:'+bw+'px;height:'+bh+'px;--h:'+hh+'px;--bc:'+kk[2]+'">'
         +'<div class="fc top">'+mat+'</div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'+fig+'</div>';});
     if(du>0)h+='<div class="roadLbl" style="left:'+(z.x+8)+'px;top:'+(z.y+z.h-22)+'px;opacity:.85">+'+du+' tổ khác</div>';

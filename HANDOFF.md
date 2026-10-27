@@ -528,7 +528,7 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
   Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
   **LINE (user 27/10): AH3 3 · AH2 3 · AH1 2 · AH6 3 · AH9 2** (`KHU.line` trong phan_bo_qc.js); AH4 chưa có số → tạm 1.
-  Ô tổ: KHÔNG còn thẻ nổi (user: "rối quá", "bỏ bớt khối lượng") — in phẳng trên mặt ô: tên tổ + chấm tình trạng + 1 số tấn NT + chấm ảnh QC nhỏ; chỉ QC đang chọn mới nổi lên. SX/tồn xem ở bảng bên phải.
+  Ô tổ: KHÔNG còn thẻ nổi (user: "rối quá", "bỏ bớt khối lượng") — in phẳng trên mặt ô: tên tổ + chấm tình trạng + 1 số tấn NT ; ảnh QC ĐỨNG (billboard, user: "hiển ảnh đứng") chỉ ảnh tròn + tên ngắn, tối đa 2/ô; chọn 1 QC thì chỉ người đó. SX/tồn xem ở bảng bên phải.
   Mặt bằng trong xưởng DỰNG ĐỨNG (user: "phải theo chiều dọc"), góc nhìn thẳng trục (rz=0, rx=32), tổ xếp 1 cột trong mỗi vùng.
   Mỗi line là 1 làn dọc: dưới Fitup 45% · giữa Hàn 30% · trên Final 25%; Sơn chung ở cuối xưởng (phải). QC có ghi "Line n" trong sơ đồ đứng ở đầu line.
   **Tổ → line CHƯA có** (`TO_LINE` trống) → trang xếp TẠM luân phiên và ghi rõ — UNKNOWN — NEED USER CONFIRMATION: xin bảng tổ–line từng xưởng.
