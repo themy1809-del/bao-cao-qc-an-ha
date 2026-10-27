@@ -504,6 +504,11 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
 | `CLAUDE.md` / `HANDOFF.md` / `PROJECT_STATUS.md` / `SYSTEM_ARCHITECTURE.md` / `DATA_MODEL.md` / `SECURITY_MODEL.md` / `PERFORMANCE_PLAN.md` | repo | Bộ tài liệu chuẩn | — |
 
 ## 11. RECENT CHANGES
+
+- **27/10/2026** — thêm `ban_do_qc.html` + `phan_bo_qc.js` (bản đồ phân bổ QC 3D, trang độc lập, chỉ đọc).
+  Đặt `qc_khoa.js` ngay sau `qcdata.js` theo quy tắc đăng nhập. Chưa thêm link từ `qc.html` (chờ user duyệt).
+  Mở: PDF ghi "24 nhân sự" nhưng đếm tên được 25 (có mặt 21 + Hảo + 3 ra site) → UNKNOWN — NEED USER CONFIRMATION.
+  AH8 không có trên tổng mặt bằng → vị trí trên bản đồ là ước lượng. Vũ Đại Phong, Lê Minh Trí chưa có mã SPM.
 | Date | Change | Files | Reason |
 |---|---|---|---|
 | 29/09 | Rà soát số liệu dashboard (khớp 6/6 KPI); `index.html`→chuyển hướng; khôi phục tab 06 Dự án; Doc Control nhúng app tra cứu; khối Sức khoẻ dữ liệu; phân tuổi Waiting | `qc.html`, `index.html`, `index_backup_1108.html`, `app.html` | User yêu cầu nâng cấp dashboard + đưa app vào Doc Control |

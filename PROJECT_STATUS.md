@@ -4,6 +4,14 @@
 ## STATUS
 
 ### DONE
+**Hệ 3 — 27/10/2026: trang mới `ban_do_qc.html` (Bản đồ phân bổ QC 3D) — trên nhánh, CHƯA lên `main`.**
+Trang ĐỘC LẬP (không sửa `qc.html`/`app.html`/`doc.html`). Tổng mặt bằng 3D (CSS 3D) NM An Hạ theo sơ đồ
+user gửi → bấm xưởng → bản đồ bên trong xưởng: mỗi tổ gia công 1 ô (màu = công đoạn chính, cao = tấn NT),
+ảnh QC đứng tại tổ NT nhiều nhất. Bảng: phân bổ kế hoạch vs thực tế SPM, Tổ × QC, Dự án × công đoạn (Fitup/Hàn/Sơn) × QC.
+Phân bổ lấy từ `phan_bo_qc.js` (chép tay từ PDF "Sơ đồ Team QC Kích thước 13/10/2026").
+Số liệu đối chiếu độc lập: 30 ngày 27/09→26/10 = 15.646,8 t (F 5.449,1 · H 5.132,8 · S 5.064,8) — khớp, từng xưởng khớp.
+Ảnh chân dung: dán link Sheet nhân sự trên trang (lưu localStorage), KHÔNG ghi ID Sheet vào repo vì Sheet có SĐT/ngày sinh và đang mở "anyone reader".
+
 **Hệ 3 — vòng 8 (29/09):** tab Chất lượng (xu hướng 12 tháng, lỗi theo tổ, bỏ biểu đồ 2 trục, 8M thanh ngang)
 và Bảng điều khiển KHSX (trang mở đầu tab KHSX). Số liệu đối chiếu khớp. Đăng nhập: đã lên web, chờ PC khoá `qcdata.js` là tự bật (HUONG_DAN_DANG_NHAP.md).
 
