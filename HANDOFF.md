@@ -521,6 +521,8 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Sơn & Đóng gói (Sheet nhân sự không ghi xưởng → khu **TẠM** theo SPM, `tam:1`). Trang có nút chọn team: bản đồ, bảng phân bổ, KPI, tải theo công đoạn của team.
   Trần Văn Dương: user xác nhận 27/10 là QC Hàn → đã bỏ khỏi Team Kích thước. **Team Kích thước = 24 người** (khớp PDF; thay cho số 25 xác nhận trước đó).
   Sheet nhân sự ghi mã SPM Phạm Tấn Dương = `duongpt1`, SPM thật dùng `duongpt`.
+  **27/10 sau khi lên main:** sửa lỗi KHSX đọc live báo "thiếu cột" — gviz `headers=2` gộp dòng TỔNG (số) vào tiêu đề → bỏ phần số đầu như `_khLbl` của qc.html (đã thử CSV giả lập tiêu đề gộp: ra đúng tổng).
+  Bản đồ to hơn trên máy tính (cao 78vh, bảng tên giữ cỡ chữ khi phóng/thu, nút ⛶ Toàn màn hình). Khung Tổng quan có **danh sách QC — bấm tên → ghim vị trí** (xưởng được giao + xưởng/tổ đang NT nhiều nhất).
   Kiểm độc lập 27/10, 14 ngày: AH4 KH 255,7 · AH3 234,7 · AH9 102,4 · AH2 21,7 · AH6 12,3 t — khớp. KHSX còn nhiều KL quá hạn/chưa có ngày (AH3 945 t, AH2 669 t) → có thể KHSX chưa cập nhật.
   Bộ đọc KHSX trong trang là bản gọn RIÊNG (không dùng chung `_khBuild` của qc.html vì nó nằm nội tuyến) — gộp là việc riêng.
   AH8 không có trên tổng mặt bằng → vị trí trên bản đồ là ước lượng. Vũ Đại Phong, Lê Minh Trí chưa có mã SPM.
