@@ -530,6 +530,7 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Rủi ro đã nêu với user: repo công khai → ảnh + tên QC ai cũng xem được.
   Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
   Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
+  **AH9 mở rộng** (user 27/10): khối `AH9MR` (gop:'AH9') ở góc trên-trái mặt bằng (x62 y100 228×235 trên ảnh nền); bấm mở AH9. Chưa rõ có tách số SPM/line riêng không.
   **LINE (user 27/10): AH3 3 · AH2 3 · AH1 2 · AH6 3 · AH9 2** (`KHU.line` trong phan_bo_qc.js); AH4 chưa có số → tạm 1.
   **QC đứng VỊ TRÍ CỐ ĐỊNH theo sơ đồ** (user 27/10): khâu (cột công đoạn) + line (cột dự án/line) → Fitup/Hàn/Final của line đó; nhiều line → đứng ở mỗi line; không ghi line → giữa xưởng; Lắp thử → ô LẮP THỬ (trên cột Sơn); vắng/chưa giao khâu → "Ngoài xưởng". Mờ = chưa NT ngày/kỳ.
   AH9 (user 27/10): Trưởng Fitup L2 · Dinh Fitup L1 · Tròn Final L1+L2. Câu "lắp thử TED RHT1 và GCN, Danieli" CHƯA rõ người — UNKNOWN — NEED USER CONFIRMATION.

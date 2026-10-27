@@ -653,6 +653,9 @@ function veCanh(){
       +'<div class="fc top" style="'+(flat?'':'background:#2f5d46')+'"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'
       +'<div class="bb" style="--h:'+(flat?4:20)+'px"><div class="bbIn" style="animation:none"><div style="font-size:12px;font-weight:700;color:var(--mut);white-space:nowrap;transform:translate(0,0)">'+esc(k.ten)+'</div></div></div></div>';});
   PB.KHU.forEach(function(k){
+    if(k.gop){h+='<div class="bld" data-khu="'+esc(k.gop)+'" style="left:'+k.x+'px;top:'+k.y+'px;width:'+k.w+'px;height:'+k.h+'px;--h:'+k.cao+'px;--L:'+k.x+'px;--T:'+k.y+'px">'
+      +'<div class="fc top"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'
+      +'<div class="bb"><div class="bbIn" data-khu="'+esc(k.gop)+'" style="animation:none"><div class="tagMini">'+esc(k.ten)+'</div></div></div></div>';return;}
     var ds=nguoiKhu(k.id),co=ds.filter(function(e){return !e.g.vang;});
     var x=k.spmX&&S.X[k.spmX];var v=khuVal(k);
     var pq=SELQ&&NGUOI[SELQ],giaoQ=pq&&pq.giao.some(function(g){return g.khu===k.id;}),ttq=pq&&qThucTe(pq),thucQ=ttq&&k.spmX&&ttq.x===k.spmX&&!giaoQ;
@@ -724,7 +727,7 @@ function theQC(){var p=NGUOI[SELQ];if(!p)return '';var tt=qThucTe(p),q=p.qi>=0&&
   else h+='<div class="muted" style="margin-top:8px;font-size:12px">Không có lượt nghiệm thu trong SPM '+KY+' ngày.</div>';
   return h+'<div class="muted" style="font-size:11px;margin-top:6px">Trên bản đồ: viền xanh liền = xưởng được giao · viền xanh đứt = xưởng đang nghiệm thu nhiều nhất (nếu khác).</div></div>';}
 /* ---------- panel chi tiet 1 khu ---------- */
-function chon(id){if(!KHU[id])return;SEL=id;VIEW=id;stopSpin();setCamBtn('iso');cam.rx=32;cam.rz=0;veCanh();cam.s=fitScale();applyCam();veCanh();vePanel();}
+function chon(id){if(KHU[id]&&KHU[id].gop)id=KHU[id].gop;if(!KHU[id])return;SEL=id;VIEW=id;stopSpin();setCamBtn('iso');cam.rx=32;cam.rz=0;veCanh();cam.s=fitScale();applyCam();veCanh();vePanel();}
 function raNgoai(){SEL=null;VIEW='site';WD=null;cam.rx=56;cam.rz=-28;cam.s=fitScale();applyCam();veCanh();vePanel();}
 document.getElementById('btnBack').addEventListener('click',raNgoai);
 document.getElementById('ngaySeg').addEventListener('click',function(e){var b=e.target.closest('[data-ng]');if(!b)return;var g=b.getAttribute('data-ng');
@@ -735,7 +738,7 @@ function vePanel(){
   if(!SEL){
     /* tong quan: xep hang khu theo tai */
     var h='<h2>Tổng quan</h2><div class="mo">Bấm 1 xưởng trên bản đồ (hoặc dòng bên dưới) để xem QC, tổ gia công và dự án.</div><table><thead><tr><th>Khu</th><th class="n">QC có mặt</th><th class="n">Tấn NT</th><th class="n">t / QC</th></tr></thead><tbody>';
-    PB.KHU.forEach(function(k){var co=nguoiKhu(k.id).filter(function(e){return !e.g.vang;}).length;var x=k.spmX&&S.X[k.spmX];
+    PB.KHU.forEach(function(k){if(k.gop)return;var co=nguoiKhu(k.id).filter(function(e){return !e.g.vang;}).length;var x=k.spmX&&S.X[k.spmX];
       h+='<tr class="click" data-khu="'+esc(k.id)+'"><td><b>'+esc(k.ten)+'</b><div class="muted" style="font-size:11px">'+esc(k.mo)+'</div></td><td class="n">'+co+'</td><td class="n">'+(x?'<b>'+fm(x.t)+'</b>':'<span class="muted">—</span>')+'</td><td class="n">'+(x&&co?fm(x.t/co):'—')+'</td></tr>';});
     h='<div id="qcCard">'+theQC()+'</div>'+h;
     el.innerHTML=h+'</tbody></table><div class="sec">Danh sách QC — '+esc(TEAM.ten)+' · bấm để xem vị trí</div><input id="qcFind" placeholder="Tìm tên hoặc mã SPM…" value="'+esc(QFIND)+'"><div id="qcList">'+dsQC()+'</div><div class="note"><b>Tấn NT</b> = tổng khối lượng (tấn) QC đã nghiệm thu trong kỳ, cộng cả 3 công đoạn Fitup + Hàn + Sơn (theo QCDate trong SPM). AH1, AH8, AH2 MR không có trong SPM nên không có số tấn.</div>';

@@ -18,6 +18,8 @@ window.PHAN_BO_QC = {
   /* Khu vuc tren mat bang. spmX = ten xuong trong SPM (de doi chieu so lieu that). AH1/AH8/AH2 MR khong co trong SPM. */
   KHU: [
     {id:'AH9',   ten:'AH9',    mo:'Xuất hàng — Fitup / Final', x:302, y:90,  w:212, h:205, cao:64, line:2, spmX:'AH9'},
+    /* 27/10 user: AH9 mo rong them xuong ben trai (khu nha kho goc tren-trai mat bang). gop -> bam vao mo AH9 */
+    {id:'AH9MR', ten:'AH9 mở rộng', mo:'Phần mở rộng của xưởng AH9', x:62, y:100, w:228, h:235, cao:44, spmX:'', gop:'AH9'},
     {id:'AH4',   ten:'AH4',    mo:'Fitup / Final — EVAPCO',     x:985, y:75,  w:375, h:120, cao:58, spmX:'AH4'},
     {id:'AH1',   ten:'AH1',    mo:'Sơ chế — Cắt · Khoan · Chấn', x:985, y:197, w:375, h:101, cao:54, line:2, spmX:''},
     {id:'AH6',   ten:'AH6',    mo:'Fitup / Final',              x:299, y:313, w:353, h:148, cao:56, line:3, spmX:'AH6'},
