@@ -105,9 +105,15 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .bld.selq .top{outline:4px solid #38bdf8;filter:brightness(1.25)}
 .bld.selq .ring{display:block;border-color:#38bdf8}
 .bld.selt .top{outline:3px dashed #38bdf8}
+.theQ3{display:flex;gap:16px;align-items:center;background:rgba(8,47,73,.95);border:2px solid #38bdf8;border-radius:16px;padding:10px 14px 10px 10px;color:#fff;box-shadow:0 12px 30px rgba(14,165,233,.45);white-space:nowrap}
+.theQ3 .av{width:120px;height:120px;font-size:34px;border-color:#38bdf8;border-width:3px;margin:0}
+.theQ3 .tn3{font-size:28px;font-weight:900}
+.theQ3 .mo3{font-size:17px;color:#cfe8f7;margin-top:2px}
+.tagMini{background:rgba(12,17,28,.8);color:#aeb8ca;font-weight:800;font-size:13px;padding:2px 9px;border-radius:8px;border:1px solid rgba(255,255,255,.12)}
 .pinQ{background:#0ea5e9;color:#fff;font-weight:900;font-size:13px;border-radius:10px;padding:4px 10px;margin-bottom:6px;white-space:nowrap;box-shadow:0 6px 18px rgba(14,165,233,.45);text-align:center}
 .pinQ small{display:block;font-weight:600;font-size:10.5px;opacity:.9}
-.fig.me .avL{outline:3px solid #38bdf8;outline-offset:2px}
+.fig.me .avL{outline:3px solid #38bdf8;outline-offset:2px;width:84px;height:84px;font-size:24px}
+.fig.me .figN{font-size:15px}
 .fig.me .figN{background:#0ea5e9}
 .bay.selq .top{outline:4px solid #38bdf8}
 .qrow{display:flex;gap:9px;align-items:center;padding:6px 8px;border-radius:10px;cursor:pointer;border:1px solid transparent}
@@ -480,6 +486,7 @@ function figHtml(qi,p,g,sub,mo){var me=SELQ&&NGUOI[SELQ]&&NGUOI[SELQ].qi===qi&&q
     +'<div class="figN">'+esc(shortNm)+'</div>'+(sub?'<div class="figS">'+sub+'</div>':'')+'</div>';}
 function veXuong(id){
   W.classList.remove('anh');
+  var qiS=SELQ&&NGUOI[SELQ]?NGUOI[SELQ].qi:-9; /* dang chon 1 QC -> chi hien hinh nguoi do */
   var k=KHU[id],plan=nguoiKhu(id);
   var FX=60,FY=60,FW=1320,FH=680;W.style.width='1440px';W.style.height='800px';W.style.margin='-400px 0 0 -720px';
   var h='<div class="floor" style="left:'+FX+'px;top:'+FY+'px;width:'+FW+'px;height:'+FH+'px"></div>'
@@ -501,14 +508,14 @@ function veXuong(id){
         +'<div class="kv"><span>SX</span><b>'+fm(so.sx,1)+'</b><span>NT</span><b style="color:#F2D58A">'+fm(so.nt,1)+'</b><span>Tồn</span><b style="color:'+(ton>0.05?'#f0b43c':'#aeb8ca')+'">'+fm(ton,1)+'</b></div>'
         +(so.sx>0.05?'<div class="bar" style="margin-top:4px" title="SX theo công đoạn"><i style="width:'+(so.sf/so.sx*100)+'%;background:var(--f)"></i><i style="width:'+(so.sw/so.sx*100)+'%;background:var(--w)"></i><i style="width:'+(so.sp/so.sx*100)+'%;background:var(--p)"></i></div>':'')+'</div>';
       var qs=topK(so.q,4);
+      if(qiS>=0){qs=qs.filter(function(q){return +q===qiS;});}
       if(qs.length)qs.forEach(function(q){var p=Q2N[q];var g=p&&p.giao.filter(function(z){return z.khu===id;})[0];figs+=figHtml(+q,p,g,'NT '+fm(so.q[q],1)+' t'+(p?'':' · ngoài sơ đồ'));});
-      else (chu[b.tk]||[]).sort(function(a,z){return z.t-a.t;}).slice(0,3).forEach(function(e){var p=Q2N[e.q];var g=p&&p.giao.filter(function(z){return z.khu===id;})[0];figs+=figHtml(e.q,p,g,CHE==='ngay'?'phụ trách · chưa NT ngày này':'phụ trách',CHE==='ngay');});
-      var qiS=SELQ&&NGUOI[SELQ]?NGUOI[SELQ].qi:-9;
+      else (chu[b.tk]||[]).filter(function(e){return !(qiS>=0)||e.q===qiS;}).sort(function(a,z){return z.t-a.t;}).slice(0,3).forEach(function(e){var p=Q2N[e.q];var g=p&&p.giao.filter(function(z){return z.khu===id;})[0];figs+=figHtml(e.q,p,g,CHE==='ngay'?'phụ trách · chưa NT ngày này':'phụ trách',CHE==='ngay');});
       h+='<div class="bld bay'+((qiS>=0&&(so.q[qiS]||(chu[b.tk]||[]).some(function(e){return e.q===qiS;})))?' selq':'')+'" data-to="'+esc(b.tk)+'" style="left:'+L+'px;top:'+T+'px;width:'+bw+'px;height:'+bh+'px;--h:'+hh+'px;--bc:'+tt[0]+'">'
         +'<div class="fc top"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>';
     }else{
       lab='<div class="tag3 sm"><div class="h"><b>Khu QC chung</b><span>'+chung.length+' người</span></div><div class="m">được giao '+esc(k.ten)+(k.spmX?' · không NT tổ nào '+(CHE==='ngay'?'ngày này':'trong kỳ'):' · không có trong SPM')+'</div></div>';
-      chung.forEach(function(e){figs+=figHtml(e.p.qi,e.p,e.g,esc(e.g.cd)+(e.g.vang?' · vắng':(e.g.kiem?' · kiêm':'')));});
+      chung.filter(function(e){return !(qiS>=0)||e.p.qi===qiS;}).forEach(function(e){figs+=figHtml(e.p.qi,e.p,e.g,esc(e.g.cd)+(e.g.vang?' · vắng':(e.g.kiem?' · kiêm':'')));});
       h+='<div class="bld bay chung" style="left:'+L+'px;top:'+T+'px;width:'+bw+'px;height:'+bh+'px;--h:6px;--bc:#6b7280">'
         +'<div class="fc top"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>';
     }
@@ -547,11 +554,16 @@ function veCanh(){
     var ds=nguoiKhu(k.id),co=ds.filter(function(e){return !e.g.vang;});
     var x=k.spmX&&S.X[k.spmX];var v=khuVal(k);
     var pq=SELQ&&NGUOI[SELQ],giaoQ=pq&&pq.giao.some(function(g){return g.khu===k.id;}),ttq=pq&&qThucTe(pq),thucQ=ttq&&k.spmX&&ttq.x===k.spmX&&!giaoQ;
-    var pin=(giaoQ||thucQ)?'<div class="pinQ">📍 '+esc(titleCase(pq.ten).split(' ').slice(-2).join(' '))+'<small>'+(giaoQ?'được giao '+esc(k.ten):'')+(ttq&&ttq.x===k.spmX?(giaoQ?' · ':'')+'đang NT '+ttq.pc+'%':'')+'</small></div>':'';
+    var gq=giaoQ&&pq.giao.filter(function(g){return g.khu===k.id;})[0];
+    var pin=(giaoQ||thucQ)?'<div class="theQ3">'+avHtml(pq,gq,true)+'<div><div class="tn3">'+esc(titleCase(pq.ten))+'</div>'
+      +'<div class="mo3">'+(giaoQ?'📍 được giao <b>'+esc(k.ten)+'</b>'+(gq&&gq.cd&&gq.cd!=='—'?' · '+esc(gq.cd):''):'📍 <b>'+esc(k.ten)+'</b>')+'</div>'
+      +(ttq&&ttq.x===k.spmX?'<div class="mo3">đang nghiệm thu <b>'+ttq.pc+'%</b> tại đây · '+fm(ttq.t,1)+' t / '+KY+' ngày</div>':(giaoQ&&ttq?'<div class="mo3" style="color:#f0b43c">thực tế NT nhiều nhất ở '+esc(ttq.x)+'</div>':''))
+      +(gq&&gq.da&&gq.da!=='—'?'<div class="mo3">'+esc(gq.da)+'</div>':'')+'</div></div>':'';
+    var nhanNho='<div class="tagMini">'+esc(k.ten)+'</div>';
     h+='<div class="bld'+(SEL===k.id?' sel':'')+(giaoQ?' selq':'')+(thucQ?' selt':'')+(k.chuaRoViTri?' ghost':'')+'" data-khu="'+esc(k.id)+'" style="left:'+k.x+'px;top:'+k.y+'px;width:'+k.w+'px;height:'+k.h+'px;--h:'+k.cao+'px;--L:'+k.x+'px;--T:'+k.y+'px">'
       +'<div class="fc top" style="--heat:'+heat(v,mx)+'"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'
       +'<div class="ring"></div>'
-      +'<div class="bb"><div class="bbIn" data-khu="'+esc(k.id)+'" style="animation-delay:-'+((k.x+k.y)%32)/10+'s">'+pin+'<div class="tag3">'
+      +'<div class="bb"><div class="bbIn" data-khu="'+esc(k.id)+'" style="animation-delay:-'+((k.x+k.y)%32)/10+'s">'+(pq?(pin||nhanNho)+'<div class="tag3" style="display:none">':'<div class="tag3">')
       +'<div class="h"><b>'+esc(k.ten)+'</b><span>'+co.length+' QC'+(ds.length>co.length?' · '+(ds.length-co.length)+' vắng':'')+'</span></div>'
       +'<div class="m">'+esc(k.mo)+(k.chuaRoViTri?' · <span style="color:#f0b43c">vị trí ước lượng</span>':'')+'</div>'
       +(x?'<div class="t">'+fm(x.t,1)+' t <i>NT '+KY+' ngày</i></div>'+ngayXuong(k.spmX):(k.spmX===''?'<div class="m" style="color:#8a95aa">không có trong SPM</div>':'<div class="m">0 t trong kỳ</div>'))
