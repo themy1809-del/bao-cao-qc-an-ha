@@ -220,6 +220,15 @@ tr.click:hover td{background:var(--surf2)}
 .vung span{position:absolute;left:12px;bottom:8px;font-size:30px;font-weight:900;letter-spacing:.12em;color:color-mix(in srgb,var(--bc) 75%,#fff 10%);opacity:.55}
 .lineHd{position:absolute;transform:translateZ(1px);border-radius:8px;background:rgba(217,180,90,.16);outline:2px solid rgba(217,180,90,.55);outline-offset:-2px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;letter-spacing:.14em;color:#F2D58A}
 .vung span{font-size:22px!important}
+.mat{position:absolute;inset:6px 10px;display:flex;flex-direction:column;justify-content:center;gap:2px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.55);overflow:hidden}
+.khau.rong .top{opacity:.55!important}
+.mat .mt1{display:flex;align-items:center;gap:7px}
+.mat .mt1 b{font-size:24px;font-weight:900;letter-spacing:.02em}
+.mat .mt1 i{width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.7)}
+.mat .mt2{font-size:14px;font-weight:600;opacity:.95;white-space:nowrap}
+.mat .mt2 b{font-size:20px}
+.mat .mt3{display:flex;gap:4px;margin-top:2px}
+.av.mini{width:26px;height:26px;font-size:10px;margin:0;border-width:1.5px}
 .plate .top.pl{background:rgba(255,255,255,.05);outline:1px solid rgba(255,255,255,.14);transform:translateZ(1px)}
 .plate.selq .top.pl{outline:4px solid #38bdf8}
 .plate{cursor:default}
@@ -561,16 +570,17 @@ function veXuong(id){
     arr.forEach(function(e,i){var cc=i%cols,rr=Math.floor(i/cols),L=z.x+pad+cc*(bw+pad),T=z.y+pad+rr*(bh+pad);
       var val=Math.max(e.v[0],e.v[1]),hh=e.act?5+Math.round(40*val/(mx||1)):3;
       var t2=c==='d'?['#60A5FA','có NT']:ttKhau(e.v[0],e.v[1]);
-      var lab='<div class="tag3 sm"><div class="h"><b>'+esc(e.tk.split('.').slice(1).join('.'))+'</b><span style="color:'+t2[0]+'">●</span></div>'
-        +'<div class="kv">'+(c==='d'?'':'<span>SX</span><b>'+fm(e.v[0],1)+'</b>')+'<span>NT</span><b style="color:#F2D58A">'+fm(e.v[1],1)+'</b>'+(c==='d'?'':'<span>Tồn</span><b style="color:'+(e.v[2]>0.05?'#f0b43c':'#aeb8ca')+'">'+fm(e.v[2],1)+'</b>')+'</div></div>';
-      var figs='',o=e.so.qs[c];
-      topK(o,2).forEach(function(q){if(qiS>=0&&q!==String(qiS))return;var qi=/^n:/.test(q)?-1:+q,p=qi>=0?Q2N[qi]:null;
-        var g=p&&p.giao.filter(function(z2){return z2.khu===id;})[0];
-        figs+=figHtml(qi,p,g,{ten:tenQ(q),txt:fm(o[q],1)+' t'},false,kk[2]);});
-      var selB=qiS>=0&&o[String(qiS)];
+      /* GON: ten to + so in PHANG tren mat o (o khong de nhau -> chu khong de nhau); QC = cham anh nho; chi QC dang chon moi noi len */
+      var o=e.so.qs[c],qs=topK(o,2);
+      var mini=qs.map(function(q){var qi=/^n:/.test(q)?-1:+q,p=qi>=0?Q2N[qi]:null,nm=p?titleCase(p.ten):tenQ(q);
+        return p?avHtml(p,null).replace('class="av','title="'+esc(nm)+' · '+fm(o[q],1)+' t" class="av mini'):'<span class="av mini" title="'+esc(nm)+' · '+fm(o[q],1)+' t">'+esc(String(nm).slice(0,2).toUpperCase())+'</span>';}).join('');
+      var mat='<div class="mat"><div class="mt1"><b>'+esc(e.tk.split('.').slice(1).join('.'))+'</b><i style="background:'+t2[0]+'" title="'+t2[1]+'"></i></div>'
+        +(e.v[1]>0.05?'<div class="mt2"><b>'+fm(e.v[1],1)+'</b> t</div>':'')
+        +(mini?'<div class="mt3">'+mini+'</div>':'')+'</div>';
+      var selB=qiS>=0&&o[String(qiS)],fig='';
+      if(selB){var pS=Q2N[qiS];fig='<div class="bb"><div class="bbIn"><div class="figs">'+figHtml(qiS,pS,pS&&pS.giao.filter(function(z2){return z2.khu===id;})[0],{txt:kk[1]+' '+fm(o[String(qiS)],1)+' t'},false,kk[2])+'</div></div></div>';}
       h+='<div class="bld bay khau'+(e.act?'':' rong')+(selB?' selq':'')+'" data-to="'+esc(e.tk)+'" style="left:'+L+'px;top:'+T+'px;width:'+bw+'px;height:'+bh+'px;--h:'+hh+'px;--bc:'+kk[2]+'">'
-        +'<div class="fc top"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'
-        +'<div class="bb"><div class="bbIn" style="animation-delay:-'+(i%7)*.4+'s">'+lab+(figs?'<div class="figs">'+figs+'</div>':'')+'</div></div></div>';});
+        +'<div class="fc top">'+mat+'</div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'+fig+'</div>';});
     if(du>0)h+='<div class="roadLbl" style="left:'+(z.x+8)+'px;top:'+(z.y+z.h-22)+'px;opacity:.85">+'+du+' tổ khác</div>';
   });
   /* QC theo sơ đồ: ai có ghi line -> đứng ở đầu line đó; còn lại (chưa NT khâu nào) gom ô "Chưa NT" */
