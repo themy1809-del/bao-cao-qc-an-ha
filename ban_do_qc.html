@@ -228,6 +228,7 @@ tr.click:hover td{background:var(--surf2)}
 .mat .mt2{font-size:14px;font-weight:600;opacity:.95;white-space:nowrap}
 .mat .mt2 b{font-size:20px}
 .mat .mt3{display:flex;gap:4px;margin-top:2px}
+.fig.cm .av{border-color:var(--avb);border-width:3px}
 .figs.dung{gap:4px;margin-top:0}
 .figs.dung .fig{min-width:0}
 .figs.dung .avL{width:52px;height:52px;font-size:15px;box-shadow:0 8px 16px rgba(0,0,0,.55)}
@@ -535,8 +536,8 @@ function tenQ(key){if(/^n:/.test(key)){var s2=key.slice(2);return s2==='?'?'(ch�
 function figHtml(qi,p,g,sub,mo,mau){var me=SELQ&&NGUOI[SELQ]&&NGUOI[SELQ].qi===qi&&qi>=0;
   var nm=p?titleCase(p.ten):(qi>=0?String(D.Q[qi]||''):String(sub&&sub.ten||''));var parts=nm.split(' ');var shortNm=parts.slice(-2).join(' ');
   var av=p?avHtml(p,g,true):'<span class="av avL" title="'+esc(nm)+'">'+esc(nm.slice(0,2).toUpperCase())+'</span>';
-  if(mau)av=av.replace('class="av','style="border-color:'+mau+';border-width:3px" class="av');
-  return '<div class="fig'+(me?' me':'')+'"'+(mo&&!me?' style="opacity:.5"':'')+'>'+av
+  /* mau vien khau: dat qua bien CSS tren .fig — KHONG chen them thuoc tinh style vao the anh (trung style -> trinh duyet bo mat anh) */
+  return '<div class="fig'+(me?' me':'')+(mau?' cm':'')+'" style="'+(mau?'--avb:'+mau+';':'')+(mo&&!me?'opacity:.5':'')+'">'+av
     +'<div class="figN">'+esc(shortNm)+'</div>'+(sub&&sub.txt?'<div class="figS">'+sub.txt+'</div>':'')+'</div>';}
 /* so line cua QC tu cot "du an / line" trong so do (vd "Line 2 – AH2") */
 function lineCuaQC(g){var m=String(g&&g.da||'').match(/line\s*(\d+)/i);return m?+m[1]:0;}
