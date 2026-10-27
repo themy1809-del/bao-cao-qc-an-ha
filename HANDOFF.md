@@ -509,6 +509,8 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Đặt `qc_khoa.js` ngay sau `qcdata.js` theo quy tắc đăng nhập. Chưa thêm link từ `qc.html` (chờ user duyệt).
   Mở: PDF ghi "24 nhân sự" nhưng đếm tên được 25 (có mặt 21 + Hảo + 3 ra site) → UNKNOWN — NEED USER CONFIRMATION.
   Nền 3D = ảnh tổng mặt bằng user gửi (`so_do_nha_may.webp`, 1440×864, đã cắt dải "PROPOSAL ROUTE"); toạ độ xưởng trong `phan_bo_qc.js` theo ảnh này.
+  Bản đồ trong xưởng có số liệu HẰNG NGÀY từng tổ (chọn ngày ◀ ▶ hoặc cả kỳ): SX = tấn theo WorkDate trừ "Miễn QC";
+  NT = tấn theo QCDate "Đã QC (AH)"; Tồn = "Chưa QC" — cùng định nghĩa `qc.html`. Kiểm AH3 26/10 khớp độc lập.
   AH8 không có trên tổng mặt bằng → vị trí trên bản đồ là ước lượng. Vũ Đại Phong, Lê Minh Trí chưa có mã SPM.
 | Date | Change | Files | Reason |
 |---|---|---|---|
