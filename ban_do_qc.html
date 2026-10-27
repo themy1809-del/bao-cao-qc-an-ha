@@ -358,7 +358,7 @@ tr.click:hover td{background:var(--surf2)}
 'use strict';
 var D=window.QCDATA||{rows:[],P:[],X:[],T:[],Q:[],PL:[]};
 var PB=window.PHAN_BO_QC||{KHU:[],PHU:[],NGUOI:[]};
-var MOIM=false, KY=30, COLMODE='t', SEL=null, VIEW='site', HR={}, SELQ=null, QFIND=''; /* HR: tenChuan -> {img,st,spm} */
+var MOBANG=false, MOIM=false, KY=30, COLMODE='t', SEL=null, VIEW='site', HR={}, SELQ=null, QFIND=''; /* HR: tenChuan -> {img,st,spm} */
 
 /* ---------- tien ich ---------- */
 function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -737,11 +737,16 @@ function vePanel(){
   var el=document.getElementById('panel');
   if(!SEL){
     /* tong quan: xep hang khu theo tai */
-    var h='<h2>Tổng quan</h2><div class="mo">Bấm 1 xưởng trên bản đồ (hoặc dòng bên dưới) để xem QC, tổ gia công và dự án.</div><table><thead><tr><th>Khu</th><th class="n">QC có mặt</th><th class="n">Tấn NT</th><th class="n">t / QC</th></tr></thead><tbody>';
+    var h='<h2>Tổng quan</h2><div class="mo">Bấm 1 xưởng trên bản đồ hoặc 1 QC bên dưới.</div>';
+    var bang='<table><thead><tr><th>Khu</th><th class="n">QC có mặt</th><th class="n">Tấn NT</th><th class="n">t / QC</th></tr></thead><tbody>';
     PB.KHU.forEach(function(k){if(k.gop)return;var co=nguoiKhu(k.id).filter(function(e){return !e.g.vang;}).length;var x=k.spmX&&S.X[k.spmX];
-      h+='<tr class="click" data-khu="'+esc(k.id)+'"><td><b>'+esc(k.ten)+'</b><div class="muted" style="font-size:11px">'+esc(k.mo)+'</div></td><td class="n">'+co+'</td><td class="n">'+(x?'<b>'+fm(x.t)+'</b>':'<span class="muted">—</span>')+'</td><td class="n">'+(x&&co?fm(x.t/co):'—')+'</td></tr>';});
-    h='<div id="qcCard">'+theQC()+'</div>'+h;
-    el.innerHTML=h+'</tbody></table><div class="sec">Danh sách QC — '+esc(TEAM.ten)+' · bấm để xem vị trí</div><input id="qcFind" placeholder="Tìm tên hoặc mã SPM…" value="'+esc(QFIND)+'"><div id="qcList">'+dsQC()+'</div><div class="note"><b>Tấn NT</b> = tổng khối lượng (tấn) QC đã nghiệm thu trong kỳ, cộng cả 3 công đoạn Fitup + Hàn + Sơn (theo QCDate trong SPM). AH1, AH8, AH2 MR không có trong SPM nên không có số tấn.</div>';
+      bang+='<tr class="click" data-khu="'+esc(k.id)+'"><td><b>'+esc(k.ten)+'</b><div class="muted" style="font-size:11px">'+esc(k.mo)+'</div></td><td class="n">'+co+'</td><td class="n">'+(x?'<b>'+fm(x.t)+'</b>':'<span class="muted">—</span>')+'</td><td class="n">'+(x&&co?fm(x.t/co):'—')+'</td></tr>';});
+    bang+='</tbody></table><div class="note"><b>Tấn NT</b> = tổng khối lượng (tấn) QC đã nghiệm thu trong kỳ, cộng cả 3 công đoạn Fitup + Hàn + Sơn (theo QCDate trong SPM). AH1, AH8, AH2 MR không có trong SPM nên không có số tấn.</div>';
+    /* 27/10 user: AN bang theo xuong — chi mo khi bam */
+    el.innerHTML='<div id="qcCard">'+theQC()+'</div>'+h
+      +'<div class="sec">Danh sách QC — '+esc(TEAM.ten)+' · bấm để xem vị trí</div><input id="qcFind" placeholder="Tìm tên hoặc mã SPM…" value="'+esc(QFIND)+'"><div id="qcList">'+dsQC()+'</div>'
+      +'<div class="muted" data-mobang="1" style="margin-top:12px;font-size:12px;cursor:pointer">'+(MOBANG?'▾ Ẩn bảng theo xưởng':'▸ Xem bảng theo xưởng')+'</div>'
+      +(MOBANG?bang:'');
     return;}
   var k=KHU[SEL],ds=nguoiKhu(SEL),x=k.spmX&&S.X[k.spmX];
   var h=theQC()+'<div style="display:flex;justify-content:space-between;align-items:start;gap:8px"><div><h2>'+esc(k.ten)+'</h2><div class="mo">'+esc(k.mo)+'</div></div><button class="btn noprint" data-close="1">✕</button></div>';
@@ -779,6 +784,7 @@ document.getElementById('panel').addEventListener('click',function(e){
   if(e.target.closest('[data-close]')){raNgoai();return;}
   if(e.target.closest('[data-boq]')){SELQ=null;veCanh();vePanel();return;}
   if(e.target.closest('[data-moim]')){MOIM=!MOIM;vePanel();return;}
+  if(e.target.closest('[data-mobang]')){MOBANG=!MOBANG;vePanel();return;}
   var r=e.target.closest('[data-khu]');if(r){chon(r.getAttribute('data-khu'));return;}
   var q=e.target.closest('[data-qc]');if(q)chonQC(q.getAttribute('data-qc'));});
 document.getElementById('panel').addEventListener('input',function(e){if(e.target.id!=='qcFind')return;QFIND=e.target.value;var l=document.getElementById('qcList');if(l)l.innerHTML=dsQC();});
