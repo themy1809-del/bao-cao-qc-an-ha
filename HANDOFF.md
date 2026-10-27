@@ -525,6 +525,9 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Bản đồ to hơn trên máy tính (cao 78vh, bảng tên giữ cỡ chữ khi phóng/thu, nút ⛶ Toàn màn hình). Khung Tổng quan có **danh sách QC — bấm tên → ghim vị trí** (xưởng được giao + xưởng/tổ đang NT nhiều nhất).
   Bản đồ chuyển lên đầu trang; bảng tên xưởng thu nhỏ (`--bbk` .62). Ảnh chân dung: KHÔNG ghi mã ảnh/ID Sheet nhân sự vào repo
   (bị chặn vì dữ liệu nguồn nhạy cảm) → người xem bấm "🖼 Ảnh nhân sự" dán link Sheet (lưu localStorage). File ảnh Drive đang chia sẻ anyone-reader.
+  Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
+  Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
+  Final = Final DIM: dòng có tấn Hàn + ghi chú "acc" (chép `_fdName`/`_FD_AL` của qc.html); QC Final lấy tên trong ghi chú. Kiểm AH3 26/10: HH Hàn SX 70,1 · NT 51,1 · Final 51,1 (vupt) khớp.
   Kiểm độc lập 27/10, 14 ngày: AH4 KH 255,7 · AH3 234,7 · AH9 102,4 · AH2 21,7 · AH6 12,3 t — khớp. KHSX còn nhiều KL quá hạn/chưa có ngày (AH3 945 t, AH2 669 t) → có thể KHSX chưa cập nhật.
   Bộ đọc KHSX trong trang là bản gọn RIÊNG (không dùng chung `_khBuild` của qc.html vì nó nằm nội tuyến) — gộp là việc riêng.
   AH8 không có trên tổng mặt bằng → vị trí trên bản đồ là ước lượng. Vũ Đại Phong, Lê Minh Trí chưa có mã SPM.
