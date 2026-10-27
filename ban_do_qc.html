@@ -540,6 +540,8 @@ function figHtml(qi,p,g,sub,mo,mau){var me=SELQ&&NGUOI[SELQ]&&NGUOI[SELQ].qi===q
     +'<div class="figN">'+esc(shortNm)+'</div>'+(sub&&sub.txt?'<div class="figS">'+sub.txt+'</div>':'')+'</div>';}
 /* so line cua QC tu cot "du an / line" trong so do (vd "Line 2 – AH2") */
 function lineCuaQC(g){var m=String(g&&g.da||'').match(/line\s*(\d+)/i);return m?+m[1]:0;}
+/* tat ca line ghi trong cot du an/line (vd "Final · Line 1, Line 2" -> [1,2]) */
+function cacLineQC(g){var t=String(g&&g.da||''),out=[],re=/line\s*(\d+)/ig,m;while((m=re.exec(t)))out.push(+m[1]);return out;}
 function veXuong(id){
   W.classList.remove('anh');
   var qiS=SELQ&&NGUOI[SELQ]?NGUOI[SELQ].qi:-9; /* dang chon 1 QC -> chi hien hinh nguoi do */
@@ -550,14 +552,16 @@ function veXuong(id){
   /* MAT BANG: NL lan LINE chay doc; trong moi line tu duoi len: Fitup -> Han -> Final; cuoi xuong (ben phai) vung Son dung chung */
   /* chieu dai line chia theo khau: Fitup nhieu nhat (45%) · Han giua (30%) · Final tren (25%) — theo user 27/10 */
   var G=14,HD=46,SW=Math.round(FW*0.2),LW=FW-SW-G,LNW=(LW-G*(NL-1))/NL,ZT=FH-HD-G*2,ZHd=ZT*.25,ZHw=ZT*.30,ZHf=ZT*.45;
-  function zone(li,c){var x=FX+li*(LNW+G);if(c==='p')return {x:FX+LW+G,y:FY,w:SW,h:FH};
+  var LTH=Math.round(FH*0.22);
+  function zone(li,c){var x=FX+li*(LNW+G);if(c==='lt')return {x:FX+LW+G,y:FY,w:SW,h:LTH};if(c==='p')return {x:FX+LW+G,y:FY+LTH+G,w:SW,h:FH-LTH-G};
     if(c==='d')return {x:x,y:FY,w:LNW,h:ZHd};if(c==='w')return {x:x,y:FY+ZHd+G,w:LNW,h:ZHw};return {x:x,y:FY+ZHd+ZHw+2*G,w:LNW,h:ZHf};}
   var h='<div class="floor" style="left:'+FX+'px;top:'+FY+'px;width:'+FW+'px;height:'+FH+'px"></div>';
   for(var li=0;li<NL;li++){
     KHAU.forEach(function(kk){if(kk[0]==='p')return;var z=zone(li,kk[0]);
       h+='<div class="vung" style="left:'+z.x+'px;top:'+z.y+'px;width:'+z.w+'px;height:'+z.h+'px;--bc:'+kk[2]+'"><span>'+kk[1].toUpperCase()+'</span></div>';});
     h+='<div class="lineHd" style="left:'+(FX+li*(LNW+G))+'px;top:'+(FY+FH-HD)+'px;width:'+LNW+'px;height:'+HD+'px">LINE '+(li+1)+'</div>';}
-  var zp=zone(0,'p');h+='<div class="vung" style="left:'+zp.x+'px;top:'+zp.y+'px;width:'+zp.w+'px;height:'+zp.h+'px;--bc:#16A34A"><span>SƠN</span></div>';
+  var zp=zone(0,'p'),zl=zone(0,'lt');h+='<div class="vung" style="left:'+zp.x+'px;top:'+zp.y+'px;width:'+zp.w+'px;height:'+zp.h+'px;--bc:#16A34A"><span>SƠN</span></div>'
+    +'<div class="vung" style="left:'+zl.x+'px;top:'+zl.y+'px;width:'+zl.w+'px;height:'+zl.h+'px;--bc:#0F766E"><span>LẮP THỬ</span></div>';
   /* to -> line: theo TO_LINE; chua co thi xep TAM luan phien theo khoi luong 90 ngay */
   var tos=k.spmX?cacTo(k.spmX):[],tam=0,lineTo={};
   tos.forEach(function(tk,i){var l=+TOL[tk];if(l>=1&&l<=NL)lineTo[tk]=l-1;else{lineTo[tk]=i%NL;tam++;}});
@@ -582,25 +586,37 @@ function veXuong(id){
         +(e.v[1]>0.05?'<div class="mt2"><b>'+fm(e.v[1],1)+'</b> t</div>':'')
         +'</div>';
       /* anh QC DUNG (billboard) — chi anh tron + ten ngan, khong the so; dang chon 1 QC thi chi hien nguoi do */
-      var selB=qiS>=0&&o[String(qiS)],fig='',dsQ=qiS>=0?(selB?[String(qiS)]:[]):qs;
+      var selB=qiS>=0&&o[String(qiS)],fig='',dsQ=[]; /* QC dung o VI TRI CO DINH theo so do (ben duoi), khong dung tren o to */
       if(dsQ.length)fig='<div class="bb"><div class="bbIn" style="animation:none"><div class="figs dung">'+dsQ.map(function(q){var qi=/^n:/.test(q)?-1:+q,p=qi>=0?Q2N[qi]:null;
           return figHtml(qi,p,p&&p.giao.filter(function(z2){return z2.khu===id;})[0],selB?{ten:tenQ(q),txt:kk[1]+' '+fm(o[q],1)+' t'}:{ten:tenQ(q)},false,kk[2]);}).join('')+'</div></div></div>';
       h+='<div class="bld bay khau'+(e.act?'':' rong')+(selB?' selq':'')+'" data-to="'+esc(e.tk)+'" style="left:'+L+'px;top:'+T+'px;width:'+bw+'px;height:'+bh+'px;--h:'+hh+'px;--bc:'+kk[2]+'">'
         +'<div class="fc top">'+mat+'</div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'+fig+'</div>';});
     if(du>0)h+='<div class="roadLbl" style="left:'+(z.x+8)+'px;top:'+(z.y+z.h-22)+'px;opacity:.85">+'+du+' tổ khác</div>';
   });
-  /* QC theo sơ đồ: ai có ghi line -> đứng ở đầu line đó; còn lại (chưa NT khâu nào) gom ô "Chưa NT" */
+  /* QC DUNG O VI TRI CO DINH theo so do: khau (cot cong doan) + line (cot du an/line).
+     Fitup -> vung Fitup · Han -> vung Han · Final -> vung Final · Lap thu -> o LAP THU · Son -> vung Son.
+     Ghi nhieu line -> dung o moi line. Khong ghi line -> dung giua cac line. Vang / chua giao khau -> ngoai xuong. */
   var coMat={};tos.forEach(function(tk){var so=toSo(tk);KHAU.forEach(function(kk){Object.keys(so.qs[kk[0]]).forEach(function(q){coMat[q]=1;});});});
-  var dauLine={},chua=[];
-  plan.forEach(function(e){if(qiS>=0&&e.p.qi!==qiS)return;var l=lineCuaQC(e.g);
-    if(l>=1&&l<=NL)(dauLine[l-1]=dauLine[l-1]||[]).push(e);else if(!(e.p.qi>=0&&coMat[e.p.qi]))chua.push(e);});
-  Object.keys(dauLine).forEach(function(li){var x=FX+li*(LNW+G);
-    h+='<div class="bld bay chung" style="left:'+(x+LNW/2-1)+'px;top:'+(FY+FH-HD/2)+'px;width:2px;height:2px;--h:2px;--bc:#6b7280"><div class="fc top"></div>'
-      +'<div class="bb"><div class="bbIn" style="animation:none"><div class="figs">'+dauLine[li].map(function(e){return figHtml(e.p.qi,e.p,e.g,{txt:'QC line '+(+li+1)+(e.g.vang?' · vắng':'')});}).join('')+'</div></div></div></div>';});
-  if(chua.length){
-    h+='<div class="bld bay chung" style="left:'+(zp.x+zp.w/2)+'px;top:'+(FY+FH+30)+'px;width:2px;height:2px;--h:2px;--bc:#6b7280"><div class="fc top"></div>'
-      +'<div class="bb"><div class="bbIn" style="animation:none"><div class="tag3 sm"><div class="h"><b>Chưa NT</b><span>'+chua.length+' QC '+(CHE==='ngay'?'ngày này':'trong kỳ')+'</span></div></div><div class="figs">'
-      +chua.map(function(e){return figHtml(e.p.qi,e.p,e.g,{txt:esc(e.g.cd)+(e.g.vang?' · vắng':(e.g.kiem?' · kiêm':''))},true);}).join('')+'</div></div></div></div>';}
+  var cho={},ngoai=[];
+  function khauCuaQC(cd){cd=String(cd||'');if(/lắp thử|lap thu|ted/i.test(cd))return 'lt';if(/fitup/i.test(cd))return 'f';if(/final/i.test(cd))return 'd';if(/hàn/i.test(cd))return 'w';if(/sơn/i.test(cd))return 'p';return '';}
+  plan.forEach(function(e){if(qiS>=0&&e.p.qi!==qiS)return;
+    var kq=khauCuaQC(e.g.cd);
+    if(e.g.vang||!kq){ngoai.push(e);return;}
+    var ls=cacLineQC(e.g).filter(function(l){return l>=1&&l<=NL;});
+    if(kq==='lt'||kq==='p'||!ls.length)ls=[0];
+    ls.forEach(function(l){var key=kq+'|'+l;(cho[key]=cho[key]||[]).push(e);});});
+  var MAU={f:'#60A5FA',w:'#F59E0B',d:'#1E40AF',p:'#16A34A',lt:'#0F766E'},TEN={f:'Fitup',w:'Hàn',d:'Final',p:'Sơn',lt:'Lắp thử'};
+  Object.keys(cho).forEach(function(key){var kq=key.split('|')[0],l=+key.split('|')[1],x,y;
+    if(kq==='lt'||kq==='p'){var zz=zone(0,kq);x=zz.x+zz.w/2;y=zz.y+zz.h*0.55;}
+    else if(l>=1){var z1=zone(l-1,kq);x=z1.x+z1.w/2;y=z1.y+z1.h*0.5;}
+    else{var za=zone(0,kq),zb=zone(NL-1,kq);x=(za.x+zb.x+zb.w)/2+(NL%2?LNW/2+G/2:0);y=za.y+za.h*0.18;} /* khong ghi line: dung tren duong ranh giua cac line, lech len de khong de nguoi co line */
+    h+='<div class="bld bay chung" style="left:'+x+'px;top:'+y+'px;width:2px;height:2px;--h:2px;--bc:#6b7280"><div class="fc top"></div>'
+      +'<div class="bb"><div class="bbIn" style="animation:none"><div class="figs dung">'+cho[key].map(function(e){var nt=e.p.qi>=0&&coMat[e.p.qi];
+        return figHtml(e.p.qi,e.p,e.g,{txt:TEN[kq]+(l>=1?' · L'+l:'')+(e.g.kiem?' · kiêm':'')+(nt?'':' · chưa NT')},!nt,MAU[kq]);}).join('')+'</div></div></div></div>';});
+  if(ngoai.length){
+    h+='<div class="bld bay chung" style="left:'+(FX+FW/2)+'px;top:'+(FY+FH+70)+'px;width:2px;height:2px;--h:2px;--bc:#6b7280"><div class="fc top"></div>'
+      +'<div class="bb"><div class="bbIn" style="animation:none"><div class="tag3 sm"><div class="h"><b>Ngoài xưởng</b><span>vắng / chưa giao khâu</span></div></div><div class="figs dung">'
+      +ngoai.map(function(e){return figHtml(e.p.qi,e.p,e.g,{txt:e.g.vang?'vắng':'chưa giao khâu'},true);}).join('')+'</div></div></div></div>';}
   h+='<div class="roadLbl" style="left:'+FX+'px;top:'+(FY+FH+8)+'px;'+(tam?'color:#f0b43c;opacity:1':'')+'">'+NL+' line'+(k.line?'':' (chưa có số line — tạm 1)')
     +(tam?' · '+tam+' tổ xếp TẠM vào line (chưa có sơ đồ tổ–line)':'')+' · ô tổ xếp theo khối lượng</div>';
   W.innerHTML='<div class="ground"></div>'+h;
