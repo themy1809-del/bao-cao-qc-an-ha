@@ -537,6 +537,7 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   - Thẻ: tiêu đề, người, ưu tiên 4 mức, bắt đầu/hạn, tấn, nhãn, mô tả, việc con, đính kèm (link https), kết quả NT, duyệt + xử lý / trả về, bình luận, lịch sử tự ghi.
   - Thông báo: chuông cho QC (việc người khác giao/sửa); Notification API khi app đang mở (kiểm 60 s). Đẩy khi app tắt: CHƯA (cần máy chủ đẩy).
   - Thử với máy chủ giả lập 2 máy (QL desktop + QC điện thoại): giao việc → QC thấy + 🔔; QC nhập → QL thấy Chờ duyệt; duyệt + việc con → QC 🔔. Không lỗi.
+  - 31/10 (tiếp): ĐỌC cũng cần mã nhóm (`?k=`, PHIEN_BAN_CV '31/10 doc-can-ma'); nút ⬇ Excel (CSV danh sách đang lọc, 26 cột); đầu trang gọn trên điện thoại; hướng dẫn `HUONG_DAN_CONG_VIEC.md`.
   - **Cần user**: tạo Sheet + triển khai Apps Script theo hướng dẫn đầu file .gs, gửi URL /exec để điền `pms_api.js`.
   **App điện thoại (PWA, 31/10)**: `app/qc.webmanifest` (start_url `ban_do_qc.html?app=1`, standalone, icon từ logo: `app/icon-*.png`, `apple-touch-icon.png`) + `sw_qc.js`.
   `sw_qc.js` CHỈ xử lý file của app (ban_do_qc.html, qc_khoa.js, ảnh, manifest, icon; qcdata.js + phan_bo_qc.js = mạng trước, mất mạng dùng bản lưu). Mọi request khác (qc.html, app.html, Google Sheets) đi thẳng mạng. Đổi file app → tăng `CACHE='qc-app-vN'`.

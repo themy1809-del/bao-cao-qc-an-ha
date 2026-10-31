@@ -1,6 +1,6 @@
 /* =====================================================================
    QC CONG VIEC — kho du lieu dung chung cho "Cong viec QC" (ban_do_qc.html)
-   PHIEN_BAN_CV = '31/10 khoi-tao'
+   PHIEN_BAN_CV = '31/10 doc-can-ma'
 
    CACH TRIEN KHAI (lam 1 lan, khoang 10 phut):
    1. Tao 1 Google Sheet moi, dat ten "QC CONG VIEC". Chia se: CHI noi bo (khong "Bat ky ai co link").
@@ -14,10 +14,10 @@
    6. Dan URL vao file pms_api.js (window.QC_PMS_API = "https://script.google.com/macros/s/.../exec";) roi day len GitHub.
    CAP NHAT CODE VE SAU: Trien khai -> Quan ly trien khai -> ✏ -> Phien ban moi (GIU NGUYEN URL). KHONG tao trien khai moi.
 
-   GHI CHU AN TOAN: DOC (doGet) khong can ma — ai co URL /exec doc duoc danh sach viec (ten QC, du an, ket qua).
-   Neu can kin hon: them tham so ma vao doGet va cho trang gui kem (phai sua dong thoi ban_do_qc.html).
+   GHI CHU AN TOAN: CA DOC (doGet) lan GHI (doPost) deu can ma nhom PMS_KEY. Trang gui ma qua tham so ?k= khi doc.
+   Doi ma: sua PMS_KEY trong Script properties -> moi may nhap lai ma moi trong ⚙.
    ===================================================================== */
-var PHIEN_BAN_CV = '31/10 khoi-tao';
+var PHIEN_BAN_CV = '31/10 doc-can-ma';
 var TAB_VIEC = 'VIEC', TAB_LOG = 'NHAT KY';
 var COT = ['id', 'u', 'spm', 'st', 'han', 'pj', 'x', 'tieude', 'json'];   // json = toan bo viec; cac cot truoc de loc/xem nhanh tren Sheet
 
@@ -30,12 +30,14 @@ function khoiTao() {
   return 'OK ' + PHIEN_BAN_CV;
 }
 
-/* DOC: ?cb=<ten ham>&since=<ms> -> cb({ok, now, tasks:[...]}) — chi tra viec sua sau 'since' */
+/* DOC: ?cb=<ten ham>&since=<ms>&k=<ma nhom> -> cb({ok, now, tasks:[...]}) — chi tra viec sua sau 'since' */
 function doGet(e) {
   var p = (e && e.parameter) || {};
   var cb = String(p.cb || '');
   var out;
   try {
+    var key = PropertiesService.getScriptProperties().getProperty('PMS_KEY') || '';
+    if (!key || String(p.k || '') !== key) throw new Error('sai mã nhóm');
     var since = Number(p.since || 0) || 0;
     var sh = SpreadsheetApp.getActive().getSheetByName(TAB_VIEC);
     var tasks = [];

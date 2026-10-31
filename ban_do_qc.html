@@ -430,6 +430,7 @@ body.appmode{overflow:hidden}
 .pmswb{max-width:1880px;margin:0 auto;padding:10px max(14px,env(safe-area-inset-right,0px)) 40px max(14px,env(safe-area-inset-left,0px))}
 .pmwh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 0 10px;position:sticky;top:0;background:var(--bg);z-index:3}
 .pmwt{font-size:20px;font-weight:900}
+@media(max-width:600px){.pmwt{font-size:17px;flex:1 0 100%}.pmwh .btn{padding:7px 10px}.pmwh .sp{display:none}.pmbar>*{flex:1 1 45%}.pmbar #pmPv{flex:1 0 100%}}
 .pmbd{background:var(--bad);color:#fff;border-radius:999px;padding:0 6px;font-size:11px}
 .pmtabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:10px;overflow-x:auto}
 .pmtabs button{font:inherit;font-weight:800;font-size:14px;padding:9px 14px;border:0;background:none;color:var(--mut);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
@@ -1565,6 +1566,7 @@ function pmsTuNhap(o,nh){if(!o||!nh)return;var ngay=ngayKeTiep(),spm=String(o.p.
 function pmsApi(){return window.QC_PMS_API||'';}
 function pmsKey(){return pmsDoc('pmsKey','');}
 function pmsKeo(cb){var api=pmsApi();if(!api){PMS_SYNC.tt='local';cb&&cb();return;}
+  if(!pmsKey()){PMS_SYNC.tt='loi';PMS_SYNC.loi='chưa nhập mã nhóm (⚙)';cb&&cb();return;}
   var fn='_pmsCB'+Math.floor(Math.random()*1e9),sc=document.createElement('script'),xong=false;
   window[fn]=function(d){xong=true;try{delete window[fn];}catch(e){window[fn]=null;}sc.remove();
     if(!d||!d.ok){PMS_SYNC.tt='loi';PMS_SYNC.loi=(d&&d.loi)||'phản hồi lạ';cb&&cb();return;}
@@ -1572,7 +1574,7 @@ function pmsKeo(cb){var api=pmsApi();if(!api){PMS_SYNC.tt='local';cb&&cb();retur
     (d.tasks||[]).forEach(function(r){var l=PMS.tasks[r.id];if(!l||(+r.u||0)>(+l.u||0)){if(me&&r.spm===me&&r.ub!==pmAi()&&r.ub!=='Kế hoạch tự động'&&(!l||r.u>l.u))moiCuaToi++;PMS.tasks[r.id]=r;delete PMS.pend[r.id];}});
     PMS.since=d.now||Date.now();pmsLuu();PMS_SYNC.tt='ok';PMS_SYNC.luc=pmLuc();PMS_SYNC.loi='';
     if(moiCuaToi)pmsBao(moiCuaToi);cb&&cb();};
-  sc.src=api+(api.indexOf('?')>=0?'&':'?')+'cb='+fn+'&since='+(PMS.since||0)+'&_t='+Date.now();
+  sc.src=api+(api.indexOf('?')>=0?'&':'?')+'cb='+fn+'&since='+(PMS.since||0)+'&k='+encodeURIComponent(pmsKey())+'&_t='+Date.now();
   sc.onerror=function(){PMS_SYNC.tt='loi';PMS_SYNC.loi='không kết nối được Web App';try{delete window[fn];}catch(e){}cb&&cb();};
   document.head.appendChild(sc);setTimeout(function(){if(!xong&&PMS_SYNC.tt!=='loi'){PMS_SYNC.tt='loi';PMS_SYNC.loi='quá thời gian';}},20000);}
 var _pmsT=null;function pmsDay(){if(!pmsApi())return;clearTimeout(_pmsT);_pmsT=setTimeout(pmsDayNgay,1500);}
@@ -1703,7 +1705,7 @@ function moPMSW(){var w=document.getElementById('pmsW');w.hidden=false;document.
 function vePMSW(){var w=document.getElementById('pmsWB');if(!w)return;PMS_DS=dsPMS();var ds=PMS_DS.filter(locPMS),tb=pmsThongBao();
   var h='<div class="pmwh"><b class="pmwt">📋 Công việc QC</b><span id="pmSync"></span><span class="sp"></span>'
     +(pmAiMa()?'<button class="btn" data-pmsact="tbmo">🔔'+(tb.length?' <b class="pmbd">'+tb.length+'</b>':'')+'</button>':'')
-    +'<button class="btn on" data-pmsact="tao">＋ Tạo việc</button><button class="btn" data-pmsact="cauhinh" title="Đồng bộ / mã nhóm / thông báo">⚙</button><button class="btn" data-pmsact="dongw" aria-label="Đóng">✕</button></div>'
+    +'<button class="btn on" data-pmsact="tao">＋ Tạo việc</button><button class="btn" data-pmsact="csv" title="Xuất danh sách đang lọc ra Excel (CSV)">⬇ Excel</button><button class="btn" data-pmsact="cauhinh" title="Đồng bộ / mã nhóm / thông báo">⚙</button><button class="btn" data-pmsact="dongw" aria-label="Đóng">✕</button></div>'
     +'<div class="pmtabs">'+PMS_VIEWS.map(function(v){return '<button class="'+(PMS_VIEW===v[0]?'on':'')+'" data-pmv="'+v[0]+'">'+v[1]+'</button>';}).join('')+'</div>'
     +'<div id="pmTbP"></div>'+pmBoLoc(PMS_DS)+'<div class="muted" style="font-size:12px;margin:-4px 0 8px">'+ds.length+' / '+PMS_DS.length+' việc phù hợp bộ lọc</div>';
   h+=PMS_VIEW==='ds'?veDS(ds):PMS_VIEW==='lich'?veLich(ds.concat([])):PMS_VIEW==='gantt'?veGantt(ds):PMS_VIEW==='nguoi'?veNguoi(ds):PMS_VIEW==='bc'?veBC(ds):veKanban(ds);
@@ -1757,6 +1759,12 @@ function cauHinh(){var dr=document.getElementById('pmsDr'),b=document.getElement
     +(pmAiMa()?'':'<label>Tên bạn<input id="cfAi" value="'+esc(pmsDoc('pms|ai','QLQC'))+'"></label>')+'</div>'
     +'<div style="margin-top:10px"><button class="btn on" data-pmsact="cfluu">Lưu</button> <button class="btn" data-pmsact="dongbo">⟳ Đồng bộ ngay</button>'+(window.Notification&&Notification.permission!=='granted'?' <button class="btn" data-pmsact="tbbat">🔔 Bật thông báo máy</button>':'')+'</div>'
     +'<p class="muted" style="font-size:12px">Thông báo hiện khi app đang mở (tự kiểm 1 phút/lần). Thông báo đẩy khi app tắt cần máy chủ đẩy riêng — chưa có.</p>';}
+function pmsCSV(){var ds=dsPMS().filter(locPMS),q=function(v){v=String(v==null?'':v);return /[",\n;]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+  var R=[['Mã việc','Tiêu đề','Người làm','Mã SPM','Xưởng','Tổ','Khâu','Dự án','Ưu tiên','Bắt đầu','Hạn','Tấn KH','Trạng thái','Quá hạn','Kết quả','Tấn NT','Loại lỗi','NCR','Lý do chưa làm','Xử lý','Người duyệt','Nhãn','Việc con xong','Bình luận','Nguồn','Sửa lần cuối']];
+  ds.forEach(function(t){var k=t.kq||{};R.push([t.id,t.tieude,titleCase(t.ten||''),t.spm,t.x,String(t.tk||'').split('.').slice(1).join('.'),CDN2[t.c]||'',t.pj,utMau(t.ut)[1],t.bd,t.han,t.ke,(PMS_COT.filter(function(c){return c[0]===t.st;})[0]||[0,t.st])[1],t.qua?'Có':'',
+    {dat:'Đạt',kd:'Không đạt',cl:'Chưa làm'}[k.kq]||'',k.t||'',k.loi||'',k.ncr?'Có':'',k.ly||'',t.xl||'',t.duyet||'',(t.nhan||[]).join(', '),(t.con||[]).filter(function(c){return c.x;}).length+'/'+(t.con||[]).length,(t.bl||[]).length,t.nguon==='kh'?'Kế hoạch':'Tạo tay',t.ub||'']);});
+  var bl=new Blob(['\ufeff'+R.map(function(r){return r.map(q).join(',');}).join('\n')],{type:'text/csv;charset=utf-8'}),u=URL.createObjectURL(bl),a=document.createElement('a');
+  a.href=u;a.download='cong_viec_qc_'+homNay()+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},500);}
 function datTT(id,st){var t=PMS.tasks[id];if(!t||t.st===st)return;var ten=(PMS_COT.filter(function(c){return c[0]===st;})[0]||[0,st])[1];pmSua(id,{st:st},'Chuyển trạng thái → '+ten);vePMSAll();}
 function alert2(m){var b=document.getElementById('pmsDrB');var d=document.createElement('div');d.className='nhw';d.textContent=m;b.appendChild(d);}
 function suKienPMS(){
@@ -1772,6 +1780,7 @@ function suKienPMS(){
     var a=e.target.closest('[data-pmsact]');if(a){var act=a.getAttribute('data-pmsact');
       if(act==='dongw'){w.hidden=true;document.body.style.overflow='';vePMS();return;}
       if(act==='tao'){formTao();return;}if(act==='cauhinh'){cauHinh();return;}
+      if(act==='csv'){pmsCSV();return;}
       if(act==='tbmo'){var p=document.getElementById('pmTbP');if(p&&p.innerHTML)p.innerHTML='';else veTB();return;}
       if(act==='tbdoc'){pmsGhi('pms|seen|'+pmAiMa(),Date.now());vePMSW();return;}
       if(act==='tbbat'){try{Notification.requestPermission().then(function(){vePMSW();});}catch(er){}return;}}
