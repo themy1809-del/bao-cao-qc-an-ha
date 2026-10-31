@@ -530,6 +530,14 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Rủi ro đã nêu với user: repo công khai → ảnh + tên QC ai cũng xem được.
   Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
   Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
+  **Công việc QC — PMS đầy đủ (31/10, user chọn cả 4: dữ liệu chung · nhiều góc nhìn · thuộc tính việc · báo cáo & thông báo)**:
+  - Kho `PMS.tasks` (localStorage `pms2`) + đồng bộ 2 chiều với Google Sheet qua `cong_cu_pc/QC_CONG_VIEC.gs` (doGet JSONP `?since=`, doPost `{key,ai,tasks}` upsert theo `u` mới nhất, LockService trong try). URL ở `pms_api.js` (ĐANG TRỐNG = chỉ trên máy). Mã nhóm (Script property `PMS_KEY`) nhập 1 lần trong ⚙.
+  - Việc tự sinh từ kế hoạch ngày mang `u:1` (cũ nhất) → không bao giờ đè chỉnh sửa trên máy chủ. Kết quả nhập cuối ca → `pmsTuNhap` cập nhật việc (Đạt→xong, Không đạt→chờ duyệt, Chưa làm→vướng).
+  - Không gian công việc toàn màn hình: Danh sách (nhóm theo trạng thái/người/dự án/xưởng/ưu tiên) · Kanban (kéo thả) · Lịch tuần · Gantt 4 tuần theo dự án · Theo người (tải = tấn mở ÷ tốc độ NT) · Báo cáo (KPI, KH vs TH 14 ngày, theo dự án). Bộ lọc + phạm vi + lưu góc nhìn.
+  - Thẻ: tiêu đề, người, ưu tiên 4 mức, bắt đầu/hạn, tấn, nhãn, mô tả, việc con, đính kèm (link https), kết quả NT, duyệt + xử lý / trả về, bình luận, lịch sử tự ghi.
+  - Thông báo: chuông cho QC (việc người khác giao/sửa); Notification API khi app đang mở (kiểm 60 s). Đẩy khi app tắt: CHƯA (cần máy chủ đẩy).
+  - Thử với máy chủ giả lập 2 máy (QL desktop + QC điện thoại): giao việc → QC thấy + 🔔; QC nhập → QL thấy Chờ duyệt; duyệt + việc con → QC 🔔. Không lỗi.
+  - **Cần user**: tạo Sheet + triển khai Apps Script theo hướng dẫn đầu file .gs, gửi URL /exec để điền `pms_api.js`.
   **App điện thoại (PWA, 31/10)**: `app/qc.webmanifest` (start_url `ban_do_qc.html?app=1`, standalone, icon từ logo: `app/icon-*.png`, `apple-touch-icon.png`) + `sw_qc.js`.
   `sw_qc.js` CHỈ xử lý file của app (ban_do_qc.html, qc_khoa.js, ảnh, manifest, icon; qcdata.js + phan_bo_qc.js = mạng trước, mất mạng dùng bản lưu). Mọi request khác (qc.html, app.html, Google Sheets) đi thẳng mạng. Đổi file app → tăng `CACHE='qc-app-vN'`.
   Chế độ app (`?app=1` hoặc mở từ icon): lần đầu chọn "Bạn là ai" (localStorage `appToi`) → Việc của tôi: kế hoạch ngày + nút Nhập kết quả (x/y đã nhập) + thẻ việc theo trạng thái; nút "Bản đồ" về trang đầy đủ.
