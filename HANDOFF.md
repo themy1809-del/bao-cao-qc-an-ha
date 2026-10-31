@@ -530,6 +530,11 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Rủi ro đã nêu với user: repo công khai → ảnh + tên QC ai cũng xem được.
   Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
   Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
+  **Theo mô hình ERPNext / OCA (31/10)** — đọc trực tiếp `erpnext/stock/doctype/quality_inspection(_reading).json` và README `OCA/manufacture/quality_control_oca`:
+  - Mỗi việc = 1 PHIẾU NT có số `NT-yymmdd-<SPM>-nn` (≈ naming_series), tham chiếu dự án·tổ (≈ reference_type Job Card), Số CK kiểm (≈ sample_size), Số CK lỗi, người kiểm (≈ inspected_by), người duyệt + xử lý (≈ verified_by).
+  - `MAU_KT` = mẫu kiểm theo khâu (≈ Quality Inspection Template / OCA Test): tiêu chí ĐỊNH LƯỢNG (min–max, nhập số đo → tự Đạt/Lỗi) và ĐỊNH TÍNH (Đạt/Lỗi). Một tiêu chí lỗi → phiếu Không đạt, tự điền loại lỗi. **Tiêu chí + dung sai là MẪU TẠM do Claude đặt — QC/QA phải duyệt.**
+  - Luồng OCA: Đạt → Hoàn thành (không cần duyệt); Không đạt → Chờ duyệt → quản lý chọn XỬ LÝ (Sửa lại & NT lại / NCR / Nhượng bộ / Loại bỏ) rồi Duyệt; Chưa làm → Vướng.
+  - CSV theo trường ERPNext (Số phiếu, Loại NT, Tham chiếu, Trạng thái, Số CK kiểm/lỗi, Tiêu chí lỗi, Người kiểm…).
   **Bảng công việc QC (PMS, kiểu Plane/Jira) — BẢN THỬ** (user 31/10 chọn "Quản lý công việc"): Kanban 5 cột Kế hoạch · Đang làm · Vướng · Chờ duyệt · Hoàn thành, ngay trên mục Kế hoạch ngày.
   Thẻ tự sinh từ kế hoạch ngày (việc "hôm nay") + thẻ tạo tay (người, dự án, tổ, khâu, tấn, mô tả, ưu tiên). Lọc theo QC / xưởng / tìm. Kéo thả đổi trạng thái; bấm thẻ → ngăn chi tiết (trạng thái, kết quả nhập, bình luận, nút Duyệt, mở màn nhập).
   Nối màn nhập cuối ca: Đạt/Không đạt → "Chờ duyệt"; Chưa làm → "Vướng"; trạng thái chỉnh tay ghi đè. Lưu localStorage theo ngày (`pms|tt|`, `pms|tay|`) — CHƯA dùng chung giữa máy, cần Apps Script + Sheet (chờ duyệt).
