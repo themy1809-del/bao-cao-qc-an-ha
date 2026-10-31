@@ -530,6 +530,10 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Rủi ro đã nêu với user: repo công khai → ảnh + tên QC ai cũng xem được.
   Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
   Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
+  **Nhập kết quả NT cuối ca — BẢN THỬ** (user 31/10 "nghiên cứu giao diện"): lớp phủ toàn màn hình trong ban_do_qc.html, mở từ nút "✍ Nhập kết quả" trên thẻ kế hoạch hoặc link `ban_do_qc.html#nhap-<mã SPM>` (tự chọn team).
+  Danh sách = việc "hôm nay" trong kế hoạch ngày, GOM THEO DỰ ÁN (nút "Đạt hết"); mỗi việc 1 chạm Đạt / Không đạt (loại lỗi + NCR) / Chưa làm (lý do); thêm việc ngoài KH; ghi chú ca; ảnh (chỉ xem trên máy).
+  Thanh tiến độ dính trên (tấn đạt / KH, số việc có kết quả). Tự lưu nháp localStorage theo ngày + QC + khu. "Gửi" = tóm tắt copy Zalo + tải CSV.
+  **CHƯA ghi về hệ thống** — muốn lưu tập trung cần Apps Script (doPost ghi 1 Sheet "KET QUA NT CUOI CA") → phải user duyệt + quyết định quan hệ với SPM (SPM vẫn là nguồn NT chính thức).
   **Kế hoạch làm việc trong ngày của QC** (user 31/10): mục ngay dưới ô số tổng. Cho NGÀY LÀM VIỆC KẾ TIẾP sau ngày SPM mới nhất (bỏ Chủ nhật), theo team đang chọn.
   Mỗi QC có mặt: xưởng (KHU.spmX) + khâu (cột công đoạn, `khauDS`: "Fitup · Final" = 2 khâu, "DIM" = Final DIM). Việc = tồn "Chưa QC" của khâu tại xưởng; Final/DIM = hàng NT hàn 30 ngày chưa có Final DIM (`_fdName` rỗng).
   Chia: tổ nào QC đó NT nhiều nhất 30 ngày → giao QC đó; còn lại chia đều. Thứ tự: dự án Ưu tiên (KHSX) → mẩu ≥0,3 t → tồn lâu → tấn. Tồn >90 ngày tách riêng "cần đối chiếu SPM", KHÔNG vào mục tiêu.
