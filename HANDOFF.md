@@ -530,6 +530,11 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Rủi ro đã nêu với user: repo công khai → ảnh + tên QC ai cũng xem được.
   Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
   Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
+  **Kế hoạch làm việc trong ngày của QC** (user 31/10): mục ngay dưới ô số tổng. Cho NGÀY LÀM VIỆC KẾ TIẾP sau ngày SPM mới nhất (bỏ Chủ nhật), theo team đang chọn.
+  Mỗi QC có mặt: xưởng (KHU.spmX) + khâu (cột công đoạn, `khauDS`: "Fitup · Final" = 2 khâu, "DIM" = Final DIM). Việc = tồn "Chưa QC" của khâu tại xưởng; Final/DIM = hàng NT hàn 30 ngày chưa có Final DIM (`_fdName` rỗng).
+  Chia: tổ nào QC đó NT nhiều nhất 30 ngày → giao QC đó; còn lại chia đều. Thứ tự: dự án Ưu tiên (KHSX) → mẩu ≥0,3 t → tồn lâu → tấn. Tồn >90 ngày tách riêng "cần đối chiếu SPM", KHÔNG vào mục tiêu.
+  Mục tiêu = tốc độ NT thực tế của QC (≥3 ngày dữ liệu, không thì bình quân nhóm) — GỢI Ý. Nút Copy (từng người / cả team) ra tin nhắn Zalo.
+  Kiểm 31/10 Team Kích thước: Fitup chờ 805,1 + Final chờ 397,6 = 1.202,7 t = tổng các thẻ (1.202,8, làm tròn). AH9 Final 0 là đúng (513,4 t hàn NT 30 ngày đều đã có Final).
   **Rà soát 4 tác tử (27/10): thiết kế · màu sắc · kỹ thuật · QC số liệu** — QC số liệu 22/24 khớp độc lập. Đã sửa:
   - Lỗi: tên dự án "[object Object]" (khoá `p` trùng); ghép dự án KHSX↔SPM chỉ dự phòng theo MÃ có chữ số và DUY NHẤT; `_num` theo `_khParseNum` của qc.html (dấu chấm nghìn); kéo cảm ứng (pointercancel + capture); Final DIM theo ĐÚNG `_fdName` của qc.html (trước đếm rộng hơn ~253 t/30 ngày); "Cộng" tồn xưởng cộng đủ mọi tổ.
   - Hiệu năng: `fm` dùng Intl.NumberFormat cache (~2×); `tocDo` tính 1 lần trong taiTinh; `veDA10` chỉ vẽ khi đọc xong KHSX dự án. Xoá mã thừa (spark, shortPj, lineCuaQC, mini…).
