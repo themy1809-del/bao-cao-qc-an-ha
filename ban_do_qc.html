@@ -136,7 +136,16 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .stageCard:fullscreen .stage{height:auto;flex:1}
 .bbIn{position:absolute;bottom:0;left:0;transform:translate(-50%,0);animation:bob 3.2s ease-in-out infinite;pointer-events:auto}
 @keyframes bob{0%,100%{translate:0 0}50%{translate:0 -10px}}
-@media (prefers-reduced-motion:reduce){.bbIn,.ring{animation:none}.world{transition:none}}
+/* 31/10 user: "khối lượng đổ vào nó cao lên — khi trình chiếu kiểu đổ vào": khối tổ dâng từ mặt sàn lên đúng độ cao
+   (--h đăng ký @property để trình duyệt nội suy được), lần lượt từng khối, mặt trên có vệt sáng như chất lỏng đang đổ */
+@property --h{syntax:'<length>';inherits:true;initial-value:0px}
+.world.doVao .bld.khau{animation:doVao 1.6s cubic-bezier(.16,.84,.24,1) both;animation-delay:var(--dd,0s)}
+@keyframes doVao{from{--h:0px}}
+.world.doVao .bld.khau .top::before{content:'';position:absolute;inset:0;border-radius:3px;pointer-events:none;
+  background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.42) 50%,transparent 70%) 0 0/260% 100% no-repeat;
+  animation:song 1.6s ease-out both;animation-delay:var(--dd,0s)}
+@keyframes song{from{background-position:130% 0;opacity:1}to{background-position:-70% 0;opacity:0}}
+@media (prefers-reduced-motion:reduce){.bbIn,.ring{animation:none}.world{transition:none}.world.doVao .bld.khau,.world.doVao .bld.khau .top::before{animation:none}}
 .tag3{min-width:150px;background:rgba(12,17,28,.92);border:1.5px solid var(--gold);border-radius:12px;padding:7px 10px 8px;color:#eef2f8;
   box-shadow:0 10px 26px rgba(0,0,0,.5);text-align:left;white-space:nowrap;position:relative}
 .tag3::after{content:'';position:absolute;left:50%;bottom:-9px;margin-left:-8px;border:8px solid transparent;border-top-color:var(--gold);border-bottom:0}
@@ -357,6 +366,7 @@ table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
           <button class="btn" data-cam="top">Nhìn thẳng</button>
           <button class="btn" data-cam="spin">⟳ Tự xoay</button>
           <button class="btn" data-cam="fs" title="Phóng bản đồ toàn màn hình">⛶ Toàn màn hình</button>
+          <button class="btn" data-cam="do" title="Cho các khối khối lượng dâng lên lại như đang đổ vào (dùng khi trình chiếu)">💧 Đổ vào</button>
         </div>
         <div class="seg noprint" id="ngaySeg" title="Chọn ngày xem số liệu SX / NT của từng tổ">
           <button class="btn" data-ng="-1" aria-label="Ngày trước">◀</button>
@@ -521,6 +531,9 @@ function hrLoad(){
 
 /* ---------- canh 3D ---------- */
 var W=document.getElementById('world'),ST=document.getElementById('stage');
+/* hiệu ứng ĐỔ VÀO: chỉ chạy khi vào xưởng / đổi kỳ / toàn màn hình / bấm 💧 — vẽ lại thường không chạy lại */
+var DOI=0,doT=null;
+function doVao(){DOI=0;W.classList.remove('doVao');void W.offsetWidth;W.classList.add('doVao');clearTimeout(doT);doT=setTimeout(function(){W.classList.remove('doVao');},4200);}
 var cam={rx:56,rz:-28,s:.62},spin=false,spinT=null;
 var NEN=PB.NEN||{w:1440,h:800,src:''};
 W.style.width=NEN.w+'px';W.style.height=NEN.h+'px';W.style.margin=(-NEN.h/2)+'px 0 0 '+(-NEN.w/2)+'px';
@@ -637,7 +650,7 @@ function veXuong(id){
         +(e.v[1]>0.05?'<div class="mt2"><b>'+fm(e.v[1],1)+'</b> t</div>':'')
         +'</div>';
       var selB=qiS>=0&&o[String(qiS)],fig=''; /* QC dung o VI TRI CO DINH theo so do (ben duoi), khong dung tren o to */
-      h+='<div class="bld bay khau'+(e.act?'':' rong')+(selB?' selq':'')+'" data-to="'+esc(e.tk)+'" style="left:'+L+'px;top:'+T+'px;width:'+bw+'px;height:'+bh+'px;--h:'+hh+'px;--bc:'+kk[2]+';--tx:'+kk[3]+'">'
+      h+='<div class="bld bay khau'+(e.act?'':' rong')+(selB?' selq':'')+'" data-to="'+esc(e.tk)+'" style="left:'+L+'px;top:'+T+'px;width:'+bw+'px;height:'+bh+'px;--h:'+hh+'px;--bc:'+kk[2]+';--tx:'+kk[3]+';--dd:'+(DOI++*0.07).toFixed(2)+'s">'
         +'<div class="fc top">'+mat+'</div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'+fig+'</div>';});
     if(du>0)h+='<div class="roadLbl" style="left:'+(z.x+8)+'px;top:'+(z.y+z.h-22)+'px;opacity:.85">+'+du+' tổ khác</div>';
   });
@@ -674,6 +687,7 @@ function veXuong(id){
 function ngayXuong(x){var sx=0,nt=0;Object.keys(TD).forEach(function(tk){if(tk.indexOf(x+'.')!==0)return;var a=TD[tk][NGAY];if(a){sx+=a.sx;nt+=a.nt;}});
   return '<div class="m">'+dVN(NGAY).slice(0,5)+': SX <b style="color:#fff">'+fm(sx,1)+'</b> · NT <b style="color:#F2D58A">'+fm(nt,1)+'</b> t</div>';}
 function veCanh(){
+  DOI=0;
   document.getElementById('stTitle').textContent=VIEW==='site'?'Tổng mặt bằng NM An Hạ — 3D':('Bên trong xưởng '+KHU[VIEW].ten+' — tổ gia công & QC');
   document.getElementById('btnBack').style.display=VIEW==='site'?'none':'';
   document.getElementById('colSeg').style.display=VIEW==='site'?'':'none';
@@ -747,7 +761,8 @@ function stopSpin(){if(spinT){cancelAnimationFrame(spinT);spinT=null;}spin=false
 function startSpin(){stopSpin();spin=true;W.classList.add('drag');var t0=performance.now(),z0=cam.rz;
   (function f(t){if(!spin)return;cam.rz=z0+(t-t0)*.012;applyCam();spinT=requestAnimationFrame(f);})(t0);}
 document.getElementById('camSeg').addEventListener('click',function(e){var b=e.target.closest('[data-cam]');if(!b)return;var k=b.getAttribute('data-cam');
-  if(k==='fs'){var cd=ST.closest('.stageCard');try{if(document.fullscreenElement)document.exitFullscreen();else if(cd.requestFullscreen)cd.requestFullscreen();}catch(er){}return;}
+  if(k==='do'){doVao();return;}
+  if(k==='fs'){var cd=ST.closest('.stageCard');try{if(document.fullscreenElement)document.exitFullscreen();else if(cd.requestFullscreen){cd.requestFullscreen();setTimeout(doVao,350);}}catch(er){}return;}
   setCamBtn(k);W.classList.remove('drag');
   if(k==='spin'){if(cam.rx<30)cam.rx=56;applyCam();setTimeout(startSpin,260);return;}stopSpin();
   if(k==='top'){cam.rx=0;cam.rz=0;}else if(VIEW!=='site'){cam.rx=32;cam.rz=0;}else{cam.rx=56;cam.rz=-28;}cam.s=fitScale();applyCam();});
@@ -775,12 +790,12 @@ function theQC(){var p=NGUOI[SELQ];if(!p)return '';var tt=qThucTe(p),q=p.qi>=0&&
   else h+='<div class="muted" style="margin-top:8px;font-size:12px">Không có lượt nghiệm thu trong SPM '+KY+' ngày.</div>';
   return h+'<div class="muted" style="font-size:11px;margin-top:6px">Trên bản đồ: viền xanh liền = xưởng được giao · viền xanh đứt = xưởng đang nghiệm thu nhiều nhất (nếu khác).</div></div>';}
 /* ---------- panel chi tiet 1 khu ---------- */
-function chon(id){if(KHU[id]&&KHU[id].gop)id=KHU[id].gop;if(!KHU[id])return;SEL=id;VIEW=id;stopSpin();setCamBtn('iso');cam.rx=32;cam.rz=0;veCanh();cam.s=fitScale();applyCam();veCanh();vePanel();}
+function chon(id){if(KHU[id]&&KHU[id].gop)id=KHU[id].gop;if(!KHU[id])return;SEL=id;VIEW=id;stopSpin();setCamBtn('iso');cam.rx=32;cam.rz=0;veCanh();cam.s=fitScale();applyCam();veCanh();vePanel();doVao();}
 function raNgoai(){SEL=null;VIEW='site';WD=null;cam.rx=56;cam.rz=-28;cam.s=fitScale();applyCam();veCanh();vePanel();}
 document.getElementById('btnBack').addEventListener('click',raNgoai);
 document.getElementById('ngaySeg').addEventListener('click',function(e){var b=e.target.closest('[data-ng]');if(!b)return;var g=b.getAttribute('data-ng');
   if(g==='ky')CHE='ky';else if(g==='ngay')CHE='ngay';else{CHE='ngay';var i=NGAYS.indexOf(NGAY)+(+g);if(i>=0&&i<NGAYS.length)NGAY=NGAYS[i];}
-  veCanh();vePanel();});
+  veCanh();vePanel();doVao();});
 function vePanel(){
   var el=document.getElementById('panel');
   if(!SEL){
