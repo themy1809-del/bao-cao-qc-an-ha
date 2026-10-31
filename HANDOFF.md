@@ -530,6 +530,9 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Rủi ro đã nêu với user: repo công khai → ảnh + tên QC ai cũng xem được.
   Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
   Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
+  **Bảng công việc QC (PMS, kiểu Plane/Jira) — BẢN THỬ** (user 31/10 chọn "Quản lý công việc"): Kanban 5 cột Kế hoạch · Đang làm · Vướng · Chờ duyệt · Hoàn thành, ngay trên mục Kế hoạch ngày.
+  Thẻ tự sinh từ kế hoạch ngày (việc "hôm nay") + thẻ tạo tay (người, dự án, tổ, khâu, tấn, mô tả, ưu tiên). Lọc theo QC / xưởng / tìm. Kéo thả đổi trạng thái; bấm thẻ → ngăn chi tiết (trạng thái, kết quả nhập, bình luận, nút Duyệt, mở màn nhập).
+  Nối màn nhập cuối ca: Đạt/Không đạt → "Chờ duyệt"; Chưa làm → "Vướng"; trạng thái chỉnh tay ghi đè. Lưu localStorage theo ngày (`pms|tt|`, `pms|tay|`) — CHƯA dùng chung giữa máy, cần Apps Script + Sheet (chờ duyệt).
   **Nhập kết quả NT cuối ca — BẢN THỬ** (user 31/10 "nghiên cứu giao diện"): lớp phủ toàn màn hình trong ban_do_qc.html, mở từ nút "✍ Nhập kết quả" trên thẻ kế hoạch hoặc link `ban_do_qc.html#nhap-<mã SPM>` (tự chọn team).
   Danh sách = việc "hôm nay" trong kế hoạch ngày, GOM THEO DỰ ÁN (nút "Đạt hết"); mỗi việc 1 chạm Đạt / Không đạt (loại lỗi + NCR) / Chưa làm (lý do); thêm việc ngoài KH; ghi chú ca; ảnh (chỉ xem trên máy).
   Thanh tiến độ dính trên (tấn đạt / KH, số việc có kết quả). Tự lưu nháp localStorage theo ngày + QC + khu. "Gửi" = tóm tắt copy Zalo + tải CSV.
