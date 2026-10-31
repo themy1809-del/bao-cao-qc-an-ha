@@ -631,3 +631,5 @@ Phiên Claude Code kế tiếp nên:
 - (tiếp, 31/10) Trang chính chia 3 tab: **Công việc & kế hoạch ngày** · **Tải QC & 10 dự án** · **Bảng phân bổ** (`chonTab`, nhớ tab trong `localStorage bdTab`; In báo cáo vẫn in đủ mọi khối).
 - Kéo thả / đổi trạng thái có Hoàn tác (`datTT`).
 - Xoá việc nay **đồng bộ lên máy chủ**: thay vì xoá hẳn, ghi "bia mộ" `{id, xoa:1, u}` → các máy khác nhận và ẩn. Trên Sheet QC CONG VIEC, dòng việc đã xoá có cột `st` trống, `json` chứa `"xoa":1` — đừng xoá tay những dòng này (máy khác chưa đồng bộ sẽ gửi lại việc cũ). Không phải sửa Apps Script.
+- (Impeccable lượt 2, 31/10) Bỏ nốt ký tự-icon trên nút (◐ ← ⟳ ⛶ ◀ ▶ ✕ ▾ ▸ ✓ ✗ ↩) → SVG `I()`; nút chỉ có icon đều có `aria-label`. Nhãn KPI bỏ chữ IN HOA giãn cách. Điện thoại (≤600px): bộ lọc gom vào nút **Lọc (n)** (`PMS_LOCMO`, class `.pmlf`). Icon đồng bộ đổi thành thanh trượt.
+- Đường nét đứt hồng/tím trên bản đồ 3D nằm trong ảnh `so_do_nha_may.webp` (sơ đồ gốc), không phải màu code.
