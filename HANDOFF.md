@@ -530,6 +530,9 @@ Hệ 1/2 dùng `Member punch no`; hệ 3 dùng `pn` (cột tuỳ layout A/B/C/D)
   Rủi ro đã nêu với user: repo công khai → ảnh + tên QC ai cũng xem được.
   Chọn 1 QC → chỉ hiện QC đó (thẻ ảnh lớn), xưởng khác thu về nhãn tên. Bản đồ trong xưởng: mỗi tổ chia 4 cột KHÂU
   Fitup #60A5FA · Hàn #F59E0B · Final #1E40AF · Sơn #16A34A (user yêu cầu Fitup/Hàn/Final; thêm Sơn vì có tổ sơn như AH3.TO1TP, bỏ thì mất số).
+  **App điện thoại (PWA, 31/10)**: `app/qc.webmanifest` (start_url `ban_do_qc.html?app=1`, standalone, icon từ logo: `app/icon-*.png`, `apple-touch-icon.png`) + `sw_qc.js`.
+  `sw_qc.js` CHỈ xử lý file của app (ban_do_qc.html, qc_khoa.js, ảnh, manifest, icon; qcdata.js + phan_bo_qc.js = mạng trước, mất mạng dùng bản lưu). Mọi request khác (qc.html, app.html, Google Sheets) đi thẳng mạng. Đổi file app → tăng `CACHE='qc-app-vN'`.
+  Chế độ app (`?app=1` hoặc mở từ icon): lần đầu chọn "Bạn là ai" (localStorage `appToi`) → Việc của tôi: kế hoạch ngày + nút Nhập kết quả (x/y đã nhập) + thẻ việc theo trạng thái; nút "Bản đồ" về trang đầy đủ.
   **Theo mô hình ERPNext / OCA (31/10)** — đọc trực tiếp `erpnext/stock/doctype/quality_inspection(_reading).json` và README `OCA/manufacture/quality_control_oca`:
   - Mỗi việc = 1 PHIẾU NT có số `NT-yymmdd-<SPM>-nn` (≈ naming_series), tham chiếu dự án·tổ (≈ reference_type Job Card), Số CK kiểm (≈ sample_size), Số CK lỗi, người kiểm (≈ inspected_by), người duyệt + xử lý (≈ verified_by).
   - `MAU_KT` = mẫu kiểm theo khâu (≈ Quality Inspection Template / OCA Test): tiêu chí ĐỊNH LƯỢNG (min–max, nhập số đo → tự Đạt/Lỗi) và ĐỊNH TÍNH (Đạt/Lỗi). Một tiêu chí lỗi → phiếu Không đạt, tự điền loại lỗi. **Tiêu chí + dung sai là MẪU TẠM do Claude đặt — QC/QA phải duyệt.**

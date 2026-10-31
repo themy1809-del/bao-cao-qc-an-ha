@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Bản đồ 3D phân bổ QC theo xưởng, tổ gia công và dự án — Nhà máy An Hạ, DDC.">
 <title>Bản đồ phân bổ QC — Nhà máy An Hạ</title>
+<link rel="manifest" href="app/qc.webmanifest">
+<meta name="theme-color" content="#0b0f17">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="QC An Hạ">
+<link rel="apple-touch-icon" href="app/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -396,6 +403,28 @@ table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
 .nhdr input{width:80px;font:inherit;font-size:14px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--surf);color:var(--ink)}
 .nhseg.sm button{padding:6px 10px;font-size:12.5px}
 @media(max-width:520px){.nhdr{grid-template-columns:1fr auto}.nhdr .nhseg.sm{grid-column:1/-1;width:100%}}
+.appv{position:fixed;inset:0;z-index:900;background:var(--bg);overflow:auto;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.appv[hidden]{display:none}
+body.appmode{overflow:hidden}
+.aph{position:sticky;top:0;z-index:2;display:flex;gap:10px;align-items:center;padding:10px max(14px,env(safe-area-inset-right,0px)) 10px max(14px,env(safe-area-inset-left,0px));background:var(--surf);border-bottom:1px solid var(--line)}
+.aph img{width:34px;height:34px;border-radius:8px;background:#fff;padding:2px}
+.aph b{display:block;font-size:16px;font-weight:900;color:var(--gold2)}.aph span{font-size:12px;color:var(--mut)}
+.apb{max-width:640px;margin:0 auto;padding:14px max(14px,env(safe-area-inset-right,0px)) 40px max(14px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
+.apb h2{margin:6px 0 0;font-size:22px}
+.apds{display:flex;flex-direction:column;gap:6px}
+.apqc{font:inherit;text-align:left;border:1px solid var(--line);background:var(--surf);color:var(--ink);border-radius:12px;padding:12px 14px;cursor:pointer}
+.apqc b{display:block;font-size:15.5px}.apqc span{font-size:12.5px;color:var(--mut)}
+.apqc[hidden]{display:none}
+.apme{display:flex;gap:12px;align-items:center}.apme .av{width:56px;height:56px;font-size:17px;margin:0}
+.apme b{display:block;font-size:18px;font-weight:900}.apme span{font-size:13px;color:var(--ink2)}
+.apcard{border:1px solid var(--line);border-radius:14px;background:var(--surf);padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.aprow{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.aprow span{display:block;font-size:12.5px}
+.apbig{display:block;font-size:34px;font-weight:900;line-height:1.05;color:var(--gold2);font-variant-numeric:tabular-nums}
+.apnhap{font-size:15px;padding:12px 14px;line-height:1.2;text-align:center}.apnhap small{font-weight:600;font-size:11.5px}
+.apl{font-size:14px}
+.apst{display:flex;gap:8px;align-items:baseline;border-top:3px solid var(--cc);padding-top:6px;margin-top:4px}
+.apfoot{margin-top:8px;font-size:12.5px}
 .foot{color:var(--mut);font-size:11.5px;margin:16px 0 4px;text-align:center}
 
 @media print{
@@ -515,6 +544,7 @@ table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
 
   <div class="note" id="noteSrc"></div>
   <div class="foot">Trang độc lập · chỉ đọc · không ghi dữ liệu về Google Sheet / SPM</div>
+  <div id="appV" class="appv" hidden></div>
   <div id="nhapOv" class="nhov" hidden role="dialog" aria-label="Nhập kết quả nghiệm thu cuối ca"><div class="nhwrap"><div class="nhbt">BẢN THỬ — chưa ghi về hệ thống</div><div id="nhapBody"></div></div></div>
 </div>
 
@@ -1554,6 +1584,57 @@ function suKienPMS(){
 function alert2(m){var b=document.getElementById('pmsDrB');var d=document.createElement('div');d.className='nhw';d.textContent=m;b.appendChild(d);}
 function datTT(id,st){var tt=pmsTT(),ov=tt[id]=tt[id]||{};ov.st=st;pmsGhi('pms|tt|'+ngayKeTiep(),tt);vePMS();}
 
+/* ================= CHE DO APP DIEN THOAI (ban_do_qc.html?app=1 hoac mo tu icon man hinh chinh) =================
+   Lan dau: chon "Toi la ai" (luu tren may). Sau do: viec cua toi hom nay + nhap ket qua cuoi ca + the viec cua toi.
+   Khong lam viec nang (ban do 3D) khi o man hinh app. */
+var APP=/[?&]app=1/.test(location.search)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+function appToi(){try{return localStorage.getItem('appToi')||'';}catch(e){return '';}}
+function appNV(){var ma=appToi();if(!ma)return null;var tm=null;TEAMS.forEach(function(t){if(!tm&&t.NGUOI.some(function(p){return String(p.spm).toLowerCase()===ma;}))tm=t;});
+  if(!tm)return null;if(TEAM.id!==tm.id){chonTeam(tm.id);taiTinh();veLai();}
+  return (KHN&&KHN.NV||[]).filter(function(o){return String(o.p.spm).toLowerCase()===ma;});}
+function veApp(){
+  var el=document.getElementById('appV');if(!el)return;el.hidden=false;document.body.classList.add('appmode');
+  var ma=appToi(),h='<div class="aph"><img src="logo_daidung.png" alt=""><div style="flex:1;min-width:0"><b>QC An Hạ</b><span>'+(D.updated?'SPM '+esc(D.updated):'')+(navigator.onLine===false?' · <b style="color:var(--warn)">ngoại tuyến</b>':'')+'</span></div><button class="btn" data-app="ban">Bản đồ</button></div>';
+  if(!ma){var ds=[];TEAMS.forEach(function(t){t.NGUOI.forEach(function(p){if(p.spm&&!ds.some(function(x){return x.p.spm===p.spm;}))ds.push({p:p,t:t});});});
+    ds.sort(function(a,b){return a.p.ten<b.p.ten?-1:1;});
+    h+='<div class="apb"><h2>Bạn là ai?</h2><p class="muted">Chọn tên một lần — app sẽ nhớ trên máy này.</p><input id="apTim" class="nhsel" style="width:100%" placeholder="Gõ tên hoặc mã SPM…"><div class="apds">'
+      +ds.map(function(x){return '<button class="apqc" data-app="chon" data-ma="'+esc(String(x.p.spm).toLowerCase())+'" data-tim="'+esc(bo(x.p.ten+' '+x.p.spm))+'"><b>'+esc(titleCase(x.p.ten))+'</b><span>'+esc(x.t.ngan||x.t.ten)+' · '+esc(x.p.khu||'—')+' · '+esc(x.p.spm)+'</span></button>';}).join('')+'</div></div>';
+    el.innerHTML=h;return;}
+  var nv=appNV();
+  if(!nv||!nv.length){h+='<div class="apb"><p>Không tìm thấy phân công cho mã <b>'+esc(ma)+'</b> (có thể đang vắng hoặc chưa có trong sơ đồ).</p><button class="btn" data-app="doi">Đổi người</button></div>';el.innerHTML=h;return;}
+  var o=nv[0];
+  h+='<div class="apb"><div class="apme">'+avHtml(o.p,o.g,true)+'<div style="flex:1;min-width:0"><b>'+esc(titleCase(o.p.ten))+'</b><span>'+nv.map(function(x){return esc((KHU[x.khu]?KHU[x.khu].ten:x.khu)+' · '+(x.cs.map(function(c){return CDN2[c];}).join(' + ')||'chưa giao khâu'));}).join('<br>')+'</span></div><button class="btn" data-app="doi" aria-label="Đổi người">⇄</button></div>';
+  nv.forEach(function(x,ix){
+    var nh=null;try{nh=JSON.parse(localStorage.getItem(nhapKey(x))||'null');}catch(e){}
+    var xong=nh&&nh.items?nh.items.filter(function(it){return it.kq;}).length:0,tong=x.ds?x.ds.filter(function(w){return w.hn;}).length:0;
+    h+='<div class="apcard"><div class="aprow"><div><span class="muted">Kế hoạch '+dVN(ngayKeTiep())+'</span><b class="apbig">'+fm(x.hn||0,1)+' t</b><span class="muted">'+tong+' việc'+(x.tanCu>0.05?' · tồn cũ '+fm(x.tanCu,1)+' t cần đối chiếu':'')+'</span></div>'
+      +(x.ds&&x.ds.length?'<button class="btn on apnhap" data-app="nhap" data-i="'+ix+'">✍ Nhập kết quả<br><small>'+xong+'/'+tong+' đã nhập</small></button>':'')+'</div>';
+    if(x.c==='lt'||!x.x)h+='<p class="muted">'+(x.c==='lt'?'Lắp thử: theo kế hoạch lắp thử của dự án.':'Giao việc theo chỉ đạo trực tiếp.')+'</p>';
+    else if(!x.ds||!x.ds.length)h+='<p class="muted">Không có tồn chờ NT — liên hệ quản lý để hỗ trợ xưởng khác.</p>';
+    else h+='<ol class="khnl apl">'+x.ds.filter(function(w){return w.hn;}).map(function(w){return '<li><b>'+esc(w.tk.split('.').slice(1).join('.'))+'</b>'+(x.cs.length>1?' <span class="chip">'+CDN2[w.c]+'</span>':'')+' · '+esc(tenDA(w.pj))+'<span class="khnr">'+fm(w.t,1)+' t'+(w.ut?' <span class="chip tn">Ưu tiên</span>':'')+'</span></li>';}).join('')+'</ol>';
+    h+='</div>';});
+  /* the viec cua toi (PMS) */
+  var my=(PMS_DS.length?PMS_DS:dsPMS()).filter(function(t){return String(t.spm).toLowerCase()===ma;});
+  if(my.length){h+='<div class="sec">Việc của tôi</div>'+PMS_COT.map(function(c){var cs=my.filter(function(t){return t.st===c[0];});if(!cs.length)return '';
+      return '<div class="apst" style="--cc:'+c[2]+'"><b>'+c[1]+'</b> <span class="muted">'+cs.length+'</span></div>'+cs.map(theNgan).join('');}).join('');}
+  h+='<div class="apfoot">'+(APP_CAI?'<button class="btn on" data-app="cai">📲 Cài app vào điện thoại</button>':'<span class="muted">Cài app: Chrome ⋮ → <b>Thêm vào màn hình chính</b> · iPhone: Safari ⎋ Chia sẻ → <b>Thêm vào MH chính</b></span>')+'</div></div>';
+  el.innerHTML=h;
+}
+var APP_CAI=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();APP_CAI=e;if(APP)veApp();});
+function suKienApp(){
+  var el=document.getElementById('appV');
+  el.addEventListener('click',function(e){var b=e.target.closest('[data-app]');if(b){var a=b.getAttribute('data-app');
+      if(a==='chon'){try{localStorage.setItem('appToi',b.getAttribute('data-ma'));}catch(er){}veApp();return;}
+      if(a==='doi'){try{localStorage.removeItem('appToi');}catch(er){}veApp();return;}
+      if(a==='nhap'){var nv=appNV();if(nv)moNhap(nv[+b.getAttribute('data-i')]);return;}
+      if(a==='ban'){el.hidden=true;document.body.classList.remove('appmode');window.scrollTo(0,0);cam.s=fitScale();applyCam();veCanh();return;}
+      if(a==='cai'&&APP_CAI){APP_CAI.prompt();APP_CAI=null;return;}}
+    var c=e.target.closest('[data-pms]');if(c){vePMS();moThe(c.getAttribute('data-pms'));}});
+  el.addEventListener('input',function(e){if(e.target.id!=='apTim')return;var q=bo(e.target.value);[].forEach.call(el.querySelectorAll('.apqc'),function(b){b.hidden=q&&b.getAttribute('data-tim').indexOf(q)<0;});});
+  window.addEventListener('online',function(){if(!el.hidden)veApp();});window.addEventListener('offline',function(){if(!el.hidden)veApp();});
+}
+
 function veLai(){veTai();veKHN();vePMS();veCanh();vePanel();veKpi();veBangAsg();veBangTo();veBangPj();veNote();}
 
 /* ---------- dieu khien chung ---------- */
@@ -1572,7 +1653,11 @@ if(!(D.rows&&D.rows.length)){document.getElementById('subLine').textContent='Kh�
 (function(){var sg=document.getElementById('teamSeg');sg.innerHTML=TEAMS.map(function(t){return '<button class="btn" data-team="'+esc(t.id)+'">Team '+esc(t.ngan||t.ten)+'</button>';}).join('');
   sg.addEventListener('click',function(e){var b=e.target.closest('[data-team]');if(!b)return;chonTeam(b.getAttribute('data-team'));taiTinh();veLai();});})();
 chonTeam(ls('bdqcTeam')||'kt');
-tinh();cam.s=fitScale();applyCam();veLai();hrLoad();khTai();pjTai();suKienNhap();suKienPMS();moNhapTuHash();
+tinh();cam.s=fitScale();applyCam();veLai();hrLoad();khTai();pjTai();suKienNhap();suKienPMS();suKienApp();moNhapTuHash();
+if(APP)veApp();
+/* dong man nhap / ngan chi tiet o che do app -> cap nhat man app */
+(function(){var od=dongNhap;dongNhap=function(){od();if(APP&&!document.getElementById('appV').hidden)veApp();};})();
+if('serviceWorker' in navigator&&location.protocol==='https:'){try{navigator.serviceWorker.register('sw_qc.js');}catch(e){}}
 document.getElementById('khnBody').addEventListener('click',function(e){
   var nb=e.target.closest('[data-khnnhap]');if(nb&&KHN){moNhap(KHN.sorted[+nb.getAttribute('data-khnnhap')]);return;}
   var m=e.target.closest('[data-khnmo]');if(m){var k=m.getAttribute('data-khnmo');KHN_MO[k]=!KHN_MO[k];veKHN();return;}
