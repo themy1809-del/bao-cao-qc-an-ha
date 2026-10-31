@@ -621,3 +621,10 @@ Phiên Claude Code kế tiếp nên:
    chỉ hỏi lại cho gọn.
 6. Đã trả lời → làm theo đúng thứ tự đã chốt, mỗi lần một việc, có đối soát số liệu trước/sau.
 7. Bất kỳ chỗ nào ghi **UNKNOWN — NEED USER CONFIRMATION** → hỏi user hoặc tra sheet sống, **không đoán**.
+
+### 31/10/2026 — `ban_do_qc.html`: đợt rà soát thiết kế theo Impeccable
+- Bỏ emoji trong giao diện → icon SVG nét (`I(name)`, bảng `ICP`); bản text copy Zalo/CSV giữ emoji.
+- Ưu tiên hiển thị bằng cột tín hiệu SVG (`pmBar`) thay ‼▲■▼.
+- Xoá việc / sửa hàng loạt / cân tải: có thanh "Hoàn tác" 8 giây (`pmChup` + `pmHoanTac`); hoàn tác ghi lại với `u` mới để đồng bộ đè lên.
+- Bỏ viền màu một bên (side-stripe) → nền nhuộm nhẹ; thêm `::selection`, `:focus-visible`, thanh cuộn, số dạng bảng; font số/tiêu đề `--fontD` (Barlow Condensed). Biến `--fd` vẫn là màu Final DIM — đừng dùng lại tên này.
+- `npx impeccable` bị môi trường chặn (chạy mã ngoài) — áp quy tắc thủ công.
