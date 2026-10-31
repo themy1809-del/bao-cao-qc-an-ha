@@ -44,6 +44,7 @@ Bộ lọc: người, xưởng, dự án, ưu tiên, nhãn, tìm; phạm vi Hôm
 ## 5. Giới hạn hiện tại
 
 - Thông báo hiện khi app **đang mở** (kiểm 1 phút/lần). Thông báo khi app tắt cần máy chủ đẩy — chưa có.
+- Việc đã xoá vẫn còn 1 dòng trên Sheet (cột st trống, json có "xoa":1) để các máy khác biết mà ẩn — không xoá tay.
 - Đính kèm là **link** (bản vẽ / ảnh trên Drive); chưa tải ảnh trực tiếp lên.
 - Tiêu chí & dung sai trong phiếu kiểm tra là **mẫu tạm** — QA cần duyệt / thay bằng ITP thật.
 - Kế hoạch ngày dựa trên SPM do PC đẩy (`qcdata.js`); SPM vẫn là nơi ghi nghiệm thu chính thức.

@@ -628,3 +628,6 @@ Phiên Claude Code kế tiếp nên:
 - Xoá việc / sửa hàng loạt / cân tải: có thanh "Hoàn tác" 8 giây (`pmChup` + `pmHoanTac`); hoàn tác ghi lại với `u` mới để đồng bộ đè lên.
 - Bỏ viền màu một bên (side-stripe) → nền nhuộm nhẹ; thêm `::selection`, `:focus-visible`, thanh cuộn, số dạng bảng; font số/tiêu đề `--fontD` (Barlow Condensed). Biến `--fd` vẫn là màu Final DIM — đừng dùng lại tên này.
 - `npx impeccable` bị môi trường chặn (chạy mã ngoài) — áp quy tắc thủ công.
+- (tiếp, 31/10) Trang chính chia 3 tab: **Công việc & kế hoạch ngày** · **Tải QC & 10 dự án** · **Bảng phân bổ** (`chonTab`, nhớ tab trong `localStorage bdTab`; In báo cáo vẫn in đủ mọi khối).
+- Kéo thả / đổi trạng thái có Hoàn tác (`datTT`).
+- Xoá việc nay **đồng bộ lên máy chủ**: thay vì xoá hẳn, ghi "bia mộ" `{id, xoa:1, u}` → các máy khác nhận và ẩn. Trên Sheet QC CONG VIEC, dòng việc đã xoá có cột `st` trống, `json` chứa `"xoa":1` — đừng xoá tay những dòng này (máy khác chưa đồng bộ sẽ gửi lại việc cũ). Không phải sửa Apps Script.

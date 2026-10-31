@@ -463,6 +463,9 @@ h1,.pmwt,.nht,.apme b{font-family:var(--fontD);letter-spacing:.01em}
 .toast button{font:inherit;font-weight:800;background:none;border:0;color:var(--gold);cursor:pointer;padding:4px 6px}
 @media (prefers-reduced-motion:no-preference){.toast{animation:toastIn .25s cubic-bezier(.16,1,.3,1)}@keyframes toastIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}}
 .foot{color:var(--mut);font-size:11.5px;margin:16px 0 4px;text-align:center}
+.tabbar{display:flex;flex-wrap:wrap;margin:0 0 12px;width:max-content;max-width:100%}.tabbar .btn{font-weight:700;padding:8px 14px}
+[data-tabp].tabhide{display:none}
+@media print{[data-tabp].tabhide{display:block!important}}
 
 @media print{
   @page{size:A4 landscape;margin:8mm}
@@ -534,7 +537,9 @@ h1,.pmwt,.nht,.apme b{font-family:var(--fontD);letter-spacing:.01em}
 
   <div class="kpis" id="kpis"></div>
 
-  <div class="card sect gold" style="margin:0 0 14px">
+  <div class="seg noprint tabbar" id="tabSeg" role="tablist" aria-label="Nhóm nội dung"><button class="btn on" data-tab="viec" role="tab">Công việc &amp; kế hoạch ngày</button><button class="btn" data-tab="tai" role="tab">Tải QC &amp; 10 dự án</button><button class="btn" data-tab="bang" role="tab">Bảng phân bổ</button></div>
+
+  <div class="card sect gold" data-tabp="viec" style="margin:0 0 14px">
     <h3>Công việc QC</h3>
     <div class="q" id="qPms"></div>
     <div id="pmsBody"></div>
@@ -542,39 +547,39 @@ h1,.pmwt,.nht,.apme b{font-family:var(--fontD);letter-spacing:.01em}
   <div id="pmsW" class="pmsw" hidden role="dialog" aria-label="Không gian công việc QC"><div id="pmsWB" class="pmswb"></div></div>
   <div id="pmsDr" class="nhov pmdr" hidden role="dialog" aria-label="Chi tiết công việc"><div class="nhwrap pmwrap"><div id="pmsDrB"></div></div></div>
 
-  <div class="card sect gold" style="margin:0 0 14px">
+  <div class="card sect gold" data-tabp="viec" style="margin:0 0 14px">
     <h3>Kế hoạch làm việc trong ngày của QC</h3>
     <div class="q" id="qKhn"></div>
     <div id="khnBody"></div>
   </div>
 
-  <div class="card sect gold" style="margin:0 0 14px">
+  <div class="card sect gold" data-tabp="tai" style="margin:0 0 14px">
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h3 style="margin:0">Tải QC theo KHSX — Fitup · Hàn · Sơn</h3><div class="sp"></div>
       <div class="seg noprint" id="winSeg" title="Khoảng kế hoạch tính tải"><button class="btn" data-win="7">7 ngày tới</button><button class="btn on" data-win="14">14 ngày tới</button><button class="btn" data-win="30">30 ngày tới</button></div></div>
     <div class="q" id="qTai" style="margin-top:6px"></div>
     <div id="taiBody"></div>
   </div>
 
-  <div class="card sect gold" style="margin:0 0 14px">
+  <div class="card sect gold" data-tabp="tai" style="margin:0 0 14px">
     <h3>10 dự án đang gia công — QC có đáp ứng không?</h3>
     <div class="q" id="qDa10"></div>
     <div id="da10Body"></div>
   </div>
 
 
-  <div class="card sect">
+  <div class="card sect" data-tabp="bang">
     <h3>Bảng phân bổ QC — kế hoạch &amp; thực tế</h3>
     <div class="q" id="qAsg"></div>
     <div class="tw"><table id="tAsg"></table></div>
   </div>
 
-  <div class="card sect">
+  <div class="card sect" data-tabp="bang">
     <h3>Tổ gia công × QC phụ trách (thực tế SPM)</h3>
     <div class="q" id="qTo"></div>
     <div class="tw"><table id="tTo"></table></div>
   </div>
 
-  <div class="card sect">
+  <div class="card sect" data-tabp="bang">
     <h3>QC phụ trách từng công đoạn theo dự án (thực tế SPM)</h3>
     <div class="q" id="qPj"></div>
     <div class="tw"><table id="tPj"></table></div>
@@ -600,6 +605,10 @@ var MOBANG=false, MOIM=false, KY=30, COLMODE='t', SEL=null, VIEW='site', HR={}, 
 /* ---------- tien ich ---------- */
 var ICP={'clip':'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>', 'bell':'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>', 'pen':'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', 'gear':'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>', 'plus':'<path d="M12 5v14M5 12h14"/>', 'down':'<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>', 'att':'<path d="m21.4 11.1-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/>', 'cal':'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', 'pin':'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>', 'img':'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>', 'print':'<path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>', 'phone':'<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>', 'alert':'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/>', 'chk':'<path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>', 'chat':'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>', 'sync':'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>'};
 function I(n){return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+(ICP[n]||'')+'</svg>';}
+/* Tab trang chinh (P1 Impeccable: trang qua dai). In bao cao van in du moi khoi. */
+function chonTab(k){try{localStorage.setItem('bdTab',k);}catch(e){}
+  document.querySelectorAll('#tabSeg [data-tab]').forEach(function(b){var on=b.getAttribute('data-tab')===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',on);});
+  document.querySelectorAll('[data-tabp]').forEach(function(c){c.classList.toggle('tabhide',c.getAttribute('data-tabp')!==k);});}
 function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 var _NF={};function fm(n,d){d=d==null?2:d;var f=_NF[d]||(_NF[d]=new Intl.NumberFormat('vi-VN',{minimumFractionDigits:d,maximumFractionDigits:d}));return f.format(Number(n||0));}
 function bo(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toUpperCase().replace(/\s+/g,' ').trim();}
@@ -1603,12 +1612,12 @@ function veSync(){var e=document.getElementById('pmSync');if(!e)return;var n=Obj
     :'<span class="pmsy e" title="'+esc(PMS_SYNC.loi)+'">● Lỗi đồng bộ: '+esc(PMS_SYNC.loi)+'</span>';}
 /* ---------- thong bao ---------- */
 function pmsThongBao(){var me=pmAiMa();if(!me)return [];var seen=pmsDoc('pms|seen|'+me,0);
-  return Object.keys(PMS.tasks).map(function(k){return PMS.tasks[k];}).filter(function(t){return t.spm===me&&(+t.u||0)>seen&&t.ub&&t.ub!==pmAi()&&t.ub!=='Kế hoạch tự động';})
+  return Object.keys(PMS.tasks).map(function(k){return PMS.tasks[k];}).filter(function(t){return !t.xoa&&t.spm===me&&(+t.u||0)>seen&&t.ub&&t.ub!==pmAi()&&t.ub!=='Kế hoạch tự động';})
     .sort(function(a,b){return b.u-a.u;});}
 function pmsBao(n){try{if(window.Notification&&Notification.permission==='granted')new Notification('QC An Hạ',{body:n+' việc mới / có thay đổi cho bạn',icon:'app/icon-192.png'});}catch(e){}}
 /* ---------- du lieu cho cac goc nhin ---------- */
 function dsPMS(){pmsTuKH();var NG=PM_NG();
-  return Object.keys(PMS.tasks).map(function(k){var t=PMS.tasks[k],p=NG[t.spm];t.p=p;t.ten=p?p.ten:t.spm;
+  return Object.keys(PMS.tasks).filter(function(k){return !PMS.tasks[k].xoa;}).map(function(k){var t=PMS.tasks[k],p=NG[t.spm];t.p=p;t.ten=p?p.ten:t.spm;
     t.o=p?{p:p}:null;t.qua=t.st!=='xong'&&t.han&&t.han<homNay();return t;});}
 function pmHienTai(t){var pv=PMS_LOC.pv,d=ngayKeTiep();
   if(pv==='ngay')return (t.bd||t.han)<=d&&(t.han||t.bd)>=d;
@@ -1802,7 +1811,7 @@ function pmsCSV(){var ds=dsPMS().filter(locPMS),q=function(v){v=String(v==null?'
     {dat:'Đạt',kd:'Không đạt',cl:'Chưa làm'}[k.kq]||'',k.t||'',k.loi||'',k.ncr?'Có':'',k.ly||'',t.xl||'',t.duyet||'',(t.nhan||[]).join(', '),(t.con||[]).filter(function(c){return c.x;}).length+'/'+(t.con||[]).length,(t.bl||[]).length,t.nguon==='kh'?'Kế hoạch':'Tạo tay',t.ub||'']);});
   var bl=new Blob(['\ufeff'+R.map(function(r){return r.map(q).join(',');}).join('\n')],{type:'text/csv;charset=utf-8'}),u=URL.createObjectURL(bl),a=document.createElement('a');
   a.href=u;a.download='cong_viec_qc_'+homNay()+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},500);}
-function datTT(id,st){var t=PMS.tasks[id];if(!t||t.st===st)return;var ten=(PMS_COT.filter(function(c){return c[0]===st;})[0]||[0,st])[1];pmSua(id,{st:st},'Chuyển trạng thái → '+ten);vePMSAll();}
+function datTT(id,st){var t=PMS.tasks[id];if(!t||t.st===st)return;var ten=(PMS_COT.filter(function(c){return c[0]===st;})[0]||[0,st])[1],chup=pmChup([id]);pmSua(id,{st:st},'Chuyển trạng thái → '+ten);vePMSAll();pmHoanTac('Đã chuyển sang '+ten,chup);}
 function alert2(m){var b=document.getElementById('pmsDrB');var d=document.createElement('div');d.className='nhw';d.textContent=m;b.appendChild(d);}
 function suKienPMS(){
   var el=document.getElementById('pmsBody'),w=document.getElementById('pmsW'),dr=document.getElementById('pmsDr');
@@ -1826,7 +1835,7 @@ function suKienPMS(){
     var ck=e.target.closest('[data-pmchk]');if(ck){var id0=ck.getAttribute('data-pmchk');if(ck.checked)PMS_CHON[id0]=1;else delete PMS_CHON[id0];vePMSW();return;}
     var all=e.target.closest('[data-pmall]');if(all){dsPMS().filter(locPMS).forEach(function(t){if(all.checked)PMS_CHON[t.id]=1;else delete PMS_CHON[t.id];});vePMSW();return;}
     var c=e.target.closest('[data-pms]');if(c)moThe(c.getAttribute('data-pms'));});
-  function apHL(f,v){var ids=Object.keys(PMS_CHON).filter(function(id){return PMS.tasks[id];});if(!v||!ids.length)return;var NG=PM_NG(),chup=pmChup(ids);
+  function apHL(f,v){var ids=Object.keys(PMS_CHON).filter(function(id){return PMS.tasks[id]&&!PMS.tasks[id].xoa;});if(!v||!ids.length)return;var NG=PM_NG(),chup=pmChup(ids);
     ids.forEach(function(id){var t=PMS.tasks[id],patch={},log='';
       if(f==='nhan'){if((t.nhan||[]).indexOf(v)>=0)return;patch.nhan=(t.nhan||[]).concat([v]);log='Thêm nhãn: '+v;}
       else{patch[f]=v;log={spm:'Người làm',st:'Trạng thái',ut:'Ưu tiên',han:'Hạn'}[f]+' → '+(f==='spm'?(NG[v]?titleCase(NG[v].ten):v):f==='st'?(PMS_COT.filter(function(c){return c[0]===v;})[0]||[0,v])[1]:f==='ut'?utMau(v)[1]:dVN(v))+' (hàng loạt)';}
@@ -1860,7 +1869,7 @@ function suKienPMS(){
     if(act==='duyet'){var xl=document.getElementById('pmXl').value;if(!xl){alert2('Chọn cách xử lý trước khi duyệt.');return;}pmSua(PMS_MO,{st:'xong',xl:xl,duyet:pmAi()+' · '+pmLuc()},'Duyệt · '+xl);vePMSAll();return;}
     if(act==='trave'){pmSua(PMS_MO,{st:'dang'},'Trả về QC làm lại');vePMSAll();return;}
     if(act==='bl'){var nd=document.getElementById('pmBl').value.trim();if(!nd)return;pmSua(PMS_MO,{bl:(PMS.tasks[PMS_MO].bl||[]).concat([{ai:pmAi(),nd:nd,luc:pmLuc()}])},'Bình luận');vePMSAll();return;}
-    if(act==='xoa'){var chupX=pmChup([PMS_MO]),tdX=(PMS.tasks[PMS_MO]||{}).tieude||'';delete PMS.tasks[PMS_MO];delete PMS.pend[PMS_MO];pmsLuu();dr.hidden=true;vePMSAll();pmHoanTac('Đã xoá: '+tdX.slice(0,40),chupX);return;}
+    if(act==='xoa'){var chupX=pmChup([PMS_MO]),tdX=(PMS.tasks[PMS_MO]||{}).tieude||'';PMS.tasks[PMS_MO]={id:PMS_MO,xoa:1,u:Date.now(),ub:pmAi(),tieude:tdX};PMS.pend[PMS_MO]=1;pmsLuu();pmsDay();dr.hidden=true;vePMSAll();pmHoanTac('Đã xoá: '+tdX.slice(0,40),chupX);return;}
     if(act==='cfluu'){var k=document.getElementById('cfKey');if(k)pmsGhi('pmsKey',k.value.trim());var ai=document.getElementById('cfAi');if(ai&&ai.value.trim())pmsGhi('pms|ai',ai.value.trim());dr.hidden=true;pmsDay();vePMSAll();return;}
     if(act==='dongbo'){pmsKeo(function(){pmsDayNgay();vePMSAll();});return;}
     if(act==='tbbat'){try{Notification.requestPermission().then(function(){cauHinh();});}catch(er){}return;}
@@ -1949,6 +1958,8 @@ if(APP)veApp();
 /* dong man nhap / ngan chi tiet o che do app -> cap nhat man app */
 (function(){var od=dongNhap;dongNhap=function(){od();if(APP&&!document.getElementById('appV').hidden)veApp();};})();
 if('serviceWorker' in navigator&&location.protocol==='https:'){try{navigator.serviceWorker.register('sw_qc.js');}catch(e){}}
+document.getElementById('tabSeg').addEventListener('click',function(e){var b=e.target.closest('[data-tab]');if(b)chonTab(b.getAttribute('data-tab'));});
+(function(){var k='viec';try{k=localStorage.getItem('bdTab')||'viec';}catch(e){}chonTab(/^(viec|tai|bang)$/.test(k)?k:'viec');})();
 document.getElementById('khnBody').addEventListener('click',function(e){
   var nb=e.target.closest('[data-khnnhap]');if(nb&&KHN){moNhap(KHN.sorted[+nb.getAttribute('data-khnnhap')]);return;}
   var m=e.target.closest('[data-khnmo]');if(m){var k=m.getAttribute('data-khnmo');KHN_MO[k]=!KHN_MO[k];veKHN();return;}
