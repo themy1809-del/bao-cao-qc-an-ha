@@ -65,7 +65,8 @@ window.PHAN_BO_QC = {
     {ten:'NGUYỄN VĂN KIÊN', anh:'1dV4bPgHPJ0DbBCTZuAddp90guyFRWNBc',       spm:'kiennv',   khu:'AH2MR', cd:'—',               da:'DANIELI', gc:'kiêm từ AH2', kiem:1},
     {ten:'NGUYỄN NGỌC TÍNH', anh:'1bqTv5ymz58-dKAdOGXHdOlEKKSDyKvs-',      spm:'tinhnn',   khu:'AH8',   cd:'Lắp thử',         da:'EVAPCO — AH8', gc:'chuyển từ AH4'},
     {ten:'BÙI VÂN ĐIỆP', anh:'1XvUxwFrpN1Fm_2iAmuMLVsC_UOpLnw14',          spm:'diepbv',   khu:'AH9',   cd:'—',               da:'—', gc:'ra site / vắng', vang:1},
-    {ten:'NGUYỄN PHAN ĐĂNG QUANG', anh:'1JRnhsOMycPkqiAPIKMXewxLZ8ipcUkTA', spm:'quangnpd', khu:'AH6',   cd:'Fitup · Final',   da:'chưa giao line', gc:'đã đi làm lại (27/10)'}
+    {ten:'NGUYỄN PHAN ĐĂNG QUANG', anh:'1JRnhsOMycPkqiAPIKMXewxLZ8ipcUkTA', spm:'quangnpd', khu:'AH6',   cd:'Fitup · Final',   da:'chưa giao line', gc:'đã đi làm lại (27/10)'},
+    {ten:'VÕ TUẤN VŨ', anh:'1HBaFQYOK3jcODNPerDa6o797o_pjUPhJ',          spm:'vuvt',     khu:'AH3',   cd:'DIM',             da:'Xưởng AH3', gc:'cập nhật 31/10 · trước: Team Hàn AH4'}
     /* 27/10: TRAN VAN DUONG (duongtv) bo khoi Team Kich thuoc theo user — la QC Han (xem TEAMS 'han') */
   ],
   /* ===== MOI TEAM 1 SO DO RIENG (27/10/2026) =====
@@ -85,10 +86,10 @@ window.PHAN_BO_QC = {
       {ten:'NGUYỄN DUY KHANG', anh:'1vc1Rxw_RwyU6xYOtRqPNonN2mjO13unc',    spm:'khangnd',  khu:'AH3', cd:'Hàn', da:'—', gc:''},
       {ten:'PHẠM HOÀNG LONG', anh:'1ZG23sjPYbmE8fC11Y_J4aAqw_I5f16HD',     spm:'longph1',  khu:'AH3', cd:'Hàn', da:'—', gc:''},
       {ten:'VÕ HOÀNG SANG', anh:'1fbnZU1Nko_LH7-bc6jDmqkcMixuxIYKc',       spm:'sangvh',   khu:'AH4', cd:'Hàn', da:'—', gc:''},
-      {ten:'VÕ TUẤN VŨ', anh:'1HBaFQYOK3jcODNPerDa6o797o_pjUPhJ',          spm:'vuvt',     khu:'AH4', cd:'Hàn', da:'—', gc:''},
+      /* 31/10: VO TUAN VU (vuvt) chuyen sang Team Kich thuoc — DIM AH3 theo user */
       {ten:'TRẦN NGUYỄN ĐẠI PHÁT', anh:'1SB2Aidt-DjIAYahxNTed2giAQq8F6J9k',spm:'phattnd',  khu:'AH6', cd:'Hàn', da:'—', gc:''},
       {ten:'NGUYỄN NGỌC CHUNG', anh:'1x2hj6ia4B3gJPs7ak7G_CTuCafO6qu41',   spm:'chungnn',  khu:'AH9', cd:'Hàn', da:'—', gc:''},
-      {ten:'TRẦN VĂN DƯƠNG', anh:'1Ll6aC-2IDYG03BLpjGTAXIlFcYLy8UdD',      spm:'duongtv',  khu:'AH9', cd:'Hàn', da:'—', gc:''}
+      {ten:'TRẦN VĂN DƯƠNG', anh:'1Ll6aC-2IDYG03BLpjGTAXIlFcYLy8UdD',      spm:'duongtv',  khu:'AH4', cd:'Hàn', da:'—', gc:'cập nhật 31/10 · trước: AH9'}
      ]},
     {id:'son', ten:'Team QC Sơn & Đóng gói', ngan:'Sơn', cd:'p', capNhat:'27/10/2026',
      nguon:'Sheet nhân sự QC_HR_DATA_CENTER (không ghi xưởng) — khu vực TẠM theo xưởng nghiệm thu sơn nhiều nhất trong SPM 30 ngày',
