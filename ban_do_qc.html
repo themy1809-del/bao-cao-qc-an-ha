@@ -36,8 +36,8 @@
 }
 [data-theme=light]{
   --bg:#f3f5f8; --bg2:#e9edf3; --surf:#fff; --surf2:#f8fafc; --line:#dde3ea; --line2:#eef2f5;
-  --ink:#111827; --ink2:#374151; --mut:#6b7280;
-  --ok:#15803D; --warn:#B4690E; --bad:#B42318;
+  --ink:#111827; --ink2:#374151; --mut:#59606d; /* WCAG AA: mut/warn/ok dam hon de dat 4.5:1 tren nen sang */
+  --ok:#146c34; --warn:#955409; --bad:#B42318;
   --sel:#0369a1; --idle:#3b5bdb; --tn:#B42318; --fT:#1d4ed8; --wT:#B45309; --pT:#15803D;
   --ground:#cfe3cf; --ground2:#bfd8bf; --road:#c9ced6;
   --roof:#a9b6c8; --roofHi:#c4cfdc; --side1:#8796ab; --side2:#76859b;
@@ -468,6 +468,7 @@ h1,.pmwt,.nht,.apme b{font-family:var(--fontD);letter-spacing:.01em}
 .toast button{font:inherit;font-weight:800;background:none;border:0;color:var(--gold);cursor:pointer;padding:4px 6px}
 @media (prefers-reduced-motion:no-preference){.toast{animation:toastIn .25s cubic-bezier(.16,1,.3,1)}@keyframes toastIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}}
 .foot{color:var(--mut);font-size:11.5px;margin:16px 0 4px;text-align:center}
+.clickable{display:inline-block;padding:4px 0;min-height:24px}[data-mobang]{display:flex;align-items:center;gap:4px;min-height:28px}
 .tabbar{display:flex;flex-wrap:wrap;margin:0 0 12px;width:max-content;max-width:100%}.tabbar .btn{font-weight:700;padding:8px 14px}
 [data-tabp].tabhide{display:none}
 @media print{[data-tabp].tabhide{display:block!important}}
@@ -614,6 +615,14 @@ function I(n){return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+(
 function chonTab(k){try{localStorage.setItem('bdTab',k);}catch(e){}
   document.querySelectorAll('#tabSeg [data-tab]').forEach(function(b){var on=b.getAttribute('data-tab')===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',on);});
   document.querySelectorAll('[data-tabp]').forEach(function(c){c.classList.toggle('tabhide',c.getAttribute('data-tabp')!==k);});}
+/* WCAG 2.1.1 ban phim: phan tu bam duoc khong phai nut -> tabindex + role=button, Enter/Space = bam; Esc dong lop phu */
+var KB_SEL='#world [data-khu],.clickable,tr.click,[data-moim],[data-mobang],[data-pms].pmc,[data-khnmo],[data-q]:not(button):not(a),[data-sel]:not(button):not(a)';
+function kbHoa(){document.querySelectorAll(KB_SEL).forEach(function(e){if(/^(BUTTON|A|INPUT|SELECT|TEXTAREA)$/.test(e.tagName)||e.hasAttribute('tabindex'))return;e.setAttribute('tabindex','0');if(!e.getAttribute('role'))e.setAttribute('role','button');});}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){var q=function(id,sel){var o=document.getElementById(id);if(o&&!o.hidden){var b=o.querySelector(sel);if(b){b.click();return true;}}return false;};
+    if(q('pmsDr','[data-pmsact="dong"]')||q('nhapOv','[data-nh="dong"]')||q('pmsW','[data-pmsact="dongw"]'))e.preventDefault();return;}
+  if((e.key==='Enter'||e.key===' ')&&e.target.getAttribute&&e.target.getAttribute('role')==='button'&&!/^(BUTTON|A)$/.test(e.target.tagName)){e.preventDefault();if(e.target.closest('#world')&&e.target.hasAttribute('data-khu'))chon(e.target.getAttribute('data-khu'));else e.target.click();}});
+if(window.MutationObserver){var _kbT=0;new MutationObserver(function(){clearTimeout(_kbT);_kbT=setTimeout(kbHoa,60);}).observe(document.body,{childList:true,subtree:true});}
 function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 var _NF={};function fm(n,d){d=d==null?2:d;var f=_NF[d]||(_NF[d]=new Intl.NumberFormat('vi-VN',{minimumFractionDigits:d,maximumFractionDigits:d}));return f.format(Number(n||0));}
 function bo(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toUpperCase().replace(/\s+/g,' ').trim();}
@@ -982,7 +991,7 @@ function vePanel(){
     bang+='</tbody></table><div class="note"><b>Tấn NT</b> = tổng khối lượng (tấn) QC đã nghiệm thu trong kỳ, cộng cả 3 công đoạn Fitup + Hàn + Sơn (theo QCDate trong SPM). AH1, AH8, AH2 MR không có trong SPM nên không có số tấn.</div>';
     /* 27/10 user: AN bang theo xuong — chi mo khi bam */
     el.innerHTML='<div id="qcCard">'+theQC()+'</div>'+h
-      +'<div class="sec">Danh sách QC — '+esc(TEAM.ten)+' · bấm để xem vị trí</div><input id="qcFind" placeholder="Tìm tên hoặc mã SPM…" value="'+esc(QFIND)+'"><div id="qcList">'+dsQC()+'</div>'
+      +'<div class="sec">Danh sách QC — '+esc(TEAM.ten)+' · bấm để xem vị trí</div><input id="qcFind" aria-label="Tìm QC theo tên hoặc mã SPM" placeholder="Tìm tên hoặc mã SPM…" value="'+esc(QFIND)+'"><div id="qcList">'+dsQC()+'</div>'
       +'<div class="muted" data-mobang="1" style="margin-top:12px;font-size:12px;cursor:pointer">'+(MOBANG?I('cd')+'Ẩn bảng theo xưởng':I('cr')+'Xem bảng theo xưởng')+'</div>'
       +(MOBANG?bang:'');
     return;}
@@ -1647,7 +1656,7 @@ function theNgan(t){var tk=String(t.tk||'').split('.').slice(1).join('.'),cx=(t.
     +(kqC||(t.bl||[]).length||(t.con||[]).length||(t.dk||[]).length?'<div class="pmf">'+kqC+((t.con||[]).length?'<span class="muted pmm">'+I('chk')+cx+'/'+t.con.length+'</span>':'')+((t.dk||[]).length?'<span class="muted pmm">'+I('att')+t.dk.length+'</span>':'')+((t.bl||[]).length?'<span class="muted pmm">'+I('chat')+t.bl.length+'</span>':'')+'</div>':'')+'</div>';}
 /* ---------- goc nhin ---------- */
 var PMS_VIEWS=[['ds','Danh sách'],['kanban','Kanban'],['lich','Lịch tuần'],['gantt','Gantt'],['nguoi','Theo người'],['bc','Báo cáo']];
-function pmBoLoc(all){var o=function(arr,cur,lab,id,fmt){return '<select id="'+id+'" class="nhsel pmlf"><option value="">'+lab+'</option>'+arr.map(function(v){return '<option value="'+esc(v)+'"'+(cur===v?' selected':'')+'>'+esc(fmt?fmt(v):v)+'</option>';}).join('')+'</select>';};
+function pmBoLoc(all){var o=function(arr,cur,lab,id,fmt){return '<select id="'+id+'" class="nhsel pmlf" aria-label="'+lab+'"><option value="">'+lab+'</option>'+arr.map(function(v){return '<option value="'+esc(v)+'"'+(cur===v?' selected':'')+'>'+esc(fmt?fmt(v):v)+'</option>';}).join('')+'</select>';};
   var U=function(f){var m={};all.forEach(function(t){var v=f(t);if(Array.isArray(v))v.forEach(function(x){if(x)m[x]=1;});else if(v)m[v]=1;});return Object.keys(m).sort();};
   var NG=PM_NG(),nLoc=['qc','x','pj','ut','nhan','tim'].filter(function(k){return PMS_LOC[k];}).length;
   return '<div class="pmbar'+(PMS_LOCMO?' mo':'')+'">'
@@ -1658,8 +1667,8 @@ function pmBoLoc(all){var o=function(arr,cur,lab,id,fmt){return '<select id="'+i
     +o(U(function(t){return t.pj;}),PMS_LOC.pj,'Tất cả dự án','pmPj',tenDA)
     +o(PMS_UT.map(function(u){return u[0];}),PMS_LOC.ut,'Mọi ưu tiên','pmUt',function(v){return utMau(v)[1];})
     +o(U(function(t){return t.nhan;}),PMS_LOC.nhan,'Mọi nhãn','pmNh')
-    +'<input id="pmTim" class="nhsel pmlf" placeholder="Tìm…" value="'+esc(PMS_LOC.tim)+'">'
-    +'<select id="pmGv" class="nhsel pmlf"><option value="">Góc nhìn đã lưu…</option>'+Object.keys(pmsDoc('pms|gv',{})).map(function(k){return '<option>'+esc(k)+'</option>';}).join('')+'<option value="__luu">+ Lưu bộ lọc hiện tại</option></select>'
+    +'<input id="pmTim" class="nhsel pmlf" aria-label="Tìm việc" placeholder="Tìm…" value="'+esc(PMS_LOC.tim)+'">'
+    +'<select id="pmGv" class="nhsel pmlf" aria-label="Góc nhìn đã lưu"><option value="">Góc nhìn đã lưu…</option>'+Object.keys(pmsDoc('pms|gv',{})).map(function(k){return '<option>'+esc(k)+'</option>';}).join('')+'<option value="__luu">+ Lưu bộ lọc hiện tại</option></select>'
     +'</div>';}
 function veKanban(ds){return '<div class="pmk5">'+PMS_COT.map(function(c){var cs=ds.filter(function(t){return t.st===c[0];}),tt=cs.reduce(function(a,t){return a+(+t.ke||0);},0);
     cs.sort(function(a,b){return pmUtSo(a)-pmUtSo(b)||(a.han||'').localeCompare(b.han||'');});

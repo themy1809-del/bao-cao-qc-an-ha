@@ -639,3 +639,9 @@ Phiên Claude Code kế tiếp nên:
 - `.claude/settings.json`: khai báo marketplace `knowledge-work-plugins` + bật 8 plugin: data, design, operations, productivity, product-management, engineering, enterprise-search, pdf-viewer.
 - Áp dụng cho mọi phiên **Claude Code** mở repo này (web/desktop/CLI). Lần đầu Claude Code sẽ hỏi tin cậy/cài — bấm đồng ý.
 - Plugin khác trong marketplace (sales, finance, legal, marketing…): gõ `/plugin` để bật thêm. Chỉ là cấu hình, không ảnh hưởng trang web.
+
+### 01/11/2026 — `ban_do_qc.html`: kiểm tra truy cập WCAG 2.1 AA (plugin Design → accessibility-review)
+- Theme sáng: `--mut #59606d`, `--warn #955409`, `--ok #146c34` (trước 4,0–4,4:1 → nay ≥4,5:1). Theme tối không đổi.
+- Ô lọc / tìm có `aria-label`. Phím **Esc** đóng thẻ việc → màn nhập → không gian công việc.
+- Phần tử bấm được không phải nút (xưởng trên bản đồ 3D, thẻ việc, "+ n việc khác", dòng bảng): tự gắn `tabindex=0 role=button` (`kbHoa` + MutationObserver), Enter/Space = bấm; xưởng 3D gọi `chon()` vì bản đồ dùng pointerup.
+- Vùng bấm chữ ≥24px. Kết quả đo lại (1400 tối/sáng, 390 sáng): tương phản 0 lỗi, thiếu tên 0, thiếu nhãn 0, vùng bấm nhỏ 0, phần tử không tới được bằng bàn phím 0.
