@@ -634,3 +634,8 @@ Phiên Claude Code kế tiếp nên:
 - (Impeccable lượt 2, 31/10) Bỏ nốt ký tự-icon trên nút (◐ ← ⟳ ⛶ ◀ ▶ ✕ ▾ ▸ ✓ ✗ ↩) → SVG `I()`; nút chỉ có icon đều có `aria-label`. Nhãn KPI bỏ chữ IN HOA giãn cách. Điện thoại (≤600px): bộ lọc gom vào nút **Lọc (n)** (`PMS_LOCMO`, class `.pmlf`). Icon đồng bộ đổi thành thanh trượt.
 - Đường nét đứt hồng/tím trên bản đồ 3D nằm trong ảnh `so_do_nha_may.webp` (sơ đồ gốc), không phải màu code.
 - (Impeccable lượt 3, 31/10) Gỡ "thẻ lồng thẻ": `.mxsum/.mxk` (ô số trong khối Công việc QC, 10 dự án, Báo cáo) thành dải số liệu phẳng ngăn vạch 1px; điện thoại xếp lưới 3 cột. Chỉ sửa CSS.
+
+### 01/11/2026 — Nạp plugin `anthropics/knowledge-work-plugins` cho dự án
+- `.claude/settings.json`: khai báo marketplace `knowledge-work-plugins` + bật 8 plugin: data, design, operations, productivity, product-management, engineering, enterprise-search, pdf-viewer.
+- Áp dụng cho mọi phiên **Claude Code** mở repo này (web/desktop/CLI). Lần đầu Claude Code sẽ hỏi tin cậy/cài — bấm đồng ý.
+- Plugin khác trong marketplace (sales, finance, legal, marketing…): gõ `/plugin` để bật thêm. Chỉ là cấu hình, không ảnh hưởng trang web.
