@@ -1,7 +1,10 @@
 {
   "extraKnownMarketplaces": {
     "knowledge-work-plugins": {
-      "source": { "source": "github", "repo": "anthropics/knowledge-work-plugins" }
+      "source": {
+        "source": "github",
+        "repo": "anthropics/knowledge-work-plugins"
+      }
     }
   },
   "enabledPlugins": {
@@ -12,6 +15,7 @@
     "product-management@knowledge-work-plugins": true,
     "engineering@knowledge-work-plugins": true,
     "enterprise-search@knowledge-work-plugins": true,
-    "pdf-viewer@knowledge-work-plugins": true
+    "pdf-viewer@knowledge-work-plugins": true,
+    "human-resources@knowledge-work-plugins": true
   }
 }
