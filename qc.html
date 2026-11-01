@@ -2690,7 +2690,7 @@ const PJTYPE=[
 ];
 const _PJT_FALLBACK={k:2,label:'Nhà xưởng / kho / nhà máy',K:1.1};
 const _pjtCache={};
-function pjType(i){if(_pjtCache[i])return _pjtCache[i];const nm=D.P[i]||'';for(const t of PJTYPE){if(t.re.test(nm))return _pjtCache[i]=t;}return _pjtCache[i]=_PJT_FALLBACK;}
+function pjType(i){if(_pjtCache[i])return _pjtCache[i];const nm=(D.P[i]||'').normalize('NFC');for(const t of PJTYPE){if(t.re.test(nm))return _pjtCache[i]=t;}return _pjtCache[i]=_PJT_FALLBACK;}
 function FSX(){return D.rows.filter(r=>(!S.x.size||S.x.has(D.X[r[1]]))&&(!S.to.size||S.to.has(toKey(r)))&&(!S.pj.size||S.pj.has(r[0]))&&(!S.q.size||S.q.has(D.Q[r[5]]))&&r[4]&&(!DR.from||r[4]>=DR.from)&&(!DR.to||r[4]<=DR.to));}
 var _BSCK='aopBsc2026';
 function _bscLoad(){try{return JSON.parse(localStorage.getItem(_BSCK)||'{}');}catch(e){return{};}}

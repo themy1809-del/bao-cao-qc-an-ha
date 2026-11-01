@@ -4,6 +4,7 @@
 ## STATUS
 
 ### DONE
+**Hệ 3 — 01/11/2026: `qc.html` `pjType` chuẩn hoá NFC** → SVĐ Hùng Vương K 1.1→1.6 (SLQĐ). KPI tấn + `QCDATA.check` lệch 0. Chờ user xác nhận K của 10625-030 (DGRP + Cảng HK, đang 1.8).
 **Hệ 3 — 27/10/2026: trang mới `ban_do_qc.html` (Bản đồ phân bổ QC 3D) — trên nhánh, CHƯA lên `main`.**
 Trang ĐỘC LẬP (không sửa `qc.html`/`app.html`/`doc.html`). Tổng mặt bằng 3D (CSS 3D) NM An Hạ theo sơ đồ
 user gửi → bấm xưởng → bản đồ bên trong xưởng: mỗi tổ gia công 1 ô (màu = công đoạn chính, cao = tấn NT),

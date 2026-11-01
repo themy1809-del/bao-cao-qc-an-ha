@@ -645,3 +645,10 @@ Phiên Claude Code kế tiếp nên:
 - Ô lọc / tìm có `aria-label`. Phím **Esc** đóng thẻ việc → màn nhập → không gian công việc.
 - Phần tử bấm được không phải nút (xưởng trên bản đồ 3D, thẻ việc, "+ n việc khác", dòng bảng): tự gắn `tabindex=0 role=button` (`kbHoa` + MutationObserver), Enter/Space = bấm; xưởng 3D gọi `chon()` vì bản đồ dùng pointerup.
 - Vùng bấm chữ ≥24px. Kết quả đo lại (1400 tối/sáng, 390 sáng): tương phản 0 lỗi, thiếu tên 0, thiếu nhãn 0, vùng bấm nhỏ 0, phần tử không tới được bằng bàn phím 0.
+
+### 01/11/2026 — `qc.html`: hệ số K dự án khó bỏ sót tên Unicode NFD (user duyệt)
+- `pjType` (`qc.html:2693`) chuẩn hoá tên dự án `normalize('NFC')` trước khi test `PJTYPE`. 1 dòng.
+- Lý do: 2/120 tên trong `QCDATA.P` lưu dạng NFD → "10626-051 DG SÂN VẬN ĐỘNG HÙNG VƯƠNG" bị K=1.1, nay **K=1.6**.
+  Tên NFD còn lại "DỰ ÁN NỘI BỘ CHO NHÀ MÁY AN HẠ - 2026" vẫn K=1.1. Chỉ ảnh hưởng SLQĐ, không đổi tấn.
+- Kiểm: `node --check` 15 script OK; `QCDATA.check` + KPI Tổng quan trước/sau lệch 0. Trang khác không có cùng lỗi.
+- Mở: "10625-030 DGRP GA T2 CẢNG HÀNG KHÔNG QT PHÚ QUỐC" K=1.8 do quy tắc DGRP xét trước — **UNKNOWN — NEED USER CONFIRMATION** giữ 1.8 hay 1.6.
