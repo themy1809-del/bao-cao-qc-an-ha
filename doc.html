@@ -88,7 +88,7 @@ th{color:#4b5563}
 .uxi{display:inline-flex;width:1.05em;height:1.05em;vertical-align:-.16em;flex:none}.uxi svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 [data-theme=light] [style*="color:#eab308"]{color:#A16207!important}
 [data-theme=light] [style*="color:#f97316"]{color:#C2410C!important}
-[data-theme=light] [style*="color:#16a34a"]{color:#15803D!important}
+[data-theme=light] [style*="color:#16a34a"]{color:#166534!important}
 [data-theme=light] [style*="color:#dc2626"],[data-theme=light] [style*="color:#DC2626"]{color:#B91C1C!important}
 [data-theme=dark] .view [style*="color:#dc2626"],[data-theme=dark] .view [style*="color:#DC2626"]{color:#F87171!important}
 [data-theme=dark] .view [style*="color:#2563eb"],[data-theme=dark] .view [style*="color:#2563EB"]{color:#60A5FA!important}
@@ -98,10 +98,28 @@ th{color:#4b5563}
 [data-theme=dark] .tag[style*="background:var(--bad)"]{color:#3b0a0a!important}
 [data-theme=light] .nav-item.active small{color:#fff}
 [data-theme=light] [style*="color:#888"]{color:#5f6772!important}
-[data-theme=light]{--muted:#5f6772}
+[data-theme=light]{--muted:#5f6772;--good:#15803d;--bad:#b91c1c}
 [data-theme=dark]{--muted:#A3B0A8}
 [data-theme=light]{--pzok:#14532d;--pzy:#713f12;--pzo:#7c2d12;--pzr:#7f1d1d}
 [data-theme=dark]{--pzok:#4ade80;--pzy:#facc15;--pzo:#fb923c;--pzr:#f87171}
+/* theme toi (02/11/2026): bo mau toi day du — mac dinh van la theme sang */
+[data-theme=dark]{--bg:#0f1720;--card:#16212d;--line:#2a3746;--ink:#E5ECF3;--acc:#3b82f6;--good:#4ade80;--warn:#fbbf24;--bad:#f87171;--rowH:#1d2a38;color-scheme:dark}
+[data-theme=dark] th{color:#C3CFDB}
+[data-theme=dark] .tag{background:#263342;color:#D1DAE3}
+[data-theme=dark] .tag.g{background:#14361f;color:#86EFAC}[data-theme=dark] .tag.b{background:#172c4d;color:#93C5FD}[data-theme=dark] .tag.o{background:#3d2410;color:#FDBA74}
+[data-theme=dark] .bar{background:#2a3746}
+[data-theme=dark] [style*="color:#dc2626"],[data-theme=dark] [style*="color:#DC2626"]{color:#F87171!important}
+[data-theme=dark] [style*="color:#2563eb"],[data-theme=dark] [style*="color:#2563EB"]{color:#60A5FA!important}
+[data-theme=dark] [style*="color:#16a34a"]{color:#4ADE80!important}
+[data-theme=dark] [style*="color:#eab308"]{color:#FACC15!important}
+[data-theme=dark] [style*="color:#f97316"]{color:#FB923C!important}
+[data-theme=dark] [style*="color:#0e7490"]{color:#22D3EE!important}
+[data-theme=dark] .bdg,[data-theme=dark] [style*="background:var(--bad)"]{color:#3b0a0a!important}
+[data-theme=dark] .qf.on{background:#1d4ed8;border-color:#1d4ed8}
+[data-theme=dark] .sbi.on{background:#1d4ed8}
+[data-theme=dark] .user .av,[data-theme=dark] .sb .logo .ic{background:#1d4ed8}
+.thTog{border:1px solid var(--line);background:var(--card);color:inherit;border-radius:8px;min-width:32px;min-height:32px;font:inherit;display:inline-flex;align-items:center;justify-content:center}
+@media (pointer:coarse){.thTog{min-height:44px;min-width:44px}}
 .uxdot{display:inline-block;width:.62em;height:.62em;border-radius:50%;vertical-align:.05em;margin:0 .15em}.uxdot.rong{background:transparent;border:1.5px solid #9CA3AF}
 </style>
 </head>
@@ -119,6 +137,7 @@ th{color:#4b5563}
       <select id="dcProjSel" onchange="_dcProjSel(this.value)" style="padding:6px 8px;border:1px solid var(--line);border-radius:9px;background:var(--card);max-width:230px"></select>
       <span class="q" id="dcSrc">—</span><span class="q" id="dcStatus" style="color:var(--warn)"></span>
       <button class="qf" onclick="_dcLoad(true)" title="Xóa cache, tải lại từ Google Sheet">↻</button>
+      <button class="thTog" id="thTog" type="button" aria-label="Đổi giao diện sáng / tối" title="Đổi giao diện sáng / tối" onclick="_docTheme()"><span class="uxi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span></button>
       <span class="bell" title="Cảnh báo" onclick="_dcSetMod('alert')">🔔<span class="bdg" id="bellBdg" style="display:none"></span></span>
       <div class="user"><div class="av">QC</div><div><div class="nm">Phòng QC An Hạ</div><div class="rl">Document Control</div></div></div>
     </header>
@@ -129,11 +148,16 @@ th{color:#4b5563}
   </div>
 </div>
 <div id="dcDrawerWrap" style="display:none"></div>
+<script>
+/* theme sang/toi cho doc.html (02/11/2026) — nho theo trinh duyet, mac dinh sang */
+function _docTheme(t){var d=document.documentElement;t=t||(d.getAttribute('data-theme')==='dark'?'light':'dark');d.setAttribute('data-theme',t);try{localStorage.setItem('doc_theme',t);}catch(e){}if(arguments.length===0){try{for(var k in CH){CH[k].dispose();delete CH[k];}}catch(e){}try{_dcRender();}catch(e){}}}
+(function(){var t='light';try{t=localStorage.getItem('doc_theme')||'light';}catch(e){}document.documentElement.setAttribute('data-theme',t);})();
+</script>
 <script src="ddc_data.js"></script>
 <script>
 /* ==== helper thay cho khung qc.html ==== */
 var CH={};
-function ch(id){var el=document.getElementById(id);if(!el||typeof echarts==='undefined')return null;if(!CH[id])CH[id]=echarts.init(el);return CH[id];}
+function ch(id){var el=document.getElementById(id);if(!el||typeof echarts==='undefined')return null;if(!CH[id])CH[id]=echarts.init(el,document.documentElement.getAttribute('data-theme')==='dark'?'dark':null);return CH[id];}
 function setOpt(id,opt,onClick){var c=ch(id);if(!c)return;opt.backgroundColor='transparent';opt.textStyle={fontFamily:'Inter,Be Vietnam Pro,system-ui,sans-serif'};c.setOption(opt,true);c.off('click');if(onClick)c.on('click',onClick);c.resize();}
 window.addEventListener('resize',function(){for(var k in CH){try{CH[k].resize();}catch(e){}}});
 var fm1=function(v){return (Math.round((v||0)*10)/10).toLocaleString('vi-VN');};
