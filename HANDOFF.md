@@ -672,3 +672,8 @@ Phiên Claude Code kế tiếp nên:
 - Kết quả: qua 11 màn, emoji hiển thị 218 → 0 (chỉ còn ✓✔↔↗); 87 icon/chấm SVG; KPI + `QCDATA.check` trước/sau GIỐNG HỆT; lỗi JS 0; tải trang không chậm hơn.
 - Kèm theo (Doc Control nhúng trong qc.html, trước chưa đo tới): khai báo `--muted` theo theme; chữ đỏ/xanh/tím ghi cứng → bản sáng ở theme tối; ô ma trận Phase×Zone dùng `--pzok/--pzy/--pzo/--pzr`; menu đang chọn chữ số trắng. **Màu tím `#7c3aed` (Lệch REV) → `#0e7490`** ở qc.html (8 chỗ) và doc.html (1 chỗ) theo quy ước tránh tím. Đo lại 10 module × 2 theme: tương phản 0.
 - CHƯA: emoji trong `doc.html` (62) — có thể dùng lại nguyên khối `uxpmico`.
+
+### 02/11/2026 — Áp skill toàn bộ + ghi luật cho mọi phiên
+- `uxpmico` (đổi emoji → SVG) đã có ở 6 trang: qc, doc, app, kiem_tra_waiting, section_tracker, dangnhap — bảng icon giống hệt nhau (thêm ⇔ ❓). `doc.html`: emoji hiển thị 285 → 0.
+- `kiem_tra/ui_audit.js`: bộ đo dùng lại cho mọi phiên (tương phản, nhãn, bàn phím, emoji, nút <44px, lỗi JS).
+- `CLAUDE.md` mục **4B**: BẮT BUỘC dùng skill `ui-ux-pro-max` cho mọi việc giao diện + 3 khối chung cho trang mới + chạy `ui_audit.js` trước khi giao.

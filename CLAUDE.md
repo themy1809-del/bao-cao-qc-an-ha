@@ -143,6 +143,27 @@ Do not invent missing business rules.
 - Báo cáo phải để người ngoài đọc hiểu: tên dự án ĐẦY ĐỦ, nói rõ nợ HỒ SƠ GÌ
   kèm số lượng, đơn vị đúng (khối lượng = TẤN), số làm tròn 2 chữ số.
 
+### 4B. BẮT BUỘC dùng skill `ui-ux-pro-max` cho MỌI việc giao diện (user chốt 02/11/2026 — áp cho mọi phiên chat)
+- Skill nằm trong repo: `.claude/skills/ui-ux-pro-max/` (MIT, nguồn ghi ở `NGUON.txt`). Mỗi khi thiết kế / sửa / soát
+  trang web, báo cáo PDF, biểu đồ → gọi skill `ui-ux-pro-max` trước, tra quy tắc bằng
+  `python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<truy vấn>" --domain ux` (hoặc `chart`, `color`…).
+  Chỉ lấy QUY TẮC UX; bảng màu / font / bố cục landing mà skill gợi ý KHÔNG được thay màu thương hiệu & màu khâu ở trên.
+  Không dùng `--persist` trong repo nếu user chưa đồng ý.
+- Mọi trang HTML đang dùng đều có 3 khối chung — trang MỚI phải chép nguyên 3 khối này từ `qc.html`:
+  `<style id="uxpm">` (cuối `<head>`: viền focus, giảm chuyển động, vùng bấm 44px khi `pointer:coarse`, con trỏ, `.uxi/.uxdot`),
+  `<script id="uxpmico">` (đổi emoji/ký hiệu làm icon → SVG trên DOM; KHÔNG đụng dữ liệu, chữ copy Zalo/xuất file, biểu đồ, option, placeholder),
+  `<script id="uxpmjs">` (aria-label cho ô thiếu nhãn; `[onclick]`/`.clickable` → `tabindex=0 role=button`, Enter/Space).
+  Bảng icon `uxpmico` phải GIỐNG HỆT nhau ở mọi trang — sửa một chỗ thì đồng bộ tất cả.
+- Không dùng emoji làm icon trong UI (dùng SVG nét, 1 bộ). Giữ ✓ ✔ ↔ ↗ khi là dấu chữ trong câu/bảng; regex đọc dữ liệu (vd `/✓/`) không được đổi.
+  Chữ copy gửi Zalo / CSV được giữ emoji.
+- Tương phản chữ ≥ 4,5:1 (chữ lớn ≥ 3:1) ở CẢ theme sáng và tối; màu khâu dùng làm CHỮ được đậm/sáng hơn theo theme
+  (vd `qc.html`: tối `--fd #2DD4BF --f #60A5FA --p #4ADE80`; sáng `--w #B45309`) — màu tô biểu đồ giữ nguyên.
+  Trạng thái không chỉ dựa vào màu (kèm chữ / dấu). Không dùng tím (đã đổi `#7c3aed` → `#0e7490`; khâu Sơn = xanh lá).
+- Trước khi giao bất kỳ thay đổi giao diện: chạy `python3 -m http.server 8765 &` rồi `node kiem_tra/ui_audit.js [trang.html]`
+  → phải "DAT HET" (trừ ngoại lệ ghi trong đầu file). Với `qc.html` vẫn phải đối chiếu KPI Tổng quan + `QCDATA.check` lệch 0.
+- Báo cáo PDF (đánh giá QC, sản lượng…): theo cùng quy tắc — biểu đồ theo tháng = đường, phân biệt chuỗi bằng kiểu nét + chú giải,
+  số căn phải có phân cách nghìn. File có dữ liệu nhân sự KHÔNG commit vào repo công khai.
+
 ## 5. WORKFLOW
 Before editing:
 1. Read HANDOFF.md.
