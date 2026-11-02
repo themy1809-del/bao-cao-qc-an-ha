@@ -1044,7 +1044,7 @@ rDU=function(){ if(!_dcInit){_dcInit=true;_dcRender();_dcLoad(false);} else _dcR
    4 tầng drill-down: Portfolio → Dự án → Danh sách → Drawer chi tiết
    ================================================================ */
 var _dcMod='tq',_dcF={pj:-1,dim:'',val:''},_dcDocF='',_dcDocPage=0,_dcPjView='table';
-var _DC_C={done:'#16a34a',proc:'#2563eb',pend:'#eab308',soon:'#f97316',od:'#dc2626',rev:'#7c3aed',gray:'#9ca3af'};
+var _DC_C={done:'#16a34a',proc:'#2563eb',pend:'#eab308',soon:'#f97316',od:'#dc2626',rev:'#0e7490',gray:'#9ca3af'};
 function _dcOptR(id,opt,cb){_dcChReset(id);var el=document.getElementById(id);if(!el)return;setOpt(id,opt,cb);}
 function _dcMK(tot,tan,done,fin,od,soon,rev){od=od||0;soon=soon||0;
   var proc=Math.max(fin-done,0),pend=Math.max(tot-fin-od-soon,0);

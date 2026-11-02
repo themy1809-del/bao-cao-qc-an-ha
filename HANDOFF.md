@@ -665,3 +665,10 @@ Phiên Claude Code kế tiếp nên:
 - CHƯA LÀM (chờ duyệt): thay emoji làm icon (qc.html 148, doc.html 62) bằng SVG — đổi diện mạo lớn.
 - (02/11, bổ sung) `dangnhap.html` cũng đã áp `uxpm` (CSS + JS chung) + ô nhập 44px, nút "Hiện" 44×44, viền focus đỏ đặc 2px (trước là bóng mờ 14%), ô tích 20px. Đo bằng cách giả lập `QCDATA_ENC`; luồng thật (chưa khoá → chuyển `qc.html`) vẫn chạy, lỗi JS 0.
 - Trang ĐÃ áp skill: ban_do_qc, qc, app, doc, kiem_tra_waiting, section_tracker, dangnhap. KHÔNG áp: index.html (chỉ chuyển hướng), 2 file backup.
+
+### 02/11/2026 — `qc.html`: thay emoji làm icon → SVG (skill ui-ux-pro-max, user duyệt)
+- Cách làm: `<script id="uxpmico">` (trước `uxpmjs`) đổi emoji / ký hiệu làm icon thành `<span class="uxi"><svg>` NGAY TRÊN DOM hiển thị (TreeWalker + MutationObserver). KHÔNG sửa các chuỗi JS gốc → không đụng dữ liệu, chữ copy Zalo / xuất file, biểu đồ canvas, `<option>`, placeholder, regex đọc dữ liệu (vd `/✓/` nhận “xong”).
+- Bảng đổi: ⚠🔍✅🔔📁📊📄📑🗂🔄🚨🗺🧩♻🚚👍🖥📌📝🔗📋👤⏳⏰ + nút ✕ ↻ ☰ ✎ ★ → icon nét; chấm 🔴🟠🟡🟢🔵⚪ → `.uxdot` cùng màu; 🟣 → xanh cổ vịt #0E7490. GIỮ ✓ ✔ ↔ ↗ (dấu chữ trong câu / bảng).
+- Kết quả: qua 11 màn, emoji hiển thị 218 → 0 (chỉ còn ✓✔↔↗); 87 icon/chấm SVG; KPI + `QCDATA.check` trước/sau GIỐNG HỆT; lỗi JS 0; tải trang không chậm hơn.
+- Kèm theo (Doc Control nhúng trong qc.html, trước chưa đo tới): khai báo `--muted` theo theme; chữ đỏ/xanh/tím ghi cứng → bản sáng ở theme tối; ô ma trận Phase×Zone dùng `--pzok/--pzy/--pzo/--pzr`; menu đang chọn chữ số trắng. **Màu tím `#7c3aed` (Lệch REV) → `#0e7490`** ở qc.html (8 chỗ) và doc.html (1 chỗ) theo quy ước tránh tím. Đo lại 10 module × 2 theme: tương phản 0.
+- CHƯA: emoji trong `doc.html` (62) — có thể dùng lại nguyên khối `uxpmico`.
