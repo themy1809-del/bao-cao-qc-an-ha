@@ -645,3 +645,10 @@ Phiên Claude Code kế tiếp nên:
 - Ô lọc / tìm có `aria-label`. Phím **Esc** đóng thẻ việc → màn nhập → không gian công việc.
 - Phần tử bấm được không phải nút (xưởng trên bản đồ 3D, thẻ việc, "+ n việc khác", dòng bảng): tự gắn `tabindex=0 role=button` (`kbHoa` + MutationObserver), Enter/Space = bấm; xưởng 3D gọi `chon()` vì bản đồ dùng pointerup.
 - Vùng bấm chữ ≥24px. Kết quả đo lại (1400 tối/sáng, 390 sáng): tương phản 0 lỗi, thiếu tên 0, thiếu nhãn 0, vùng bấm nhỏ 0, phần tử không tới được bằng bàn phím 0.
+
+### 02/11/2026 — Nạp skill `ui-ux-pro-max` (nextlevelbuilder, MIT) + soát `ban_do_qc.html`
+- Skill nằm ở `.claude/skills/ui-ux-pro-max/` (SKILL.md, data CSV, scripts Python chỉ dùng thư viện chuẩn, không gọi mạng; nguồn + commit trong `NGUON.txt`). Phiên Claude Code mới mở repo sẽ tự có.
+- Chạy: `python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<truy vấn>" --domain ux`. KHÔNG dùng `--persist` trong repo nếu chưa hỏi user.
+- Kết quả `--design-system` gợi ý bảng màu/font khác → KHÔNG áp (giữ màu Đại Dũng + màu khâu theo CLAUDE.md); chỉ lấy quy tắc UX.
+- Đã sửa theo skill: vùng bấm ≥44px trên điện thoại / màn cảm ứng / chế độ app (trừ checkbox); con trỏ + phản hồi khi nhấn; cuộn theo `prefers-reduced-motion` (`RM_MOTION`); ô "không đáp ứng" ở ma trận 10 dự án có dấu "!" (không chỉ dựa màu); chữ 11–11,5px → 12px (trừ nhãn 3D, chữ tắt avatar, thanh Gantt).
+- Đổi trạng thái không cần kéo thả: đã có sẵn hàng nút trạng thái trong thẻ việc — không thêm trùng.
