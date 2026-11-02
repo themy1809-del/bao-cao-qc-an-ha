@@ -663,3 +663,5 @@ Phiên Claude Code kế tiếp nên:
   `kiem_tra_waiting.html`: `--mut`, `--warn`, `--good` đậm hơn; **khâu Sơn đổi tím → xanh lá #15803D** theo quy ước dự án.
 - Kết quả đo (1400 tối/sáng + 375): tương phản 0, thiếu nhãn 0, phần tử bàn phím không tới 0, nút <44px trên cảm ứng 0, lỗi JS 0. Ngoại lệ: `app.html` dải tiêu đề đỏ (bộ đo báo nhầm, thực tế ~5:1); 2 link "Xem tất cả" trong câu (WCAG miễn).
 - CHƯA LÀM (chờ duyệt): thay emoji làm icon (qc.html 148, doc.html 62) bằng SVG — đổi diện mạo lớn.
+- (02/11, bổ sung) `dangnhap.html` cũng đã áp `uxpm` (CSS + JS chung) + ô nhập 44px, nút "Hiện" 44×44, viền focus đỏ đặc 2px (trước là bóng mờ 14%), ô tích 20px. Đo bằng cách giả lập `QCDATA_ENC`; luồng thật (chưa khoá → chuyển `qc.html`) vẫn chạy, lỗi JS 0.
+- Trang ĐÃ áp skill: ban_do_qc, qc, app, doc, kiem_tra_waiting, section_tracker, dangnhap. KHÔNG áp: index.html (chỉ chuyển hướng), 2 file backup.
