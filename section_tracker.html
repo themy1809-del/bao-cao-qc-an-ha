@@ -20,10 +20,19 @@ button{font:inherit;background:#E2231A;color:#fff;border:0;border-radius:8px;pad
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 10px;border-top:1px solid #f1f1f1;text-align:left}td.n,th.n{text-align:right}
 th{color:var(--mut);font-size:11px;text-transform:uppercase;font-weight:700;border-top:0}
 .tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;color:#fff}
-</style></head><body><div class="wrap">
+</style><style id="uxpm">
+/* ==== ux-pro-max (02/11/2026): lop chung theo skill ui-ux-pro-max — chi them, khong doi bo cuc ==== */
+:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+button,select,summary,[role=button],[onclick],label[for]{cursor:pointer}
+button:active,[role=button]:active{filter:brightness(.92)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+@media (pointer:coarse){button,select,input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea{min-height:44px}}
+:root{--mut:#565d68}
+</style>
+</head><body><div class="wrap">
 <h1>Kiểm soát Section theo tổ gia công</h1>
 <div class="sub" id="sub">Đang đọc Google Sheet…</div>
-<div class="bar">Sheet ID <input id="sid" size="28"> · Tab <input id="tab" size="26"> <button onclick="load()">Tải lại</button>
+<div class="bar">Sheet ID <input id="sid" size="28" aria-label="Sheet ID"> · Tab <input id="tab" size="26" aria-label="Tên tab"> <button onclick="load()">Tải lại</button>
   · Lọc <select id="fst" onchange="render()"><option value="">Mọi trạng thái</option><option>Chưa</option><option>Đang</option><option>Xong</option></select>
   <select id="fto" onchange="render()"><option value="">Mọi tổ</option></select> <span id="err" style="color:#c0392b"></span></div>
 <div class="hero" id="hero"></div>
@@ -73,4 +82,13 @@ function render(){
   document.getElementById('grp').innerHTML=html||'<div style="color:var(--mut);padding:10px">Không có section khớp bộ lọc.</div>';
 }
 document.getElementById('sid').value=SID; document.getElementById('tab').value=TAB; load();
-</script></body></html>
+</script><script id="uxpmjs">/* ux-pro-max (02/11/2026): nhan cho o chua co nhan + ban phim cho phan tu bam duoc khong phai nut. Chi them thuoc tinh, khong doi hanh vi. */
+(function(){var SEL='[onclick]:not(button):not(a):not(input):not(select):not(textarea):not(label),.clickable';
+function chay(){
+  document.querySelectorAll('select,input:not([type=hidden]),textarea').forEach(function(e){if(e.getAttribute('aria-label')||(e.labels&&e.labels.length)||e.closest('label'))return;
+    var t=e.getAttribute('placeholder')||e.title||(e.tagName==='SELECT'&&e.options[0]?e.options[0].text.replace(/^[—\-\s]+|[—\-\s]+$/g,''):'');if(t)e.setAttribute('aria-label',t);});
+  document.querySelectorAll(SEL).forEach(function(e){if(e.hasAttribute('tabindex'))return;e.setAttribute('tabindex','0');if(!e.getAttribute('role'))e.setAttribute('role','button');});}
+document.addEventListener('keydown',function(e){var t=e.target;if((e.key==='Enter'||e.key===' ')&&t&&t.getAttribute&&t.getAttribute('role')==='button'&&!/^(BUTTON|A|INPUT|SELECT|TEXTAREA)$/.test(t.tagName)){e.preventDefault();t.click();}});
+chay();if(window.MutationObserver){var k=0;new MutationObserver(function(){clearTimeout(k);k=setTimeout(chay,80);}).observe(document.body,{childList:true,subtree:true});}})();
+</script>
+</body></html>

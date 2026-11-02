@@ -347,6 +347,24 @@ body.tvmode #hdrStick{position:static;box-shadow:none}
 .view>.kpis{padding:6px 0 8px}
 body.tvmode .view>.kpis{position:static}
 </style>
+<style id="uxpm">
+/* ==== ux-pro-max (02/11/2026): lop chung theo skill ui-ux-pro-max — chi them, khong doi bo cuc ==== */
+:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+button,select,summary,[role=button],[onclick],label[for]{cursor:pointer}
+button:active,[role=button]:active{filter:brightness(.92)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+@media (pointer:coarse){button,select,input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea{min-height:44px}}
+/* qc.html — tuong phan WCAG AA (do bang skill ui-ux-pro-max + Playwright) */
+[data-theme=dark]{--fd:#2DD4BF;--f:#60A5FA;--p:#4ADE80}
+[data-theme=dark] .kpi.a .v{color:#94A3B8}
+[data-theme=light] .dd-btn{color:#B42318}
+.qf,.seg button{min-height:24px}
+@media (pointer:coarse){.qf,.seg button,.dd-btn,.sb-btn{min-height:44px}}
+[data-theme=light]{--w:#B45309;--warn:#955409}
+[data-theme=dark] .seg button.on,[data-theme=dark] .qf.on,[data-theme=dark] .sb-btn.pri,[data-theme=dark] .dd-btn:hover,[data-theme=dark] .dnav:hover:not(:disabled){color:#052e1c}
+[data-theme=light] .nav-item small,[data-theme=light] .nav-foot{color:#5f6772}
+[data-theme=light] .brand-sub{color:#5f6772}
+</style>
 </head>
 <body><!-- 29/09: bỏ huy hiệu "BẢN MỚI 20/9 v100" nổi góc phải — nó đè lên bảng/biểu đồ ở mọi tab --><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
@@ -444,10 +462,10 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
         <button data-db="w">Ngày gia công</button>
       </div>
       <span class="cg-lbl">Kỳ</span><button class="qf" id="qr3" onclick="setQR('3m')">3 tháng</button><button class="qf" id="qrm" onclick="setQR('m')">Tháng mới nhất</button><button class="qf" id="qra" onclick="setQR('all')">Tất cả</button><span class="cg-lbl" style="margin-left:6px">Cỡ</span><button class="qf" onclick="uiScale(-1)" title="Thu nhỏ toàn bộ">A−</button><button class="qf" onclick="uiScale(1)" title="Phóng to toàn bộ">A+</button>
-      <span class="drbox"><span class="cg-lbl">Từ</span><input type="date" id="drFrom" class="drin"><span class="cg-lbl">đến</span><input type="date" id="drTo" class="drin"></span> <button class="qf" onclick="copyLink()" title="Sao chép link kèm bộ lọc hiện tại">Sao chép link</button>
+      <span class="drbox"><span class="cg-lbl">Từ</span><input type="date" id="drFrom" class="drin" aria-label="Từ ngày"><span class="cg-lbl">đến</span><input type="date" id="drTo" class="drin" aria-label="Đến ngày"></span> <button class="qf" onclick="copyLink()" title="Sao chép link kèm bộ lọc hiện tại">Sao chép link</button>
     </div>
   </div>
-  <div id="ctrlbar"><span class="gsWrap"><input id="gSearch" placeholder="Tìm QC · dự án · tổ…" autocomplete="off" oninput="gsInput()" onfocus="gsInput()"><div id="gsMenu"></div></span><span class="cg-sep"></span><span id="xFilter"></span><span class="cg-sep"></span><span class="cg-lbl">Công đoạn</span><span id="stFilter"></span><span class="cg-sep"></span><span class="cg-lbl">Trạng thái NT</span><span id="plFilter"></span><span class="cg-sep"></span><span id="chips"></span><button id="clearF" onclick="clearAll()">✕ Xóa lọc</button><span class="hint" id="fhint">bấm để lọc · <b>bấm đúp</b> để xoá lọc</span></div>
+  <div id="ctrlbar"><span class="gsWrap"><input id="gSearch" aria-label="Tìm QC, dự án, tổ" placeholder="Tìm QC · dự án · tổ…" autocomplete="off" oninput="gsInput()" onfocus="gsInput()"><div id="gsMenu"></div></span><span class="cg-sep"></span><span id="xFilter"></span><span class="cg-sep"></span><span class="cg-lbl">Công đoạn</span><span id="stFilter"></span><span class="cg-sep"></span><span class="cg-lbl">Trạng thái NT</span><span id="plFilter"></span><span class="cg-sep"></span><span id="chips"></span><button id="clearF" onclick="clearAll()">✕ Xóa lọc</button><span class="hint" id="fhint">bấm để lọc · <b>bấm đúp</b> để xoá lọc</span></div>
   <div id="freshBar" class="fresh" style="display:none"></div>
   <div id="errE"><b>Không tải được thư viện biểu đồ.</b> Cần internet lần đầu mở file — Ctrl+F5.</div>
 
@@ -1012,7 +1030,7 @@ function renderCtrls(){
   const xs=D.X.slice().sort();
   const xsel=xs.filter(x=>S.x.has(x));const xlab=xsel.length?(xsel.length<=2?xsel.join(', '):xsel.length+' xưởng'):'Tất cả';
   document.getElementById('xFilter').innerHTML='<span class="dd'+(xddOpen?' open':'')+'" onclick="event.stopPropagation()"><button class="dd-btn" onclick="ddTog(event)">Xưởng: '+xlab+' <span class="dd-ar">▾</span></button><div class="dd-menu"><div class="dd-it'+(xsel.length?'':' on')+'" onclick="xSel()">Tất cả xưởng</div>'+xs.map(x=>'<label class="dd-it"><input type="checkbox" '+(S.x.has(x)?'checked':'')+' onchange="tog(\'x\',\''+x+'\')"> '+x+'</label>').join('')+'</div></span>';
-  document.getElementById('stFilter').innerHTML=STG.map(s=>'<button class="qf '+s[0]+(S.st.has(s[0])?' on':'')+'" onclick="tog(\'st\',\''+s[0]+'\')">'+s[1]+'</button>').join('')+'<button class="qf'+(S.st.has('fd')?' on':'')+'" style="'+(S.st.has('fd')?'':'border-color:#0D9488;color:#0D9488')+'" onclick="tog(\'st\',\'fd\')">Final DIM</button>';
+  document.getElementById('stFilter').innerHTML=STG.map(s=>'<button class="qf '+s[0]+(S.st.has(s[0])?' on':'')+'" onclick="tog(\'st\',\''+s[0]+'\')">'+s[1]+'</button>').join('')+'<button class="qf'+(S.st.has('fd')?' on':'')+'" style="'+(S.st.has('fd')?'':'border-color:var(--fd);color:var(--fd)')+'" onclick="tog(\'st\',\'fd\')">Final DIM</button>';
   document.getElementById('plFilter').innerHTML=D.PL.map(v=>'<button class="qf'+(v==='Chưa QC'?' plw':'')+(S.pl.has(v)?' on':'')+'" onclick="tog(\'pl\',\''+v+'\')">'+plLabel(v)+'</button>').join('');
 }
 function renderAll(){try{saveState();}catch(e){}renderChips();renderCtrls();
@@ -6882,5 +6900,14 @@ if(typeof setOpt==='function'){var _so=setOpt;
 /* vẽ lại tab đang mở để áp dụng lớp tách 2 trục (cTime, cNcrMini ở Tổng quan; cKh* ở KHSX) */
 try{if(typeof CUR!=='undefined'&&typeof render==='function')render(CUR);}catch(e){}
 })();
+</script>
+<script id="uxpmjs">/* ux-pro-max (02/11/2026): nhan cho o chua co nhan + ban phim cho phan tu bam duoc khong phai nut. Chi them thuoc tinh, khong doi hanh vi. */
+(function(){var SEL='[onclick]:not(button):not(a):not(input):not(select):not(textarea):not(label),.clickable';
+function chay(){
+  document.querySelectorAll('select,input:not([type=hidden]),textarea').forEach(function(e){if(e.getAttribute('aria-label')||(e.labels&&e.labels.length)||e.closest('label'))return;
+    var t=e.getAttribute('placeholder')||e.title||(e.tagName==='SELECT'&&e.options[0]?e.options[0].text.replace(/^[—\-\s]+|[—\-\s]+$/g,''):'');if(t)e.setAttribute('aria-label',t);});
+  document.querySelectorAll(SEL).forEach(function(e){if(e.hasAttribute('tabindex'))return;e.setAttribute('tabindex','0');if(!e.getAttribute('role'))e.setAttribute('role','button');});}
+document.addEventListener('keydown',function(e){var t=e.target;if((e.key==='Enter'||e.key===' ')&&t&&t.getAttribute&&t.getAttribute('role')==='button'&&!/^(BUTTON|A|INPUT|SELECT|TEXTAREA)$/.test(t.tagName)){e.preventDefault();t.click();}});
+chay();if(window.MutationObserver){var k=0;new MutationObserver(function(){clearTimeout(k);k=setTimeout(chay,80);}).observe(document.body,{childList:true,subtree:true});}})();
 </script>
 </body></html>

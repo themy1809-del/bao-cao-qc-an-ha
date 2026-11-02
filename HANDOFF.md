@@ -652,3 +652,14 @@ Phiên Claude Code kế tiếp nên:
 - Kết quả `--design-system` gợi ý bảng màu/font khác → KHÔNG áp (giữ màu Đại Dũng + màu khâu theo CLAUDE.md); chỉ lấy quy tắc UX.
 - Đã sửa theo skill: vùng bấm ≥44px trên điện thoại / màn cảm ứng / chế độ app (trừ checkbox); con trỏ + phản hồi khi nhấn; cuộn theo `prefers-reduced-motion` (`RM_MOTION`); ô "không đáp ứng" ở ma trận 10 dự án có dấu "!" (không chỉ dựa màu); chữ 11–11,5px → 12px (trừ nhãn 3D, chữ tắt avatar, thanh Gantt).
 - Đổi trạng thái không cần kéo thả: đã có sẵn hàng nút trạng thái trong thẻ việc — không thêm trùng.
+
+### 02/11/2026 — Áp skill `ui-ux-pro-max` cho các trang còn lại
+- Mỗi trang (`qc.html`, `app.html`, `doc.html`, `kiem_tra_waiting.html`, `section_tracker.html`) có thêm `<style id="uxpm">` cuối `<head>` + `<script id="uxpmjs">` cuối `<body>`:
+  CSS: viền `:focus-visible`, giảm chuyển động (`prefers-reduced-motion`), vùng bấm 44px trên màn cảm ứng (`pointer:coarse`), con trỏ bàn tay, phản hồi khi nhấn.
+  JS: gắn `aria-label` cho ô chưa có nhãn (lấy placeholder / lựa chọn đầu); phần tử `[onclick]`/`.clickable` không phải nút → `tabindex=0 role=button`, Enter/Space = bấm. Chỉ thêm thuộc tính, không đổi hành vi.
+- Tương phản WCAG AA (chỉ đổi màu CHỮ / biến theo theme, biểu đồ canvas giữ màu):
+  `qc.html` tối: `--fd #2DD4BF`, `--f #60A5FA`, `--p #4ADE80`, chữ trên nền `--acc` → `#052e1c`; sáng: `--w #B45309`, `--warn #955409`, xám phụ `#5f6772`, nút Xưởng `#B42318`; chip `.qf` ≥24px. KPI Tổng quan + `QCDATA.check` trước/sau: GIỐNG HỆT.
+  `doc.html`: chữ vàng/cam/xanh/đỏ ghi trực tiếp → bản đậm hơn qua `[style*="color:#…"]`; `--warn #b45309`.
+  `kiem_tra_waiting.html`: `--mut`, `--warn`, `--good` đậm hơn; **khâu Sơn đổi tím → xanh lá #15803D** theo quy ước dự án.
+- Kết quả đo (1400 tối/sáng + 375): tương phản 0, thiếu nhãn 0, phần tử bàn phím không tới 0, nút <44px trên cảm ứng 0, lỗi JS 0. Ngoại lệ: `app.html` dải tiêu đề đỏ (bộ đo báo nhầm, thực tế ~5:1); 2 link "Xem tất cả" trong câu (WCAG miễn).
+- CHƯA LÀM (chờ duyệt): thay emoji làm icon (qc.html 148, doc.html 62) bằng SVG — đổi diện mạo lớn.

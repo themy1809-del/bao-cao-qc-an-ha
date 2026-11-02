@@ -70,6 +70,22 @@ tr.clickable:hover td{background:var(--rowH)}
 select,input{font:inherit;color:inherit}
 @media(max-width:960px){.r2{grid-template-columns:1fr}.sb{position:fixed;z-index:200;transform:translateX(-100%)}.sb.open{transform:none}}
 </style>
+<style id="uxpm">
+/* ==== ux-pro-max (02/11/2026): lop chung theo skill ui-ux-pro-max — chi them, khong doi bo cuc ==== */
+:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+button,select,summary,[role=button],[onclick],label[for]{cursor:pointer}
+button:active,[role=button]:active{filter:brightness(.92)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+@media (pointer:coarse){button,select,input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea{min-height:44px}}
+/* doc.html — mau CHU dat 4.5:1 (bieu do canvas giu mau cu) */
+[style*="color:#eab308"]{color:#A16207!important}
+[style*="color:#f97316"]{color:#C2410C!important}
+[style*="color:#16a34a"]{color:#15803D!important}
+[style*="color:#dc2626"],[style*="color:#DC2626"]{color:#B91C1C!important}
+:root{--warn:#b45309}
+.bell{display:inline-flex;min-width:24px;min-height:24px;align-items:center;justify-content:center}
+th{color:#4b5563}
+</style>
 </head>
 <body>
 <div class="layout">
@@ -1560,5 +1576,14 @@ function _dcModShip(main){
 }
 
 _dcRender();
+</script>
+<script id="uxpmjs">/* ux-pro-max (02/11/2026): nhan cho o chua co nhan + ban phim cho phan tu bam duoc khong phai nut. Chi them thuoc tinh, khong doi hanh vi. */
+(function(){var SEL='[onclick]:not(button):not(a):not(input):not(select):not(textarea):not(label),.clickable';
+function chay(){
+  document.querySelectorAll('select,input:not([type=hidden]),textarea').forEach(function(e){if(e.getAttribute('aria-label')||(e.labels&&e.labels.length)||e.closest('label'))return;
+    var t=e.getAttribute('placeholder')||e.title||(e.tagName==='SELECT'&&e.options[0]?e.options[0].text.replace(/^[—\-\s]+|[—\-\s]+$/g,''):'');if(t)e.setAttribute('aria-label',t);});
+  document.querySelectorAll(SEL).forEach(function(e){if(e.hasAttribute('tabindex'))return;e.setAttribute('tabindex','0');if(!e.getAttribute('role'))e.setAttribute('role','button');});}
+document.addEventListener('keydown',function(e){var t=e.target;if((e.key==='Enter'||e.key===' ')&&t&&t.getAttribute&&t.getAttribute('role')==='button'&&!/^(BUTTON|A|INPUT|SELECT|TEXTAREA)$/.test(t.tagName)){e.preventDefault();t.click();}});
+chay();if(window.MutationObserver){var k=0;new MutationObserver(function(){clearTimeout(k);k=setTimeout(chay,80);}).observe(document.body,{childList:true,subtree:true});}})();
 </script>
 </body></html>

@@ -50,6 +50,16 @@ select,input[type=text]{border:1px solid var(--line);border-radius:7px;padding:5
 .guide summary{cursor:pointer;font-weight:700;color:var(--acc);padding:8px 0}
 .guide li{margin:5px 0;line-height:1.55}
 </style>
+<style id="uxpm">
+/* ==== ux-pro-max (02/11/2026): lop chung theo skill ui-ux-pro-max — chi them, khong doi bo cuc ==== */
+:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+button,select,summary,[role=button],[onclick],label[for]{cursor:pointer}
+button:active,[role=button]:active{filter:brightness(.92)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+@media (pointer:coarse){button,select,input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea{min-height:44px}}
+/* kiem_tra_waiting — tuong phan + mau khau Son theo quy uoc du an (Painting #16A34A, khong dung tim) */
+:root{--mut:#5f6772;--warn:#955409;--son:#15803D;--good:#17693a}
+</style>
 </head>
 <body>
 <h1>Phân tích WAITING — tồn chờ nghiệm thu</h1>
@@ -234,6 +244,15 @@ h+='</table><div class="note" style="margin-top:12px"><b>Cách chốt số với
 
 document.getElementById('out').innerHTML=h;
 }
+</script>
+<script id="uxpmjs">/* ux-pro-max (02/11/2026): nhan cho o chua co nhan + ban phim cho phan tu bam duoc khong phai nut. Chi them thuoc tinh, khong doi hanh vi. */
+(function(){var SEL='[onclick]:not(button):not(a):not(input):not(select):not(textarea):not(label),.clickable';
+function chay(){
+  document.querySelectorAll('select,input:not([type=hidden]),textarea').forEach(function(e){if(e.getAttribute('aria-label')||(e.labels&&e.labels.length)||e.closest('label'))return;
+    var t=e.getAttribute('placeholder')||e.title||(e.tagName==='SELECT'&&e.options[0]?e.options[0].text.replace(/^[—\-\s]+|[—\-\s]+$/g,''):'');if(t)e.setAttribute('aria-label',t);});
+  document.querySelectorAll(SEL).forEach(function(e){if(e.hasAttribute('tabindex'))return;e.setAttribute('tabindex','0');if(!e.getAttribute('role'))e.setAttribute('role','button');});}
+document.addEventListener('keydown',function(e){var t=e.target;if((e.key==='Enter'||e.key===' ')&&t&&t.getAttribute&&t.getAttribute('role')==='button'&&!/^(BUTTON|A|INPUT|SELECT|TEXTAREA)$/.test(t.tagName)){e.preventDefault();t.click();}});
+chay();if(window.MutationObserver){var k=0;new MutationObserver(function(){clearTimeout(k);k=setTimeout(chay,80);}).observe(document.body,{childList:true,subtree:true});}})();
 </script>
 </body>
 </html>
