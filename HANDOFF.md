@@ -3,7 +3,9 @@
 
 > Cầu nối giữa các phiên Chat/Cowork và Claude Code Cloud. Cập nhật mỗi khi xong việc lớn
 > hoặc đổi việc đang làm.
-> **Cập nhật lần cuối: 29/09/2026 — nâng cấp dashboard `qc.html`, trang chủ chuyển hướng về `qc.html`.**
+> **Cập nhật lần cuối: 02/11/2026 — soát giao diện bằng ui-ux-pro-max: `doc.html` có theme tối; `qc.html` 11 tab audit = 0; Doc Control nhúng theo theme cha. Chi tiết: PROJECT_STATUS.md mục DONE đầu tiên.**
+> Kiểm từng tab: `kiem_tra/ui_audit.js` chỉ đo tab mặc định — muốn đo tab khác phải gọi `setView('<mã>')` (qc.html) / `_dcSetMod('<mã>')` (doc.html) / `go('<mã>')` (app.html) trước khi đo.
+> (Bản 29/09: nâng cấp dashboard `qc.html`, trang chủ chuyển hướng về `qc.html`.)
 > Bản 27/09 chỉ mô tả hệ 1 + hệ 2. Bản này bổ sung **hệ 3 (dashboard web = repo này)**
 > đã được dựng lại từ mã nguồn thật, và ghi rõ các lệch pha đã xác minh.
 
