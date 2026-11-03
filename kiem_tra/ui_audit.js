@@ -30,7 +30,7 @@ const AUDIT=()=>{
   contrast:Object.values(out.contrast.reduce((m,x)=>{const k=x.sel+'|'+x.cr;if(!m[k])m[k]={...x,n:0};m[k].n++;return m;},{})).sort((a,b)=>a.cr-b.cr).slice(0,14),
   noName:out.noName.slice(0,6),noLabel:out.noLabel.slice(0,10),noAlt:out.noAlt.slice(0,5),small:agg(out.small),clickDiv:agg(out.clickDiv)};
 };
-const RX='[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{27BF}\\u{2300}-\\u{23FF}]';
+const RX='[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{2712}\\u{2715}-\\u{27BF}\\u{2300}-\\u{23FF}]'; // ✓ ✔ (2713/2714) la dau chu duoc phep (CLAUDE.md 4B)
 const PAGES=process.argv.slice(2).length?process.argv.slice(2):['qc.html','ban_do_qc.html','app.html','doc.html','kiem_tra_waiting.html','section_tracker.html'];
 (async()=>{const b=await chromium.launch();let bad=0;
 for(const pg of PAGES)for(const th of ['dark','light'])for(const [w,h] of [[1400,900],[375,812]]){
