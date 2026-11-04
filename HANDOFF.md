@@ -683,4 +683,5 @@ Phiên Claude Code kế tiếp nên:
 - Nguồn: KHSX (`KHR`, `khTuBang` thêm [11] tổng KL t, [12] TSL ráp HT còn lại) · SPM `qcdata.js` · `phan_bo_qc.js` mảng mới **`PHU_TRACH`** (QC × dự án × khâu, `tt` = tình trạng ghi tay, `giu:1` = vẫn hiện khi KHSX chưa xếp xưởng), **`DANG_CHAY`** (user xác nhận đang chạy), **`BO_QUA`** (user bỏ khỏi báo cáo).
 - Quy tắc user chốt: KHSX chưa xếp dự án ở xưởng thì CHƯA đưa vào (trừ `giu:1`); không có PB An Hạ (sheet KH gia công khoá nội bộ — user chọn bỏ); tiến độ = % ráp xong tại xưởng theo KHSX; tháng chốt 21→20 theo ngày SPM mới nhất.
 - Cập nhật hằng tháng: chỉ sửa `PHU_TRACH` / `DANG_CHAY` / `BO_QUA`. Hiện mới khai báo AH3.
+- Trình bày gọn (04/11 sau): QC = thẻ theo người; dự án = 1 dòng tên + % + thanh tiến độ + 1 dòng phụ. Tự đọc lại KHSX mỗi 5 phút khi tab mở (`khLamMoi`), nút "Làm mới"; `spmKiem` đọc 300 byte đầu `qcdata.js` để báo khi PC đẩy SPM mới (bấm tải lại trang).
 - Kiểm tra: `ui_audit.js ban_do_qc.html` DAT HET; số AH3 khớp báo cáo PDF tay 04/11.
