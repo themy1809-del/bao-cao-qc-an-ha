@@ -55,6 +55,29 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .sub{color:var(--mut);font-size:12.5px}
 .sp{flex:1}
 .toc{border:2px solid var(--gold);border-radius:12px;padding:10px 12px;margin-bottom:12px;background:var(--surf2)}
+.xbc{margin-top:14px;padding:16px 18px}.xbc[hidden]{display:none}
+.xbch{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.xbch .btn{min-height:44px;display:inline-flex;align-items:center;gap:4px;flex:none}.xbch h2{margin:0;font-size:20px}.xbch .muted{font-size:13px}
+.xbk{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:12px 0 4px}.xbk div{background:var(--surf2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}.xbk b{display:block;font-size:24px;font-weight:900;font-variant-numeric:tabular-nums}.xbk span{font-size:13px;color:var(--mut)}
+.xbt{width:100%}.xbt td{font-size:14px;padding:7px 8px;vertical-align:middle}.xbt td .muted{font-size:12px}.xbp{display:flex;align-items:center;gap:8px}.xbp b{min-width:42px}.xbp .bcbar{flex:1;margin:0;height:7px}
+.tw3{overflow-x:auto}
+.bcg{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:18px;align-items:start}
+@media(max-width:900px){.bcg{grid-template-columns:1fr}.xbk{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.toh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.toh h2{margin:0;font-size:22px}
+.tos{font-size:13px;color:var(--mut)}
+.tobig{display:flex;align-items:baseline;gap:8px;margin:10px 0 4px}.tobig b{font-size:34px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}.tobig span{font-size:14px;color:var(--mut)}
+.bcbar.tob{height:8px;margin:4px 0 8px}
+.tol{display:grid;grid-template-columns:78px 1fr 1fr;gap:8px;align-items:baseline;padding:5px 0;border-top:1px solid var(--line)}.tol span{font-size:13px;color:var(--mut)}.tol b{font-size:15px;font-variant-numeric:tabular-nums}
+.tot2{font-weight:800;font-size:14px;margin:12px 0 2px}
+.topr{padding:8px 0;border-top:1px solid var(--line)}.topr .bcpn{font-size:14px}.topr .bcp1 b{font-size:15px}.topr .bcbar.tob{height:6px;margin:5px 0 4px}
+.tom{font-size:13px;color:var(--mut)}.tom b{color:var(--ink);font-variant-numeric:tabular-nums}
+.tod{margin-top:8px;font-size:12.5px;color:var(--mut)}.tod summary{cursor:pointer;min-height:32px;display:flex;align-items:center}.tod div{padding:2px 0 4px}
+.toPop{position:absolute;top:12px;left:12px;width:min(480px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;z-index:30;cursor:auto;user-select:text;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.45);overscroll-behavior:contain}
+.toPop .toc{margin:0;background:var(--surf)}
+.toPop .tosum{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,1.6fr);gap:14px;align-items:center}.toPop .topc{margin:0}
+.toPop .topj td{padding:5px 7px}.toPop .topj .muted{font-size:11.5px}.toPop .topj .bcbar{margin:3px 0 0}
+@media(max-width:560px){.toPop .tosum{grid-template-columns:1fr}}
+.toPop .bcpn{font-size:13.5px}.toPop .tog b{font-size:14px}
+@media(min-width:700px){.toPop .tog{grid-template-columns:repeat(3,minmax(0,160px))}}
 .topc{display:flex;flex-direction:column;gap:4px;margin:8px 0}.topc div:first-child{display:flex;justify-content:space-between;align-items:baseline}.topc b{font-size:24px;font-weight:900}
 .tokq td{padding:4px 7px}
 .tog{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:3px}.tog div{font-size:12px;color:var(--mut)}.tog span{display:block}.tog b{display:block;color:var(--ink);font-size:13px;font-variant-numeric:tabular-nums}.tog i{font-style:normal;font-variant-numeric:tabular-nums}
@@ -560,12 +583,13 @@ label.ck input{width:20px;height:20px}
           <button class="btn" data-col="ng">Tô theo tấn / QC</button>
         </div>
       </div>
-      <div class="stage" id="stage"><div class="world" id="world"></div></div>
+      <div class="stage" id="stage"><div class="world" id="world"></div><div class="toPop" id="toPop" hidden></div></div>
       <div class="stageFoot"><div class="legend3" id="legend3"></div><div class="hint3">kéo để xoay · cuộn / 2 ngón để phóng · bấm xưởng xem chi tiết</div></div>
     </div>
     <aside class="card panel gold" id="panel"></aside>
   </div>
 
+  <section class="card gold xbc" id="xuongBC" hidden></section>
   <div class="kpis" id="kpis"></div>
 
   <div class="seg noprint tabbar" id="tabSeg" role="tablist" aria-label="Nhóm nội dung"><button class="btn on" data-tab="viec" role="tab">Công việc &amp; kế hoạch ngày</button><button class="btn" data-tab="tai" role="tab">Tải QC &amp; 10 dự án</button><button class="btn" data-tab="bang" role="tab">Bảng phân bổ</button></div>
@@ -1021,11 +1045,12 @@ function bcT(v){return v>0&&v<10?fm(v,1):fm(v,0);}
 function bcTenDep(t){t=String(t||'').replace(/^(TN|XK|D2)\s+/i,'');if(t!==t.toUpperCase()||!/[A-ZÀ-Ỹ]{3}/.test(t))return t;
   var AC=/^(TED|SDM|ATO|PRJ|QT|GA|SVĐ|RTG|XK|APEC|CC|KH|TMDV|NM|GT|VIN|EU|USA|DDC|PQ)$/;
   return t.split(/(\s+|[-+()\/])/).map(function(w){if(!w||/^(\s+|[-+()\/])$/.test(w))return w;if(/\d/.test(w)||AC.test(w))return w;return w.charAt(0)+w.slice(1).toLowerCase();}).join('');}
-function bcXuong(xw){
+function bcXuong(xw,noHead){
   var K=bcKy(),PT=(PB.PHU_TRACH||[]).filter(function(p){return p.x===xw;}),CT=((PB.DANG_CHAY||{})[xw]||[]),BOQ=((PB.BO_QUA||{})[xw]||[]);
-  var h='<div class="bch"><div><b>Tháng '+K.m+'/'+K.y+'</b> <span class="muted">'+dVN(K.tu).slice(0,5)+' → '+dVN(K.den).slice(0,5)+'</span></div>'
+  var h=noHead?'':'<div class="bch"><div><b>Tháng '+K.m+'/'+K.y+'</b> <span class="muted">'+dVN(K.tu).slice(0,5)+' → '+dVN(K.den).slice(0,5)+'</span></div>'
     +'<button class="btn" data-bclm="1" aria-label="Đọc lại KHSX">'+I('ref')+'Làm mới</button></div>'
     +'<div class="muted bcsrc">KHSX '+(KH_TT==='ok'?esc(KH_LUC):(KH_TT==='err'?'<span style="color:var(--bad)">lỗi đọc</span>':'đang đọc…'))+' · SPM '+esc(D.updated||'—')+' · tự đọc lại KHSX mỗi 5 phút</div>';
+  if(noHead)h='';
   if(SPM_MOI)h+='<div class="note">Có số liệu SPM mới trên máy chủ — <a href="#" data-bctl="1" style="color:var(--ink);font-weight:800">tải lại trang</a> để cập nhật.</div>';
   if(KH_TT!=='ok'){h+='<div class="note">'+(KH_TT==='err'?'Không đọc được KHSX ('+esc(KH_LUC)+') — chưa tính được tình trạng / tiến độ.':'Đang đọc KHSX…')+'</div>';if(KH_TT!=='err')return h;}
   var KS={};(KHR||[]).forEach(function(r){var m=bcMa(r[0]),w=chuanX(r[1])||'?';var o=(KS[m]=KS[m]||{});var z=o[w]=o[w]||{ten:r[0],kl:0,r:0,h:0,sl:0};
@@ -1049,13 +1074,15 @@ function bcXuong(xw){
         if(rem<0.5){t='Xong';cl='ok';}else{t='Còn '+(both?'ráp '+bcT(z.r)+' · hàn '+bcT(z.h):bcT(rem))+' t';cl='am';}}}
     if(!(p.qc in ix)){ix[p.qc]=nhom.length;nhom.push({qc:p.qc,ds:[]});}
     nhom[ix[p.qc]].ds.push({ten:p.ten,khau:p.khau,t:t,cl:cl});});
+  h+='<div class="bcg"><div class="bcgA">';
   h+='<div class="bct">QC phụ trách</div>';
   if(!nhom.length)h+='<div class="note">Chưa khai báo QC phụ trách dự án cho '+esc(xw)+' (<b>PHU_TRACH</b> trong phan_bo_qc.js).</div>';
   else{nhom.forEach(function(g){h+='<div class="bcq"><div class="bcqn">'+esc(bcQC(g.qc))+'</div>';
       g.ds.forEach(function(d){h+='<div class="bcr"><div class="bcl"><span>'+esc(d.ten)+'</span><small>'+esc(d.khau)+'</small></div><div class="bcs" style="color:'+MAU[d.cl]+'">'+esc(d.t)+'</div></div>';});
       h+='</div>';});
     if(bo.length)h+='<div class="muted bcsrc">Chưa đưa vào: '+esc(bo.join(', '))+' — KHSX chưa xếp ở '+esc(xw)+'.</div>';}
-  if(KH_TT!=='ok')return h;
+  if(KH_TT!=='ok')return h+'</div></div>';
+  h+='</div><div class="bcgB">';
   /* 2. Du an tai xuong */
   var coQC={},qcM={};PT.forEach(function(p){if(!p.ma)return;coQC[p.ma]=1;var a=qcM[p.ma]=qcM[p.ma]||[],n=bcQC(p.qc).split(' ').pop();if(a.indexOf(n)<0)a.push(n);});
   var set={};Object.keys(KS).forEach(function(m){var z=KS[m][xw];if(!z||BOQ.indexOf(m)>=0)return;if(z.r+z.h>=1||(F[m]||0)>0.05||coQC[m])set[m]=1;});
@@ -1071,15 +1098,22 @@ function bcXuong(xw){
       b+='<div class="bcp"><div class="bcp1"><span class="bcpn">'+esc(d.ten)+'</span>'+right+'</div>'+(ttM[d.m]?'':'<div class="bcbar"><i style="width:'+p.toFixed(0)+'%;background:'+MAU[cl]+'"></i></div>')+'<div class="bcm">'+meta.join(' · ')+'</div></div>';});
     return b;}
   h+=ds('Đang chạy',DA.filter(function(d){return d.chay;}))+ds('Chuẩn bị chạy',DA.filter(function(d){return !d.chay;}));
-  h+='<div class="muted bcsrc">Tiến độ = % ráp xong tại '+esc(xw)+' (KHSX) · CK = cấu kiện còn ráp · ráp tháng '+K.m+' tại xưởng: '+fm(tF,0)+' t (SPM)</div>';
+  h+='<div class="muted bcsrc">Tiến độ = % ráp xong tại '+esc(xw)+' (KHSX) · CK = cấu kiện còn ráp</div></div></div>';
   return h;}
+(function(){var x=document.getElementById('xuongBC');if(!x)return;x.addEventListener('click',function(e){
+  var t=e.target.closest('[data-tosel]');if(t){SELTO=null;chonTo(t.getAttribute('data-tosel'));var st=document.getElementById('stage');if(st)st.scrollIntoView({behavior:'smooth',block:'start'});return;}
+  if(e.target.closest('[data-bclm]')){KH_LUC='đang đọc lại…';vePanel();khLamMoi();return;}
+  if(e.target.closest('[data-bctl]')){e.preventDefault();location.reload();}});})();
+(function(){var e=document.getElementById('toPop');if(!e)return;
+  ['pointerdown','wheel','touchstart'].forEach(function(t){e.addEventListener(t,function(ev){ev.stopPropagation();},{passive:true});});
+  e.addEventListener('click',function(ev){if(ev.target.closest('[data-toclose]')){SELTO=null;veCanh();vePanel();}});})();
 /* ===== THE TO (user 04/11/2026: bam vao to tren ban do -> khoi luong phan bo cua to) =====
    KHSX khong co cot to -> PHAN BO UOC TINH (user chon): KL con lai KHSX cua tung du an tai xuong x ty le to do da gia cong
    du an do tai xuong trong 90 ngay (Fitup chia theo tan Fitup, Han chia theo tan Han trong SPM). Kem so thuc te SPM. */
 function _ksGop(){if(_ksGop.k===KHR)return _ksGop.v;var KS={};(KHR||[]).forEach(function(r){var m=bcMa(r[0]),w=chuanX(r[1])||'?';var o=(KS[m]=KS[m]||{});var z=o[w]=o[w]||{ten:r[0],kl:0,r:0,h:0,sl:0,slh:0};
   z.kl+=+r[11]||0;z.r+=+r[2]||0;z.h+=+r[5]||0;z.sl+=+r[12]||0;z.slh+=+r[13]||0;});_ksGop.k=KHR;_ksGop.v=KS;return KS;}
 function chonTo(tk){SELTO=SELTO===tk?null:tk;veCanh();vePanel();var p=document.getElementById('panel');if(p&&SELTO)p.scrollTop=0;}
-function theTo(tk){
+function toData(tk){
   var xw=tk.split('.')[0],to=tk.slice(xw.length+1),iX=D.X.indexOf(xw),iT=D.T.indexOf(to),K=bcKy(),MI=D.PL.indexOf('Miễn QC'),plCho=D.PL.indexOf('Chưa QC');
   var cut=new Date(new Date(MAXD).getTime()-89*864e5).toISOString().slice(0,10);
   var tot={},mine={},dn={},sx={},ton={},PN={},q={},tf=0,tw=0;
@@ -1106,26 +1140,52 @@ function theTo(tk){
   var MAU={ok:'var(--ok)',am:'var(--warn)',bad:'var(--bad)'};
   function mau(p){return p==null?'var(--mut)':MAU[p>=99.5?'ok':(p>=50?'am':'bad')];}
   function kq(k,n){return bcT(k)+' t · '+fm(n,0)+' CK';}
+  return {xw:xw,to:to,K:K,kh:kh,T:T,ds:ds,q:q,mau:mau};}
+function theTo(tk){var o=toData(tk),xw=o.xw,to=o.to,K=o.K,kh=o.kh,T=o.T,ds=o.ds,q=o.q,mau=o.mau;
   var pcT=T.pk>0.05?100*T.dk/T.pk:null;
-  var h='<div class="toc"><div class="bch"><div><div class="muted" style="font-size:12px">Tổ gia công · '+esc(xw)+' · khâu '+kh+'</div><h2 style="margin:0">'+esc(to)+'</h2></div><button class="btn" data-toclose="1" aria-label="Đóng thẻ tổ">'+I('x')+'</button></div>';
-  if(KH_TT!=='ok')h+='<div class="muted bcsrc">'+(KH_TT==='err'?'Không đọc được KHSX — chưa ước được phần còn lại.':'Đang đọc KHSX…')+'</div>';
-  h+='<div class="topc"><div><span class="muted">Hoàn thành</span><b style="color:'+mau(pcT)+'">'+(pcT==null?'—':fm(pcT,0)+'%')+'</b></div><div class="bcbar" style="height:8px"><i style="width:'+(pcT==null?0:Math.min(100,pcT)).toFixed(0)+'%;background:'+mau(pcT)+'"></i></div></div>';
-  h+='<table class="tto bcx tokq"><thead><tr><th></th><th class="n">Khối lượng</th><th class="n">Số lượng</th></tr></thead><tbody>'
-    +'<tr><td>Phân bổ (ước)</td><td class="n"><b>'+bcT(T.pk)+' t</b></td><td class="n"><b>'+fm(T.pq,0)+' CK</b></td></tr>'
-    +'<tr><td>Đã làm</td><td class="n">'+bcT(T.dk)+' t</td><td class="n">'+fm(T.dq,0)+' CK</td></tr>'
-    +'<tr><td>Còn lại</td><td class="n" style="color:var(--warn);font-weight:800">'+bcT(T.ck)+' t</td><td class="n" style="color:var(--warn);font-weight:800">'+fm(T.cq,0)+' CK</td></tr></tbody></table>';
-  h+='<div class="muted bcsrc">SX T'+K.m+': <b style="color:var(--ink)">'+bcT(T.sx)+' t</b> · tồn chờ NT: <b style="color:'+(T.ton>0.05?'var(--warn)':'var(--ink)')+'">'+bcT(T.ton)+' t</b></div>';
-  if(!ds.length)h+='<div class="muted bcsrc">Tổ chưa có dự án đang làm tại '+esc(xw)+'.</div>';
+  function bar(p,c){return '<div class="bcbar tob"><i style="width:'+(p==null?0:Math.min(100,p)).toFixed(0)+'%;background:'+c+'"></i></div>';}
+  var h='<div class="toc">';
+  h+='<div class="toh"><div><h2>'+esc(to)+'</h2><div class="tos">'+kh+' · xưởng '+esc(xw)+'</div></div><button class="btn" data-toclose="1" aria-label="Đóng thẻ tổ">'+I('x')+'</button></div>';
+  if(KH_TT!=='ok')h+='<div class="tos">'+(KH_TT==='err'?'Không đọc được KHSX — chưa ước được phần còn lại.':'Đang đọc KHSX…')+'</div>';
+  /* 1 con so chinh + 1 thanh + 2 dong */
+  h+='<div class="tobig"><b style="color:'+mau(pcT)+'">'+(pcT==null?'—':fm(pcT,0)+'%')+'</b><span>hoàn thành</span></div>'+bar(pcT,mau(pcT));
+  h+='<div class="tol"><span>Đã làm</span><b>'+bcT(T.dk)+' / '+bcT(T.pk)+' t</b><b>'+fm(T.dq,0)+' / '+fm(T.pq,0)+' CK</b></div>';
+  h+='<div class="tol"><span>Còn lại</span><b style="color:var(--warn)">'+bcT(T.ck)+' t</b><b style="color:var(--warn)">'+fm(T.cq,0)+' CK</b></div>';
+  h+='<div class="tol"><span>Tháng '+K.m+'</span><b>SX '+bcT(T.sx)+' t</b><b'+(T.ton>0.05?' style="color:var(--warn)"':'')+'>Chờ NT '+bcT(T.ton)+' t</b></div>';
+  h+='<div class="tot2">Dự án ('+ds.length+')</div>';
+  if(!ds.length)h+='<div class="tos">Tổ chưa có dự án đang làm tại '+esc(xw)+'.</div>';
   ds.forEach(function(d){
-    h+='<div class="bcp"><div class="bcp1"><span class="bcpn">'+esc(d.ten)+'</span><b style="color:'+mau(d.pc)+'">'+(d.pc==null?'—':fm(d.pc,0)+'%')+'</b></div>'
-      +'<div class="bcbar"><i style="width:'+(d.pc==null?0:Math.min(100,d.pc)).toFixed(0)+'%;background:'+mau(d.pc)+'"></i></div>'
-      +'<div class="tog"><div><span>Phân bổ</span><b>'+bcT(d.pk)+' t</b><i>'+fm(d.pq,0)+' CK</i></div><div><span>Đã làm</span><b>'+bcT(d.dk)+' t</b><i>'+fm(d.dq,0)+' CK</i></div><div><span>Còn lại</span><b style="color:var(--warn)">'+bcT(d.ck)+' t</b><i>'+fm(d.cq,0)+' CK</i></div></div>'
-      +((d.co?'':'<div class="bcm">KHSX chưa xếp '+esc(xw)+'</div>')+(d.tn>0.05?'<div class="bcm" style="color:var(--warn)">Tồn chờ NT '+bcT(d.tn)+' t</div>':''))+'</div>';});
+    h+='<div class="topr"><div class="bcp1"><span class="bcpn">'+esc(d.ten)+'</span><b style="color:'+mau(d.pc)+'">'+(d.pc==null?'—':fm(d.pc,0)+'%')+'</b></div>'+bar(d.pc,mau(d.pc))
+      +'<div class="tom">Đã làm <b>'+bcT(d.dk)+' / '+bcT(d.pk)+' t</b> · <b>'+fm(d.dq,0)+' / '+fm(d.pq,0)+' CK</b>'+(d.ck>=0.05?' · còn '+bcT(d.ck)+' t':'')+'</div>'
+      +((d.tn>0.05?'<div class="tom" style="color:var(--warn)">Chờ NT '+bcT(d.tn)+' t</div>':'')+(d.co?'':'<div class="tom">KHSX chưa xếp '+esc(xw)+'</div>'))+'</div>';});
   var qs=Object.keys(q).sort(function(a,b){return q[b]-q[a];}).slice(0,3);
-  h+='<div class="muted bcsrc">'+(qs.length?'QC NT T'+K.m+': '+qs.map(function(n){return esc(n.split(' ').slice(-2).join(' '))+' '+bcT(q[n])+' t';}).join(', ')+' · ':'')
-    +'Phân bổ (ước) = đã làm (SPM, mọi thời điểm) + còn lại ước = KL/CK còn lại KHSX của dự án tại '+esc(xw)+' × % tổ đã làm dự án đó (SPM 90 ngày). % hoàn thành = đã làm ÷ phân bổ. KHSX không ghi tổ nên đây là số ước.</div></div>';
+  if(qs.length)h+='<div class="tos" style="margin-top:8px">QC nghiệm thu tháng '+K.m+': '+qs.map(function(n){return esc(n.split(' ').slice(-2).join(' '))+' '+bcT(q[n])+' t';}).join(' · ')+'</div>';
+  h+='<details class="tod"><summary>Số phân bổ là số ước — cách tính</summary><div>KHSX không ghi tổ. Phân bổ = phần tổ đã làm (SPM) + phần còn lại ước. Phần còn lại ước = khối lượng / cấu kiện còn lại của dự án tại '+esc(xw)+' (KHSX) × tỷ lệ tổ đã làm dự án đó trong 90 ngày (SPM). Hoàn thành = đã làm ÷ phân bổ. Khâu của tổ = ráp hay hàn, theo khâu tổ làm nhiều hơn.</div></details></div>';
   return h;}
-function vePanel(){
+/* ===== BAO CAO TONG QUAN XUONG — duoi ban do (user 04/11): KPI · to gia cong · QC phu trach · du an ===== */
+function veXuongBC(){var el=document.getElementById('xuongBC');if(!el)return;var k=SEL&&KHU[SEL];
+  if(!k||!k.spmX){el.hidden=true;el.innerHTML='';return;}
+  var xw=k.spmX,K=bcKy(),tos=cacTo(xw).map(function(tk){return toData(tk);}).filter(function(o){return o.T.pk>0.05||o.T.sx>0.05||o.T.ton>0.05;});
+  tos.sort(function(a,b){return b.T.ck-a.T.ck||b.T.pk-a.T.pk;});
+  var mau=function(p){return p==null?'var(--mut)':(p>=99.5?'var(--ok)':(p>=50?'var(--warn)':'var(--bad)'));};
+  var R={pk:0,dk:0,ck:0,cq:0,sx:0,ton:0};tos.forEach(function(o){R.pk+=o.T.pk;R.dk+=o.T.dk;R.ck+=o.T.ck;R.cq+=o.T.cq;R.sx+=o.T.sx;R.ton+=o.T.ton;});
+  var h='<div class="xbch"><div><h2>Báo cáo tổng quan '+esc(xw)+'</h2><div class="muted">Tháng '+K.m+'/'+K.y+' ('+dVN(K.tu).slice(0,5)+' → '+dVN(K.den).slice(0,5)+') · SPM '+esc(D.updated||'—')+' · KHSX '+(KH_TT==='ok'?esc(KH_LUC):'đang đọc…')+' · tự đọc lại mỗi 5 phút</div></div><button class="btn" data-bclm="1" aria-label="Đọc lại KHSX">'+I('sync')+'Làm mới</button></div>'+(SPM_MOI?'<div class="note">Có số liệu SPM mới — <a href="#" data-bctl="1" style="color:var(--ink);font-weight:800">tải lại trang</a>.</div>':'');
+  var KR2={r:0,h:0};if(KH_TT==='ok'){var KSx=_ksGop();Object.keys(KSx).forEach(function(m){var z=KSx[m][xw];if(z){KR2.r+=z.r;KR2.h+=z.h;}});}
+  h+='<div class="xbk"><div><b>'+(KH_TT==='ok'?bcT(KR2.r):'—')+' t</b><span>Còn ráp (KHSX)</span></div><div><b>'+(KH_TT==='ok'?bcT(KR2.h):'—')+' t</b><span>Còn hàn (KHSX)</span></div><div><b>'+bcT(R.sx)+' t</b><span>Sản xuất tháng '+K.m+'</span></div><div><b style="color:'+(R.ton>0.05?'var(--warn)':'var(--ink)')+'">'+bcT(R.ton)+' t</b><span>Đang chờ QC nghiệm thu</span></div><div><b>'+tos.length+'</b><span>Tổ đang có việc</span></div></div>';
+  h+='<div class="bct">Tổ gia công <span class="muted">bấm 1 tổ để xem chi tiết</span></div>';
+  if(!tos.length)h+='<div class="note">Chưa có tổ nào có việc tại '+esc(xw)+'.</div>';
+  else{h+='<div class="tw3"><table class="tto xbt"><thead><tr><th>Tổ</th><th>Khâu</th><th style="width:22%">Hoàn thành</th><th class="n">Đã làm / Phân bổ</th><th class="n">Còn lại</th><th class="n">SX T'+K.m+'</th><th class="n">Chờ NT</th></tr></thead><tbody>';
+    tos.forEach(function(o){var t=o.T,p=t.pk>0.05?100*t.dk/t.pk:null;
+      h+='<tr class="click" data-tosel="'+esc(xw+'.'+o.to)+'"><td><b>'+esc(o.to)+'</b></td><td>'+(o.kh==='Hàn'?'Hàn':'Ráp')+'</td>'
+        +'<td><div class="xbp"><b style="color:'+mau(p)+'">'+(p==null?'—':fm(p,0)+'%')+'</b><div class="bcbar"><i style="width:'+(p==null?0:Math.min(100,p)).toFixed(0)+'%;background:'+mau(p)+'"></i></div></div></td>'
+        +'<td class="n">'+bcT(t.dk)+' / '+bcT(t.pk)+' t<div class="muted">'+fm(t.dq,0)+' / '+fm(t.pq,0)+' CK</div></td>'
+        +'<td class="n"><b style="color:var(--warn)">'+bcT(t.ck)+' t</b><div class="muted">'+fm(t.cq,0)+' CK</div></td>'
+        +'<td class="n">'+(t.sx>0.05?bcT(t.sx)+' t':'—')+'</td><td class="n"'+(t.ton>0.05?' style="color:var(--warn);font-weight:800"':'')+'>'+(t.ton>0.05?bcT(t.ton)+' t':'—')+'</td></tr>';});
+    h+='</tbody></table></div><div class="muted bcsrc">Phân bổ của tổ là số ước (KHSX không ghi tổ): đã làm theo SPM + phần còn lại KHSX chia theo tỷ lệ tổ đã làm từng dự án trong 90 ngày.</div>';}
+  h+=bcXuong(xw,true);
+  el.innerHTML=h;el.hidden=false;}
+function veToPop(){var e=document.getElementById('toPop');if(!e)return;if(!SELTO||!SEL){e.hidden=true;e.innerHTML='';return;}e.innerHTML=theTo(SELTO);e.hidden=false;}
+function vePanel(){veToPop();veXuongBC();
   var el=document.getElementById('panel');
   if(!SEL){
     /* tong quan: xep hang khu theo tai */
@@ -1141,10 +1201,10 @@ function vePanel(){
       +(MOBANG?bang:'');
     return;}
   var k=KHU[SEL],ds=nguoiKhu(SEL),x=k.spmX&&S.X[k.spmX];
-  var h=(SELTO?theTo(SELTO):'')+theQC()+'<div style="display:flex;justify-content:space-between;align-items:start;gap:8px"><div><h2>'+esc(k.ten)+'</h2><div class="mo">'+esc(k.mo)+'</div>'+'</div><button class="btn noprint" data-close="1" aria-label="Đóng">'+I('x')+'</button></div>';
+  var h=theQC()+'<div style="display:flex;justify-content:space-between;align-items:start;gap:8px"><div><h2>'+esc(k.ten)+'</h2><div class="mo">'+esc(k.mo)+'</div>'+'</div><button class="btn noprint" data-close="1" aria-label="Đóng">'+I('x')+'</button></div>';
   if(x){h+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center">'
       +[['Fitup',x.f,'var(--f)'],['Hàn',x.w,'var(--w)'],['Sơn',x.p,'var(--p)']].map(function(a){return '<div class="card" style="padding:7px;box-shadow:none"><div style="font-size:18px;font-weight:900;color:'+a[2]+'">'+fm(a[1],1)+'</div><div class="muted" style="font-size:12px">'+a[0]+' (tấn)</div></div>';}).join('')+'</div>';}
-  if(k.spmX)h+='<div class="sec">Báo cáo '+esc(k.spmX)+'</div>'+bcXuong(k.spmX);
+  if(k.spmX)h+='<button class="btn" data-xbc="1" style="width:100%;margin-top:10px;min-height:44px">Báo cáo tổng quan '+esc(k.spmX)+' (dưới bản đồ) ↓</button>';
   if(x){
     /* gon: moi to 1 dong; to khong phat sinh trong ngay gom lai, bam de mo */
     h+='<div class="sec">Từng tổ — '+(CHE==='ngay'?'ngày '+dVN(NGAY):KY+' ngày')+' (tấn)</div><table class="tto"><thead><tr><th>Tổ</th><th class="n">SX</th><th class="n">NT</th><th class="n">Tồn</th><th>QC nghiệm thu</th></tr></thead><tbody>';
@@ -1179,6 +1239,7 @@ document.getElementById('panel').addEventListener('click',function(e){
   if(e.target.closest('[data-boq]')){SELQ=null;veCanh();vePanel();return;}
   if(e.target.closest('[data-moim]')){MOIM=!MOIM;vePanel();return;}
   if(e.target.closest('[data-mobang]')){MOBANG=!MOBANG;vePanel();return;}
+  if(e.target.closest('[data-xbc]')){var xb=document.getElementById('xuongBC');if(xb)xb.scrollIntoView({behavior:'smooth',block:'start'});return;}
   if(e.target.closest('[data-toclose]')){SELTO=null;veCanh();vePanel();return;}
   var tq=e.target.closest('[data-tosel]');if(tq){chonTo(tq.getAttribute('data-tosel'));return;}
   if(e.target.closest('[data-bclm]')){KH_LUC='đang đọc lại…';vePanel();khLamMoi();return;}
