@@ -880,23 +880,26 @@ function veXuong(id){
   /* to -> line: theo TO_LINE; chua co thi xep TAM luan phien theo khoi luong 90 ngay */
   var tos=k.spmX?cacTo(k.spmX):[],tam=0,lineTo={};
   tos.forEach(function(tk,i){var l=+TOL[tk];if(l>=1&&l<=NL)lineTo[tk]=l-1;else{lineTo[tk]=i%NL;tam++;}});
+  /* 04/11 user: khoi cao theo SAN LUONG — tan SX cua to o khau do trong ky KY ngay (khong phu thuoc ngay dang xem) */
+  var dsK=NGAYS.filter(function(d){return d>=LIMD&&d<=MAXD;}),SL={},mxS=0;
+  tos.forEach(function(tk){var o=TD[tk]||{},a={f:0,w:0,d:0,p:0};dsK.forEach(function(d){var x=o[d];if(!x)return;a.f+=x.sf;a.w+=x.sw;a.p+=x.sp;a.d+=x.nd;});SL[tk]=a;mxS=Math.max(mxS,a.f,a.w,a.p,a.d);});
   var mx=0,ds={};
   tos.forEach(function(tk){var so=toSo(tk),tn=TONC[tk]||{f:0,w:0,p:0};
     var v4={f:[so.sf,so.nf,tn.f],w:[so.sw,so.nw,tn.w],d:[0,so.nd,0],p:[so.sp,so.np,tn.p]};
     KHAU.forEach(function(kk){var c=kk[0],v=v4[c],act=v[0]>0.05||v[1]>0.05,key=c==='p'?'p':(lineTo[tk]+c);
-      if(act||v[2]>0.5)(ds[key]=ds[key]||[]).push({tk:tk,so:so,v:v,act:act,c:c});if(act)mx=Math.max(mx,v[0],v[1]);});});
+      var slc=(SL[tk]||{})[c]||0;if(act||v[2]>0.5||slc>0.5)(ds[key]=ds[key]||[]).push({tk:tk,so:so,v:v,act:act,c:c,sl:slc});if(act)mx=Math.max(mx,v[0],v[1]);});});
   Object.keys(ds).forEach(function(key){var c=key.slice(-1),li=c==='p'?0:+key.slice(0,-1),z=zone(li,c),kk=KHAU.filter(function(a){return a[0]===c;})[0];
-    var arr=ds[key].sort(function(a,b){return (b.act-a.act)||(Math.max(b.v[0],b.v[1])-Math.max(a.v[0],a.v[1]))||(b.v[2]-a.v[2]);});
+    var arr=ds[key].sort(function(a,b){return (b.sl-a.sl)||(b.act-a.act)||(b.v[2]-a.v[2]);});
     var cap=c==='p'?7:(c==='f'?6:(c==='w'?4:3)),du=arr.length-cap;arr=arr.slice(0,cap);
     var n=arr.length,pad=8,cols=1,rows=Math.ceil(n/cols);
     var bw=(z.w-pad*(cols+1))/cols,bh=(z.h-pad*(rows+1))/rows;
     arr.forEach(function(e,i){var cc=i%cols,rr=Math.floor(i/cols),L=z.x+pad+cc*(bw+pad),T=z.y+pad+rr*(bh+pad);
-      var val=Math.max(e.v[0],e.v[1]),hh=e.act?5+Math.round(40*val/(mx||1)):3;
+      var sl=(SL[e.tk]||{})[c]||0,hh=sl>0.05?6+Math.round(70*Math.sqrt(sl/(mxS||1))):3;
       var t2=c==='d'?['#ffffff','có NT']:ttKhau(e.v[0],e.v[1]);
       /* GON: ten to + so in PHANG tren mat o (o khong de nhau -> chu khong de nhau); QC = cham anh nho; chi QC dang chon moi noi len */
       var o=e.so.qs[c];
       var mat='<div class="mat"><div class="mt1"><b>'+esc(e.tk.split('.').slice(1).join('.'))+'</b><i style="background:'+t2[0]+'" title="'+t2[1]+'"></i></div>'
-        +(e.v[1]>0.05?'<div class="mt2"><b>'+fm(e.v[1],1)+'</b> t</div>':'')
+        +(e.sl>0.05?'<div class="mt2"><b>'+fm(e.sl,0)+'</b> t SX '+KY+'n</div>':'')
         +'</div>';
       var selB=qiS>=0&&o[String(qiS)],fig=''; /* QC dung o VI TRI CO DINH theo so do (ben duoi), khong dung tren o to */
       h+='<div class="bld bay khau'+(e.act?'':' rong')+(selB||SELTO===e.tk?' selq':'')+'" data-to="'+esc(e.tk)+'" style="left:'+L+'px;top:'+T+'px;width:'+bw+'px;height:'+bh+'px;--h:'+hh+'px;--bc:'+kk[2]+';--tx:'+kk[3]+'">'
@@ -931,7 +934,7 @@ function veXuong(id){
     +(tam?' · '+tam+' tổ xếp TẠM vào line (chưa có sơ đồ tổ–line)':'')+' · ô tổ xếp theo khối lượng</div>';
   W.innerHTML='<div class="ground"></div>'+h;
   document.getElementById('legend3').innerHTML=KHAU.map(function(kk){return '<span><i style="background:'+kk[2]+'"></i>'+kk[1]+'</span>';}).join('')
-    +'<span>· <b style="color:var(--ok)">●</b> NT kịp SX <b style="color:var(--warn)">●</b> chậm <b style="color:var(--bad)">●</b> có SX chưa NT · ô mờ = chỉ còn tồn</span><span>· '+(CHE==='ngay'?'ngày '+dVN(NGAY):KY+' ngày')+' · tấn · Final = Final DIM, là phần của khối lượng Hàn</span>';
+    +'<span>· <b style="color:var(--ok)">●</b> NT kịp SX <b style="color:var(--warn)">●</b> chậm <b style="color:var(--bad)">●</b> có SX chưa NT · ô mờ = chỉ còn tồn · khối càng cao = sản xuất '+KY+' ngày càng nhiều</span><span>· '+(CHE==='ngay'?'ngày '+dVN(NGAY):KY+' ngày')+' · tấn · Final = Final DIM, là phần của khối lượng Hàn</span>';
 }
 function ngayXuong(x){var sx=0,nt=0;Object.keys(TD).forEach(function(tk){if(tk.indexOf(x+'.')!==0)return;var a=TD[tk][NGAY];if(a){sx+=a.sx;nt+=a.nt;}});
   return '<div class="m">'+dVN(NGAY).slice(0,5)+': SX <b style="color:#fff">'+fm(sx,1)+'</b> · NT <b style="color:#F2D58A">'+fm(nt,1)+'</b> t</div>';}
@@ -1001,7 +1004,7 @@ function veCanh(){
   window.addEventListener('pointercancel',function(e){delete pts[e.pointerId];if(Object.keys(pts).length<2)pinch0=0;dn=null;W.classList.remove('drag');});
   window.addEventListener('pointerup',function(e){delete pts[e.pointerId];if(Object.keys(pts).length<2)pinch0=0;
     if(!dn)return;var moved=dn.moved;dn=null;W.classList.remove('drag');
-    if(!moved){var t=document.elementFromPoint(e.clientX,e.clientY);var bt=t&&t.closest&&t.closest('[data-to]');if(bt&&SEL){chonTo(bt.getAttribute('data-to'));return;}var b=t&&t.closest&&t.closest('[data-khu]');if(b)chon(b.getAttribute('data-khu'));}});
+    if(!moved){var t=document.elementFromPoint(e.clientX,e.clientY);var bt=t&&t.closest&&t.closest('[data-to]');if(bt&&SEL){chonTo(bt.getAttribute('data-to'));return;}if(SELTO&&!(t&&t.closest&&t.closest('#toPop'))){SELTO=null;veCanh();vePanel();return;}var b=t&&t.closest&&t.closest('[data-khu]');if(b)chon(b.getAttribute('data-khu'));}});
   ST.addEventListener('wheel',function(e){e.preventDefault();cam.s=Math.max(.2,Math.min(1.6,cam.s*(e.deltaY<0?1.08:.92)));applyCam();},{passive:false});
 })();
 function setCamBtn(k){[].forEach.call(document.querySelectorAll('#camSeg .btn'),function(b){b.classList.toggle('on',b.getAttribute('data-cam')===k);});}
@@ -1128,6 +1131,8 @@ function bcXuong(xw,noHead){
   var t=e.target.closest('[data-tosel]');if(t){SELTO=null;chonTo(t.getAttribute('data-tosel'));var st=document.getElementById('stage');if(st)st.scrollIntoView({behavior:'smooth',block:'start'});return;}
   if(e.target.closest('[data-bclm]')){KH_LUC='đang đọc lại…';vePanel();khLamMoi();return;}
   if(e.target.closest('[data-bctl]')){e.preventDefault();location.reload();}});})();
+document.addEventListener('click',function(ev){if(!SELTO)return;var t=ev.target;if(!t.closest||t.closest('#toPop')||t.closest('#stage')||t.closest('[data-tosel]')||t.closest('[data-to]'))return;SELTO=null;veCanh();vePanel();});
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&SELTO){SELTO=null;veCanh();vePanel();}});
 (function(){var e=document.getElementById('toPop');if(!e)return;
   ['pointerdown','wheel','touchstart'].forEach(function(t){e.addEventListener(t,function(ev){ev.stopPropagation();},{passive:true});});
   e.addEventListener('click',function(ev){if(ev.target.closest('[data-toclose]')){SELTO=null;veCanh();vePanel();}});})();
