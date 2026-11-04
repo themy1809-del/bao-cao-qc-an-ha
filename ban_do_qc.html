@@ -100,6 +100,7 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .bcq{border:1px solid var(--line2);border-radius:10px;padding:6px 10px;margin-bottom:6px}.bcqn{font-weight:800;font-size:13px;margin-bottom:2px}
 .bcr{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-top:1px dashed var(--line2)}.bcr:first-of-type{border-top:0}
 .bcl{min-width:0}.bcl span{display:block;font-size:12.5px}.bcl small{color:var(--mut);font-size:12px}
+.bcr.bcsub{padding-left:14px;border-top:0}.bcr.bcsub .bcl span{font-size:12.5px;color:var(--ink2)}.bcr.bcsub .bcl span::before{content:'↳ ';color:var(--mut)}.bcr.bcsub .bcs{font-weight:700;font-size:12px}
 .bcs{font-weight:800;font-size:12.5px;text-align:right;flex:none;max-width:48%}
 .bcp{padding:7px 0;border-bottom:1px solid var(--line2)}.bcp1{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
 .bcpn{font-weight:700;font-size:12.5px;min-width:0}.bcp1 b{flex:none;font-size:13px;text-align:right}
@@ -1084,7 +1085,9 @@ function bcXuong(xw,noHead){
     var t,cl;
     if(p.to||p.tatca){var rows=[];
       if(p.to)p.to.forEach(function(tn){var o=toData(xw+'.'+tn),T=o.T,pc=T.pk>0.05?100*T.dk/T.pk:null;
-        var AL={TO1RH:'RHT1',TO2RH:'RHT2',TO3RH:'RHT3',TO2GCN:'GCN 2',TO3GCN:'GCN 3'};rows.push({ten:'Tổ '+(AL[tn]||tn)+' ('+tn+')',khau:p.khau,t:KH_TT!=='ok'?'—':(T.ck<0.5?'Xong':'Còn '+bcT(T.ck)+' t · '+fm(T.cq,0)+' CK')+(pc==null?'':' · '+fm(pc,0)+'%'),cl:KH_TT!=='ok'?'mu':(T.ck<0.5?'ok':'am')});});
+        var AL={TO1RH:'RHT1',TO2RH:'RHT2',TO3RH:'RHT3',TO2GCN:'GCN 2',TO3GCN:'GCN 3'};rows.push({ten:'Tổ '+(AL[tn]||tn)+' ('+tn+')',khau:p.khau,t:KH_TT!=='ok'?'—':(T.ck<0.5?'Xong':'Còn '+bcT(T.ck)+' t · '+fm(T.cq,0)+' CK')+(pc==null?'':' · '+fm(pc,0)+'%'),cl:KH_TT!=='ok'?'mu':(T.ck<0.5?'ok':'am')});
+        /* 04/11 user: QC theo to VA du an gia cong -> liet ke du an cua to */
+        o.ds.filter(function(d){return d.ck>=0.5||d.tn>0.05;}).forEach(function(d){rows.push({sub:1,ten:d.ten,khau:'đã làm '+bcT(d.dk)+' / '+bcT(d.pk)+' t · '+fm(d.dq,0)+' / '+fm(d.pq,0)+' CK'+(d.tn>0.05?' · chờ NT '+bcT(d.tn)+' t':''),t:(d.ck<0.5?'Xong':'Còn '+bcT(d.ck)+' t')+(d.pc==null?'':' · '+fm(d.pc,0)+'%'),cl:d.pc==null?'mu':(d.pc>=99.5?'ok':(d.pc>=50?'am':'bad'))});});});
       else{var sh=0;if(KH_TT==='ok')Object.keys(KS).forEach(function(m){var z=KS[m][xw];if(z&&BOQ.indexOf(m)<0)sh+=z.h;});
         rows.push({ten:p.ten,khau:p.khau,t:KH_TT!=='ok'?'—':'Còn hàn '+bcT(sh)+' t',cl:KH_TT!=='ok'?'mu':'am'});}
       if(!(p.qc in ix)){ix[p.qc]=nhom.length;nhom.push({qc:p.qc,ds:[]});}
@@ -1101,7 +1104,7 @@ function bcXuong(xw,noHead){
   h+='<div class="bct">QC phụ trách</div>';
   if(!nhom.length)h+='<div class="note">Chưa khai báo QC phụ trách dự án cho '+esc(xw)+' (<b>PHU_TRACH</b> trong phan_bo_qc.js).</div>';
   else{nhom.forEach(function(g){h+='<div class="bcq"><div class="bcqn">'+esc(bcQC(g.qc))+'</div>';
-      g.ds.forEach(function(d){h+='<div class="bcr"><div class="bcl"><span>'+esc(d.ten)+'</span><small>'+esc(d.khau)+'</small></div><div class="bcs" style="color:'+MAU[d.cl]+'">'+esc(d.t)+'</div></div>';});
+      g.ds.forEach(function(d){h+='<div class="bcr'+(d.sub?' bcsub':'')+'"><div class="bcl"><span>'+esc(d.ten)+'</span><small>'+esc(d.khau)+'</small></div><div class="bcs" style="color:'+MAU[d.cl]+'">'+esc(d.t)+'</div></div>';});
       h+='</div>';});
     if(bo.length)h+='<div class="muted bcsrc">Chưa đưa vào: '+esc(bo.join(', '))+' — KHSX chưa xếp ở '+esc(xw)+'.</div>';}
   if(KH_TT!=='ok')return h+'</div></div>';
