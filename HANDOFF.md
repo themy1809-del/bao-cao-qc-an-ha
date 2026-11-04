@@ -685,3 +685,5 @@ Phiên Claude Code kế tiếp nên:
 - Cập nhật hằng tháng: chỉ sửa `PHU_TRACH` / `DANG_CHAY` / `BO_QUA`. Hiện mới khai báo AH3.
 - Trình bày gọn (04/11 sau): QC = thẻ theo người; dự án = 1 dòng tên + % + thanh tiến độ + 1 dòng phụ. Tự đọc lại KHSX mỗi 5 phút khi tab mở (`khLamMoi`), nút "Làm mới"; `spmKiem` đọc 300 byte đầu `qcdata.js` để báo khi PC đẩy SPM mới (bấm tải lại trang).
 - Kiểm tra: `ui_audit.js ban_do_qc.html` DAT HET; số AH3 khớp báo cáo PDF tay 04/11.
+- (04/11 sau) **Bấm vào tổ** trong xưởng (khối `[data-to]`) → thẻ tổ đầu panel (`theTo`): ráp còn / hàn còn **phân bổ ước** (user chọn), SX tháng, tồn chờ NT, từng dự án, QC NT. Ước = KL còn lại KHSX dự án tại xưởng × % tổ đã làm dự án đó (SPM 90 ngày, Fitup theo tấn Fitup, hàn theo tấn hàn). KHSX không có cột tổ.
+
