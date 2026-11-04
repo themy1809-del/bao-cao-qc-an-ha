@@ -678,9 +678,9 @@ Phiên Claude Code kế tiếp nên:
 - `kiem_tra/ui_audit.js`: bộ đo dùng lại cho mọi phiên (tương phản, nhãn, bàn phím, emoji, nút <44px, lỗi JS).
 - `CLAUDE.md` mục **4B**: BẮT BUỘC dùng skill `ui-ux-pro-max` cho mọi việc giao diện + 3 khối chung cho trang mới + chạy `ui_audit.js` trước khi giao.
 
-### 04/11/2026 — Trang `bao_cao_xuong.html` (báo cáo chi tiết từng xưởng theo tháng chốt) — user yêu cầu + duyệt
-- Mở từ `ban_do_qc.html`: bấm xưởng → nút **"Báo cáo tháng AHx →"** (chỉ hiện với khu có `spmX`). Link trực tiếp: `bao_cao_xuong.html?x=AH3&m=2026-11` (m bỏ trống = tháng chốt hiện tại 21→20).
-- Nguồn: `qcdata.js` (SPM, có `qc_khoa.js` ngay sau) · KHSX sheet Data đọc trực tiếp (cùng sheet/gid với ban_do_qc) · `phan_bo_qc.js` mảng mới **`PHU_TRACH`** (QC × dự án × khâu, `tt` = tình trạng ghi tay, `giu:1` = vẫn hiện khi KHSX chưa xếp xưởng), **`DANG_CHAY`** (user xác nhận đang chạy), **`BO_QUA`** (user bỏ khỏi báo cáo).
-- Quy tắc user chốt: KHSX chưa xếp dự án ở xưởng thì CHƯA đưa vào (trừ `giu:1`); không có cột PB An Hạ (sheet KH gia công khoá nội bộ — user chọn bỏ); tiến độ hoàn thành = % ráp xong tại xưởng theo KHSX; số cấu kiện = TSL ráp HT còn lại.
-- Cập nhật hằng tháng: chỉ sửa `PHU_TRACH` / `DANG_CHAY` / `BO_QUA` trong `phan_bo_qc.js`. Có nút In / Lưu PDF (A4 ngang).
-- Kiểm tra: `ui_audit.js` bao_cao_xuong + ban_do_qc DAT HET; đối chiếu AH3 với báo cáo PDF tay 04/11 (Fitup HV còn 233 t, Final 237 t, EVAPCO Structural 33/49 t, tiến độ 96/58/55/94/10/98/78 %) — khớp.
+### 04/11/2026 — Báo cáo xưởng theo tháng chốt NGAY TRONG panel `ban_do_qc.html` (user yêu cầu + duyệt)
+- Bấm 1 xưởng trên sơ đồ → panel phải có mục **"Báo cáo AHx — tháng m/yyyy"** (hàm `bcXuong`): 1. QC đang phụ trách (dự án · khâu · tình trạng), 2. Dự án tại xưởng: Đang chạy / Chuẩn bị chạy (còn ráp, tiến độ %, số cấu kiện, còn hàn, đã ráp trong tháng, QC). User không muốn trang/PDF riêng → đã bỏ `bao_cao_xuong.html`.
+- Nguồn: KHSX (`KHR`, `khTuBang` thêm [11] tổng KL t, [12] TSL ráp HT còn lại) · SPM `qcdata.js` · `phan_bo_qc.js` mảng mới **`PHU_TRACH`** (QC × dự án × khâu, `tt` = tình trạng ghi tay, `giu:1` = vẫn hiện khi KHSX chưa xếp xưởng), **`DANG_CHAY`** (user xác nhận đang chạy), **`BO_QUA`** (user bỏ khỏi báo cáo).
+- Quy tắc user chốt: KHSX chưa xếp dự án ở xưởng thì CHƯA đưa vào (trừ `giu:1`); không có PB An Hạ (sheet KH gia công khoá nội bộ — user chọn bỏ); tiến độ = % ráp xong tại xưởng theo KHSX; tháng chốt 21→20 theo ngày SPM mới nhất.
+- Cập nhật hằng tháng: chỉ sửa `PHU_TRACH` / `DANG_CHAY` / `BO_QUA`. Hiện mới khai báo AH3.
+- Kiểm tra: `ui_audit.js ban_do_qc.html` DAT HET; số AH3 khớp báo cáo PDF tay 04/11.
