@@ -1053,7 +1053,8 @@ function _pad2(n){return ('0'+n).slice(-2);}
 function bcKy(){var d=MAXD||homNay(),y=+d.slice(0,4),m=+d.slice(5,7);if(+d.slice(8,10)>20){m++;if(m>12){m=1;y++;}}
   var py=m===1?y-1:y,pm=m===1?12:m-1,ppy=pm===1?py-1:py,ppm=pm===1?12:pm-1;
   return {m:m,y:y,tu:py+'-'+_pad2(pm)+'-21',den:y+'-'+_pad2(m)+'-20',tuTruoc:ppy+'-'+_pad2(ppm)+'-21'};}
-function bcMa(p){return String(p==null?'':p).normalize('NFC').trim().split(/\s+/)[0]||'';}
+var BC_ALIAS={'13626-002':'TCTN.DNS.26.004'}; /* Cao toc VIN: ma SPM khac ma KHSX */
+function bcMa(p){var c=String(p==null?'':p).normalize('NFC').trim().split(/\s+/)[0]||'';return BC_ALIAS[c]||c;}
 function bcTen(p){return String(p==null?'':p).normalize('NFC').trim().replace(/^\S+\s+/,'').replace(/^(DGRP|DG)\s+/i,'');}
 var _BCTEN=null;function bcQC(c){if(!_BCTEN){_BCTEN={};(PB.TEAMS||[{NGUOI:PB.NGUOI}]).concat([{NGUOI:PB.NGUOI}]).forEach(function(t){(t.NGUOI||[]).forEach(function(n){if(n.spm&&!_BCTEN[n.spm])_BCTEN[n.spm]=titleCase(n.ten);});});}return _BCTEN[c]||c;}
 function bcT(v){return v>0&&v<10?fm(v,1):fm(v,0);}
