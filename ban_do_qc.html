@@ -55,6 +55,9 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .sub{color:var(--mut);font-size:12.5px}
 .sp{flex:1}
 .toc{border:2px solid var(--gold);border-radius:12px;padding:10px 12px;margin-bottom:12px;background:var(--surf2)}
+.topc{display:flex;flex-direction:column;gap:4px;margin:8px 0}.topc div:first-child{display:flex;justify-content:space-between;align-items:baseline}.topc b{font-size:24px;font-weight:900}
+.tokq td{padding:4px 7px}
+.tog{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:3px}.tog div{font-size:12px;color:var(--mut)}.tog span{display:block}.tog b{display:block;color:var(--ink);font-size:13px;font-variant-numeric:tabular-nums}.tog i{font-style:normal;font-variant-numeric:tabular-nums}
 .tok{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}.tok div{background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:6px 8px}.tok b{display:block;font-size:17px;font-weight:900;font-variant-numeric:tabular-nums}.tok span{font-size:12px;color:var(--mut)}
 .bch{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:2px 0}.bch .btn{min-height:36px;display:inline-flex;align-items:center;gap:4px}
 .bcsrc{font-size:12px;margin:2px 0 6px}
@@ -1073,40 +1076,54 @@ function bcXuong(xw){
 /* ===== THE TO (user 04/11/2026: bam vao to tren ban do -> khoi luong phan bo cua to) =====
    KHSX khong co cot to -> PHAN BO UOC TINH (user chon): KL con lai KHSX cua tung du an tai xuong x ty le to do da gia cong
    du an do tai xuong trong 90 ngay (Fitup chia theo tan Fitup, Han chia theo tan Han trong SPM). Kem so thuc te SPM. */
-function _ksGop(){if(_ksGop.k===KHR)return _ksGop.v;var KS={};(KHR||[]).forEach(function(r){var m=bcMa(r[0]),w=chuanX(r[1])||'?';var o=(KS[m]=KS[m]||{});var z=o[w]=o[w]||{ten:r[0],kl:0,r:0,h:0,sl:0};
-  z.kl+=+r[11]||0;z.r+=+r[2]||0;z.h+=+r[5]||0;z.sl+=+r[12]||0;});_ksGop.k=KHR;_ksGop.v=KS;return KS;}
+function _ksGop(){if(_ksGop.k===KHR)return _ksGop.v;var KS={};(KHR||[]).forEach(function(r){var m=bcMa(r[0]),w=chuanX(r[1])||'?';var o=(KS[m]=KS[m]||{});var z=o[w]=o[w]||{ten:r[0],kl:0,r:0,h:0,sl:0,slh:0};
+  z.kl+=+r[11]||0;z.r+=+r[2]||0;z.h+=+r[5]||0;z.sl+=+r[12]||0;z.slh+=+r[13]||0;});_ksGop.k=KHR;_ksGop.v=KS;return KS;}
 function chonTo(tk){SELTO=SELTO===tk?null:tk;veCanh();vePanel();var p=document.getElementById('panel');if(p&&SELTO)p.scrollTop=0;}
 function theTo(tk){
   var xw=tk.split('.')[0],to=tk.slice(xw.length+1),iX=D.X.indexOf(xw),iT=D.T.indexOf(to),K=bcKy(),MI=D.PL.indexOf('Miễn QC'),plCho=D.PL.indexOf('Chưa QC');
   var cut=new Date(new Date(MAXD).getTime()-89*864e5).toISOString().slice(0,10);
-  var tot={},mine={},sx={},ton={},PN={},q={};
+  var tot={},mine={},dn={},sx={},ton={},PN={},q={},tf=0,tw=0;
   D.rows.forEach(function(r){if(r[1]!==iX)return;var m=bcMa(D.P[r[0]]),wd=r[4]||'',f=+r[7]||0,w=+r[8]||0;
-    if(wd>=cut&&r[6]!==MI){var a=tot[m]=tot[m]||{f:0,w:0};a.f+=f;a.w+=w;if(r[2]===iT){var b=mine[m]=mine[m]||{f:0,w:0};b.f+=f;b.w+=w;PN[m]=D.P[r[0]];}}
-    if(r[2]!==iT)return;
-    if(wd>=K.tu&&wd<=K.den&&r[6]!==MI){var c=sx[m]=sx[m]||{f:0,w:0};c.f+=f;c.w+=w;PN[m]=D.P[r[0]];}
-    if(r[6]===plCho){ton[m]=(ton[m]||0)+f+w+(+r[9]||0);PN[m]=D.P[r[0]];}
+    if(wd>=cut&&r[6]!==MI){var a=tot[m]=tot[m]||{f:0,w:0};a.f+=f;a.w+=w;if(r[2]===iT){var b=mine[m]=mine[m]||{f:0,w:0};b.f+=f;b.w+=w;}}
+    if(r[2]!==iT)return;PN[m]=D.P[r[0]];
+    if(r[6]!==MI){var d=dn[m]=dn[m]||{f:0,fq:0,w:0,wq:0};d.f+=f;d.fq+=+r[10]||0;d.w+=w;d.wq+=+r[11]||0;tf+=f;tw+=w;}
+    if(wd>=K.tu&&wd<=K.den&&r[6]!==MI){var c=sx[m]=sx[m]||{t:0};c.t+=f+w;}
+    if(r[6]===plCho){ton[m]=(ton[m]||0)+f+w+(+r[9]||0);}
     if(r[3]>=K.tu&&r[3]<=K.den&&r[6]!==plCho&&r[6]!==MI&&f+w>0){var qn=qName(+r[5]);q[qn]=(q[qn]||0)+f+w;}});
-  var KS=KH_TT==='ok'?_ksGop():null,ds=[],S1={r:0,h:0,sf:0,sw:0,ton:0};
+  /* to rap (Fitup) hay to han: theo khoi luong to da lam nhieu hon */
+  var han=tw>tf,kh=han?'Hàn':'Ráp (Fitup)';
+  var KS=KH_TT==='ok'?_ksGop():null,ds=[],T={pk:0,pq:0,dk:0,dq:0,ck:0,cq:0,sx:0,ton:0};
   var tenM={};(PB.PHU_TRACH||[]).forEach(function(p){if(p.ma&&!tenM[p.ma])tenM[p.ma]=p.ten.replace(/\s+—\s+\d+\s*bộ$/,'');});
-  var all={};[mine,sx,ton].forEach(function(o){Object.keys(o).forEach(function(m){all[m]=1;});});
-  Object.keys(all).forEach(function(m){var z=KS&&KS[m]&&KS[m][xw],a=tot[m]||{f:0,w:0},b=mine[m]||{f:0,w:0};
-    var shF=a.f>0.05?b.f/a.f:0,shW=a.w>0.05?b.w/a.w:0,pr=z?z.r*shF:0,ph=z?z.h*shW:0,c=sx[m]||{f:0,w:0},tn=ton[m]||0;
-    if(pr+ph<0.05&&c.f+c.w<0.05&&tn<0.05)return;
-    S1.r+=pr;S1.h+=ph;S1.sf+=c.f;S1.sw+=c.w;S1.ton+=tn;
-    ds.push({ten:tenM[m]||bcTenDep(bcTen(z?z.ten:(PN[m]||m))),pr:pr,ph:ph,shF:shF,shW:shW,c:c,tn:tn});});
-  ds.sort(function(a,b){return (b.pr+b.ph)-(a.pr+a.ph)||(b.c.f+b.c.w)-(a.c.f+a.c.w);});
+  var all={};[mine,dn,sx,ton].forEach(function(o){Object.keys(o).forEach(function(m){all[m]=1;});});
+  Object.keys(all).forEach(function(m){var z=KS&&KS[m]&&KS[m][xw],a=tot[m]||{f:0,w:0},b=mine[m]||{f:0,w:0},d=dn[m]||{f:0,fq:0,w:0,wq:0};
+    var sh=han?(a.w>0.05?b.w/a.w:0):(a.f>0.05?b.f/a.f:0);
+    var ck=z?(han?z.h:z.r)*sh:0,cq=z?(han?z.slh:z.sl)*sh:0,dk=han?d.w:d.f,dq=han?d.wq:d.fq;
+    if(ck<0.05&&!((sx[m]||{}).t>0.05)&&!(ton[m]>0.05))return; /* chi du an to con phan bo / dang lam trong thang / con ton */
+    var pk=dk+ck,pq=dq+cq;
+    T.pk+=pk;T.pq+=pq;T.dk+=dk;T.dq+=dq;T.ck+=ck;T.cq+=cq;T.sx+=(sx[m]||{t:0}).t;T.ton+=ton[m]||0;
+    ds.push({ten:tenM[m]||bcTenDep(bcTen(z?z.ten:(PN[m]||m))),pk:pk,pq:pq,dk:dk,dq:dq,ck:ck,cq:cq,sh:sh,pc:pk>0.05?100*dk/pk:null,sx:(sx[m]||{t:0}).t,tn:ton[m]||0,co:!!z});});
+  ds.sort(function(a,b){return b.ck-a.ck||b.pk-a.pk;});
+  var MAU={ok:'var(--ok)',am:'var(--warn)',bad:'var(--bad)'};
+  function mau(p){return p==null?'var(--mut)':MAU[p>=99.5?'ok':(p>=50?'am':'bad')];}
+  function kq(k,n){return bcT(k)+' t · '+fm(n,0)+' CK';}
+  var pcT=T.pk>0.05?100*T.dk/T.pk:null;
+  var h='<div class="toc"><div class="bch"><div><div class="muted" style="font-size:12px">Tổ gia công · '+esc(xw)+' · khâu '+kh+'</div><h2 style="margin:0">'+esc(to)+'</h2></div><button class="btn" data-toclose="1" aria-label="Đóng thẻ tổ">'+I('x')+'</button></div>';
+  if(KH_TT!=='ok')h+='<div class="muted bcsrc">'+(KH_TT==='err'?'Không đọc được KHSX — chưa ước được phần còn lại.':'Đang đọc KHSX…')+'</div>';
+  h+='<div class="topc"><div><span class="muted">Hoàn thành</span><b style="color:'+mau(pcT)+'">'+(pcT==null?'—':fm(pcT,0)+'%')+'</b></div><div class="bcbar" style="height:8px"><i style="width:'+(pcT==null?0:Math.min(100,pcT)).toFixed(0)+'%;background:'+mau(pcT)+'"></i></div></div>';
+  h+='<table class="tto bcx tokq"><thead><tr><th></th><th class="n">Khối lượng</th><th class="n">Số lượng</th></tr></thead><tbody>'
+    +'<tr><td>Phân bổ (ước)</td><td class="n"><b>'+bcT(T.pk)+' t</b></td><td class="n"><b>'+fm(T.pq,0)+' CK</b></td></tr>'
+    +'<tr><td>Đã làm</td><td class="n">'+bcT(T.dk)+' t</td><td class="n">'+fm(T.dq,0)+' CK</td></tr>'
+    +'<tr><td>Còn lại</td><td class="n" style="color:var(--warn);font-weight:800">'+bcT(T.ck)+' t</td><td class="n" style="color:var(--warn);font-weight:800">'+fm(T.cq,0)+' CK</td></tr></tbody></table>';
+  h+='<div class="muted bcsrc">SX T'+K.m+': <b style="color:var(--ink)">'+bcT(T.sx)+' t</b> · tồn chờ NT: <b style="color:'+(T.ton>0.05?'var(--warn)':'var(--ink)')+'">'+bcT(T.ton)+' t</b></div>';
+  if(!ds.length)h+='<div class="muted bcsrc">Tổ chưa có dự án đang làm tại '+esc(xw)+'.</div>';
+  ds.forEach(function(d){
+    h+='<div class="bcp"><div class="bcp1"><span class="bcpn">'+esc(d.ten)+'</span><b style="color:'+mau(d.pc)+'">'+(d.pc==null?'—':fm(d.pc,0)+'%')+'</b></div>'
+      +'<div class="bcbar"><i style="width:'+(d.pc==null?0:Math.min(100,d.pc)).toFixed(0)+'%;background:'+mau(d.pc)+'"></i></div>'
+      +'<div class="tog"><div><span>Phân bổ</span><b>'+bcT(d.pk)+' t</b><i>'+fm(d.pq,0)+' CK</i></div><div><span>Đã làm</span><b>'+bcT(d.dk)+' t</b><i>'+fm(d.dq,0)+' CK</i></div><div><span>Còn lại</span><b style="color:var(--warn)">'+bcT(d.ck)+' t</b><i>'+fm(d.cq,0)+' CK</i></div></div>'
+      +((d.co?'':'<div class="bcm">KHSX chưa xếp '+esc(xw)+'</div>')+(d.tn>0.05?'<div class="bcm" style="color:var(--warn)">Tồn chờ NT '+bcT(d.tn)+' t</div>':''))+'</div>';});
   var qs=Object.keys(q).sort(function(a,b){return q[b]-q[a];}).slice(0,3);
-  var h='<div class="toc"><div class="bch"><div><div class="muted" style="font-size:12px">Tổ gia công · '+esc(xw)+'</div><h2 style="margin:0">'+esc(to)+'</h2></div><button class="btn" data-toclose="1" aria-label="Đóng thẻ tổ">'+I('x')+'</button></div>';
-  h+='<div class="tok"><div><b>'+(KS?bcT(S1.r):'—')+' t</b><span>Ráp còn (phân bổ ước)</span></div><div><b>'+(KS?bcT(S1.h):'—')+' t</b><span>Hàn còn (phân bổ ước)</span></div>'
-    +'<div><b>'+bcT(S1.sf+S1.sw)+' t</b><span>SX T'+K.m+' (ráp '+bcT(S1.sf)+' · hàn '+bcT(S1.sw)+')</span></div><div><b style="color:'+(S1.ton>0.05?'var(--warn)':'var(--ink)')+'">'+bcT(S1.ton)+' t</b><span>Tồn chờ NT</span></div></div>';
-  if(KH_TT!=='ok')h+='<div class="muted bcsrc">'+(KH_TT==='err'?'Không đọc được KHSX — chưa ước được phân bổ.':'Đang đọc KHSX…')+'</div>';
-  if(!ds.length)h+='<div class="muted bcsrc">Tổ chưa có dự án đang làm tại '+esc(xw)+' trong 90 ngày.</div>';
-  ds.forEach(function(d){var meta=[];
-    if(d.pr>=0.05)meta.push('ráp còn <b>'+bcT(d.pr)+' t</b> ('+fm(d.shF*100,0)+'%)');if(d.ph>=0.05)meta.push('hàn còn <b>'+bcT(d.ph)+' t</b> ('+fm(d.shW*100,0)+'%)');
-    if(d.c.f+d.c.w>0.05)meta.push('SX T'+K.m+' '+bcT(d.c.f+d.c.w)+' t');if(d.tn>0.05)meta.push('<span style="color:var(--warn)">tồn '+bcT(d.tn)+' t</span>');
-    h+='<div class="bcp"><div class="bcp1"><span class="bcpn">'+esc(d.ten)+'</span><b>'+bcT(d.pr+d.ph)+' t</b></div><div class="bcm">'+meta.join(' · ')+'</div></div>';});
   h+='<div class="muted bcsrc">'+(qs.length?'QC NT T'+K.m+': '+qs.map(function(n){return esc(n.split(' ').slice(-2).join(' '))+' '+bcT(q[n])+' t';}).join(', ')+' · ':'')
-    +'Phân bổ ước = KL còn lại KHSX của dự án tại '+esc(xw)+' × % tổ đã làm dự án đó (SPM 90 ngày). KHSX không ghi tổ nên đây là số ước.</div></div>';
+    +'Phân bổ (ước) = đã làm (SPM, mọi thời điểm) + còn lại ước = KL/CK còn lại KHSX của dự án tại '+esc(xw)+' × % tổ đã làm dự án đó (SPM 90 ngày). % hoàn thành = đã làm ÷ phân bổ. KHSX không ghi tổ nên đây là số ước.</div></div>';
   return h;}
 function vePanel(){
   var el=document.getElementById('panel');
@@ -1273,7 +1290,7 @@ function khTuBang(rows){
   var cP=c('Tên dự án'),cX=c('Xưởng gia công'),cF=c('TKL ráp hoàn thiện còn lại'),cB=c('Bắt đầu ráp hoàn thiện'),cE=c('Kết thúc ráp hoàn thiện'),
       cW=c('TKL hàn hoàn thiện còn lại'),cWB=c('Bắt đầu hàn hoàn thiện'),cWE=c('Kết thúc hàn hoàn thiện'),
       cS=c('TKL sơn hoàn thiện còn lại'),cSB=c('Bắt đầu sơn hoàn thiện'),cSE=c('Kết thúc sơn hoàn thiện');
-  var cKL=c('Tổng khối lượng'),cSR=c('TSL ráp hoàn thiện còn lại'); /* 04/11: cho bao cao xuong trong panel */
+  var cKL=c('Tổng khối lượng'),cSR=c('TSL ráp hoàn thiện còn lại'),cSH=c('TSL hàn hoàn thiện còn lại'); /* 04/11: cho bao cao xuong trong panel */
   if([cP,cX,cF,cE].some(function(z){return z<0;}))throw new Error('thiếu cột rap HT / xưởng / kết thúc');
   /* ngay dang d/m/y hay m/d/y: so nao > 12 o vi tri dau -> d/m/y */
   var dmy=true,seen=false;for(var k=hi+1;k<rows.length&&!seen;k++){var m=String((rows[k]||[])[cE]||'').match(/^(\d{1,2})\/(\d{1,2})\/\d{4}/);if(m){if(+m[1]>12){dmy=true;seen=true;}else if(+m[2]>12){dmy=false;seen=true;}}}
@@ -1284,7 +1301,7 @@ function khTuBang(rows){
   function g(x,i){return i>=0?x[i]:'';}
   /* [du an, xuong, rapHT con (t), bd, kt, han con (t), son con (t), han bd, han kt, son bd, son kt] */
   var out=[];for(var r=hi+1;r<rows.length;r++){var x=rows[r]||[];var p=String(x[cP]==null?'':x[cP]).trim();if(!p||lbl(p)==='tên dự án')continue;
-    out.push([p,String(x[cX]==null?'':x[cX]).trim(),_num(x[cF])/1000,d(g(x,cB)),d(x[cE]),_num(g(x,cW))/1000,_num(g(x,cS))/1000,d(g(x,cWB)),d(g(x,cWE)),d(g(x,cSB)),d(g(x,cSE)),_num(g(x,cKL))/1000,_num(g(x,cSR))]);}
+    out.push([p,String(x[cX]==null?'':x[cX]).trim(),_num(x[cF])/1000,d(g(x,cB)),d(x[cE]),_num(g(x,cW))/1000,_num(g(x,cS))/1000,d(g(x,cWB)),d(g(x,cWE)),d(g(x,cSB)),d(g(x,cSE)),_num(g(x,cKL))/1000,_num(g(x,cSR)),_num(g(x,cSH))]);}
   return out;}
 function khTai(){
   if(window.KHSX_SNAP){KHR=window.KHSX_SNAP.rows;KH_TT='ok';KH_LUC='bản chụp '+window.KHSX_SNAP.luc;taiTinh();veLai();return;}
