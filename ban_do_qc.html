@@ -1005,7 +1005,7 @@ function vePanel(){
       +(MOBANG?bang:'');
     return;}
   var k=KHU[SEL],ds=nguoiKhu(SEL),x=k.spmX&&S.X[k.spmX];
-  var h=theQC()+'<div style="display:flex;justify-content:space-between;align-items:start;gap:8px"><div><h2>'+esc(k.ten)+'</h2><div class="mo">'+esc(k.mo)+'</div></div><button class="btn noprint" data-close="1" aria-label="Đóng">'+I('x')+'</button></div>';
+  var h=theQC()+'<div style="display:flex;justify-content:space-between;align-items:start;gap:8px"><div><h2>'+esc(k.ten)+'</h2><div class="mo">'+esc(k.mo)+'</div>'+(k.spmX?'<a class="btn noprint" style="display:inline-flex;align-items:center;margin-top:6px;min-height:44px;text-decoration:none" href="bao_cao_xuong.html?x='+encodeURIComponent(k.spmX)+'" target="_blank" rel="noopener">Báo cáo tháng '+esc(k.spmX)+' →</a>':'')+'</div><button class="btn noprint" data-close="1" aria-label="Đóng">'+I('x')+'</button></div>';
   if(x){h+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center">'
       +[['Fitup',x.f,'var(--f)'],['Hàn',x.w,'var(--w)'],['Sơn',x.p,'var(--p)']].map(function(a){return '<div class="card" style="padding:7px;box-shadow:none"><div style="font-size:18px;font-weight:900;color:'+a[2]+'">'+fm(a[1],1)+'</div><div class="muted" style="font-size:12px">'+a[0]+' (tấn)</div></div>';}).join('')+'</div>';}
   if(x){

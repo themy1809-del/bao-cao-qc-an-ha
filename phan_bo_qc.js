@@ -103,5 +103,26 @@ window.PHAN_BO_QC = {
       {ten:'ĐÀO NHỰT HUY', anh:'1Nc0lyQkv0fb7j4z0RWVLK8nmZImLjOej',        spm:'huydn1',   khu:'',    cd:'Đóng gói', da:'—', gc:'chưa có lượt NT trong SPM'},
       {ten:'HUỲNH VĂN THON', anh:'1ZEweu0MtcJqhq-eA9niJm33PYpFTx10J',      spm:'thonhv',   khu:'',    cd:'Đóng gói', da:'—', gc:'chưa có lượt NT trong SPM'}
      ]}
-  ]
+  ],
+  /* ===== PHU TRACH DU AN THUC TE (user chot 04/11/2026) — dung cho bao_cao_xuong.html =====
+     Moi dong: x = xuong (SPM) · qc = ma SPM · ma = ma du an (dau ten KHSX/SPM) · ten = ten ngan hien tren bao cao
+     khau: 'Fitup' (tinh theo KHSX rap HT con lai) | 'Final' (han HT con lai) | 'Fitup + Final' | 'Lắp thử' | 'Khác'
+     tt  : tinh trang ghi tay (de trong = tu tinh tu KHSX) · giu:1 = van hien khi KHSX chua xep du an o xuong nay
+     Quy tac (user 04/11): KHSX chua xep o xuong thi CHUA dua vao bao cao (tru dong co giu:1). */
+  PHU_TRACH: [
+    {x:'AH3', qc:'dongpt',  ma:'10626-051', ten:'SVĐ Hùng Vương',                     khau:'Fitup'},
+    {x:'AH3', qc:'dongpt',  ma:'10725-007', ten:'TED — BISON SDM ATO & TED',          khau:'Lắp thử'},
+    {x:'AH3', qc:'vupt',    ma:'10626-051', ten:'SVĐ Hùng Vương',                     khau:'Final'},
+    {x:'AH3', qc:'vupt',    ma:'10726-041', ten:'Cẩu KONE — 4 sets RTG Cranes (XK)',  khau:'Fitup + Final', giu:1},
+    {x:'AH3', qc:'vupt',    ma:'10726-014', ten:'Bedplate for Hoist 625T — 12 bộ',    khau:'Khác', tt:'Đang phay — xong 5/12 bộ'},
+    {x:'AH3', qc:'cuongtk', ma:'10725-008', ten:'EVAPCO-Gregory — Structural',        khau:'Final'},
+    {x:'AH3', qc:'cuongtk', ma:'10725-012', ten:'EVAPCO-Gregory — Ducting',           khau:'Final'},
+    {x:'AH3', qc:'tuonghn', ma:'10725-008', ten:'EVAPCO-Gregory — Structural',        khau:'Fitup'},
+    {x:'AH3', qc:'tuonghn', ma:'10725-012', ten:'EVAPCO-Gregory — Ducting',           khau:'Fitup'},
+    {x:'AH3', qc:'tuonghn', ma:'',          ten:'Lắp thử EVAPCO',                     khau:'Lắp thử', tt:'Đang làm — đã NT lắp 12/20'}
+  ],
+  /* Du an user xac nhan DANG CHAY tai xuong du SPM chua co dong (04/11/2026) */
+  DANG_CHAY: {AH3:['10626-110','TCTN.DNS.26.004','10725-007']},
+  /* Du an user BO khoi bao cao xuong (04/11/2026): Thuan Giao, GA T2 Phu Quoc */
+  BO_QUA: {AH3:['10626-142','10625-030']}
 };
