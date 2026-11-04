@@ -119,7 +119,12 @@ window.PHAN_BO_QC = {
     {x:'AH3', qc:'cuongtk', ma:'10725-012', ten:'EVAPCO-Gregory — Ducting',           khau:'Final'},
     {x:'AH3', qc:'tuonghn', ma:'10725-008', ten:'EVAPCO-Gregory — Structural',        khau:'Fitup'},
     {x:'AH3', qc:'tuonghn', ma:'10725-012', ten:'EVAPCO-Gregory — Ducting',           khau:'Fitup'},
-    {x:'AH3', qc:'tuonghn', ma:'',          ten:'Lắp thử EVAPCO',                     khau:'Lắp thử', tt:'Đang làm — đã NT lắp 12/20'}
+    {x:'AH3', qc:'tuonghn', ma:'',          ten:'Lắp thử EVAPCO',                     khau:'Lắp thử', tt:'Đang làm — đã NT lắp 12/20'},
+    /* AH9 (user 04/11/2026): giao theo TO. to = ma to trong SPM (RHT1=TO1RH, RHT2=TO2RH, RHT3=TO3RH, GCN=TO2GCN+TO3GCN); tatca:1 = moi du an tai xuong */
+    {x:'AH9', qc:'trontv',   tatca:1,               ten:'Tất cả dự án AH9', khau:'Final'},
+    {x:'AH9', qc:'dinhht',   to:['TO1RH'],          ten:'Tổ RHT1',          khau:'Fitup'},
+    {x:'AH9', qc:'truongba', to:['TO2RH','TO3RH'],  ten:'Tổ RHT2, RHT3',    khau:'Fitup'},
+    {x:'AH9', qc:'huyhh',    to:['TO2GCN','TO3GCN'],ten:'Tổ GCN',           khau:'Fitup'}
   ],
   /* Du an user xac nhan DANG CHAY tai xuong du SPM chua co dong (04/11/2026) */
   DANG_CHAY: {AH3:['10626-110','TCTN.DNS.26.004','10725-007']},
