@@ -67,7 +67,7 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .r2to{display:inline-flex;align-items:center;gap:5px;padding:2px 10px 2px 0;font-size:12.5px;cursor:pointer;border-radius:6px}.r2to:hover,.r2to:focus-visible{border-color:var(--gold)}
 .r2to i{width:9px;height:9px;border-radius:50%;display:inline-block}.r2to i.df{background:#2563EB}.r2to i.dw{background:#D97706}.r2to i.dp{background:#16A34A}.r2to b{font-variant-numeric:tabular-nums}
 .r2pj div{display:flex;justify-content:space-between;gap:8px;font-size:12.5px}.r2pj span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}.r2pj b{white-space:nowrap;font-variant-numeric:tabular-nums}
-.r2q{font-size:12.5px;line-height:1.5}.r2q span{display:block;color:var(--ink2);white-space:nowrap}.r2q span.g{color:var(--ink);font-weight:800}.r2q span.g::before{content:'★ ';color:var(--gold)}
+.r2q{font-size:12.5px;line-height:1.5}.r2q span{display:block;color:var(--ink2);white-space:nowrap}.r2q span.g{color:var(--ink);font-weight:800}.r2q span.g::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-right:5px;vertical-align:1px}
 @media(max-width:900px){.r2h{grid-template-columns:1fr}}
 .b2d{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(190px,1fr);gap:12px;overflow-x:auto;padding:4px 2px 10px;margin:12px 0 4px}
 .b2x{border:2px solid var(--gold);border-radius:14px;background:var(--surf2);display:flex;flex-direction:column;min-width:0}
@@ -1367,7 +1367,7 @@ function tongQuanXuong(PX){
       +(px?'<div class="r2k"><div><b>'+bcT(px.r)+' t</b><span>Còn ráp (PB)</span></div><div><b>'+bcT(px.h)+' t</b><span>Còn hàn (PB)</span></div><div><b>'+bcT(px.sx)+' t</b><span>SX tháng '+K.m+'</span></div><div><b>'+bcT(px.nt)+' t</b><span>NT tháng '+K.m+'</span></div></div>':'<div class="r2k muted">'+(k.spmX?'không có phân bổ KHSX':'chưa có trong SPM / KHSX')+'</div>')
       +(k.spmX?'<div class="r2y"><span>12 tháng</span>'+bars(yk,ys,Math.max.apply(null,yk.concat([1])),Math.max.apply(null,ys.concat([1])),ml)+'</div>':'')+'</div>'
       +'<div class="tw3"><table class="tto r2t"><thead><tr><th style="width:62px">Line</th><th>Tổ gia công (tấn T'+K.m+')</th><th class="n" style="width:62px">Dự án</th><th class="n" style="width:78px">Cấu kiện</th><th class="n" style="width:78px">SL (t)</th><th style="width:24%">Dự án chính</th><th style="width:18%">QC đảm nhận</th><th style="width:150px">Tháng '+K.m+'</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';});
-  h+='</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>ráp <i class="kw"></i>hàn <i class="kp"></i>sơn / thành phẩm</span> · SL = tấn sản xuất tháng '+K.m+' (SPM) · QC ★ = phân công, còn lại = QC đã nghiệm thu (tấn) · biểu đồ: xanh = tấn, vàng = cấu kiện · bấm tổ để mở trên bản đồ · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
+  h+='</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>ráp <i class="kw"></i>hàn <i class="kp"></i>sơn / thành phẩm</span> · SL = tấn sản xuất tháng '+K.m+' (SPM) · QC in đậm có chấm vàng = phân công, còn lại = QC đã nghiệm thu (tấn) · biểu đồ: xanh = tấn, vàng = cấu kiện · bấm tổ để mở trên bản đồ · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
   return h;}
 function slpbData(){
   var K=bcKy(),X={};function gx(x){return X[x]=X[x]||{x:x,kl:0,r:0,h:0,sl:0,pj:{},sx:0,sf:0,sw:0,nt:0};}
