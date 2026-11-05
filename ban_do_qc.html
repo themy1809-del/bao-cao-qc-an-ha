@@ -57,14 +57,20 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .toc{border:2px solid var(--gold);border-radius:12px;padding:10px 12px;margin-bottom:12px;background:var(--surf2)}
 .xbd{margin:4px 0}.xbd summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font-weight:700;font-size:13.5px}
 .qcg{margin-top:6px;border-top:1px solid var(--line)}
-.qch,.qcr{display:grid;grid-template-columns:minmax(150px,1.3fr) repeat(5,minmax(0,1fr));gap:10px;align-items:end}
-.qch{font-size:12.5px;font-weight:700;color:var(--ink2);padding:6px 4px 4px}.qch span:not(:first-child){text-align:center}
-.qcr{padding:6px 4px;border-top:1px dashed var(--line)}.qcn b{font-size:14px;display:block}.qcn span{font-size:11.5px;color:var(--mut);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qcc{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:84px}.qcc b{font-size:13px;font-variant-numeric:tabular-nums;margin-bottom:2px}.qcc i{display:block;width:70%;max-width:64px;border-radius:4px 4px 0 0}
-@media(max-width:700px){.qch{display:none}.qcr{grid-template-columns:1fr 1fr 1fr;row-gap:4px}.qcn{grid-column:1/-1}.qcc{min-height:70px}.qcc::after{content:attr(data-l);font-size:10.5px;color:var(--mut)}}
+:root,[data-theme=light]{--klsx:#94a3b8}[data-theme=dark]{--klsx:#64748b}
+.qch,.qcr{display:grid;grid-template-columns:minmax(150px,1.3fr) .6fr .6fr repeat(3,1fr);gap:10px;align-items:end}
+.qch{font-size:12.5px;font-weight:700;color:var(--ink2);padding:6px 4px 4px;position:sticky;top:0;background:var(--surf2);z-index:1}.qch span:not(:first-child){text-align:center}
+.qcr{padding:6px 4px;border-top:1px dashed var(--line)}.qcn b{font-size:14px;display:block}.qcn span{font-size:11.5px;color:var(--mut);display:block;line-height:1.25}
+.qcc{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:72px}.qcc b{font-size:13px;font-variant-numeric:tabular-nums;margin-bottom:2px}.qcc i{display:block;width:70%;max-width:64px;border-radius:4px 4px 0 0;box-sizing:border-box}
+.qcs b{font-size:16px}.qcs span{font-size:11px;color:var(--mut)}
+.ksx{background:var(--klsx)}.knt{background:var(--gold)}.kcl{background:repeating-linear-gradient(135deg,var(--warn) 0 3px,transparent 3px 6px);border:1.5px solid var(--warn)}
+.lgx i.ksx,.lgx i.knt,.lgx i.kcl{display:inline-block;width:12px;height:12px;border-radius:3px;margin-left:6px;vertical-align:-1px}
+.lyxh{display:none}
+@media(max-width:700px){.lyxh{display:flex;gap:8px;align-items:baseline;padding:6px 4px 2px;flex-wrap:wrap}.lyxh b{font-size:20px;font-weight:900}.lyxh span{font-size:12px;color:var(--mut)}
+  .qch{display:none}.qcr{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;row-gap:4px}.qcn{grid-column:1/-1}.qcc{min-height:56px}.qcc b{font-size:12px}.qcc i{width:80%}.qcc::after{content:attr(data-l);font-size:10.5px;color:var(--mut);margin-top:3px;text-align:center;line-height:1.1}.qcs span{display:none}}
 .lgtop{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0 6px;font-size:13px;color:var(--ink2)}
 .lyx{border:1px solid var(--line);border-radius:12px;background:var(--surf2);padding:4px 8px 10px;margin-bottom:12px}.lyx .lysv{overflow-x:auto}.lyx .lay{min-width:0;width:100%}
-@media(max-width:700px){.lyx .lay{min-width:900px}}
+@media(max-width:700px){.lyx .lay{min-width:720px}}
 :root,[data-theme=light]{--tf:#dbeafe;--tw:#fde68a;--tp:#bbf7d0;--tt:#111827}[data-theme=dark]{--tf:#1e3a8a;--tw:#78350f;--tp:#14532d;--tt:#eef2f8}
 .lay .lyTt{fill:var(--tt)}.lay .lyTv{fill:var(--tt)}
 .lay .lyB{stroke:var(--line2);stroke-width:2}.lay .lyLh{fill:color-mix(in srgb,var(--ink) 10%,transparent);stroke:none}
@@ -754,7 +760,7 @@ label.ck input{width:20px;height:20px}
 
 <script src="qcdata.js"></script>
 <script src="qc_khoa.js"></script>
-<script src="phan_bo_qc.js?v=20261105d"></script><!-- ?v= : doi moi lan sua phan_bo_qc.js de trinh duyet khong dung ban cu -->
+<script src="phan_bo_qc.js?v=20261105e"></script><!-- ?v= : doi moi lan sua phan_bo_qc.js de trinh duyet khong dung ban cu -->
 <script src="pms_api.js"></script>
 <script>
 (function(){
@@ -1417,13 +1423,15 @@ function tongQuanXuong(PX){
       var nm=(/^[a-z0-9._]+$/.test(n)?(bcQC(n)!==n?bcQC(n):'QC '+n):n);return {n:nm,pj:Object.keys(o.pj).length,ck:o.ck,kl:kl,nt:o.nt,cl:cl,tos:Object.keys(o.to).sort(function(a,b){return o.to[b]-o.to[a];}).map(function(t){return t.split('.').slice(1).join('.');}).join(', ')};});
     var mx={pj:0,ck:0,t:0};rows.forEach(function(z){mx.pj=Math.max(mx.pj,z.pj);mx.ck=Math.max(mx.ck,z.ck);mx.t=Math.max(mx.t,z.kl,z.nt,z.cl);});
     function col(v,m,c){var hh=m>0?Math.max(v>0?3:0,Math.round(64*v/m)):0;return '<i style="height:'+hh+'px;background:'+c+'"></i>';}
-    var h='<div class="qcg"><div class="qch"><span>QC</span><span>Số dự án</span><span>Số cấu kiện</span><span>Khối lượng (t)</span><span>Đã nghiệm thu (t)</span><span>Còn lại (t)</span></div>';
-    rows.forEach(function(z){h+='<div class="qcr" title="Tổ: '+esc(z.tos)+'"><div class="qcn"><b>'+esc(z.n)+'</b><span>'+esc(z.tos)+'</span></div>'
-      +'<div class="qcc"><b>'+fm(z.pj,0)+'</b>'+col(z.pj,mx.pj,'var(--ink2)')+'</div>'
-      +'<div class="qcc"><b>'+fm(z.ck,0)+'</b>'+col(z.ck,mx.ck,'var(--ink2)')+'</div>'
-      +'<div class="qcc"><b>'+fm(z.kl,0)+'</b>'+col(z.kl,mx.t,'var(--f)')+'</div>'
-      +'<div class="qcc"><b>'+fm(z.nt,0)+'</b>'+col(z.nt,mx.t,'var(--gold)')+'</div>'
-      +'<div class="qcc"><b style="color:var(--warn)">'+fm(z.cl,0)+'</b>'+col(z.cl,mx.t,'var(--warn)')+'</div></div>';});
+    function col2(v,m,cls){var hh=m>0?Math.max(v>0?3:0,Math.round(52*v/m)):0;return '<i class="'+cls+'" style="height:'+hh+'px"></i>';}
+    var h='<div class="qcg"><div class="qch"><span>QC</span><span>Số dự án</span><span>Số cấu kiện</span><span>SX T'+K.m+' (t)</span><span>Đã nghiệm thu (t)</span><span>Chờ NT (t)</span></div>';
+    rows.forEach(function(z){var tl=z.tos.split(', '),tos=tl.slice(0,4).join(', ')+(tl.length>4?' +'+(tl.length-4):'');
+      h+='<div class="qcr" title="Tổ: '+esc(z.tos)+'"><div class="qcn"><b>'+esc(z.n)+'</b><span>'+esc(tos)+'</span></div>'
+      +'<div class="qcc qcs" data-l="Dự án"><b>'+fm(z.pj,0)+'</b><span>dự án</span></div>'
+      +'<div class="qcc qcs" data-l="Cấu kiện"><b>'+fm(z.ck,0)+'</b><span>CK</span></div>'
+      +'<div class="qcc" data-l="SX (t)"><b>'+fm(z.kl,0)+'</b>'+col2(z.kl,mx.t,'ksx')+'</div>'
+      +'<div class="qcc" data-l="Đã NT (t)"><b>'+fm(z.nt,0)+'</b>'+col2(z.nt,mx.t,'knt')+'</div>'
+      +'<div class="qcc" data-l="Chờ NT (t)"><b'+(z.cl>0.5?' style="color:var(--warn)"':' class="muted"')+'>'+fm(z.cl,0)+'</b>'+col2(z.cl,mx.t,'kcl')+'</div></div>';});
     return h+'</div>';}
   var out='';
   xs.forEach(function(k,ix){var Y0=4,BH=BHS[ix],NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],LBH=CO[ix]?44:24,TA=' style="text-anchor:start"',BY=Y0+6;
@@ -1458,8 +1466,8 @@ function tongQuanXuong(PX){
     var qtxt=(giao.length?giao.map(function(nm){return nm.split(' ').slice(-2).join(' ');}).join(', '):qall.slice(0,3).map(function(q){return q.n.split(' ').slice(-2).join(' ');}).join(', '));
     var qs=(qtxt||'—').split(', '),l1=[],l2=[];qs.forEach(function(q){((l1.join(', ').length+q.length<28)&&!l2.length?l1:l2).push(q);});
     svg+='<text x="'+IXR+'" y="'+yq+'" class="lyQ"'+TA+'>QC: '+esc(l1.join(', '))+'</text>'+(l2.length?'<text x="'+(IXR+26)+'" y="'+(yq+18)+'" class="lyQ"'+TA+'>'+esc(l2.join(', '))+'</text>':'');
-    svg+='</svg>';out+='<div class="lyx"><div class="lysv">'+svg+'</div>'+chartXuong(k)+'</div>';});
-  var h='<div class="lgtop"><b style="color:var(--ink)">Đang xem: '+esc(TEAM.ten)+'</b><span class="lgx"><i class="k'+(TEAM.cd||'f')+'"></i>tổ '+(TEAM.cd==='w'?'hàn':(TEAM.cd==='p'?'sơn / thành phẩm':'ráp'))+' (tấn khâu này, tháng '+K.m+')</span><span class="lgx"><i style="background:var(--f)"></i>khối lượng SX <i style="background:var(--gold)"></i>đã nghiệm thu <i style="background:var(--warn)"></i>còn lại (chờ NT)</span></div><div class="layw">'+out+'</div><details class="tod"><summary>Cách đọc sơ đồ</summary><div class="muted bcsrc"> ô tổ rộng theo tỷ lệ tấn sản xuất trong line, tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · bên phải mỗi xưởng: từng line L1, L2… (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div></details>';
+    svg+='</svg>';out+='<div class="lyx"><div class="lyxh"><b>'+esc(k.ten)+'</b><span>'+esc(pbK)+' · SX T'+K.m+' '+fm(sxT,0)+' t · NT '+fm(ntT,0)+' t</span></div><div class="lysv">'+svg+'</div>'+chartXuong(k)+'</div>';});
+  var h='<div class="lgtop"><b style="color:var(--ink)">Đang xem: '+esc(TEAM.ten)+'</b><span class="lgx"><i class="k'+(TEAM.cd||'f')+'"></i>tổ '+(TEAM.cd==='w'?'hàn':(TEAM.cd==='p'?'sơn / thành phẩm':'ráp'))+' (tấn khâu này, tháng '+K.m+')</span><span class="lgx"><i class="ksx"></i>SX tháng (t) <i class="knt"></i>đã nghiệm thu <i class="kcl"></i>chờ NT</span></div><div class="layw">'+out+'</div><details class="tod"><summary>Cách đọc sơ đồ</summary><div class="muted bcsrc"> ô tổ rộng theo tỷ lệ tấn sản xuất trong line, tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · bên phải mỗi xưởng: từng line L1, L2… (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div></details>';
   return h;}
 function slpbData(){
   var K=bcKy(),X={};function gx(x){return X[x]=X[x]||{x:x,kl:0,r:0,h:0,sl:0,pj:{},sx:0,sf:0,sw:0,nt:0};}

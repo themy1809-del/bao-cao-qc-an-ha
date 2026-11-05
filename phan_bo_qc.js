@@ -20,7 +20,7 @@ window.PHAN_BO_QC = {
     {id:'AH9',   ten:'AH9',    mo:'Xuất hàng — Fitup / Final', x:302, y:90,  w:212, h:205, cao:64, line:2, spmX:'AH9'},
     /* 27/10 user: AH9 mo rong them xuong ben trai (khu nha kho goc tren-trai mat bang). gop -> bam vao mo AH9 */
     {id:'AH9MR', ten:'AH9 mở rộng', mo:'Phần mở rộng của xưởng AH9', x:62, y:100, w:228, h:235, cao:60, spmX:'', gop:'AH9', mai:'do'}, /* 05/11 user: dung thanh xuong, mai do */
-    {id:'AH4',   ten:'AH4',    mo:'Fitup / Final — EVAPCO',     x:985, y:75,  w:375, h:120, cao:58, spmX:'AH4'},
+    {id:'AH4',   ten:'AH4',    mo:'Fitup / Final — EVAPCO',     x:985, y:75,  w:375, h:120, cao:58, line:2, spmX:'AH4'}, /* 05/11 user: AH4 co 2 line */
     {id:'AH1',   ten:'AH1',    mo:'Sơ chế — Cắt · Khoan · Chấn', x:985, y:197, w:375, h:101, cao:54, line:2, spmX:''},
     {id:'AH6',   ten:'AH6',    mo:'Fitup / Final',              x:299, y:313, w:353, h:148, cao:56, line:3, spmX:'AH6'},
     {id:'AH3',   ten:'AH3',    mo:'Fitup / Final — hàn',        x:670, y:303, w:195, h:475, cao:70, line:3, spmX:'AH3'},
@@ -28,7 +28,7 @@ window.PHAN_BO_QC = {
     {id:'AH2MR', ten:'AH2 MR', mo:'Gia công lắp thử DANIELI (Mock-up area)', x:935, y:690, w:280, h:86, cao:46, spmX:''},
     {id:'AH8',   ten:'AH8',    mo:'Lắp thử EVAPCO', x:1240, y:326, w:148, h:248, cao:40, spmX:'', chuaRoViTri:true}
   ],
-  /* So LINE moi xuong (user 27/10): AH3 3 · AH2 3 · AH1 2 · AH6 3 · AH9 2. AH4 chua co so -> 1 (tam).
+  /* So LINE moi xuong (user 27/10): AH3 3 · AH2 3 · AH1 2 · AH6 3 · AH9 2. AH4 2 (user 05/11).
      TO_LINE: to gia cong thuoc line nao, khoa 'XUONG.TO' -> so line (vd 'AH2.TO1RH':1).
      De TRONG = chua co so do to-line -> trang ban do xep TAM luan phien theo khoi luong va ghi ro "xep tam". */
   TO_LINE: {},
