@@ -87,13 +87,13 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .qcd1{display:flex;gap:6px;align-items:center;margin-bottom:1px}.qcd1 .av{width:26px;height:26px;font-size:10px;flex:none;margin-left:0;color:#fff;background-color:#1f2a44}[data-theme=light] .qcd1 .av{background-color:#334155;color:#fff}.qcd1 b{display:block;font-size:13.5px;line-height:1.1}.qcd1 span{display:block;font-size:10.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
 .qcd2{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;text-align:center}.qcd2 b{display:block;font-size:15px;font-variant-numeric:tabular-nums;line-height:1.1}.qcd2 span{font-size:10.5px;color:var(--mut)}
 .qcd2 .nt b{color:#8a5a00}[data-theme=dark] .qcd2 .nt b{color:var(--gold)}.qcd2 .cl b{color:var(--warn)}
-.qrow{display:grid;grid-template-columns:minmax(120px,.9fr) repeat(5,minmax(44px,1fr));gap:6px;align-items:end;padding:3px 4px;border-top:1px dashed var(--line)}
-.qrow.qhd{border-top:0;padding:0 4px 2px;font-size:12px;font-weight:700;color:var(--ink2);text-align:center;align-items:end}
+.pqr{display:grid;grid-template-columns:minmax(120px,.9fr) repeat(5,minmax(44px,1fr));gap:6px;align-items:end;padding:3px 4px;border-top:1px dashed var(--line)}
+.pqr.qhd{border-top:0;padding:0 4px 2px;font-size:12px;font-weight:700;color:var(--ink2);text-align:center;align-items:end}
 .qn{display:flex;gap:6px;align-items:center;min-width:0;align-self:center}.qn .av{width:26px;height:26px;font-size:10px;flex:none;margin-left:0;color:#fff;background-color:#1f2a44}[data-theme=light] .qn .av{background-color:#334155}
 .qn{min-width:0}.qn>div{min-width:0}.qn b{display:block;font-size:13px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.qn span{display:block;font-size:10.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qrow .vbt{height:36px}.qrow .vbx b{font-size:12.5px}
-.qrow .vbx:nth-child(5) b{color:#8a5a00}[data-theme=dark] .qrow .vbx:nth-child(5) b{color:var(--gold)}.qrow .vbx:nth-child(6) b{color:var(--warn)}.qrow .vbx b.muted{color:var(--mut)}
-@media(max-width:700px){.qrow{grid-template-columns:repeat(5,1fr)!important;gap:3px}.qrow .qn{grid-column:1/-1!important;display:flex}.qrow.qhd{display:none}.qrow .vbx::after{content:attr(data-l);font-size:9.5px;color:var(--mut)}.qrow .vbt{height:28px}}
+.pqr .vbt{height:36px}.pqr .vbx b{font-size:12.5px}
+.pqr .vbx:nth-child(5) b{color:#8a5a00}[data-theme=dark] .pqr .vbx:nth-child(5) b{color:var(--gold)}.pqr .vbx:nth-child(6) b{color:var(--warn)}.pqr .vbx b.muted{color:var(--mut)}
+@media(max-width:700px){.pqr{grid-template-columns:repeat(5,1fr)!important;gap:3px}.pqr .qn{grid-column:1/-1!important;display:flex}.pqr.qhd{display:none}.pqr .vbx::after{content:attr(data-l);font-size:9.5px;color:var(--mut)}.pqr .vbt{height:28px}}
 .qcv{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:2px}
 .vbx{display:flex;flex-direction:column;align-items:center}.vbx b{font-size:12.5px;font-variant-numeric:tabular-nums;line-height:1.1;margin-bottom:2px}.vbx span{font-size:10.5px;color:var(--mut);margin-top:2px;white-space:nowrap}
 .vbt{height:42px;width:100%;display:flex;align-items:flex-end;justify-content:center;border-bottom:1px solid var(--line)}.vbt i{display:block;width:70%;max-width:34px;border-radius:3px 3px 0 0;box-sizing:border-box}
@@ -1467,9 +1467,9 @@ function tongQuanXuong(PX){
     /* 05/11 user (sep): CHART DUNG trong the QC — 5 cot, so tren dau, nhan duoi chan; 3 cot tan chung 1 thang trong xuong */
     function vb(v,m,cls,lbl,dl){var H=36,hh=m>0?Math.max(v>0?3:0,Math.round(H*v/m)):0;return '<div class="vbx"'+(dl?' data-l="'+esc(dl)+'"':'')+'><b'+(cls==='kcl'&&v<=0.5?' class="muted"':'')+'>'+fm(v,0)+'</b><div class="vbt"><i class="'+cls+'" style="height:'+hh+'px"></i></div>'+(lbl?'<span>'+lbl+'</span>':'')+'</div>';}
     /* 05/11 user: moi QC 1 DONG NGANG, 5 cot thang hang, cung thang trong xuong de so sanh anh em; dong sat nhau */
-    var h='<div class="qrow qhd"><div></div><div>Dự án</div><div>Cấu kiện</div><div>SX T'+K.m+' (t)</div><div>Đã NT (t)</div><div>Chờ NT (t)</div></div>';
+    var h='<div class="pqr qhd"><div></div><div>Dự án</div><div>Cấu kiện</div><div>SX T'+K.m+' (t)</div><div>Đã NT (t)</div><div>Chờ NT (t)</div></div>';
     rows.forEach(function(z){var tl=z.tos.split(', '),tos=tl.slice(0,4).join(', ')+(tl.length>4?' +'+(tl.length-4):'');
-      h+='<div class="qrow" title="Tổ: '+esc(z.tos)+'"><div class="qn">'+(z.p?avHtml(z.p,null,false):'<span class="av">'+esc(ini(z.n))+'</span>')+'<div><b>'+esc(z.n)+'</b><span>'+esc(tos)+'</span></div></div>'
+      h+='<div class="pqr" title="Tổ: '+esc(z.tos)+'"><div class="qn">'+(z.p?avHtml(z.p,null,false):'<span class="av">'+esc(ini(z.n))+'</span>')+'<div><b>'+esc(z.n)+'</b><span>'+esc(tos)+'</span></div></div>'
         +vb(z.pj,mx.pj,'kpj','',  'Dự án')+vb(z.ck,mx.ck,'kck','','CK')+vb(z.kl,mx.t,'ksx','','SX t')+vb(z.nt,mx.t,'knt','','Đã NT')+vb(z.cl,mx.t,'kcl','','Chờ NT')+'</div>';});
     return h;}
   var out='';
