@@ -701,3 +701,4 @@ Phiên Claude Code kế tiếp nên:
 - (05/11) Tab Sản lượng PB giữ MẶT BẰNG 3D ở trên (nhãn xưởng = PB còn, Ráp, Hàn, SX tháng; mái tô theo PB còn lại), biểu đồ PB ở dưới (#pbView trước .stageFoot).
 - (05/11) Tab Sản lượng PB = MẶT BẰNG 2D (class .m2d: khối phẳng, cam nhìn thẳng, ẩn nút 3D, fit vừa khung).
 - (05/11) Tab PB dưới mặt bằng 2D: **Bức tranh tổng quan xưởng** (`tongQuanXuong`) theo bảng trắng user — AH1→AH2→AH3…, mỗi xưởng 1 khung, mỗi LINE 1 hàng kèm TỔ GC; cột Năm (12 tháng chốt) + Tháng (từng ngày) KL tấn + SL CK sản xuất. Tổ→line theo TO_LINE (đang trống → xếp TẠM luân phiên; cần user khai báo).
+- (05/11) Tab PB = SƠ ĐỒ 2D LỚN (ẩn bản đồ): xưởng xếp ngang AH1→AH9 (.b2d), mỗi xưởng: PB còn ráp/hàn, SX, NT; mỗi line: ô tổ GC (to theo tấn, màu theo khâu, bấm → mở tổ trên bản đồ), biểu đồ tháng; chân: biểu đồ năm. Chi tiết phân bổ theo dự án gập trong <details>.
