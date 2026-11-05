@@ -56,6 +56,19 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .sp{flex:1}
 .toc{border:2px solid var(--gold);border-radius:12px;padding:10px 12px;margin-bottom:12px;background:var(--surf2)}
 .xbd{margin:4px 0}.xbd summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font-weight:700;font-size:13.5px}
+.r2d{display:flex;flex-direction:column;gap:12px;margin:12px 0 4px}
+.r2x{border:1px solid var(--line);border-radius:14px;background:var(--surf2);overflow:hidden}
+.r2h{display:grid;grid-template-columns:minmax(150px,auto) 1fr minmax(180px,260px);gap:16px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line)}
+.r2n{font-size:26px;font-weight:900;line-height:1}.r2n span{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-top:3px}
+.r2k{display:flex;gap:18px;flex-wrap:wrap}.r2k div b{display:block;font-size:18px;font-variant-numeric:tabular-nums}.r2k div span{font-size:12px;color:var(--mut)}
+.r2y{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:end;font-size:11.5px;color:var(--mut)}
+.r2t{width:100%}.r2t th{background:transparent}.r2t td{font-size:13px;vertical-align:middle;padding:7px 8px}.r2t td.n{font-variant-numeric:tabular-nums}
+.r2ln{font-weight:800;white-space:nowrap}
+.r2to{display:inline-flex;align-items:center;gap:5px;padding:2px 10px 2px 0;font-size:12.5px;cursor:pointer;border-radius:6px}.r2to:hover,.r2to:focus-visible{border-color:var(--gold)}
+.r2to i{width:9px;height:9px;border-radius:50%;display:inline-block}.r2to i.df{background:#2563EB}.r2to i.dw{background:#D97706}.r2to i.dp{background:#16A34A}.r2to b{font-variant-numeric:tabular-nums}
+.r2pj div{display:flex;justify-content:space-between;gap:8px;font-size:12.5px}.r2pj span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}.r2pj b{white-space:nowrap;font-variant-numeric:tabular-nums}
+.r2q{font-size:12.5px;line-height:1.5}.r2q span{display:block;color:var(--ink2);white-space:nowrap}.r2q span.g{color:var(--ink);font-weight:800}.r2q span.g::before{content:'★ ';color:var(--gold)}
+@media(max-width:900px){.r2h{grid-template-columns:1fr}}
 .b2d{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(190px,1fr);gap:12px;overflow-x:auto;padding:4px 2px 10px;margin:12px 0 4px}
 .b2x{border:2px solid var(--gold);border-radius:14px;background:var(--surf2);display:flex;flex-direction:column;min-width:0}
 .b2h{padding:10px 12px;border-bottom:2px solid var(--line)}.b2n{font-size:28px;font-weight:900;line-height:1;color:var(--ink)}.b2m{font-size:12px;color:var(--mut);margin:2px 0 6px}
@@ -1333,30 +1346,28 @@ function tongQuanXuong(PX){
       return '<span title="'+esc(lbl[i])+': '+fm(v,1)+' t · '+fm(s2,0)+' CK"><i style="height:'+(mk>0&&v>0?Math.max(2,Math.round(26*Math.sqrt(v/mk))):0)+'px;background:var(--f)"></i><i style="height:'+(ms>0&&s2>0?Math.max(2,Math.round(26*Math.sqrt(s2/ms))):0)+'px;background:var(--gold)"></i></span>';}).join('')+'</div>';}
   function khauTo(tk){var t=tk.split('.').slice(1).join('.');return /HA|HH|HT/.test(t)?'w':(/TP|SON|S\d/.test(t)?'p':'f');}
   var mxTo=0;Object.keys(A).forEach(function(k){var o=A[k];for(var tk in o.to)mxTo=Math.max(mxTo,o.to[tk]);});
-  /* BANG 2D LON: xuong xep HANG NGANG AH1 -> AH9 (user 05/11) */
-  var h='<div class="b2d" role="region" aria-label="Sơ đồ 2D các xưởng">';
-  xs.forEach(function(k){var NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],tot={t:0,n:0},yk=mons.map(function(){return 0;}),ys=mons.map(function(){return 0;});
-    var body='';
+  /* SO DO 2D (user 05/11 lan 2): moi xuong 1 HANG NGANG rong het trang, xep doc AH1 -> AH9; moi line 1 dong — gon, it mau */
+  var h='<div class="r2d" role="region" aria-label="Sơ đồ 2D các xưởng">';
+  xs.forEach(function(k){var NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],yk=mons.map(function(){return 0;}),ys=mons.map(function(){return 0;}),rows='';
     for(var li=0;li<NL;li++){var o=A[k.spmX+'|'+li]||{m:{},d:{},to:{}};
       mons.forEach(function(m,i){var a=o.m[m];if(a){yk[i]+=a[0];ys[i]+=a[1];}});
       var dk=days.map(function(d){return (o.d[d]||[0,0])[0];}),dsl=days.map(function(d){return (o.d[d]||[0,0])[1];});
-      var tt=dk.reduce(function(a,b){return a+b;},0),tn=dsl.reduce(function(a,b){return a+b;},0);tot.t+=tt;tot.n+=tn;
-      var tos=Object.keys(o.to).sort(function(a,b){return o.to[b]-o.to[a];});
-      body+='<div class="b2l"><div class="b2lh"><b>Line '+(li+1)+'</b><span>'+(k.spmX?fm(tt,0)+' t · '+fm(tn,0)+' CK':'chưa có SPM')+'</span></div>'
-        +'<div class="b2t">'+(tos.length?tos.map(function(tk){var v=o.to[tk],sz=mxTo>0?Math.sqrt(v/mxTo):0,c=khauTo(tk);
-            return '<div class="b2o k'+c+'" data-to2="'+esc(tk)+'" role="button" tabindex="0" style="flex-basis:'+Math.round(54+90*sz)+'px;min-height:'+Math.round(34+40*sz)+'px" title="'+esc(tk)+': '+fm(v,1)+' t tháng '+K.m+'"><b>'+esc(tk.split('.').slice(1).join('.'))+'</b><span>'+fm(v,0)+' t</span></div>';}).join(''):'<span class="muted" style="font-size:12px">'+(k.spmX?'chưa có SX tháng này':'—')+'</span>')+'</div>'
-        +(k.spmX?(function(){var pj=o.pj||{},ks=Object.keys(pj).sort(function(a,b){return pj[b].t-pj[a].t;}),mp=ks.length?pj[ks[0]].t:0;
-            var giao=[];tos.forEach(function(tk){(GIAO[tk]||[]).forEach(function(n){if(giao.indexOf(n)<0)giao.push(n);});});(GIAO[k.spmX+'*']||[]).forEach(function(n){if(giao.indexOf(n)<0)giao.push(n);});
-            var qk=Object.keys(o.qc||{}).filter(function(n){return n&&n!=='—'&&o.qc[n]>=1;}).sort(function(a,b){return o.qc[b]-o.qc[a];}).slice(0,3);
-            return '<div class="b2i"><span>Số dự án <b>'+ks.length+'</b></span><span>Cấu kiện <b>'+fm(tn,0)+'</b></span></div>'
-              +(ks.length?'<div class="b2pj">'+ks.slice(0,5).map(function(m){var p=pj[m];return '<div><span>'+esc(bcTenDep(bcTen(p.ten)))+'</span><i style="width:'+(mp>0?Math.max(3,Math.round(100*p.t/mp)):0)+'%"></i><b>'+fm(p.t,0)+' t · '+fm(p.n,0)+' CK</b></div>';}).join('')+(ks.length>5?'<div class="muted">+'+(ks.length-5)+' dự án khác</div>':'')+'</div>':'')
-              +'<div class="b2q"><span>QC đảm nhận</span>'+(giao.length?giao.map(function(n){return '<b>'+esc(n)+'</b>';}).join(''):'')
-                +(qk.length?qk.map(function(n){return '<em>'+esc(n.split(' ').slice(-2).join(' '))+' '+fm(o.qc[n],0)+' t</em>';}).join(''):(giao.length?'':'<em class="muted">chưa có NT tháng này</em>'))+'</div>'
-              +'<div class="b2c"><span>Tháng '+K.m+'</span>'+bars(dk,dsl,mx.dk,mx.ds,dl)+'</div>';})():'')+'</div>';}
-    h+='<div class="b2x"><div class="b2h"><div class="b2n">'+esc(k.ten)+'</div><div class="b2m">'+esc(k.mo||'')+' · '+NL+' line</div>'
-      +(px?'<div class="b2p"><span class="kf">Ráp '+bcT(px.r)+' t</span><span class="kw">Hàn '+bcT(px.h)+' t</span></div><div class="b2s">PB còn <b>'+bcT(px.r+px.h)+' t</b> · SX T'+K.m+' <b>'+bcT(px.sx)+' t</b> · NT <b>'+bcT(px.nt)+' t</b></div>':'<div class="b2s">'+(k.spmX?'không có phân bổ KHSX':'chưa có trong SPM / KHSX')+'</div>')+'</div>'
-      +body+(k.spmX?'<div class="b2y"><span>Năm — 12 tháng</span>'+bars(yk,ys,Math.max.apply(null,yk.concat([1])),Math.max.apply(null,ys.concat([1])),ml)+'</div>':'')+'</div>';});
-  h+='</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>tổ ráp <i class="kw"></i>tổ hàn <i class="kp"></i>tổ sơn / thành phẩm</span> · ô tổ to theo tấn sản xuất tháng '+K.m+' · cột xanh = KL (tấn), vàng = SL (cấu kiện) · QC đảm nhận: <b style="color:var(--ink)">nền vàng</b> = phân công (phan_bo_qc.js), viền = QC đã nghiệm thu tháng '+K.m+' · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
+      var tt=dk.reduce(function(a,b){return a+b;},0),tn=dsl.reduce(function(a,b){return a+b;},0);
+      var tos=Object.keys(o.to).sort(function(a,b){return o.to[b]-o.to[a];}),pj=o.pj||{},ks=Object.keys(pj).sort(function(a,b){return pj[b].t-pj[a].t;});
+      var giao=[];tos.forEach(function(tk){(GIAO[tk]||[]).forEach(function(n){if(giao.indexOf(n)<0)giao.push(n);});});(GIAO[k.spmX+'*']||[]).forEach(function(n){if(giao.indexOf(n)<0)giao.push(n);});
+      var qk=Object.keys(o.qc||{}).filter(function(n){return n&&n!=='—'&&o.qc[n]>=1;}).sort(function(a,b){return o.qc[b]-o.qc[a];}).slice(0,3);
+      rows+='<tr><td class="r2ln">Line '+(li+1)+'</td>';
+      if(!k.spmX){rows+='<td colspan="7" class="muted">chưa có trong SPM</td></tr>';continue;}
+      rows+='<td>'+(tos.length?tos.map(function(tk){return '<span class="r2to" data-to2="'+esc(tk)+'" role="button" tabindex="0" title="Mở tổ trên bản đồ"><i class="d'+khauTo(tk)+'"></i>'+esc(tk.split('.').slice(1).join('.'))+' <b>'+fm(o.to[tk],0)+'</b></span>';}).join(''):'<span class="muted">—</span>')+'</td>'
+        +'<td class="n">'+ks.length+'</td><td class="n">'+fm(tn,0)+'</td><td class="n"><b>'+fm(tt,0)+'</b></td>'
+        +'<td class="r2pj">'+(ks.length?ks.slice(0,3).map(function(m){return '<div><span>'+esc(bcTenDep(bcTen(pj[m].ten)))+'</span><b>'+fm(pj[m].t,0)+' t</b></div>';}).join('')+(ks.length>3?'<div class="muted">+'+(ks.length-3)+' dự án</div>':''):'<span class="muted">—</span>')+'</td>'
+        +'<td class="r2q">'+giao.map(function(n){return '<span class="g">'+esc(n)+'</span>';}).join('')+(qk.length?qk.map(function(n){return '<span>'+esc(n.split(' ').slice(-2).join(' '))+' '+fm(o.qc[n],0)+' t</span>';}).join(''):(giao.length?'':'<span class="muted">—</span>'))+'</td>'
+        +'<td>'+bars(dk,dsl,mx.dk,mx.ds,dl)+'</td></tr>';}
+    h+='<section class="r2x"><div class="r2h"><div class="r2n">'+esc(k.ten)+'<span>'+esc(k.mo||'')+' · '+NL+' line</span></div>'
+      +(px?'<div class="r2k"><div><b>'+bcT(px.r)+' t</b><span>Còn ráp (PB)</span></div><div><b>'+bcT(px.h)+' t</b><span>Còn hàn (PB)</span></div><div><b>'+bcT(px.sx)+' t</b><span>SX tháng '+K.m+'</span></div><div><b>'+bcT(px.nt)+' t</b><span>NT tháng '+K.m+'</span></div></div>':'<div class="r2k muted">'+(k.spmX?'không có phân bổ KHSX':'chưa có trong SPM / KHSX')+'</div>')
+      +(k.spmX?'<div class="r2y"><span>12 tháng</span>'+bars(yk,ys,Math.max.apply(null,yk.concat([1])),Math.max.apply(null,ys.concat([1])),ml)+'</div>':'')+'</div>'
+      +'<div class="tw3"><table class="tto r2t"><thead><tr><th style="width:62px">Line</th><th>Tổ gia công (tấn T'+K.m+')</th><th class="n" style="width:62px">Dự án</th><th class="n" style="width:78px">Cấu kiện</th><th class="n" style="width:78px">SL (t)</th><th style="width:24%">Dự án chính</th><th style="width:18%">QC đảm nhận</th><th style="width:150px">Tháng '+K.m+'</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';});
+  h+='</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>ráp <i class="kw"></i>hàn <i class="kp"></i>sơn / thành phẩm</span> · SL = tấn sản xuất tháng '+K.m+' (SPM) · QC ★ = phân công, còn lại = QC đã nghiệm thu (tấn) · biểu đồ: xanh = tấn, vàng = cấu kiện · bấm tổ để mở trên bản đồ · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
   return h;}
 function slpbData(){
   var K=bcKy(),X={};function gx(x){return X[x]=X[x]||{x:x,kl:0,r:0,h:0,sl:0,pj:{},sx:0,sf:0,sw:0,nt:0};}
