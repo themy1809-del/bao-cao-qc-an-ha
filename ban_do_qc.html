@@ -62,7 +62,7 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .lay .lyB{fill:color-mix(in srgb,var(--surf) 70%,transparent);stroke:var(--gold);stroke-width:3}
 .lay .lyL{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:5 4}
 .lay .lyT{cursor:pointer}.lay .lyT:hover rect,.lay .lyT:focus rect{stroke-width:3}
-.lay .lyTt{font-size:13px;font-weight:800;fill:#111827;text-anchor:middle}.lay .lyTv{font-size:12.5px;fill:#1f2937;text-anchor:middle;font-variant-numeric:tabular-nums}
+.lay .lyTt{font-size:13px;font-weight:800;fill:#111827;text-anchor:middle}.lay .lyTt .lyTv{font-weight:500}.lay .lyTv{font-size:12.5px;fill:#1f2937;text-anchor:middle;font-variant-numeric:tabular-nums}
 .lay .lyE{font-size:12px;fill:var(--mut);text-anchor:middle}
 .lay .lyLh{fill:color-mix(in srgb,var(--gold) 25%,transparent);stroke:var(--gold);stroke-width:1}.lay .lyLt{font-size:13px;font-weight:900;fill:var(--ink);text-anchor:middle;letter-spacing:.08em}
 .lay .lyF{font-size:13px;fill:var(--ink2);font-variant-numeric:tabular-nums}.lay .lyFb{font-weight:800;fill:var(--ink)}.lay .lyQ{font-size:13px;font-weight:700;fill:var(--ink)}
@@ -1361,43 +1361,44 @@ function tongQuanXuong(PX){
      moi to gia cong 1 o cao theo tan SX thang; duoi nha: tong line (du an · CK · tan) + QC dam nhan. Bam o to -> mo to tren ban do. */
   /* 05/11 user lan 5: XEP DOC tu tren xuong (AH1 tren cung); moi xuong 1 hang het be ngang: NHA XUONG ben TRAI, chu AHx + thong tin ben PHAI;
      trong nha moi LINE la 1 BANG NGANG, to xep trai -> phai, rong theo tan SX thang; xuong chua co so lieu thi hang thap */
-  var VW=1400,INFO=300,GAP=26,PAD=10,LG=8,LBW=74,X0=10,BW=VW-INFO-30,IXR=X0+BW+24,n=xs.length;
+  /* 05/11 user lan 6: thong tin + QC ve BEN TRAI (man hep van thay), LINE nho lai, hang deu (nha xuong can giua theo cot thong tin) */
+  var VW=1400,INFO=262,GAP=22,PAD=8,LG=6,LBW=52,IXR=12,X0=INFO+12,BW=VW-X0-10,n=xs.length;
   var CO=xs.map(function(k){var co=false;if(k.spmX)for(var li=0;li<Math.max(1,k.line||1);li++){var o=A[k.spmX+'|'+li];if(o&&Object.keys(o.to).length)co=true;}return co;});
-  var BHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1),lb=CO[ix]?66:30;return PAD*2+NL*lb+(NL-1)*LG;});
-  var RHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1);return Math.max(BHS[ix],CO[ix]?(104+NL*19+40):92);});
+  var BHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1),lb=CO[ix]?44:24;return PAD*2+NL*lb+(NL-1)*LG;});
+  var RHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1);return Math.max(BHS[ix],CO[ix]?(86+NL*18+28):70);});
   var YS=[],yc=10;RHS.forEach(function(hk){YS.push(yc);yc+=hk+GAP;});var VH=yc-GAP+10;
   var FILL={f:'#dbeafe',w:'#fde68a',p:'#bbf7d0'},STROKE={f:'#1d4ed8',w:'#b45309',p:'#15803d'};
   var svg='<svg class="lay" viewBox="0 0 '+VW+' '+VH+'" role="img" aria-label="Bản đồ layout các xưởng AH1 đến AH9">';
-  xs.forEach(function(k,ix){var Y0=YS[ix],BH=BHS[ix],NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],LBH=CO[ix]?66:30,TA=' style="text-anchor:start"';
-    svg+='<text x="'+IXR+'" y="'+(Y0+30)+'" class="lyN"'+TA+'>'+esc(k.ten)+'</text>';
-    svg+='<text x="'+IXR+'" y="'+(Y0+54)+'" class="lyS"'+TA+'>'+(px?'PB còn ráp '+fm(px.r,0)+' · hàn '+fm(px.h,0)+' t':(k.spmX?'—':'chưa có SPM'))+'</text>';
-    if(px)svg+='<text x="'+IXR+'" y="'+(Y0+74)+'" class="lyS"'+TA+'>SX T'+K.m+' '+fm(px.sx,0)+' t · NT '+fm(px.nt,0)+' t</text>';
-    svg+='<rect x="'+X0+'" y="'+Y0+'" width="'+BW+'" height="'+BH+'" rx="6" class="lyB"/>';
+  xs.forEach(function(k,ix){var Y0=YS[ix],BH=BHS[ix],NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],LBH=CO[ix]?44:24,TA=' style="text-anchor:start"',BY=Y0+Math.round((RHS[ix]-BH)/2);
+    svg+='<text x="'+IXR+'" y="'+(Y0+28)+'" class="lyN"'+TA+'>'+esc(k.ten)+'</text>';
+    svg+='<text x="'+IXR+'" y="'+(Y0+50)+'" class="lyS"'+TA+'>'+(px?'PB còn ráp '+fm(px.r,0)+' · hàn '+fm(px.h,0)+' t':(k.spmX?'—':'chưa có SPM'))+'</text>';
+    if(px)svg+='<text x="'+IXR+'" y="'+(Y0+68)+'" class="lyS"'+TA+'>SX T'+K.m+' '+fm(px.sx,0)+' t · NT '+fm(px.nt,0)+' t</text>';
+    svg+='<rect x="'+X0+'" y="'+BY+'" width="'+BW+'" height="'+BH+'" rx="6" class="lyB"/>';
     var qall=[],sumL=[];
-    for(var li=0;li<NL;li++){var o=A[k.spmX+'|'+li]||{m:{},d:{},to:{}},by=Y0+PAD+li*(LBH+LG),tx0=X0+PAD+LBW+8,tw=BW-PAD*2-LBW-8;
-      svg+='<rect x="'+(X0+PAD)+'" y="'+by+'" width="'+LBW+'" height="'+LBH+'" rx="4" class="lyLh"/><text x="'+(X0+PAD+LBW/2)+'" y="'+(by+LBH/2+5)+'" class="lyLt">LINE '+(li+1)+'</text>';
+    for(var li=0;li<NL;li++){var o=A[k.spmX+'|'+li]||{m:{},d:{},to:{}},by=BY+PAD+li*(LBH+LG),tx0=X0+PAD+LBW+8,tw=BW-PAD*2-LBW-8;
+      svg+='<rect x="'+(X0+PAD)+'" y="'+by+'" width="'+LBW+'" height="'+LBH+'" rx="4" class="lyLh"/><text x="'+(X0+PAD+LBW/2)+'" y="'+(by+LBH/2+5)+'" class="lyLt">L'+(li+1)+'</text>';
       svg+='<rect x="'+tx0+'" y="'+by+'" width="'+tw+'" height="'+LBH+'" rx="4" class="lyL"/>';
       var tos=Object.keys(o.to).sort(function(a,b){return o.to[b]-o.to[a];}),tot=tos.reduce(function(a,t){return a+o.to[t];},0);
-      var wmin=56,avail=tw-6*(tos.length+1),xx=tx0+6,bh=LBH-10;
+      var wmin=56,avail=tw-6*(tos.length+1),xx=tx0+6,bh=LBH-8;
       tos.forEach(function(tk){var v=o.to[tk],ww=Math.max(wmin,(avail-tos.length*wmin)*(tot>0?v/tot:0)+wmin);if(xx+ww>tx0+tw-6)ww=Math.max(20,tx0+tw-6-xx);if(ww<=0)return;var c=khauTo(tk),cx=xx+ww/2,nm=esc(tk.split('.').slice(1).join('.'));
         var pj=Object.keys(o.pj||{}).sort(function(a,b){return o.pj[b].t-o.pj[a].t;}).slice(0,3).map(function(m){return bcTenDep(bcTen(o.pj[m].ten))+' '+fm(o.pj[m].t,0)+' t';}).join(' · ');
         svg+='<g class="lyT" data-to2="'+esc(tk)+'" role="button" tabindex="0"><title>'+esc(tk)+': '+fm(v,1)+' t tháng '+K.m+(pj?' — line: '+esc(pj):'')+'</title>'
-          +'<rect x="'+xx+'" y="'+(by+5)+'" width="'+ww+'" height="'+bh+'" rx="4" fill="'+FILL[c]+'" stroke="'+STROKE[c]+'" stroke-width="1.5"/>'
-          +(ww>=46?'<text x="'+cx+'" y="'+(by+5+bh/2-3)+'" class="lyTt">'+nm+'</text><text x="'+cx+'" y="'+(by+5+bh/2+13)+'" class="lyTv">'+fm(v,0)+' t</text>':'')+'</g>';
+          +'<rect x="'+xx+'" y="'+(by+4)+'" width="'+ww+'" height="'+bh+'" rx="4" fill="'+FILL[c]+'" stroke="'+STROKE[c]+'" stroke-width="1.5"/>'
+          +(ww>=(nm.length+String(fm(v,0)).length)*8+40?'<text x="'+cx+'" y="'+(by+4+bh/2+5)+'" class="lyTt">'+nm+' <tspan class="lyTv">'+fm(v,0)+' t</tspan></text>':(ww>=46?'<text x="'+cx+'" y="'+(by+4+bh/2-2)+'" class="lyTt">'+nm+'</text><text x="'+cx+'" y="'+(by+4+bh/2+11)+'" class="lyTv">'+fm(v,0)+' t</text>':''))+'</g>';
         xx+=ww+6;});
       if(!tos.length)svg+='<text x="'+(tx0+tw/2)+'" y="'+(by+LBH/2+5)+'" class="lyE">'+(k.spmX?'chưa có SX':'—')+'</text>';
       var pjN=Object.keys(o.pj||{}).length,ck=days.reduce(function(a,d){return a+((o.d[d]||[0,0])[1]);},0);sumL.push({n:pjN,ck:ck,t:tot});
       Object.keys(o.qc||{}).forEach(function(nm){if(nm&&nm!=='—'&&o.qc[nm]>=1){var f=qall.filter(function(q){return q.n===nm;})[0];if(f)f.t+=o.qc[nm];else qall.push({n:nm,t:o.qc[nm]});}});}
-    var y0=Y0+(px?104:80);
-    if(CO[ix])sumL.forEach(function(L,li){svg+='<text x="'+IXR+'" y="'+(y0+li*19)+'" class="lyF"'+TA+'><tspan class="lyFb">L'+(li+1)+'</tspan> '+L.n+' dự án · '+fm(L.ck,0)+' CK · '+fm(L.t,0)+' t</text>';});
-    var yq=y0+(CO[ix]?NL*19+10:0);
+    var y0=Y0+(px?92:66);
+    if(CO[ix])sumL.forEach(function(L,li){svg+='<text x="'+IXR+'" y="'+(y0+li*18)+'" class="lyF"'+TA+'><tspan class="lyFb">L'+(li+1)+'</tspan> '+L.n+' dự án · '+fm(L.ck,0)+' CK · '+fm(L.t,0)+' t</text>';});
+    var yq=y0+(CO[ix]?NL*18+8:0);
     var giao=[];Object.keys(GIAO).forEach(function(key){if(key.indexOf(k.spmX+'.')===0||key===k.spmX+'*')GIAO[key].forEach(function(nm){if(giao.indexOf(nm)<0)giao.push(nm);});});
     qall.sort(function(a,b){return b.t-a.t;});
     var qtxt=(giao.length?giao.map(function(nm){return nm.split(' ').slice(-2).join(' ');}).join(', '):qall.slice(0,3).map(function(q){return q.n.split(' ').slice(-2).join(' ');}).join(', '));
     var qs=(qtxt||'—').split(', '),l1=[],l2=[];qs.forEach(function(q){((l1.join(', ').length+q.length<34)&&!l2.length?l1:l2).push(q);});
     svg+='<text x="'+IXR+'" y="'+yq+'" class="lyQ"'+TA+'>QC: '+esc(l1.join(', '))+'</text>'+(l2.length?'<text x="'+(IXR+26)+'" y="'+(yq+18)+'" class="lyQ"'+TA+'>'+esc(l2.join(', '))+'</text>':'');});
   svg+='</svg>';
-  var h='<div class="layw">'+svg+'</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>tổ ráp <i class="kw"></i>tổ hàn <i class="kp"></i>tổ sơn / thành phẩm</span> · ô tổ rộng theo tỷ lệ tấn sản xuất trong line, tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · bên phải mỗi xưởng: từng line (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
+  var h='<div class="layw">'+svg+'</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>tổ ráp <i class="kw"></i>tổ hàn <i class="kp"></i>tổ sơn / thành phẩm</span> · ô tổ rộng theo tỷ lệ tấn sản xuất trong line, tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · bên trái mỗi xưởng: từng line L1, L2… (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
   return h;}
 function slpbData(){
   var K=bcKy(),X={};function gx(x){return X[x]=X[x]||{x:x,kl:0,r:0,h:0,sl:0,pj:{},sx:0,sf:0,sw:0,nt:0};}
