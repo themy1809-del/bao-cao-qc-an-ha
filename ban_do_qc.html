@@ -1113,7 +1113,7 @@ function bcXuong(xw,noHead){
     var t,cl;
     if(p.to||p.tatca){var rows=[];
       if(p.to)p.to.forEach(function(tn){var o=toData(xw+'.'+tn),T=o.T,pc=T.pk>0.05?100*T.dk/T.pk:null;
-        var AL={TO1RH:'RHT1',TO2RH:'RHT2',TO3RH:'RHT3',TO2GCN:'GCN 2',TO3GCN:'GCN 3'};rows.push({ten:'Tổ '+(AL[tn]||tn)+' ('+tn+')',khau:p.khau,t:KH_TT!=='ok'?'—':(T.ck<0.5?'Xong':'Còn '+bcT(T.ck)+' t · '+fm(T.cq,0)+' CK')+(pc==null?'':' · '+fm(pc,0)+'%'),cl:KH_TT!=='ok'?'mu':(T.ck<0.5?'ok':'am')});
+        var AL={TO1RH:'RHT1',TO2RH:'RHT2',TO3RH:'RHT3',TO2GCN:'GCN 2',TO3GCN:'GCN 3'};rows.push({ten:'Tổ '+(AL[tn]?AL[tn]+' ('+tn+')':tn),khau:p.khau,t:KH_TT!=='ok'?'—':(T.ck<0.5?'Xong':'Còn '+bcT(T.ck)+' t · '+fm(T.cq,0)+' CK')+(pc==null?'':' · '+fm(pc,0)+'%'),cl:KH_TT!=='ok'?'mu':(T.ck<0.5?'ok':'am')});
         /* 04/11 user: QC theo to VA du an gia cong -> liet ke du an cua to */
         o.ds.filter(function(d){return d.ck>=0.5||d.tn>0.05;}).forEach(function(d){rows.push({sub:1,ten:d.ten,khau:'đã làm '+bcT(d.dk)+' / '+bcT(d.pk)+' t · '+fm(d.dq,0)+' / '+fm(d.pq,0)+' CK'+(d.tn>0.05?' · chờ NT '+bcT(d.tn)+' t':''),t:(d.ck<0.5?'Xong':'Còn '+bcT(d.ck)+' t')+(d.pc==null?'':' · '+fm(d.pc,0)+'%'),cl:d.pc==null?'mu':(d.pc>=99.5?'ok':(d.pc>=50?'am':'bad'))});});});
       else{var sh=0;if(KH_TT==='ok')Object.keys(KS).forEach(function(m){var z=KS[m][xw];if(z&&BOQ.indexOf(m)<0)sh+=z.h;});
