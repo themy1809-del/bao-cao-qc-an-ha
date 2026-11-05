@@ -148,6 +148,7 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .bld .top{inset:0;transform:translateZ(var(--h));border-radius:3px;
   background:repeating-linear-gradient(90deg,var(--roofHi) 0 3px,var(--roof) 3px 18px);
   outline:1px solid rgba(255,255,255,.08);transition:filter .2s}
+.siteLogo{position:absolute;transform:translateZ(4px);pointer-events:none;display:flex;align-items:center;justify-content:center}.siteLogo img{max-width:100%;max-height:100%;filter:drop-shadow(0 1px 0 rgba(255,255,255,.6))}
 .world .bld.maido .top{background:repeating-linear-gradient(90deg,#d9655a 0 4px,#b9473d 4px 20px)!important;outline:2px solid rgba(255,255,255,.6)}
 .world .bld.maido .fc:not(.top){background:#cbd5e1}.world .bld.maido .tagMini{white-space:nowrap}
 .world .ground.mrg{inset:auto;background:linear-gradient(135deg,#c9d6c9,#b8cbb8)!important;box-shadow:0 0 0 10px #8fa395,0 40px 80px rgba(0,0,0,.5)}
@@ -356,7 +357,7 @@ table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
 .mxf td,.mxf th{background:var(--surf2);border-top:2px solid var(--line)}
 .mxf td b{display:block;font-size:20px;font-weight:900;line-height:1.05}
 .world.anh .bld:not(.sel):not(:hover) .tag3 .m,.world.anh .bld:not(.sel):not(:hover) .tag3 .t,.world.anh .bld:not(.sel):not(:hover) .tag3 .avs{display:none}
-.mask{position:absolute;transform:translateZ(2px);background:var(--bg2);opacity:.86;border-radius:6px;pointer-events:none}
+.mask{position:absolute;transform:translateZ(2px);border-radius:6px;pointer-events:none;opacity:1;background:radial-gradient(circle at 30% 40%,rgba(255,255,255,.08) 0 2px,transparent 3px) 0 0/18px 18px,linear-gradient(135deg,#7cb85a,#5e9b43)} /* 05/11: bai co nhu anh flycam */
 .av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
 .av{overflow:visible}
 @media(max-width:700px){.tw table{min-width:760px}.tw td:first-child,.tw th:first-child{position:sticky;left:0;background:var(--surf);z-index:1}}
@@ -968,7 +969,8 @@ function veCanh(){
   W.style.width=SITEW+'px';W.style.height=NEN.h+'px';W.style.margin=(-NEN.h/2)+'px 0 0 '+(-SITEW/2)+'px';
   var mx=0;PB.KHU.forEach(function(k){mx=Math.max(mx,khuVal(k));});
   var h='';W.classList.toggle('anh',!!NEN.src);
-  if(NEN.src)h+='<div class="mask" style="left:40px;top:468px;width:618px;height:330px"></div>'; /* che bang tam nhin/su menh tren anh nen */
+  if(NEN.src)h+='<div class="mask" style="left:40px;top:468px;width:618px;height:330px"></div>';
+  h+='<div class="siteLogo" style="left:200px;top:520px;width:300px;height:220px"><img src="logo_daidung_trong.png" alt="Đại Dũng"></div>'; /* 05/11 user: logo tren mat bang nhu anh flycam */ /* che bang tam nhin/su menh tren anh nen */
   if(!NEN.src){
   /* duong noi bo (ve tay khi khong co anh nen) */
   [[0,248,1440,8],[0,768,1440,10],[640,240,12,540],[874,240,8,540],[1232,240,10,540],[958,0,10,250],[500,0,8,250]].forEach(function(r){

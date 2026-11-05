@@ -695,3 +695,4 @@ Phiên Claude Code kế tiếp nên:
 - (04/11 tối) Khối tổ trong xưởng CAO THEO SẢN LƯỢNG: tấn SX của tổ ở khâu đó trong kỳ KY ngày (không theo ngày đang xem), căn bậc hai để khối nhỏ vẫn thấy; mặt khối ghi "x t SX 30n". Thẻ tổ: bấm ra ngoài (trên bản đồ hoặc ngoài trang) / phím Esc → ẩn.
 - (04/11 tối) QC phụ trách theo TỔ hiện thêm DỰ ÁN của từng tổ (đã làm / phân bổ t · CK, còn lại, %, chờ NT) — cả bản đồ (bcXuong) và PDF AH9.
 - (05/11) Trang rộng hết màn hình (bỏ max-width 1880), panel phải không cuộn riêng, sửa tràn ngang trên điện thoại (grid min-width:0); thêm **NM An Hạ mở rộng** bên phải mặt bằng site (`PB.MO_RONG` trong phan_bo_qc.js: khu phụ trợ + xưởng chính, chỉ vẽ, chưa có SPM; tên khu chờ user xác nhận).
+- (05/11) Logo Đại Dũng (logo_daidung_trong.png, nền trong suốt) trên bãi cỏ góc trái dưới mặt bằng (thay mảng che tối). Mái giữ ảnh mặt bằng cũ (user từ chối mái pin).
