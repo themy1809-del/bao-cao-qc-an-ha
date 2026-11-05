@@ -56,7 +56,7 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .sp{flex:1}
 .toc{border:2px solid var(--gold);border-radius:12px;padding:10px 12px;margin-bottom:12px;background:var(--surf2)}
 .xbd{margin:4px 0}.xbd summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font-weight:700;font-size:13.5px}
-.pbv{padding:14px 16px;min-height:clamp(560px,78vh,980px)}.pbv[hidden]{display:none}
+.pbv{padding:14px 16px;border-top:1px solid var(--line)}.pbv[hidden]{display:none}
 .pbh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.pbh h2{margin:0;font-size:19px}.pbh .muted{font-size:13px}.pbh .btn{min-height:44px;display:inline-flex;align-items:center;gap:4px;flex:none}
 .pbk{grid-template-columns:repeat(4,minmax(0,1fr))}
 .pbx{border-top:1px solid var(--line);padding:6px 0}.pbx:first-of-type{border-top:0}.pbx .hb+.hb{padding-top:0}
@@ -323,6 +323,7 @@ tr.click:hover td{background:var(--surf2)}
 .plate{cursor:default}
 .khau .top{background:linear-gradient(160deg,color-mix(in srgb,var(--bc) 85%,#fff 15%),var(--bc))!important;opacity:.95;display:flex;align-items:flex-end;justify-content:center}
 .khauLbl{font-size:12px;font-weight:900;color:#fff;letter-spacing:.04em;padding-bottom:6px;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.tag3 .pbc{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.tag3 .pbc span{border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:1px 8px;font-size:12px;font-weight:700;color:#e5ebf3;white-space:nowrap;font-variant-numeric:tabular-nums}
 .tag3 .kv3{display:grid;grid-template-columns:auto auto auto auto auto;gap:3px 8px;align-items:center;margin-top:5px;font-size:14px;color:#aeb8ca}
 .tag3 .kv3 b{color:#fff;font-variant-numeric:tabular-nums}
 .tag3 .kv3 .sq{display:inline-block;width:13px;height:13px;border-radius:3px}
@@ -614,8 +615,8 @@ label.ck input{width:20px;height:20px}
           <button class="btn" data-col="ng">Tô theo tấn / QC</button>
         </div>
       </div>
-      <div class="pbv" id="pbView" hidden></div>
       <div class="stage" id="stage"><div class="world" id="world"></div><div class="toPop" id="toPop" hidden></div></div>
+      <div class="pbv" id="pbView" hidden></div>
       <div class="stageFoot"><div class="legend3" id="legend3"></div><div class="hint3">kéo để xoay · cuộn / 2 ngón để phóng · bấm xưởng xem chi tiết</div></div>
     </div>
     <aside class="card panel gold" id="panel"></aside>
@@ -968,16 +969,16 @@ function veXuong(id){
 function ngayXuong(x){var sx=0,nt=0;Object.keys(TD).forEach(function(tk){if(tk.indexOf(x+'.')!==0)return;var a=TD[tk][NGAY];if(a){sx+=a.sx;nt+=a.nt;}});
   return '<div class="m">'+dVN(NGAY).slice(0,5)+': SX <b style="color:#fff">'+fm(sx,1)+'</b> · NT <b style="color:#F2D58A">'+fm(nt,1)+'</b> t</div>';}
 function veCanh(){
-  if(TAB==='pb')return;
-  document.getElementById('stTitle').textContent=VIEW==='site'?'Tổng mặt bằng NM An Hạ — 3D':('Bên trong xưởng '+KHU[VIEW].ten+' — tổ gia công & QC');
+  document.getElementById('stTitle').textContent=VIEW==='site'?(TAB==='pb'?'Mặt bằng — sản lượng phân bổ':'Tổng mặt bằng NM An Hạ — 3D'):('Bên trong xưởng '+KHU[VIEW].ten+' — tổ gia công & QC');
   document.getElementById('btnBack').style.display=VIEW==='site'?'none':'';
-  document.getElementById('colSeg').style.display=VIEW==='site'?'':'none';
+  document.getElementById('colSeg').style.display=VIEW==='site'&&TAB!=='pb'?'':'none';
   document.getElementById('ngaySeg').style.display=VIEW==='site'?'none':'';
   document.getElementById('ngayLbl').textContent=dVN(NGAY);document.getElementById('kyLbl').textContent='Cả kỳ '+KY+' ngày';
   [].forEach.call(document.querySelectorAll('#ngaySeg .btn'),function(b){var g=b.getAttribute('data-ng');b.classList.toggle('on',(g==='ngay'&&CHE==='ngay')||(g==='ky'&&CHE==='ky'));});
   if(VIEW!=='site'){veXuong(VIEW);return;}
   W.style.width=SITEW+'px';W.style.height=NEN.h+'px';W.style.margin=(-NEN.h/2)+'px 0 0 '+(-SITEW/2)+'px';
-  var mx=0;PB.KHU.forEach(function(k){mx=Math.max(mx,khuVal(k));});
+  var SDP=TAB==='pb'?slpbData().X:null;function pbV(k){var o=SDP&&k.spmX&&SDP[k.spmX];return o?o.r+o.h:0;}
+  var mx=0;PB.KHU.forEach(function(k){mx=Math.max(mx,TAB==='pb'?pbV(k):khuVal(k));});
   var h='';W.classList.toggle('anh',!!NEN.src);
   if(NEN.src)h+='<div class="mask" style="left:40px;top:468px;width:618px;height:330px"></div>';
   h+='<div class="siteLogo" style="left:200px;top:520px;width:300px;height:220px"><img src="logo_daidung_trong.png" alt="Đại Dũng"></div>'; /* 05/11 user: logo tren mat bang nhu anh flycam */ /* che bang tam nhin/su menh tren anh nen */
@@ -999,7 +1000,7 @@ function veCanh(){
       +'<div class="fc top"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'
       +'<div class="bb"><div class="bbIn" data-khu="'+esc(k.gop)+'" style="animation:none"><div class="tagMini">'+esc(k.ten)+'</div></div></div></div>';return;}
     var ds=nguoiKhu(k.id),co=ds.filter(function(e){return !e.g.vang;});
-    var x=k.spmX&&S.X[k.spmX];var v=khuVal(k);
+    var x=k.spmX&&S.X[k.spmX];var v=TAB==='pb'?pbV(k):khuVal(k);
     var pq=SELQ&&NGUOI[SELQ],giaoQ=pq&&pq.giao.some(function(g){return g.khu===k.id;}),ttq=pq&&qThucTe(pq),thucQ=ttq&&k.spmX&&ttq.x===k.spmX&&!giaoQ;
     var gq=giaoQ&&pq.giao.filter(function(g){return g.khu===k.id;})[0];
     var pin=(giaoQ||thucQ)?'<div class="theQ3">'+avHtml(pq,gq,true)+'<div><div class="tn3">'+esc(titleCase(pq.ten))+'</div>'
@@ -1011,12 +1012,13 @@ function veCanh(){
       +'<div class="fc top" style="--heat:'+heat(v,mx)+'"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'
       +'<div class="ring"></div>'
       +'<div class="bb"><div class="bbIn" data-khu="'+esc(k.id)+'" style="animation-delay:-'+((k.x+k.y)%32)/10+'s">'+(pq?(pin||nhanNho)+'<div class="tag3" style="display:none">':'<div class="tag3">')
+      +(TAB==='pb'?pbTag(k,SDP):'')+(TAB==='pb'?'<div style="display:none">':'')
       +'<div class="h"><b>'+esc(k.ten)+'</b><span>'+co.length+' QC'+(ds.length>co.length?' · '+(ds.length-co.length)+' vắng':'')+'</span></div>'
       +'<div class="m">'+esc(k.mo)+(k.chuaRoViTri?' · <span style="color:#f0b43c">vị trí ước lượng</span>':'')+'</div>'
       +(x?'<div class="t">'+fm(x.t,1)+' t <i>NT '+KY+' ngày</i></div>'+ngayXuong(k.spmX):(k.spmX===''?'<div class="m" style="color:#8a95aa">không có trong SPM</div>':'<div class="m">0 t trong kỳ</div>'))
       +(TAI&&k.spmX&&TAI.X[k.spmX]?'<div style="margin-top:4px">'+chip3(k.spmX)+'</div>':'')
       +'<div class="avs">'+ds.slice(0,7).map(function(e){return avHtml(e.p,e.g);}).join('')+(ds.length>7?'<span class="av">+'+(ds.length-7)+'</span>':'')+'</div>'
-      +'</div></div></div></div>';
+      +(TAB==='pb'?'</div>':'')+'</div></div></div></div>';
   });
   if(MR){var mx0=NEN.w+MR.gap;
     h+='<div class="ground mrg" style="left:'+mx0+'px;top:0;width:'+MR.w+'px;height:'+MR.h+'px"></div>'
@@ -1271,7 +1273,11 @@ function bdPj(xw){ /* C: du an x cong doan (tan NT ky) + QC */
   return h+'</div>';}
 /* ===== TAB SAN LUONG PB (user 05/11): san luong phan bo theo xuong — KHSX con lai (phan bo cho xuong) + SPM thang chot ===== */
 var TAB='map',PBMO={};
-function veSLPB(){var el=document.getElementById('pbView');if(!el)return;if(TAB!=='pb'){el.hidden=true;return;}
+function pbTag(k,X){var o=X&&k.spmX&&X[k.spmX];
+  if(!o)return '<div class="h"><b>'+esc(k.ten)+'</b></div><div class="m" style="color:#8a95aa">không có phân bổ KHSX</div>';
+  return '<div class="h"><b>'+esc(k.ten)+'</b><span>PB còn '+bcT(o.r+o.h)+' t</span></div>'
+    +'<div class="pbc"><span style="color:#93c5fd">Ráp '+bcT(o.r)+' t</span><span style="color:#fcd34d">Hàn '+bcT(o.h)+' t</span><span>SX T'+bcKy().m+' '+bcT(o.sx)+' t</span></div>';}
+function slpbData(){
   var K=bcKy(),X={};function gx(x){return X[x]=X[x]||{x:x,kl:0,r:0,h:0,sl:0,pj:{},sx:0,sf:0,sw:0,nt:0};}
   if(KH_TT==='ok')(KHR||[]).forEach(function(r){var x=chuanX(r[1]);if(!x)return;var o=gx(x),m=bcMa(r[0]);o.kl+=+r[11]||0;o.r+=+r[2]||0;o.h+=+r[5]||0;o.sl+=+r[12]||0;
     var p=o.pj[m]=o.pj[m]||{ten:r[0],kl:0,r:0,h:0};p.kl+=+r[11]||0;p.r+=+r[2]||0;p.h+=+r[5]||0;});
@@ -1279,6 +1285,9 @@ function veSLPB(){var el=document.getElementById('pbView');if(!el)return;if(TAB!
   D.rows.forEach(function(r){var x=chuanX(D.X[r[1]]);if(!x)return;var o=gx(x),wd=r[4]||'',qd=r[3]||'';
     if(wd>=K.tu&&wd<=K.den&&r[6]!==MI){o.sf+=+r[7]||0;o.sw+=+r[8]||0;o.sx+=(+r[7]||0)+(+r[8]||0)+(+r[9]||0);}
     if(qd>=K.tu&&qd<=K.den&&r[6]===OK)o.nt+=(+r[7]||0)+(+r[8]||0)+(+r[9]||0);});
+  return {K:K,X:X};}
+function veSLPB(){var el=document.getElementById('pbView');if(!el)return;if(TAB!=='pb'){el.hidden=true;return;}
+  var SD=slpbData(),K=SD.K,X=SD.X;
   var ds=Object.keys(X).map(function(k){return X[k];}).filter(function(o){return o.r+o.h>0.5||o.sx>0.5;}).sort(function(a,b){return (b.r+b.h)-(a.r+a.h);});
   var T={r:0,h:0,sx:0,nt:0};ds.forEach(function(o){T.r+=o.r;T.h+=o.h;T.sx+=o.sx;T.nt+=o.nt;});
   var mx=0;ds.forEach(function(o){mx=Math.max(mx,o.r+o.h,o.sf+o.sw);});
@@ -1298,10 +1307,9 @@ function veSLPB(){var el=document.getElementById('pbView');if(!el)return;if(TAB!
   h+='</div><div class="muted bcsrc">Phân bổ = khối lượng KHSX (sheet Data) xếp cho từng xưởng còn phải ráp / hàn. Sản xuất & nghiệm thu = SPM trong tháng chốt 21 → 20. % = ráp xong của dự án tại xưởng. Bấm tên xưởng để xem dự án.</div>';
   el.innerHTML=h;el.hidden=false;}
 function doiTab(t){TAB=t;[].forEach.call(document.querySelectorAll('#tabSeg .btn'),function(b){var on=b.getAttribute('data-tab')===t;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false');});
-  var st=document.getElementById('stage'),ft=document.querySelector('.stageFoot');st.style.display=t==='pb'?'none':'';if(ft)ft.style.display=t==='pb'?'none':'';
-  ['camSeg','ngaySeg','colSeg','btnBack'].forEach(function(id){var e=document.getElementById(id);if(!e)return;if(t==='pb'){e.dataset.an=e.style.display;e.style.display='none';}else if(e.dataset.an!==undefined){e.style.display=e.dataset.an;delete e.dataset.an;}});
-  document.getElementById('stTitle').textContent=t==='pb'?'Sản lượng phân bổ theo xưởng':(VIEW==='site'?'Tổng mặt bằng NM An Hạ — 3D':'Bên trong xưởng '+KHU[VIEW].ten+' — tổ gia công & QC');
-  veSLPB();if(t==='map'){veCanh();}}
+  if(t==='pb'&&VIEW!=='site')raNgoai();
+  document.getElementById('stTitle').textContent=t==='pb'?'Mặt bằng — sản lượng phân bổ':(VIEW==='site'?'Tổng mặt bằng NM An Hạ — 3D':'Bên trong xưởng '+KHU[VIEW].ten+' — tổ gia công & QC');
+  veCanh();veSLPB();}
 document.getElementById('tabSeg').addEventListener('click',function(e){var b=e.target.closest('[data-tab]');if(b)doiTab(b.getAttribute('data-tab'));});
 document.getElementById('pbView').addEventListener('click',function(e){
   var x=e.target.closest('[data-pbx]');if(x){var k=x.getAttribute('data-pbx');PBMO[k]=!PBMO[k];veSLPB();return;}
