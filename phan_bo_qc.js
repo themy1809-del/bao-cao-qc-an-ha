@@ -19,7 +19,7 @@ window.PHAN_BO_QC = {
   KHU: [
     {id:'AH9',   ten:'AH9',    mo:'Xuất hàng — Fitup / Final', x:302, y:90,  w:212, h:205, cao:64, line:2, spmX:'AH9'},
     /* 27/10 user: AH9 mo rong them xuong ben trai (khu nha kho goc tren-trai mat bang). gop -> bam vao mo AH9 */
-    {id:'AH9MR', ten:'AH9 mở rộng', mo:'Phần mở rộng của xưởng AH9', x:62, y:100, w:228, h:235, cao:44, spmX:'', gop:'AH9'},
+    {id:'AH9MR', ten:'AH9 mở rộng', mo:'Phần mở rộng của xưởng AH9', x:62, y:100, w:228, h:235, cao:60, spmX:'', gop:'AH9', mai:'do'}, /* 05/11 user: dung thanh xuong, mai do */
     {id:'AH4',   ten:'AH4',    mo:'Fitup / Final — EVAPCO',     x:985, y:75,  w:375, h:120, cao:58, spmX:'AH4'},
     {id:'AH1',   ten:'AH1',    mo:'Sơ chế — Cắt · Khoan · Chấn', x:985, y:197, w:375, h:101, cao:54, line:2, spmX:''},
     {id:'AH6',   ten:'AH6',    mo:'Fitup / Final',              x:299, y:313, w:353, h:148, cao:56, line:3, spmX:'AH6'},
@@ -32,6 +32,11 @@ window.PHAN_BO_QC = {
      TO_LINE: to gia cong thuoc line nao, khoa 'XUONG.TO' -> so line (vd 'AH2.TO1RH':1).
      De TRONG = chua co so do to-line -> trang ban do xep TAM luan phien theo khoi luong va ghi ro "xep tam". */
   TO_LINE: {},
+  /* 05/11 user: NHA MAY AN HA MO RONG — ben phai NM hien tai (ban ve mat bang 1/1000 user gui). Toa do trong vung MO_RONG (px, goc tren-trai = 0,0).
+     Chua co trong SPM -> chi ve; ten tung khu chua xac nhan (UNKNOWN — NEED USER CONFIRMATION). */
+  MO_RONG: {ten:'NM An Hạ mở rộng', mo:'Mặt bằng 1/1000 · chưa có số liệu SPM', w:430, h:864, gap:46,
+    KHU:[{ten:'Khu phụ trợ', x:22, y:34, w:300, h:240, cao:26},
+         {ten:'Xưởng chính (mở rộng)', x:22, y:294, w:330, h:470, cao:58}]},
   /* Khu phu tro chi de ve (khong co QC) */
   PHU: [
     {ten:'Kho vật tư (thép tấm & hình)', x:529, y:83,  w:428, h:209, phang:1},
@@ -103,5 +108,31 @@ window.PHAN_BO_QC = {
       {ten:'ĐÀO NHỰT HUY', anh:'1Nc0lyQkv0fb7j4z0RWVLK8nmZImLjOej',        spm:'huydn1',   khu:'',    cd:'Đóng gói', da:'—', gc:'chưa có lượt NT trong SPM'},
       {ten:'HUỲNH VĂN THON', anh:'1ZEweu0MtcJqhq-eA9niJm33PYpFTx10J',      spm:'thonhv',   khu:'',    cd:'Đóng gói', da:'—', gc:'chưa có lượt NT trong SPM'}
      ]}
-  ]
+  ],
+  /* ===== PHU TRACH DU AN THUC TE (user chot 04/11/2026) — dung cho bao_cao_xuong.html =====
+     Moi dong: x = xuong (SPM) · qc = ma SPM · ma = ma du an (dau ten KHSX/SPM) · ten = ten ngan hien tren bao cao
+     khau: 'Fitup' (tinh theo KHSX rap HT con lai) | 'Final' (han HT con lai) | 'Fitup + Final' | 'Lắp thử' | 'Khác'
+     tt  : tinh trang ghi tay (de trong = tu tinh tu KHSX) · giu:1 = van hien khi KHSX chua xep du an o xuong nay
+     Quy tac (user 04/11): KHSX chua xep o xuong thi CHUA dua vao bao cao (tru dong co giu:1). */
+  PHU_TRACH: [
+    {x:'AH3', qc:'dongpt',  ma:'10626-051', ten:'SVĐ Hùng Vương',                     khau:'Fitup'},
+    {x:'AH3', qc:'dongpt',  ma:'10725-007', ten:'TED — BISON SDM ATO & TED',          khau:'Lắp thử'},
+    {x:'AH3', qc:'vupt',    ma:'10626-051', ten:'SVĐ Hùng Vương',                     khau:'Final'},
+    {x:'AH3', qc:'vupt',    ma:'10726-041', ten:'Cẩu KONE — 4 sets RTG Cranes (XK)',  khau:'Fitup + Final', giu:1},
+    {x:'AH3', qc:'vupt',    ma:'10726-014', ten:'Bedplate for Hoist 625T — 12 bộ',    khau:'Khác', tt:'Đang phay — xong 5/12 bộ'},
+    {x:'AH3', qc:'cuongtk', ma:'10725-008', ten:'EVAPCO-Gregory — Structural',        khau:'Final'},
+    {x:'AH3', qc:'cuongtk', ma:'10725-012', ten:'EVAPCO-Gregory — Ducting',           khau:'Final'},
+    {x:'AH3', qc:'tuonghn', ma:'10725-008', ten:'EVAPCO-Gregory — Structural',        khau:'Fitup'},
+    {x:'AH3', qc:'tuonghn', ma:'10725-012', ten:'EVAPCO-Gregory — Ducting',           khau:'Fitup'},
+    {x:'AH3', qc:'tuonghn', ma:'',          ten:'Lắp thử EVAPCO',                     khau:'Lắp thử', tt:'Đang làm — đã NT lắp 12/20'},
+    /* AH9 (user 04/11/2026): giao theo TO. to = ma to trong SPM (RHT1=TO1RH, RHT2=TO2RH, RHT3=TO3RH, GCN=TO2GCN+TO3GCN); tatca:1 = moi du an tai xuong */
+    {x:'AH9', qc:'trontv',   tatca:1,               ten:'Tất cả dự án AH9', khau:'Final'},
+    {x:'AH9', qc:'dinhht',   to:['TO1RH','TO2RH'],  ten:'Tổ RHT1, RHT2',    khau:'Fitup'},   /* 05/11 user: RHT2 giao Dinh */
+    {x:'AH9', qc:'truongba', to:['TO3RH','TO5RH'],  ten:'Tổ RHT3, TO5RH',   khau:'Fitup'},   /* 05/11 user: TO5RH giao Truong */
+    {x:'AH9', qc:'huyhh',    to:['TO2GCN','TO3GCN'],ten:'Tổ GCN',           khau:'Fitup'}
+  ],
+  /* Du an user xac nhan DANG CHAY tai xuong du SPM chua co dong (04/11/2026) */
+  DANG_CHAY: {AH3:['10626-110','TCTN.DNS.26.004','10725-007']},
+  /* Du an user BO khoi bao cao xuong (04/11/2026): Thuan Giao, GA T2 Phu Quoc */
+  BO_QUA: {AH3:['10626-142','10625-030']}
 };
