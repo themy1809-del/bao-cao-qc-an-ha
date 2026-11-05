@@ -719,3 +719,4 @@ Phiên Claude Code kế tiếp nên:
 - (05/11 tối) Sửa trùng class .qrow (đã có ở panel QC, display:flex) → dòng QC tab PB đổi tên .pqr; lưới 40/60; nhà xưởng SVG kéo cao bằng cột QC sau render.
 - (05/11 tối) vb(): cột đứng cao theo % trong .vbt (max-height 100%, overflow hidden) → không tràn lên số ở mobile; mobile .pqr = flex 2 dòng (tên / 5 cột), header .qhd ẩn.
 - (05/11 tối) Tab PB: cụm QC dồn SÁT nhà xưởng (lyb justify-content:start, nhà xưởng 360–520px, cột chart cố định 56–110px, không giãn theo màn rộng).
+- (05/11 tối) Dồn chặt hơn: cột chart 52–78px, khe 2px, hàng QC ~60px.
