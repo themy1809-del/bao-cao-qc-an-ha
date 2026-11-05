@@ -148,6 +148,8 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .bld .top{inset:0;transform:translateZ(var(--h));border-radius:3px;
   background:repeating-linear-gradient(90deg,var(--roofHi) 0 3px,var(--roof) 3px 18px);
   outline:1px solid rgba(255,255,255,.08);transition:filter .2s}
+.world .bld.maido .top{background:repeating-linear-gradient(90deg,#d9655a 0 4px,#b9473d 4px 20px)!important;outline:2px solid rgba(255,255,255,.6)}
+.world .bld.maido .fc:not(.top){background:#cbd5e1}.world .bld.maido .tagMini{white-space:nowrap}
 .world .ground.mrg{inset:auto;background:linear-gradient(135deg,#c9d6c9,#b8cbb8)!important;box-shadow:0 0 0 10px #8fa395,0 40px 80px rgba(0,0,0,.5)}
 .world .bld.mr .top{background:repeating-linear-gradient(90deg,#e8ecf1 0 3px,#cfd6df 3px 22px)!important;outline:2px dashed #64748b}
 .world .bld.mr .fc:not(.top){background:#94a3b8}
@@ -668,7 +670,7 @@ label.ck input{width:20px;height:20px}
 
 <script src="qcdata.js"></script>
 <script src="qc_khoa.js"></script>
-<script src="phan_bo_qc.js?v=20261105b"></script><!-- ?v= : doi moi lan sua phan_bo_qc.js de trinh duyet khong dung ban cu -->
+<script src="phan_bo_qc.js?v=20261105c"></script><!-- ?v= : doi moi lan sua phan_bo_qc.js de trinh duyet khong dung ban cu -->
 <script src="pms_api.js"></script>
 <script>
 (function(){
@@ -981,7 +983,7 @@ function veCanh(){
       +'<div class="fc top" style="'+(flat?'':'background:#2f5d46')+'"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'
       +'<div class="bb" style="--h:'+(flat?4:20)+'px"><div class="bbIn" style="animation:none"><div style="font-size:12px;font-weight:700;color:var(--mut);white-space:nowrap;transform:translate(0,0)">'+esc(k.ten)+'</div></div></div></div>';});
   PB.KHU.forEach(function(k){
-    if(k.gop){h+='<div class="bld" data-khu="'+esc(k.gop)+'" style="left:'+k.x+'px;top:'+k.y+'px;width:'+k.w+'px;height:'+k.h+'px;--h:'+k.cao+'px;--L:'+k.x+'px;--T:'+k.y+'px">'
+    if(k.gop){h+='<div class="bld'+(k.mai==='do'?' maido':'')+'" data-khu="'+esc(k.gop)+'" style="left:'+k.x+'px;top:'+k.y+'px;width:'+k.w+'px;height:'+k.h+'px;--h:'+k.cao+'px;--L:'+k.x+'px;--T:'+k.y+'px">'
       +'<div class="fc top"></div><div class="fc n"></div><div class="fc s"></div><div class="fc wv"></div><div class="fc e"></div>'
       +'<div class="bb"><div class="bbIn" data-khu="'+esc(k.gop)+'" style="animation:none"><div class="tagMini">'+esc(k.ten)+'</div></div></div></div>';return;}
     var ds=nguoiKhu(k.id),co=ds.filter(function(e){return !e.g.vang;});
