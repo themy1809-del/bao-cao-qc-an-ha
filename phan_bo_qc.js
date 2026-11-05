@@ -32,6 +32,11 @@ window.PHAN_BO_QC = {
      TO_LINE: to gia cong thuoc line nao, khoa 'XUONG.TO' -> so line (vd 'AH2.TO1RH':1).
      De TRONG = chua co so do to-line -> trang ban do xep TAM luan phien theo khoi luong va ghi ro "xep tam". */
   TO_LINE: {},
+  /* 05/11 user: NHA MAY AN HA MO RONG — ben phai NM hien tai (ban ve mat bang 1/1000 user gui). Toa do trong vung MO_RONG (px, goc tren-trai = 0,0).
+     Chua co trong SPM -> chi ve; ten tung khu chua xac nhan (UNKNOWN — NEED USER CONFIRMATION). */
+  MO_RONG: {ten:'NM An Hạ mở rộng', mo:'Mặt bằng 1/1000 · chưa có số liệu SPM', w:430, h:864, gap:46,
+    KHU:[{ten:'Khu phụ trợ', x:22, y:34, w:300, h:240, cao:26},
+         {ten:'Xưởng chính (mở rộng)', x:22, y:294, w:330, h:470, cao:58}]},
   /* Khu phu tro chi de ve (khong co QC) */
   PHU: [
     {ten:'Kho vật tư (thép tấm & hình)', x:529, y:83,  w:428, h:209, phang:1},
