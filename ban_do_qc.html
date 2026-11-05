@@ -1322,34 +1322,6 @@ function tongQuanXuong(){
     h+='<div class="tqn"><b>'+esc(k.ten)+'</b><span>'+NL+' line</span><span>'+fm(tot.t,0)+' t</span><span>'+fm(tot.n,0)+' CK</span></div></div>';});
   h+='<div class="muted bcsrc">Sản lượng = tấn / cấu kiện sản xuất (SPM, theo ngày gia công, bỏ "Miễn QC") của các tổ thuộc line. Tổ chưa có sơ đồ tổ–line được xếp TẠM luân phiên như trên bản đồ (khai báo đúng trong TO_LINE của phan_bo_qc.js). Cột cao theo căn bậc hai; rê chuột để xem số.</div></div>';
   return h;}
-/* ===== BANG QC THEO XUONG (bang trang user 05/11): AH1 -> AH2 -> AH3 ...; moi QC: cot theo NGAY (14 ngay) va theo THANG (6 thang chot), KL (tan) + SL (cau kien) ===== */
-function qcPB(){
-  var OK=D.PL.indexOf('Đã QC (AH)'),end=MAXD||homNay(),d0=ngayCong(end,-13),days=[];for(var i=0;i<14;i++)days.push(ngayCong(d0,i));
-  var mons=[];(function(){var y=+end.slice(0,4),m=+end.slice(5,7);if(+end.slice(8,10)>20){m++;if(m>12){m=1;y++;}}for(var i=5;i>=0;i--){var yy=y,mm=m-i;while(mm<1){mm+=12;yy--;}mons.push(yy+'-'+_pad2(mm));}})();
-  function thangCua(d){var y=+d.slice(0,4),m=+d.slice(5,7);if(+d.slice(8,10)>20){m++;if(m>12){m=1;y++;}}return y+'-'+_pad2(m);}
-  var A={};function cong(qi,d,t,n){if(qi<0||(t<=0&&n<=0))return;var o=A[qi]=A[qi]||{d:{},m:{}};if(d>=d0&&d<=end){var a=o.d[d]=o.d[d]||[0,0];a[0]+=t;a[1]+=n;}
-    var tm=thangCua(d);if(mons.indexOf(tm)>=0){var b=o.m[tm]=o.m[tm]||[0,0];b[0]+=t;b[1]+=n;}}
-  D.rows.forEach(function(r){if(r[6]!==OK||!r[3])return;
-    cong(r[5],r[3],(+r[7]||0)+(+r[8]||0)+(+r[9]||0),(+r[10]||0)+(+r[11]||0)+(+r[12]||0));
-    var nm=_fdName(r);if(nm)cong(qIndex(nm),r[3],+r[8]||0,+r[11]||0);}); /* Final DIM: QC ghi "ACC" trong ghi chu (cung quy tac qc.html) */
-  var xs=PB.KHU.filter(function(k){return !k.gop;}).slice().sort(function(a,b){return a.id.localeCompare(b.id,'vi',{numeric:true});});
-  var mxD=0,mxMK=0,mxMS=0,rows=[];
-  xs.forEach(function(k){var ds=nguoiKhu(k.id).filter(function(e){return !e.g.vang&&!e.g.kiem;});if(!ds.length)return;
-    var qs=ds.map(function(e){var o=A[e.p.qi]||{d:{},m:{}};days.forEach(function(d){var a=o.d[d];if(a)mxD=Math.max(mxD,a[0]);});mons.forEach(function(m){var b=o.m[m];if(b){mxMK=Math.max(mxMK,b[0]);mxMS=Math.max(mxMS,b[1]);}});return {p:e.p,g:e.g,o:o};});
-    rows.push({k:k,qs:qs});});
-  function bars(vals,mx,c,lbls,u){return '<div class="mc">'+vals.map(function(v,i){return '<i style="height:'+(mx>0?Math.max(v>0?2:0,Math.round(34*Math.sqrt(v/mx))):0)+'px;background:'+c+'" title="'+esc(lbls[i])+': '+(u==='t'?fm(v,1)+' t':fm(v,0)+' CK')+'"></i>';}).join('')+'</div>';}
-  var dl=days.map(function(d){return dVN(d).slice(0,5);}),ml=mons.map(function(m){return 'T'+(+m.slice(5,7))+'/'+m.slice(2,4);});
-  var h='<div class="bdc"><div class="bdh"><b>QC theo xưởng — khối lượng (KL) & số lượng (SL) nghiệm thu</b><span class="lg"><i style="background:var(--f)"></i>KL (tấn) <i style="background:var(--gold)"></i>SL (cấu kiện)</span></div>'
-    +'<div class="tw3"><table class="tto qpb"><thead><tr><th>Xưởng / QC</th><th>Theo ngày — KL 14 ngày</th><th class="n">KL 14 ngày</th><th>Theo tháng — KL</th><th>Theo tháng — SL</th><th class="n">Tháng '+(+mons[5].slice(5,7))+'</th></tr></thead><tbody>';
-  rows.forEach(function(R){h+='<tr class="qx"><td colspan="6"><b>'+esc(R.k.ten)+'</b> <span class="muted">'+esc(R.k.mo||'')+' · '+R.qs.length+' QC</span></td></tr>';
-    R.qs.forEach(function(q){var o=q.o,dv=days.map(function(d){return (o.d[d]||[0,0])[0];}),mk=mons.map(function(m){return (o.m[m]||[0,0])[0];}),ms=mons.map(function(m){return (o.m[m]||[0,0])[1];});
-      var s14=dv.reduce(function(a,b){return a+b;},0),cur=o.m[mons[5]]||[0,0];
-      h+='<tr><td><b>'+esc(titleCase(q.p.ten))+'</b><div class="muted" style="font-size:12px">'+esc(q.g.cd||'')+' · '+esc(q.p.spm||'')+'</div></td>'
-        +'<td>'+bars(dv,mxD,'var(--f)',dl,'t')+'</td><td class="n">'+fm(s14,1)+' t</td>'
-        +'<td>'+bars(mk,mxMK,'var(--f)',ml,'t')+'</td><td>'+bars(ms,mxMS,'var(--gold)',ml,'n')+'</td>'
-        +'<td class="n"><b>'+fm(cur[0],0)+' t</b><div class="muted">'+fm(cur[1],0)+' CK</div></td></tr>';});});
-  h+='</tbody></table></div><div class="muted bcsrc">QC lấy theo sơ đồ phân bổ ('+esc(TEAM.ten)+'), mỗi xưởng các QC có mặt. KL/SL = tấn / cấu kiện QC đó ký "Đã QC (AH)" trong SPM theo ngày QC. Tháng chốt 21 → 20. Final DIM tính cho QC ghi “ACC” trong ghi chú. Chiều cao cột theo căn bậc hai để QC ít vẫn thấy cột. Rê chuột lên cột để xem số.</div></div>';
-  return h;}
 function slpbData(){
   var K=bcKy(),X={};function gx(x){return X[x]=X[x]||{x:x,kl:0,r:0,h:0,sl:0,pj:{},sx:0,sf:0,sw:0,nt:0};}
   if(KH_TT==='ok')(KHR||[]).forEach(function(r){var x=chuanX(r[1]);if(!x)return;var o=gx(x),m=bcMa(r[0]);o.kl+=+r[11]||0;o.r+=+r[2]||0;o.h+=+r[5]||0;o.sl+=+r[12]||0;
