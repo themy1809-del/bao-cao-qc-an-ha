@@ -1465,7 +1465,7 @@ function tongQuanXuong(PX){
     /* 05/11 user: 1 BUC TRANH — QC la THE gan ben nha xuong, moi the: avatar + ten + to + 5 so + thanh NT/SX */
     rows.forEach(function(z){z.qi=qIndex(z.key||'');var p=null;for(var kk in NGUOI){if(NGUOI[kk].qi>=0&&NGUOI[kk].qi===qIndex(z.key||'')){p=NGUOI[kk];break;}}z.p=p;});
     /* 05/11 user (sep): CHART DUNG trong the QC — 5 cot, so tren dau, nhan duoi chan; 3 cot tan chung 1 thang trong xuong */
-    function vb(v,m,cls,lbl,dl){var H=36,hh=m>0?Math.max(v>0?3:0,Math.round(H*v/m)):0;return '<div class="vbx"'+(dl?' data-l="'+esc(dl)+'"':'')+'><b'+(cls==='kcl'&&v<=0.5?' class="muted"':'')+'>'+fm(v,0)+'</b><div class="vbt"><i class="'+cls+'" style="height:'+hh+'px"></i></div>'+(lbl?'<span>'+lbl+'</span>':'')+'</div>';}
+    function vb(v,m,cls,lbl,dl){var pc=m>0?Math.max(v>0?8:0,Math.round(100*v/m)):0;return '<div class="vbx"'+(dl?' data-l="'+esc(dl)+'"':'')+'><b'+(cls==='kcl'&&v<=0.5?' class="muted"':'')+'>'+fm(v,0)+'</b><div class="vbt"><i class="'+cls+'" style="height:'+pc+'%"></i></div>'+(lbl?'<span>'+lbl+'</span>':'')+'</div>';}
     /* 05/11 user: moi QC 1 DONG NGANG, 5 cot thang hang, cung thang trong xuong de so sanh anh em; dong sat nhau */
     var h='<div class="pqr qhd"><div></div><div>Dự án</div><div>Cấu kiện</div><div>SX T'+K.m+' (t)</div><div>Đã NT (t)</div><div>Chờ NT (t)</div></div>';
     rows.forEach(function(z){var tl=z.tos.split(', '),tos=tl.slice(0,4).join(', ')+(tl.length>4?' +'+(tl.length-4):'');
