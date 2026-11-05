@@ -697,3 +697,4 @@ Phiên Claude Code kế tiếp nên:
 - (05/11) Trang rộng hết màn hình (bỏ max-width 1880), panel phải không cuộn riêng, sửa tràn ngang trên điện thoại (grid min-width:0); thêm **NM An Hạ mở rộng** bên phải mặt bằng site (`PB.MO_RONG` trong phan_bo_qc.js: khu phụ trợ + xưởng chính, chỉ vẽ, chưa có SPM; tên khu chờ user xác nhận).
 - (05/11) Logo Đại Dũng (logo_daidung_trong.png, nền trong suốt) trên bãi cỏ góc trái dưới mặt bằng (thay mảng che tối). Mái giữ ảnh mặt bằng cũ (user từ chối mái pin).
 - (05/11) AH9: RHT2 (TO2RH) chuyển Dinh; TO5RH giao Trưởng.
+- (05/11) Tab **Sản lượng PB** cạnh tiêu đề bản đồ (`#tabSeg`, `veSLPB`, `doiTab`): theo xưởng — còn ráp / còn hàn phân bổ KHSX (thanh đặc), SX & NT tháng chốt SPM (thanh sọc), bấm xưởng mở danh sách dự án (ráp, hàn còn, %), nút 'Xem trên bản đồ'. SX = Fitup+Hàn+Sơn.

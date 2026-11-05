@@ -56,6 +56,13 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .sp{flex:1}
 .toc{border:2px solid var(--gold);border-radius:12px;padding:10px 12px;margin-bottom:12px;background:var(--surf2)}
 .xbd{margin:4px 0}.xbd summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font-weight:700;font-size:13.5px}
+.pbv{padding:14px 16px;min-height:clamp(560px,78vh,980px)}.pbv[hidden]{display:none}
+.pbh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.pbh h2{margin:0;font-size:19px}.pbh .muted{font-size:13px}.pbh .btn{min-height:44px;display:inline-flex;align-items:center;gap:4px;flex:none}
+.pbk{grid-template-columns:repeat(4,minmax(0,1fr))}
+.pbx{border-top:1px solid var(--line);padding:6px 0}.pbx:first-of-type{border-top:0}.pbx .hb+.hb{padding-top:0}
+.pbp{margin:4px 0 6px calc(14% + 10px);padding:8px 10px;background:var(--surf);border:1px solid var(--line);border-radius:10px}
+.pbr{display:grid;grid-template-columns:1fr auto 54px;gap:10px;padding:4px 0;border-bottom:1px dashed var(--line);font-size:13px}.pbr:last-of-type{border-bottom:0}.pbr .n{text-align:right;font-variant-numeric:tabular-nums}
+@media(max-width:700px){.pbk{grid-template-columns:repeat(2,minmax(0,1fr))}.pbp{margin-left:0}.pbr{grid-template-columns:1fr auto}.pbr span.n{grid-column:1/-1;text-align:left;color:var(--mut)}}
 .bdc{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0;background:var(--surf2)}
 .bdh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}.bdh b{font-size:14.5px}.bdh .muted{font-size:12.5px}
 .lg{font-size:12.5px;color:var(--ink2);display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap}.lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-left:6px}
@@ -588,6 +595,7 @@ label.ck input{width:20px;height:20px}
     <div class="card stageCard gold">
       <div class="stageBar">
         <button class="btn noprint" id="btnBack" style="display:none"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Toàn nhà máy</button><span class="t" id="stTitle">Tổng mặt bằng NM An Hạ — 3D</span>
+        <div class="seg noprint" id="tabSeg" role="tablist" aria-label="Chế độ xem"><button class="btn on" data-tab="map" role="tab" aria-selected="true">Mặt bằng 3D</button><button class="btn" data-tab="pb" role="tab" aria-selected="false">Sản lượng PB</button></div>
         <div class="sp"></div>
         <div class="seg noprint" id="camSeg">
           <button class="btn on" data-cam="iso">3D</button>
@@ -606,6 +614,7 @@ label.ck input{width:20px;height:20px}
           <button class="btn" data-col="ng">Tô theo tấn / QC</button>
         </div>
       </div>
+      <div class="pbv" id="pbView" hidden></div>
       <div class="stage" id="stage"><div class="world" id="world"></div><div class="toPop" id="toPop" hidden></div></div>
       <div class="stageFoot"><div class="legend3" id="legend3"></div><div class="hint3">kéo để xoay · cuộn / 2 ngón để phóng · bấm xưởng xem chi tiết</div></div>
     </div>
@@ -959,6 +968,7 @@ function veXuong(id){
 function ngayXuong(x){var sx=0,nt=0;Object.keys(TD).forEach(function(tk){if(tk.indexOf(x+'.')!==0)return;var a=TD[tk][NGAY];if(a){sx+=a.sx;nt+=a.nt;}});
   return '<div class="m">'+dVN(NGAY).slice(0,5)+': SX <b style="color:#fff">'+fm(sx,1)+'</b> · NT <b style="color:#F2D58A">'+fm(nt,1)+'</b> t</div>';}
 function veCanh(){
+  if(TAB==='pb')return;
   document.getElementById('stTitle').textContent=VIEW==='site'?'Tổng mặt bằng NM An Hạ — 3D':('Bên trong xưởng '+KHU[VIEW].ten+' — tổ gia công & QC');
   document.getElementById('btnBack').style.display=VIEW==='site'?'none':'';
   document.getElementById('colSeg').style.display=VIEW==='site'?'':'none';
@@ -1259,6 +1269,44 @@ function bdPj(xw){ /* C: du an x cong doan (tan NT ky) + QC */
     h+='<div class="bdp">'+hbarRow('<b>'+esc(ten)+'</b>',[{v:f,c:'var(--f)',t:'Fitup '+fm(f,1)+' t'},{v:w,c:'var(--w)',t:'Hàn '+fm(w,1)+' t'},{v:p,c:'var(--p)',t:'Sơn '+fm(p,1)+' t'}],max,'<b>'+fm(xc.t,1)+' t</b>')
       +'<div class="bdq">'+cdRow(xc)+'</div></div>';});
   return h+'</div>';}
+/* ===== TAB SAN LUONG PB (user 05/11): san luong phan bo theo xuong — KHSX con lai (phan bo cho xuong) + SPM thang chot ===== */
+var TAB='map',PBMO={};
+function veSLPB(){var el=document.getElementById('pbView');if(!el)return;if(TAB!=='pb'){el.hidden=true;return;}
+  var K=bcKy(),X={};function gx(x){return X[x]=X[x]||{x:x,kl:0,r:0,h:0,sl:0,pj:{},sx:0,sf:0,sw:0,nt:0};}
+  if(KH_TT==='ok')(KHR||[]).forEach(function(r){var x=chuanX(r[1]);if(!x)return;var o=gx(x),m=bcMa(r[0]);o.kl+=+r[11]||0;o.r+=+r[2]||0;o.h+=+r[5]||0;o.sl+=+r[12]||0;
+    var p=o.pj[m]=o.pj[m]||{ten:r[0],kl:0,r:0,h:0};p.kl+=+r[11]||0;p.r+=+r[2]||0;p.h+=+r[5]||0;});
+  var MI=D.PL.indexOf('Miễn QC'),OK=D.PL.indexOf('Đã QC (AH)');
+  D.rows.forEach(function(r){var x=chuanX(D.X[r[1]]);if(!x)return;var o=gx(x),wd=r[4]||'',qd=r[3]||'';
+    if(wd>=K.tu&&wd<=K.den&&r[6]!==MI){o.sf+=+r[7]||0;o.sw+=+r[8]||0;o.sx+=(+r[7]||0)+(+r[8]||0)+(+r[9]||0);}
+    if(qd>=K.tu&&qd<=K.den&&r[6]===OK)o.nt+=(+r[7]||0)+(+r[8]||0)+(+r[9]||0);});
+  var ds=Object.keys(X).map(function(k){return X[k];}).filter(function(o){return o.r+o.h>0.5||o.sx>0.5;}).sort(function(a,b){return (b.r+b.h)-(a.r+a.h);});
+  var T={r:0,h:0,sx:0,nt:0};ds.forEach(function(o){T.r+=o.r;T.h+=o.h;T.sx+=o.sx;T.nt+=o.nt;});
+  var mx=0;ds.forEach(function(o){mx=Math.max(mx,o.r+o.h,o.sf+o.sw);});
+  var h='<div class="pbh"><div><h2>Sản lượng phân bổ theo xưởng — tháng '+K.m+'/'+K.y+'</h2><div class="muted">'+dVN(K.tu).slice(0,5)+' → '+dVN(K.den).slice(0,5)+' · KHSX '+(KH_TT==='ok'?esc(KH_LUC):(KH_TT==='err'?'lỗi đọc':'đang đọc…'))+' · SPM '+esc(D.updated||'—')+'</div></div><button class="btn" data-bclm="1">'+I('sync')+'Làm mới</button></div>';
+  h+='<div class="xbk pbk"><div><b>'+(KH_TT==='ok'?bcT(T.r):'—')+' t</b><span>Còn ráp — phân bổ KHSX</span></div><div><b>'+(KH_TT==='ok'?bcT(T.h):'—')+' t</b><span>Còn hàn — phân bổ KHSX</span></div><div><b>'+bcT(T.sx)+' t</b><span>Sản xuất tháng '+K.m+' (SPM)</span></div><div><b>'+bcT(T.nt)+' t</b><span>QC nghiệm thu tháng '+K.m+'</span></div></div>';
+  if(KH_TT!=='ok')h+='<div class="note">'+(KH_TT==='err'?'Không đọc được KHSX — chưa có số phân bổ.':'Đang đọc KHSX…')+'</div>';
+  h+='<div class="bdc"><div class="bdh"><b>Phân bổ còn lại & sản xuất tháng theo xưởng (tấn)</b><span class="lg"><i style="background:var(--f)"></i>Còn ráp <i style="background:var(--w)"></i>Còn hàn <i class="soc" style="background:var(--mut)"></i>Sọc = SX tháng '+K.m+'</span></div>';
+  ds.forEach(function(o){var pjs=Object.keys(o.pj).map(function(m){var p=o.pj[m];return {m:m,ten:bcTenDep(bcTen(p.ten)),r:p.r,h:p.h,td:p.kl>0.05?100*(1-p.r/p.kl):null};}).filter(function(p){return p.r+p.h>=0.5;}).sort(function(a,b){return (b.r+b.h)-(a.r+a.h);});
+    var mo=!!PBMO[o.x];
+    h+='<div class="pbx">'+hbarRow('<b>'+esc(o.x)+'</b><div class="muted" style="font-size:12px">'+pjs.length+' dự án còn KL</div>',[{v:o.r,c:'var(--f)',t:o.x+' còn ráp '+bcT(o.r)+' t'},{v:o.h,c:'var(--w)',t:o.x+' còn hàn '+bcT(o.h)+' t'}],mx,
+      'ráp <b>'+bcT(o.r)+'</b> · hàn <b>'+bcT(o.h)+'</b> t',' data-pbx="'+esc(o.x)+'" role="button" tabindex="0" title="Bấm để xem dự án"')
+      +hbarRow('<span class="muted" style="font-size:12px">SX tháng '+K.m+'</span>',[{v:o.sf,c:'var(--f)',cls:'soc',t:'SX ráp '+bcT(o.sf)+' t'},{v:o.sw,c:'var(--w)',cls:'soc',t:'SX hàn '+bcT(o.sw)+' t'}],mx,'SX <b>'+bcT(o.sx)+'</b> · NT <b>'+bcT(o.nt)+'</b> t');
+    if(mo){h+='<div class="pbp">'+(pjs.length?pjs.map(function(p){var cl=p.td==null?'var(--mut)':(p.td>=99.5?'var(--ok)':(p.td>=50?'var(--warn)':'var(--bad)'));
+        return '<div class="pbr"><span>'+esc(p.ten)+'</span><span class="n">ráp '+bcT(p.r)+' · hàn '+bcT(p.h)+' t</span><b class="n" style="color:'+cl+'">'+(p.td==null?'—':fm(p.td,0)+'%')+'</b></div>';}).join(''):'<div class="muted">Không còn dự án có khối lượng.</div>')
+      +'<button class="btn" data-pbgo="'+esc(o.x)+'" style="margin-top:6px">Xem '+esc(o.x)+' trên bản đồ →</button></div>';}
+    h+='</div>';});
+  h+='</div><div class="muted bcsrc">Phân bổ = khối lượng KHSX (sheet Data) xếp cho từng xưởng còn phải ráp / hàn. Sản xuất & nghiệm thu = SPM trong tháng chốt 21 → 20. % = ráp xong của dự án tại xưởng. Bấm tên xưởng để xem dự án.</div>';
+  el.innerHTML=h;el.hidden=false;}
+function doiTab(t){TAB=t;[].forEach.call(document.querySelectorAll('#tabSeg .btn'),function(b){var on=b.getAttribute('data-tab')===t;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false');});
+  var st=document.getElementById('stage'),ft=document.querySelector('.stageFoot');st.style.display=t==='pb'?'none':'';if(ft)ft.style.display=t==='pb'?'none':'';
+  ['camSeg','ngaySeg','colSeg','btnBack'].forEach(function(id){var e=document.getElementById(id);if(!e)return;if(t==='pb'){e.dataset.an=e.style.display;e.style.display='none';}else if(e.dataset.an!==undefined){e.style.display=e.dataset.an;delete e.dataset.an;}});
+  document.getElementById('stTitle').textContent=t==='pb'?'Sản lượng phân bổ theo xưởng':(VIEW==='site'?'Tổng mặt bằng NM An Hạ — 3D':'Bên trong xưởng '+KHU[VIEW].ten+' — tổ gia công & QC');
+  veSLPB();if(t==='map'){veCanh();}}
+document.getElementById('tabSeg').addEventListener('click',function(e){var b=e.target.closest('[data-tab]');if(b)doiTab(b.getAttribute('data-tab'));});
+document.getElementById('pbView').addEventListener('click',function(e){
+  var x=e.target.closest('[data-pbx]');if(x){var k=x.getAttribute('data-pbx');PBMO[k]=!PBMO[k];veSLPB();return;}
+  var g=e.target.closest('[data-pbgo]');if(g){var id=g.getAttribute('data-pbgo');doiTab('map');if(KHU[id])chon(id);return;}
+  if(e.target.closest('[data-bclm]')){KH_LUC='đang đọc lại…';veSLPB();khLamMoi();}});
 /* ===== BAO CAO TONG QUAN XUONG — duoi ban do (user 04/11): KPI · to gia cong · QC phu trach · du an ===== */
 function veXuongBC(){var el=document.getElementById('xuongBC');if(!el)return;var k=SEL&&KHU[SEL];
   if(!k||!k.spmX){el.hidden=true;el.innerHTML='';return;}
@@ -1285,7 +1333,7 @@ function veXuongBC(){var el=document.getElementById('xuongBC');if(!el)return;var
   h+=bcXuong(xw,true);
   el.innerHTML=h;el.hidden=false;}
 function veToPop(){var e=document.getElementById('toPop');if(!e)return;if(!SELTO||!SEL){e.hidden=true;e.innerHTML='';return;}e.innerHTML=theTo(SELTO);e.hidden=false;}
-function vePanel(){veToPop();veXuongBC();
+function vePanel(){veToPop();veXuongBC();veSLPB();
   var el=document.getElementById('panel');
   if(!SEL){
     /* tong quan: xep hang khu theo tai */
