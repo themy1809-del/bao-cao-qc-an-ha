@@ -76,13 +76,19 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 @media(max-width:700px){.lyxh b{font-size:20px}
   .qch{display:none}.qcr{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;row-gap:4px}.qcn{grid-column:1/-1}.qcc{min-height:56px}.qcc b{font-size:12px}.qcc i{width:80%}.qcc::after{content:attr(data-l);font-size:10.5px;color:var(--mut);margin-top:3px;text-align:center;line-height:1.1}.qcs span{display:none}}
 .lgtop{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0 6px;font-size:13px;color:var(--ink2)}
-.lyx{border:1px solid var(--line);border-radius:12px;background:var(--surf2);padding:8px 10px;margin-bottom:12px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:16px;align-items:stretch}
-.lyL{min-width:0;display:flex;flex-direction:column}.lyL .lysv{flex:1;display:flex;align-items:stretch}.lyL .lysv .lay{height:100%}.lyR{min-width:0;border-left:1px solid var(--line);padding-left:14px}.lyx .lysv{overflow-x:auto}.lyx .lay{min-width:0;width:100%}
-.lyxh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:4px}.lyxh b{font-size:26px;font-weight:900;line-height:1}.lyxh span{font-size:12.5px;color:var(--mut)}.lyxh span b{font-size:12.5px;color:var(--ink)}
-.lyli{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--mut);margin-top:4px}.lyli b{color:var(--ink)}
-.lyqh{font-size:12.5px;font-weight:700;color:var(--ink2);margin-bottom:2px}
-@media(max-width:1000px){.lyx{grid-template-columns:1fr}.lyR{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:6px}}
-@media(max-width:700px){.lyx .lay{min-width:720px}}
+.lyx{border:1px solid var(--line2);border-radius:12px;background:var(--surf2);padding:6px 10px 8px;margin-bottom:6px}
+.lyxh{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin-bottom:4px}.lyxh>b{font-size:26px;font-weight:900;line-height:1}
+.lyk{display:flex;gap:4px 14px;flex-wrap:wrap;font-size:13px;color:var(--mut);align-items:baseline}.lyk i{font-style:normal}.lyk b{color:var(--ink);font-weight:800;font-size:13px}.lyk span{color:var(--ink2)}.lyk span b{margin-right:2px}
+.lyb{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.95fr);gap:8px;align-items:stretch}.lyb .lysv{display:flex}.lyb .lysv .lay{height:100%}
+.lyx .lysv{overflow-x:auto}.lyx .lay{min-width:0;width:100%}.lyR{min-width:0}
+.qcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:5px;height:100%;align-content:start}
+.qcd{border:1px solid var(--line);border-radius:8px;background:var(--surf);padding:5px 8px 5px}
+.qcd1{display:flex;gap:7px;align-items:center;margin-bottom:3px}.qcd1 .av{width:30px;height:30px;font-size:11px;flex:none;margin-left:0;color:#fff;background-color:#1f2a44}[data-theme=light] .qcd1 .av{background-color:#334155;color:#fff}.qcd1 b{display:block;font-size:14px;line-height:1.15}.qcd1 span{display:block;font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.qcd2{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;text-align:center}.qcd2 b{display:block;font-size:15px;font-variant-numeric:tabular-nums;line-height:1.1}.qcd2 span{font-size:10.5px;color:var(--mut)}
+.qcd2 .nt b{color:#8a5a00}[data-theme=dark] .qcd2 .nt b{color:var(--gold)}.qcd2 .cl b{color:var(--warn)}
+.qcd3{height:4px;border-radius:2px;background:var(--line);margin-top:4px;overflow:hidden}.qcd3 i{display:block;height:100%;background:var(--gold)}
+@media(max-width:1000px){.lyb{grid-template-columns:1fr}.lyx .lay{min-width:720px}.qcards{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}}
+
 :root,[data-theme=light]{--tf:#dbeafe;--tw:#fde68a;--tp:#bbf7d0;--tt:#111827}[data-theme=dark]{--tf:#1e3a8a;--tw:#78350f;--tp:#14532d;--tt:#eef2f8}
 .lay .lyTt{fill:var(--tt)}.lay .lyTv{fill:var(--tt)}
 .lay .lyB{stroke:var(--line2);stroke-width:2}.lay .lyLh{fill:color-mix(in srgb,var(--ink) 10%,transparent);stroke:none}
@@ -1409,7 +1415,7 @@ function tongQuanXuong(PX){
   /* 05/11 user: QC BEN CANH xuong (cung 1 hang) -> SVG chi ve nha xuong, thong tin + QC thanh HTML */
   var VW=900,INFO=0,GAP=22,PAD=8,LG=6,LBW=52,X0=6,BW=VW-12,IXR=X0+BW+14,n=xs.length;
   var CO=xs.map(function(k){var co=false;if(k.spmX)for(var li=0;li<Math.max(1,k.line||1);li++){var o=A[k.spmX+'|'+li];if(o&&Object.keys(o.to).length)co=true;}return co;});
-  var BHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1),lb=CO[ix]?64:28;return PAD*2+NL*lb+(NL-1)*LG;});
+  var BHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1),lb=CO[ix]?54:26;return PAD*2+NL*lb+(NL-1)*LG;});
   /* 05/11 tac tu thiet ke: tach chart khoi SVG -> moi xuong 1 khoi HTML (svg nha xuong + dai chart), dien thoai doc duoc, het de chu */
   var RHS=xs.map(function(k,ix){return k.spmX?BHS[ix]+14:40;});
   var FILL={f:'var(--tf)',w:'var(--tw)',p:'var(--tp)'},STROKE={f:'#1d4ed8',w:'#b45309',p:'#15803d'};
@@ -1418,6 +1424,7 @@ function tongQuanXuong(PX){
       return '<div class="vcb" title="'+esc(z.full||z.l)+': '+fm(z.v,dp)+u+(z.v2!=null?' · NT '+fm(z.v2,dp)+u:'')+'"><b>'+fm(z.v,dp)+(z.v2!=null?' <em>'+fm(z.v2,dp)+'</em>':'')+'</b><div class="vcp"><i style="height:'+hh+'px;background:'+c+'"></i>'+(h2!=null?'<i style="height:'+h2+'px;background:var(--gold)"></i>':'')+'</div><span>'+esc(z.l)+'</span></div>';}).join('')+'</div></div>';}
   /* 05/11 user: chart theo TUNG NHAN VIEN QC (khong theo line): so du an · so cau kien · khoi luong · da nghiem thu · con lai */
   var plChoQ=D.PL.indexOf('Chưa QC');
+  function qIndexTen(nm){for(var kk in NGUOI){var p=NGUOI[kk];if(p.qi>=0&&qName(p.qi)===nm)return p.qi;}for(var i2=0;i2<D.Q.length;i2++){if(qName(i2)===nm)return i2;}return -1;}
   function chartXuong(k){var iX=D.X.indexOf(k.spmX),Q={};
     function g(n){return Q[n]=Q[n]||{pj:{},ck:0,nt:0,to:{}};}
     D.rows.forEach(function(r){if(r[1]!==iX)return;var tk=k.spmX+'.'+D.T[r[2]];if(!(tk in LT))return;
@@ -1433,20 +1440,20 @@ function tongQuanXuong(PX){
     /* khoi luong & con lai: chia theo ty le QC do da NT tren tung to (tranh 2 QC cung to -> dem trung); chi to co SX khau nay */
     var toNT={};qs.forEach(function(n){Object.keys(Q[n].to).forEach(function(tk){toNT[tk]=(toNT[tk]||0)+Q[n].to[tk];});});
     var rows=qs.map(function(n){var o=Q[n],kl=0,cl=0;Object.keys(o.to).forEach(function(tk){var sh=toNT[tk]>0?o.to[tk]/toNT[tk]:0;kl+=(toSX[tk]||0)*sh;cl+=(toTon[tk]||0)*sh;});
-      var nm=(/^[a-z0-9._]+$/.test(n)?(bcQC(n)!==n?bcQC(n):'QC '+n):n);return {n:nm,pj:Object.keys(o.pj).length,ck:o.ck,kl:kl,nt:o.nt,cl:cl,tos:Object.keys(o.to).sort(function(a,b){return o.to[b]-o.to[a];}).map(function(t){return t.split('.').slice(1).join('.');}).join(', ')};});
+      var nm=(/^[a-z0-9._]+$/.test(n)?(bcQC(n)!==n?bcQC(n):'QC '+n):n),key=(/^[a-z0-9._]+$/.test(n)?n:(D.Q[qIndexTen(n)]||''));return {n:nm,key:key,pj:Object.keys(o.pj).length,ck:o.ck,kl:kl,nt:o.nt,cl:cl,tos:Object.keys(o.to).sort(function(a,b){return o.to[b]-o.to[a];}).map(function(t){return t.split('.').slice(1).join('.');}).join(', ')};});
     var mx={pj:0,ck:0,t:0};rows.forEach(function(z){mx.pj=Math.max(mx.pj,z.pj);mx.ck=Math.max(mx.ck,z.ck);mx.t=Math.max(mx.t,z.kl,z.nt,z.cl);});
     function col(v,m,c){var hh=m>0?Math.max(v>0?3:0,Math.round(64*v/m)):0;return '<i style="height:'+hh+'px;background:'+c+'"></i>';}
     function col2(v,m,cls){var w=m>0?Math.max(v>0?3:0,Math.round(100*v/m)):0;return '<i class="'+cls+'" style="width:'+w+'%"></i>';}
-    var h='<table class="qct"><thead><tr><th>QC</th><th class="n">Dự án</th><th class="n">Cấu kiện</th><th class="n">SX T'+K.m+' (t)</th><th class="n">Đã NT (t)</th><th class="n">Chờ NT (t)</th></tr></thead><tbody>';
-    rows.forEach(function(z){var tl=z.tos.split(', '),tos=tl.slice(0,3).join(', ')+(tl.length>3?' +'+(tl.length-3):'');
-      h+='<tr title="Tổ: '+esc(z.tos)+'"><td><b>'+esc(z.n)+'</b><span>'+esc(tos)+'</span></td>'
-      +'<td class="n"><b>'+fm(z.pj,0)+'</b></td><td class="n"><b>'+fm(z.ck,0)+'</b></td>'
-      +'<td class="n qb"><b>'+fm(z.kl,0)+'</b>'+col2(z.kl,mx.t,'ksx')+'</td>'
-      +'<td class="n qb"><b>'+fm(z.nt,0)+'</b>'+col2(z.nt,mx.t,'knt')+'</td>'
-      +'<td class="n qb"><b'+(z.cl>0.5?' style="color:var(--warn)"':' class="muted"')+'>'+fm(z.cl,0)+'</b>'+col2(z.cl,mx.t,'kcl')+'</td></tr>';});
-    return h+'</tbody></table>';}
+    /* 05/11 user: 1 BUC TRANH — QC la THE gan ben nha xuong, moi the: avatar + ten + to + 5 so + thanh NT/SX */
+    rows.forEach(function(z){z.qi=qIndex(z.key||'');var p=null;for(var kk in NGUOI){if(NGUOI[kk].qi>=0&&NGUOI[kk].qi===qIndex(z.key||'')){p=NGUOI[kk];break;}}z.p=p;});
+    var h='<div class="qcards">';
+    rows.forEach(function(z,idx){var tl=z.tos.split(', '),tos=tl.slice(0,3).join(', ')+(tl.length>3?' +'+(tl.length-3):''),pc=z.kl>0.5?Math.min(100,Math.round(100*z.nt/z.kl)):null;
+      h+='<div class="qcd" title="Tổ: '+esc(z.tos)+'"><div class="qcd1">'+(z.p?avHtml(z.p,null,false):'<span class="av">'+esc(ini(z.n))+'</span>')+'<div><b>'+esc(z.n)+'</b><span>'+esc(tos)+'</span></div></div>'
+        +'<div class="qcd2"><div><b>'+fm(z.pj,0)+'</b><span>dự án</span></div><div><b>'+fm(z.ck,0)+'</b><span>CK</span></div><div><b>'+fm(z.kl,0)+'</b><span>SX t</span></div><div class="nt"><b>'+fm(z.nt,0)+'</b><span>đã NT</span></div><div class="cl"><b'+(z.cl>0.5?'':' class="muted"')+'>'+fm(z.cl,0)+'</b><span>chờ NT</span></div></div>'
+        +'<div class="qcd3"><i style="width:'+(pc==null?0:pc)+'%"></i></div></div>';});
+    return h+'</div>';}
   var out='';
-  xs.forEach(function(k,ix){var Y0=4,BH=BHS[ix],NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],LBH=CO[ix]?64:28,TA=' style="text-anchor:start"',BY=Y0+6;
+  xs.forEach(function(k,ix){var Y0=4,BH=BHS[ix],NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],LBH=CO[ix]?54:26,TA=' style="text-anchor:start"',BY=Y0+6;
     var svg='<svg class="lay" viewBox="0 0 '+VW+' '+RHS[ix]+'" role="img" aria-label="'+esc(k.ten)+'">';
     if(!k.spmX){svg+='<rect x="'+X0+'" y="4" width="'+(VW-20)+'" height="30" rx="6" class="lyB"/><text x="'+(X0+14)+'" y="24" class="lyN" style="font-size:18px;text-anchor:start">'+esc(k.ten)+' <tspan class="lyS">· '+esc(k.mo||'')+' · chưa có SPM</tspan></text></svg>';out+='<div class="lyx">'+svg+'</div>';return;}
     var sxT=0,ntT=0;for(var q=0;q<NL;q++){var oq=A[k.spmX+'|'+q];if(oq){sxT+=days.reduce(function(a2,d){return a2+((oq.d[d]||[0,0])[0]);},0);ntT+=oq.nt||0;}}
@@ -1475,7 +1482,8 @@ function tongQuanXuong(PX){
     var qtxt=(giao.length?giao.map(function(nm){return nm.split(' ').slice(-2).join(' ');}).join(', '):qall.slice(0,3).map(function(q){return q.n.split(' ').slice(-2).join(' ');}).join(', '));
     var qs=(qtxt||'—').split(', '),l1=[],l2=[];qs.forEach(function(q){((l1.join(', ').length+q.length<28)&&!l2.length?l1:l2).push(q);});
     svg+='</svg>';
-    out+='<div class="lyx"><div class="lyL"><div class="lyxh"><b>'+esc(k.ten)+'</b><span>'+esc(pbK)+' · SX T'+K.m+' <b>'+fm(sxT,0)+' t</b> · NT <b>'+fm(ntT,0)+' t</b></span></div><div class="lysv">'+svg+'</div><div class="lyli">'+lineTxt+'</div></div>'
+    out+='<div class="lyx"><div class="lyxh"><b>'+esc(k.ten)+'</b><span class="lyk"><i>'+esc(pbK)+'</i><i>SX T'+K.m+' <b>'+fm(sxT,0)+' t</b></i><i>NT <b>'+fm(ntT,0)+' t</b></i>'+lineTxt+'</span></div>'
+      +'<div class="lyb"><div class="lysv">'+svg+'</div><div class="lyR">'+chartXuong(k)+'</div></div></div>';
       +'<div class="lyR"><div class="lyqh">QC '+esc(TEAM.ngan||TEAM.ten)+' tại '+esc(k.ten)+'</div>'+chartXuong(k)+'</div></div>';});
   var h='<div class="lgtop"><b style="color:var(--ink)">Đang xem: '+esc(TEAM.ten)+'</b><span class="lgx"><i class="k'+(TEAM.cd||'f')+'"></i>tổ '+(TEAM.cd==='w'?'hàn':(TEAM.cd==='p'?'sơn / thành phẩm':'ráp'))+' (tấn khâu này, tháng '+K.m+')</span><span class="lgx"><i class="ksx"></i>SX tháng (t) <i class="knt"></i>đã nghiệm thu <i class="kcl"></i>chờ NT</span></div><div class="layw">'+out+'</div><details class="tod"><summary>Cách đọc sơ đồ</summary><div class="muted bcsrc"> ô tổ rộng theo tỷ lệ tấn sản xuất trong line, tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · bên phải mỗi xưởng: từng line L1, L2… (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div></details>';
   return h;}
