@@ -1361,8 +1361,8 @@ function tongQuanXuong(PX){
      moi to gia cong 1 o cao theo tan SX thang; duoi nha: tong line (du an · CK · tan) + QC dam nhan. Bam o to -> mo to tren ban do. */
   /* 05/11 user lan 5: XEP DOC tu tren xuong (AH1 tren cung); moi xuong 1 hang het be ngang: NHA XUONG ben TRAI, chu AHx + thong tin ben PHAI;
      trong nha moi LINE la 1 BANG NGANG, to xep trai -> phai, rong theo tan SX thang; xuong chua co so lieu thi hang thap */
-  /* 05/11 user lan 6: thong tin + QC ve BEN TRAI (man hep van thay), LINE nho lai, hang deu (nha xuong can giua theo cot thong tin) */
-  var VW=1400,INFO=262,GAP=22,PAD=8,LG=6,LBW=52,IXR=12,X0=INFO+12,BW=VW-X0-10,n=xs.length;
+  /* 05/11 user lan 7: nha xuong ben TRAI, thong tin xuong + QC ben PHAI; LINE nho, hang deu (nha xuong can giua theo cot thong tin) */
+  var VW=1400,INFO=262,GAP=22,PAD=8,LG=6,LBW=52,X0=10,BW=VW-INFO-24,IXR=X0+BW+14,n=xs.length;
   var CO=xs.map(function(k){var co=false;if(k.spmX)for(var li=0;li<Math.max(1,k.line||1);li++){var o=A[k.spmX+'|'+li];if(o&&Object.keys(o.to).length)co=true;}return co;});
   var BHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1),lb=CO[ix]?44:24;return PAD*2+NL*lb+(NL-1)*LG;});
   var RHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1);return Math.max(BHS[ix],CO[ix]?(86+NL*18+28):70);});
@@ -1398,7 +1398,7 @@ function tongQuanXuong(PX){
     var qs=(qtxt||'—').split(', '),l1=[],l2=[];qs.forEach(function(q){((l1.join(', ').length+q.length<34)&&!l2.length?l1:l2).push(q);});
     svg+='<text x="'+IXR+'" y="'+yq+'" class="lyQ"'+TA+'>QC: '+esc(l1.join(', '))+'</text>'+(l2.length?'<text x="'+(IXR+26)+'" y="'+(yq+18)+'" class="lyQ"'+TA+'>'+esc(l2.join(', '))+'</text>':'');});
   svg+='</svg>';
-  var h='<div class="layw">'+svg+'</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>tổ ráp <i class="kw"></i>tổ hàn <i class="kp"></i>tổ sơn / thành phẩm</span> · ô tổ rộng theo tỷ lệ tấn sản xuất trong line, tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · bên trái mỗi xưởng: từng line L1, L2… (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
+  var h='<div class="layw">'+svg+'</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>tổ ráp <i class="kw"></i>tổ hàn <i class="kp"></i>tổ sơn / thành phẩm</span> · ô tổ rộng theo tỷ lệ tấn sản xuất trong line, tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · bên phải mỗi xưởng: từng line L1, L2… (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
   return h;}
 function slpbData(){
   var K=bcKy(),X={};function gx(x){return X[x]=X[x]||{x:x,kl:0,r:0,h:0,sl:0,pj:{},sx:0,sf:0,sw:0,nt:0};}
