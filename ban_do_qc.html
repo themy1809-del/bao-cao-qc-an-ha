@@ -56,14 +56,23 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .sp{flex:1}
 .toc{border:2px solid var(--gold);border-radius:12px;padding:10px 12px;margin-bottom:12px;background:var(--surf2)}
 .xbd{margin:4px 0}.xbd summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font-weight:700;font-size:13.5px}
-.chfo{width:100%;height:100%;box-sizing:border-box}.chrow{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;gap:12px;height:100%}
-.chrow .chm{margin:0;min-width:0}.chrow .cht{font-size:11.5px}.chrow .vc{min-height:96px}.chrow .vcb{min-width:28px}.chrow .vcb b{font-size:10.5px}.chrow .vcb span{font-size:10px}
+.lgtop{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0 6px;font-size:13px;color:var(--ink2)}
+.lyx{border:1px solid var(--line);border-radius:12px;background:var(--surf2);padding:4px 8px 10px;margin-bottom:12px}.lyx .lysv{overflow-x:auto}.lyx .lay{min-width:0;width:100%}
+@media(max-width:700px){.lyx .lay{min-width:900px}}
+:root,[data-theme=light]{--tf:#dbeafe;--tw:#fde68a;--tp:#bbf7d0;--tt:#111827}[data-theme=dark]{--tf:#1e3a8a;--tw:#78350f;--tp:#14532d;--tt:#eef2f8}
+.lay .lyTt{fill:var(--tt)}.lay .lyTv{fill:var(--tt)}
+.lay .lyB{stroke:var(--line2);stroke-width:2}.lay .lyLh{fill:color-mix(in srgb,var(--ink) 10%,transparent);stroke:none}
+.chrow{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.4fr;gap:14px;margin-top:4px;padding:0 4px}
+.chrow .cht{font-size:13px}.chrow .cht small{font-weight:600;color:var(--mut);margin-left:6px}.chrow .cht small i{display:inline-block;width:9px;height:9px;border-radius:2px;margin:0 3px 0 6px;vertical-align:-1px}
+.chrow .vc{min-height:110px;overflow:visible}.chrow .vcb{min-width:34px;max-width:84px}.chrow .vcb b{font-size:12.5px}.chrow .vcb b em{font-style:normal;color:var(--warn)}.chrow .vcb span{font-size:12px}
+.vcp{display:flex;align-items:flex-end;gap:2px;width:100%}.vcp i{flex:1;display:block;border-radius:4px 4px 0 0}
+@media(max-width:700px){.chrow{grid-template-columns:1fr 1fr;gap:8px}.chrow .chm:first-child,.chrow .chm:last-child{grid-column:1/-1}.lyx{padding:2px 4px 8px}}
 .chx{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
 .chc{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surf)}.chn{font-size:22px;font-weight:900;margin-bottom:4px}
 .chm{margin-top:8px}.cht{font-size:12.5px;font-weight:700;color:var(--ink2);margin-bottom:4px}
 .vc{display:flex;align-items:flex-end;gap:6px;min-height:118px;border-bottom:1px solid var(--line);padding-bottom:2px;overflow-x:auto}.vcb{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:1 1 0;min-width:40px;max-width:72px}.vcb b{font-size:11.5px;font-variant-numeric:tabular-nums;margin-bottom:2px;white-space:nowrap}.vcb i{display:block;width:100%;border-radius:4px 4px 0 0}.vcb span{font-size:11px;color:var(--mut);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .layw{overflow-x:auto;margin:12px 0 4px;border:1px solid var(--line);border-radius:14px;background:var(--surf2);padding:6px}
-.lay{display:block;width:100%;min-width:1100px;height:auto;font-family:inherit}
+.lay{display:block;width:100%;height:auto;font-family:inherit}
 .lay .lyN{font-size:30px;font-weight:900;fill:var(--ink);text-anchor:middle}.lay .lyS{font-size:13px;fill:var(--ink2);text-anchor:middle;font-variant-numeric:tabular-nums}
 .lay .lyB{fill:color-mix(in srgb,var(--surf) 70%,transparent);stroke:var(--gold);stroke-width:3}
 .lay .lyL{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:5 4}
@@ -885,7 +894,7 @@ function khuVal(k){var x=k.spmX&&S.X[k.spmX];if(!x)return 0;if(COLMODE==='t')ret
    TON = tan dang cho nghiem thu (phan loai "Chua QC"), tinh tai thoi diem du lieu ---------- */
 var TD={},TON={},TONC={},NGAYS=[],NGAY='',CHE='ngay';
 /* Final DIM: dong SPM co tan Han va ghi chu chua "acc" + ma QC kich thuoc — CHEP NGUYEN quy tac _fdName/_FD_AL cua qc.html */
-var _FD_AL={kienv:'kiennv',kien:'kiennv',cuongkt:'cuongtk',vutpt:'vupt',hieunnv:'hieunv',hienv:'hieunv'};
+var _FD_AL={kienv:'kiennv',kien:'kiennv',cuongkt:'cuongtk',vutpt:'vupt',vuppt:'vupt',truongbv:'truongba',hieunnv:'hieunv',hienv:'hieunv'}; /* 05/11: them vuppt, truongbv (go sai trong ghi chu ACC) */
 function _fdName(r){if(!(r[8]>0&&r[13]&&/acc/i.test(''+r[13])))return '';var nm=String(r[13]).toLowerCase().replace(/[:：]/g,' ').replace(/\bacc\b/g,' ').replace(/\s+/g,' ').trim();if(!nm)return '';nm=_FD_AL[nm]||nm;return /^[a-z][a-z0-9._]{1,14}$/.test(nm)?nm:'';}
 function oNgay(){return {sx:0,sf:0,sw:0,sp:0,nt:0,nf:0,nw:0,np:0,nd:0,q:{},qs:{f:{},w:{},d:{},p:{}}};}
 (function(){
@@ -1374,22 +1383,25 @@ function tongQuanXuong(PX){
   var VW=1400,INFO=262,GAP=22,PAD=8,LG=6,LBW=52,X0=10,BW=VW-INFO-24,IXR=X0+BW+14,n=xs.length;
   var CO=xs.map(function(k){var co=false;if(k.spmX)for(var li=0;li<Math.max(1,k.line||1);li++){var o=A[k.spmX+'|'+li];if(o&&Object.keys(o.to).length)co=true;}return co;});
   var BHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1),lb=CO[ix]?44:24;return PAD*2+NL*lb+(NL-1)*LG;});
-  var CHH=150; /* 05/11 user: dai chart dung gan lien duoi moi nha xuong */
-  var RHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1);return Math.max(BHS[ix],CO[ix]?(86+NL*18+28):70)+(k.spmX?CHH+6:0);});
-  var YS=[],yc=10;RHS.forEach(function(hk){YS.push(yc);yc+=hk+GAP;});var VH=yc-GAP+10;
-  var FILL={f:'#dbeafe',w:'#fde68a',p:'#bbf7d0'},STROKE={f:'#1d4ed8',w:'#b45309',p:'#15803d'};
-  function vbar(tit,items,c,u,dp){var mx=Math.max.apply(null,items.map(function(z){return z.v;}).concat([0]));
-    return '<div class="chm"><div class="cht">'+tit+'</div><div class="vc">'+items.map(function(z){var hh=mx>0?Math.max(z.v>0?3:0,Math.round(64*z.v/mx)):0;
-      return '<div class="vcb" title="'+esc(z.full||z.l)+': '+fm(z.v,dp)+u+'"><b>'+fm(z.v,dp)+'</b><i style="height:'+hh+'px;background:'+c+'"></i><span>'+esc(z.l)+'</span></div>';}).join('')+'</div></div>';}
+  /* 05/11 tac tu thiet ke: tach chart khoi SVG -> moi xuong 1 khoi HTML (svg nha xuong + dai chart), dien thoai doc duoc, het de chu */
+  var RHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1);return k.spmX?Math.max(BHS[ix],CO[ix]?(86+NL*18+46):70)+12:40;});
+  var FILL={f:'var(--tf)',w:'var(--tw)',p:'var(--tp)'},STROKE={f:'#1d4ed8',w:'#b45309',p:'#15803d'};
+  function vbar(tit,items,c,u,dp,legend){var mx=Math.max.apply(null,items.map(function(z){return Math.max(z.v,z.v2||0);}).concat([0]));
+    return '<div class="chm"><div class="cht">'+tit+(legend||'')+'</div><div class="vc">'+items.map(function(z){var hh=mx>0?Math.max(z.v>0?3:0,Math.round(70*z.v/mx)):0,h2=z.v2!=null?(mx>0?Math.max(z.v2>0?3:0,Math.round(70*z.v2/mx)):0):null;
+      return '<div class="vcb" title="'+esc(z.full||z.l)+': '+fm(z.v,dp)+u+(z.v2!=null?' · NT '+fm(z.v2,dp)+u:'')+'"><b>'+fm(z.v,dp)+(z.v2!=null?' <em>'+fm(z.v2,dp)+'</em>':'')+'</b><div class="vcp"><i style="height:'+hh+'px;background:'+c+'"></i>'+(h2!=null?'<i style="height:'+h2+'px;background:var(--gold)"></i>':'')+'</div><span>'+esc(z.l)+'</span></div>';}).join('')+'</div></div>';}
   function chartXuong(k){var NL=Math.max(1,k.line||1),L=[],qa={};
     for(var li=0;li<NL;li++){var o=A[k.spmX+'|'+li]||{d:{},pj:{},qc:{},to:{}},ck=days.reduce(function(a,d){return a+((o.d[d]||[0,0])[1]);},0),t=days.reduce(function(a,d){return a+((o.d[d]||[0,0])[0]);},0);
       L.push({n:Object.keys(o.pj||{}).length,ck:ck,t:t,nt:o.nt||0});Object.keys(o.qc||{}).forEach(function(nm){if(nm&&nm!=='—')qa[nm]=(qa[nm]||0)+o.qc[nm];});}
     function mini(tit,key,u,dp){return vbar(tit,L.map(function(z,i){return {l:'L'+(i+1),full:'Line '+(i+1),v:z[key]};}),'var(--f)',u,dp);}
     var qk=Object.keys(qa).filter(function(n){return qa[n]>=1;}).sort(function(a,b){return qa[b]-qa[a];}).slice(0,6);
-    return '<div class="chrow">'+(qk.length?vbar('QC nghiệm thu (t)',qk.map(function(n){var qi=qIndex(n.toLowerCase()),nm=(/^[a-z0-9._]+$/.test(n)?(qi>=0?qName(qi):(bcQC(n)!==n?bcQC(n):n)):n);return {l:nm.split(' ').slice(-1)[0],full:nm,v:qa[n]};}),'var(--gold)',' t',0):'<div class="chm"><div class="cht">QC nghiệm thu (t)</div><div class="muted" style="font-size:12px">—</div></div>')
-      +mini('Số lượng dự án','n','',0)+mini('Số lượng cấu kiện','ck',' CK',0)+mini('Khối lượng sản lượng (t)','t',' t',0)+mini('Sản lượng QC NT (t)','nt',' t',0)+'</div>';}
-  var svg='<svg class="lay" viewBox="0 0 '+VW+' '+VH+'" role="img" aria-label="Bản đồ layout các xưởng AH1 đến AH9">';
-  xs.forEach(function(k,ix){var Y0=YS[ix],BH=BHS[ix],NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],LBH=CO[ix]?44:24,TA=' style="text-anchor:start"',BY=Y0+Math.round((RHS[ix]-(k.spmX?CHH+6:0)-BH)/2);
+    function tenQ(n){if(!/^[a-z0-9._]+$/.test(n))return n;var qi=qIndex(n.toLowerCase());if(qi>=0&&qName(qi)!==n)return qName(qi);var b=bcQC(n);return b!==n?b:('QC '+n);}
+    return '<div class="chrow">'+(qk.length?vbar('QC nghiệm thu (t)',qk.map(function(n){var nm=tenQ(n);return {l:nm.split(' ').slice(-1)[0],full:nm,v:qa[n]};}),'var(--gold)',' t',0):'<div class="chm"><div class="cht">QC nghiệm thu (t)</div><div class="muted" style="font-size:12px">—</div></div>')
+      +mini('Số lượng dự án','n','',0)+mini('Số lượng cấu kiện','ck',' CK',0)
+      +vbar('Sản lượng theo line (t)',L.map(function(z,i){return {l:'L'+(i+1),full:'Line '+(i+1)+' — SX',v:z.t,v2:z.nt};}),'var(--f)',' t',0,' <small><i style="background:var(--f)"></i>SX <i style="background:var(--gold)"></i>QC NT</small>')+'</div>';}
+  var out='';
+  xs.forEach(function(k,ix){var Y0=4,BH=BHS[ix],NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],LBH=CO[ix]?44:24,TA=' style="text-anchor:start"',BY=Y0+6;
+    var svg='<svg class="lay" viewBox="0 0 '+VW+' '+RHS[ix]+'" role="img" aria-label="'+esc(k.ten)+'">';
+    if(!k.spmX){svg+='<rect x="'+X0+'" y="4" width="'+(VW-20)+'" height="30" rx="6" class="lyB"/><text x="'+(X0+14)+'" y="24" class="lyN" style="font-size:18px;text-anchor:start">'+esc(k.ten)+' <tspan class="lyS">· '+esc(k.mo||'')+' · chưa có SPM</tspan></text></svg>';out+='<div class="lyx">'+svg+'</div>';return;}
     svg+='<text x="'+IXR+'" y="'+(Y0+28)+'" class="lyN"'+TA+'>'+esc(k.ten)+'</text>';
     svg+='<text x="'+IXR+'" y="'+(Y0+50)+'" class="lyS"'+TA+'>'+(px?'PB còn ráp '+fm(px.r,0)+' · hàn '+fm(px.h,0)+' t':(k.spmX?'—':'chưa có SPM'))+'</text>';
     if(px)svg+='<text x="'+IXR+'" y="'+(Y0+68)+'" class="lyS"'+TA+'>SX T'+K.m+' '+fm(px.sx,0)+' t · NT '+fm(px.nt,0)+' t</text>';
@@ -1417,9 +1429,8 @@ function tongQuanXuong(PX){
     var qtxt=(giao.length?giao.map(function(nm){return nm.split(' ').slice(-2).join(' ');}).join(', '):qall.slice(0,3).map(function(q){return q.n.split(' ').slice(-2).join(' ');}).join(', '));
     var qs=(qtxt||'—').split(', '),l1=[],l2=[];qs.forEach(function(q){((l1.join(', ').length+q.length<28)&&!l2.length?l1:l2).push(q);});
     svg+='<text x="'+IXR+'" y="'+yq+'" class="lyQ"'+TA+'>QC: '+esc(l1.join(', '))+'</text>'+(l2.length?'<text x="'+(IXR+26)+'" y="'+(yq+18)+'" class="lyQ"'+TA+'>'+esc(l2.join(', '))+'</text>':'');
-    if(k.spmX)svg+='<foreignObject x="'+X0+'" y="'+(Y0+RHS[ix]-CHH)+'" width="'+(VW-20)+'" height="'+CHH+'"><div xmlns="http://www.w3.org/1999/xhtml" class="chfo">'+chartXuong(k)+'</div></foreignObject>';});
-  svg+='</svg>';
-  var h='<div class="layw">'+svg+'</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>tổ ráp <i class="kw"></i>tổ hàn <i class="kp"></i>tổ sơn / thành phẩm</span> · ô tổ rộng theo tỷ lệ tấn sản xuất trong line, tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · bên phải mỗi xưởng: từng line L1, L2… (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
+    svg+='</svg>';out+='<div class="lyx"><div class="lysv">'+svg+'</div>'+chartXuong(k)+'</div>';});
+  var h='<div class="lgtop"><span class="lgx"><i class="kf"></i>tổ ráp <i class="kw"></i>tổ hàn <i class="kp"></i>tổ sơn / thành phẩm</span><span class="lgx"><i style="background:var(--f)"></i>SX <i style="background:var(--gold)"></i>QC nghiệm thu</span></div><div class="layw">'+out+'</div><details class="tod"><summary>Cách đọc sơ đồ</summary><div class="muted bcsrc"> ô tổ rộng theo tỷ lệ tấn sản xuất trong line, tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · bên phải mỗi xưởng: từng line L1, L2… (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div></details>';
   return h;}
 function slpbData(){
   var K=bcKy(),X={};function gx(x){return X[x]=X[x]||{x:x,kl:0,r:0,h:0,sl:0,pj:{},sx:0,sf:0,sw:0,nt:0};}
