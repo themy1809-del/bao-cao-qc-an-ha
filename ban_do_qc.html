@@ -56,6 +56,9 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .sp{flex:1}
 .toc{border:2px solid var(--gold);border-radius:12px;padding:10px 12px;margin-bottom:12px;background:var(--surf2)}
 .xbd{margin:4px 0}.xbd summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font-weight:700;font-size:13.5px}
+.chx{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.chc{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surf)}.chn{font-size:22px;font-weight:900;margin-bottom:4px}
+.chm{margin-top:8px}.cht{font-size:12.5px;font-weight:700;color:var(--ink2);margin-bottom:2px}.chm .hb{grid-template-columns:minmax(40px,26%) 1fr minmax(64px,auto);padding:2px 0}.chm .hbt{height:10px}
 .layw{overflow-x:auto;margin:12px 0 4px;border:1px solid var(--line);border-radius:14px;background:var(--surf2);padding:6px}
 .lay{display:block;width:100%;min-width:1100px;height:auto;font-family:inherit}
 .lay .lyN{font-size:30px;font-weight:900;fill:var(--ink);text-anchor:middle}.lay .lyS{font-size:13px;fill:var(--ink2);text-anchor:middle;font-variant-numeric:tabular-nums}
@@ -1347,6 +1350,7 @@ function tongQuanXuong(PX){
   /* QC dam nhan line: QC ky "Da QC (AH)" trong thang chot cho cac to cua line (+ Final DIM ghi ACC) */
   var OKq=D.PL.indexOf('Đã QC (AH)');D.rows.forEach(function(r){if(r[6]!==OKq||!r[3]||r[3]<K.tu||r[3]>K.den)return;var x=D.X[r[1]],tk=x+'.'+D.T[r[2]];if(!(tk in LT))return;
     var o=A[x+'|'+LT[tk]];if(!o)return;o.qc=o.qc||{};
+    o.nt=(o.nt||0)+(+r[7]||0)+(+r[8]||0)+(+r[9]||0); /* san luong QC NT cua line (moi cong doan) */
     /* 05/11 user: 3 nut team -> QC dam nhan theo team dang chon: Kich thuoc = Fitup (+ Final DIM ghi ACC), Han = tan Han, Son = tan Son */
     var cd=TEAM.cd,t=cd==='w'?(+r[8]||0):(cd==='p'?(+r[9]||0):(+r[7]||0));var nm=qName(+r[5]);if(t>0)o.qc[nm]=(o.qc[nm]||0)+t;
     if(cd==='f'){var f=_fdName(r);if(f){var qi=qIndex(f),n2=qi>=0?qName(qi):f;o.qc[n2]=(o.qc[n2]||0)+(+r[8]||0);}}});
@@ -1400,7 +1404,20 @@ function tongQuanXuong(PX){
     var qs=(qtxt||'—').split(', '),l1=[],l2=[];qs.forEach(function(q){((l1.join(', ').length+q.length<34)&&!l2.length?l1:l2).push(q);});
     svg+='<text x="'+IXR+'" y="'+yq+'" class="lyQ"'+TA+'>QC: '+esc(l1.join(', '))+'</text>'+(l2.length?'<text x="'+(IXR+26)+'" y="'+(yq+18)+'" class="lyQ"'+TA+'>'+esc(l2.join(', '))+'</text>':'');});
   svg+='</svg>';
+  /* 05/11 user: BIEU DO COT theo xuong — QC NT tung QC, so du an, so cau kien, san luong, san luong QC NT (theo line) */
+  var CH='<div class="bdc"><div class="bdh"><b>Biểu đồ theo xưởng — tháng '+K.m+' ('+esc(TEAM.ten)+')</b><span class="lg"><i style="background:var(--f)"></i>theo line <i style="background:var(--gold)"></i>QC</span></div><div class="chx">';
+  xs.forEach(function(k){if(!k.spmX)return;var NL=Math.max(1,k.line||1),L=[],qa={};
+    for(var li=0;li<NL;li++){var o=A[k.spmX+'|'+li]||{d:{},pj:{},qc:{},to:{}},ck=days.reduce(function(a,d){return a+((o.d[d]||[0,0])[1]);},0),t=days.reduce(function(a,d){return a+((o.d[d]||[0,0])[0]);},0);
+      L.push({n:Object.keys(o.pj||{}).length,ck:ck,t:t,nt:o.nt||0});Object.keys(o.qc||{}).forEach(function(nm){if(nm&&nm!=='—')qa[nm]=(qa[nm]||0)+o.qc[nm];});}
+    function mini(tit,key,u,dp){var mx=Math.max.apply(null,L.map(function(z){return z[key];}).concat([0]));
+      return '<div class="chm"><div class="cht">'+tit+'</div>'+L.map(function(z,i){return hbarRow('L'+(i+1),[{v:z[key],c:'var(--f)',t:'Line '+(i+1)+': '+fm(z[key],dp)+u}],mx,'<b>'+fm(z[key],dp)+'</b>'+u);}).join('')+'</div>';}
+    var qk=Object.keys(qa).filter(function(n){return qa[n]>=1;}).sort(function(a,b){return qa[b]-qa[a];}).slice(0,6),qm=qk.length?qa[qk[0]]:0;
+    CH+='<div class="chc"><div class="chn">'+esc(k.ten)+'</div>'
+      +'<div class="chm"><div class="cht">QC nghiệm thu — từng QC (t)</div>'+(qk.length?qk.map(function(n){return hbarRow(esc((/^[a-z0-9._]+$/.test(n)?(bcQC(n)!==n?bcQC(n):titleCase(n)):n).split(' ').slice(-2).join(' ')),[{v:qa[n],c:'var(--gold)',t:n+': '+fm(qa[n],1)+' t'}],qm,'<b>'+fm(qa[n],0)+'</b> t');}).join(''):'<div class="muted" style="font-size:12px">—</div>')+'</div>'
+      +mini('Số lượng dự án','n','',0)+mini('Số lượng cấu kiện','ck',' CK',0)+mini('Khối lượng sản lượng (t)','t',' t',0)+mini('Sản lượng QC NT (t)','nt',' t',0)+'</div>';});
+  CH+='</div><div class="muted bcsrc">Theo line: số dự án, cấu kiện và tấn sản xuất tháng '+K.m+' (SPM theo ngày gia công); sản lượng QC NT = tấn "Đã QC (AH)" theo ngày QC. Biểu đồ QC: tấn từng QC của '+esc(TEAM.ten)+' đã nghiệm thu tại xưởng — đổi team bằng 3 nút đầu trang.</div></div>';
   var h='<div class="layw">'+svg+'</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>tổ ráp <i class="kw"></i>tổ hàn <i class="kp"></i>tổ sơn / thành phẩm</span> · ô tổ rộng theo tỷ lệ tấn sản xuất trong line, tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · bên phải mỗi xưởng: từng line L1, L2… (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
+  h+=CH;
   return h;}
 function slpbData(){
   var K=bcKy(),X={};function gx(x){return X[x]=X[x]||{x:x,kl:0,r:0,h:0,sl:0,pj:{},sx:0,sf:0,sw:0,nt:0};}
