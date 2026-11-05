@@ -1359,40 +1359,45 @@ function tongQuanXuong(PX){
   var mxTo=0;Object.keys(A).forEach(function(k){var o=A[k];for(var tk in o.to)mxTo=Math.max(mxTo,o.to[tk]);});
   /* BAN DO LAYOUT 2D (user 05/11 lan 3): SVG — moi xuong 1 nha xuong chu nhat, xep ngang AH1 -> AH9; trong nha chia LAN theo line;
      moi to gia cong 1 o cao theo tan SX thang; duoi nha: tong line (du an · CK · tan) + QC dam nhan. Bam o to -> mo to tren ban do. */
-  /* 05/11 user lan 4: XEP DOC tu tren xuong (AH1 tren cung), moi xuong 1 hang chiem het be ngang: cot trai = thong tin, ben phai = nha xuong; LINE trong nha van dung doc */
-  var VW=1400,INFO=290,IX=12,GAP=30,BH=340,LH=34,PAD=10,LG=12,BW=VW-INFO-IX-10,n=xs.length,RH=BH+LH,VH=n*RH+(n-1)*GAP+20;
+  /* 05/11 user lan 5: XEP DOC tu tren xuong (AH1 tren cung); moi xuong 1 hang het be ngang: NHA XUONG ben TRAI, chu AHx + thong tin ben PHAI;
+     trong nha moi LINE la 1 BANG NGANG, to xep trai -> phai, rong theo tan SX thang; xuong chua co so lieu thi hang thap */
+  var VW=1400,INFO=300,GAP=26,PAD=10,LG=8,LBW=74,X0=10,BW=VW-INFO-30,IXR=X0+BW+24,n=xs.length;
+  var CO=xs.map(function(k){var co=false;if(k.spmX)for(var li=0;li<Math.max(1,k.line||1);li++){var o=A[k.spmX+'|'+li];if(o&&Object.keys(o.to).length)co=true;}return co;});
+  var BHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1),lb=CO[ix]?66:30;return PAD*2+NL*lb+(NL-1)*LG;});
+  var RHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1);return Math.max(BHS[ix],CO[ix]?(104+NL*19+40):92);});
+  var YS=[],yc=10;RHS.forEach(function(hk){YS.push(yc);yc+=hk+GAP;});var VH=yc-GAP+10;
   var FILL={f:'#dbeafe',w:'#fde68a',p:'#bbf7d0'},STROKE={f:'#1d4ed8',w:'#b45309',p:'#15803d'};
   var svg='<svg class="lay" viewBox="0 0 '+VW+' '+VH+'" role="img" aria-label="Bản đồ layout các xưởng AH1 đến AH9">';
-  xs.forEach(function(k,ix){var X0=INFO+IX,Y0=10+ix*(RH+GAP),NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],lw=(BW-PAD*2-(NL-1)*LG)/NL,TA=' style="text-anchor:start"';
-    svg+='<text x="'+IX+'" y="'+(Y0+30)+'" class="lyN"'+TA+'>'+esc(k.ten)+'</text>';
-    svg+='<text x="'+IX+'" y="'+(Y0+54)+'" class="lyS"'+TA+'>'+(px?'PB còn ráp '+fm(px.r,0)+' · hàn '+fm(px.h,0)+' t':(k.spmX?'—':'chưa có SPM'))+'</text>';
-    svg+='<text x="'+IX+'" y="'+(Y0+74)+'" class="lyS"'+TA+'>'+(px?'SX T'+K.m+' '+fm(px.sx,0)+' t · NT '+fm(px.nt,0)+' t':'')+'</text>';
+  xs.forEach(function(k,ix){var Y0=YS[ix],BH=BHS[ix],NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],LBH=CO[ix]?66:30,TA=' style="text-anchor:start"';
+    svg+='<text x="'+IXR+'" y="'+(Y0+30)+'" class="lyN"'+TA+'>'+esc(k.ten)+'</text>';
+    svg+='<text x="'+IXR+'" y="'+(Y0+54)+'" class="lyS"'+TA+'>'+(px?'PB còn ráp '+fm(px.r,0)+' · hàn '+fm(px.h,0)+' t':(k.spmX?'—':'chưa có SPM'))+'</text>';
+    if(px)svg+='<text x="'+IXR+'" y="'+(Y0+74)+'" class="lyS"'+TA+'>SX T'+K.m+' '+fm(px.sx,0)+' t · NT '+fm(px.nt,0)+' t</text>';
     svg+='<rect x="'+X0+'" y="'+Y0+'" width="'+BW+'" height="'+BH+'" rx="6" class="lyB"/>';
     var qall=[],sumL=[];
-    for(var li=0;li<NL;li++){var o=A[k.spmX+'|'+li]||{m:{},d:{},to:{}},lx=X0+PAD+li*(lw+LG),ly=Y0+PAD,lh=BH-PAD*2;
-      svg+='<rect x="'+lx+'" y="'+ly+'" width="'+lw+'" height="'+lh+'" rx="4" class="lyL"/>';
+    for(var li=0;li<NL;li++){var o=A[k.spmX+'|'+li]||{m:{},d:{},to:{}},by=Y0+PAD+li*(LBH+LG),tx0=X0+PAD+LBW+8,tw=BW-PAD*2-LBW-8;
+      svg+='<rect x="'+(X0+PAD)+'" y="'+by+'" width="'+LBW+'" height="'+LBH+'" rx="4" class="lyLh"/><text x="'+(X0+PAD+LBW/2)+'" y="'+(by+LBH/2+5)+'" class="lyLt">LINE '+(li+1)+'</text>';
+      svg+='<rect x="'+tx0+'" y="'+by+'" width="'+tw+'" height="'+LBH+'" rx="4" class="lyL"/>';
       var tos=Object.keys(o.to).sort(function(a,b){return o.to[b]-o.to[a];}),tot=tos.reduce(function(a,t){return a+o.to[t];},0);
-      var avail=lh-6*(tos.length+1),hmin=30,need=tos.length*hmin,yy=ly+6;
-      tos.forEach(function(tk){var v=o.to[tk],hh=tos.length?Math.max(hmin,(avail-need)*(tot>0?v/tot:0)+hmin):hmin;if(yy+hh>ly+lh-6)hh=Math.max(18,ly+lh-6-yy);if(hh<=0)return;var c=khauTo(tk);
+      var wmin=56,avail=tw-6*(tos.length+1),xx=tx0+6,bh=LBH-10;
+      tos.forEach(function(tk){var v=o.to[tk],ww=Math.max(wmin,(avail-tos.length*wmin)*(tot>0?v/tot:0)+wmin);if(xx+ww>tx0+tw-6)ww=Math.max(20,tx0+tw-6-xx);if(ww<=0)return;var c=khauTo(tk),cx=xx+ww/2,nm=esc(tk.split('.').slice(1).join('.'));
         var pj=Object.keys(o.pj||{}).sort(function(a,b){return o.pj[b].t-o.pj[a].t;}).slice(0,3).map(function(m){return bcTenDep(bcTen(o.pj[m].ten))+' '+fm(o.pj[m].t,0)+' t';}).join(' · ');
         svg+='<g class="lyT" data-to2="'+esc(tk)+'" role="button" tabindex="0"><title>'+esc(tk)+': '+fm(v,1)+' t tháng '+K.m+(pj?' — line: '+esc(pj):'')+'</title>'
-          +'<rect x="'+(lx+5)+'" y="'+yy+'" width="'+(lw-10)+'" height="'+hh+'" rx="4" fill="'+FILL[c]+'" stroke="'+STROKE[c]+'" stroke-width="1.5"/>'
-          +(hh>=44?'<text x="'+(lx+lw/2)+'" y="'+(yy+Math.min(hh/2,22)+4)+'" class="lyTt">'+esc(tk.split('.').slice(1).join('.'))+'</text>':(hh>=18?'<text x="'+(lx+lw/2)+'" y="'+(yy+hh/2+4)+'" class="lyTt">'+esc(tk.split('.').slice(1).join('.'))+' · '+fm(v,0)+' t</text>':''))
-          +(hh>=44?'<text x="'+(lx+lw/2)+'" y="'+(yy+Math.min(hh/2,22)+20)+'" class="lyTv">'+fm(v,0)+' t</text>':'')+'</g>';
-        yy+=hh+6;});
-      if(!tos.length)svg+='<text x="'+(lx+lw/2)+'" y="'+(ly+lh/2)+'" class="lyE">'+(k.spmX?'chưa có SX':'—')+'</text>';
-      svg+='<rect x="'+lx+'" y="'+(Y0+BH+4)+'" width="'+lw+'" height="'+(LH-8)+'" rx="4" class="lyLh"/><text x="'+(lx+lw/2)+'" y="'+(Y0+BH+LH/2+5)+'" class="lyLt">LINE '+(li+1)+'</text>';
+          +'<rect x="'+xx+'" y="'+(by+5)+'" width="'+ww+'" height="'+bh+'" rx="4" fill="'+FILL[c]+'" stroke="'+STROKE[c]+'" stroke-width="1.5"/>'
+          +(ww>=46?'<text x="'+cx+'" y="'+(by+5+bh/2-3)+'" class="lyTt">'+nm+'</text><text x="'+cx+'" y="'+(by+5+bh/2+13)+'" class="lyTv">'+fm(v,0)+' t</text>':'')+'</g>';
+        xx+=ww+6;});
+      if(!tos.length)svg+='<text x="'+(tx0+tw/2)+'" y="'+(by+LBH/2+5)+'" class="lyE">'+(k.spmX?'chưa có SX':'—')+'</text>';
       var pjN=Object.keys(o.pj||{}).length,ck=days.reduce(function(a,d){return a+((o.d[d]||[0,0])[1]);},0);sumL.push({n:pjN,ck:ck,t:tot});
       Object.keys(o.qc||{}).forEach(function(nm){if(nm&&nm!=='—'&&o.qc[nm]>=1){var f=qall.filter(function(q){return q.n===nm;})[0];if(f)f.t+=o.qc[nm];else qall.push({n:nm,t:o.qc[nm]});}});}
-    var y0=Y0+104;
-    sumL.forEach(function(L,li){svg+='<text x="'+IX+'" y="'+(y0+li*19)+'" class="lyF"'+TA+'><tspan class="lyFb">L'+(li+1)+'</tspan> '+(k.spmX?L.n+' dự án · '+fm(L.ck,0)+' CK · '+fm(L.t,0)+' t':'—')+'</text>';});
+    var y0=Y0+(px?104:80);
+    if(CO[ix])sumL.forEach(function(L,li){svg+='<text x="'+IXR+'" y="'+(y0+li*19)+'" class="lyF"'+TA+'><tspan class="lyFb">L'+(li+1)+'</tspan> '+L.n+' dự án · '+fm(L.ck,0)+' CK · '+fm(L.t,0)+' t</text>';});
+    var yq=y0+(CO[ix]?NL*19+10:0);
     var giao=[];Object.keys(GIAO).forEach(function(key){if(key.indexOf(k.spmX+'.')===0||key===k.spmX+'*')GIAO[key].forEach(function(nm){if(giao.indexOf(nm)<0)giao.push(nm);});});
     qall.sort(function(a,b){return b.t-a.t;});
     var qtxt=(giao.length?giao.map(function(nm){return nm.split(' ').slice(-2).join(' ');}).join(', '):qall.slice(0,3).map(function(q){return q.n.split(' ').slice(-2).join(' ');}).join(', '));
     var qs=(qtxt||'—').split(', '),l1=[],l2=[];qs.forEach(function(q){((l1.join(', ').length+q.length<34)&&!l2.length?l1:l2).push(q);});
-    svg+='<text x="'+IX+'" y="'+(y0+NL*19+10)+'" class="lyQ"'+TA+'>QC: '+esc(l1.join(', '))+'</text>'+(l2.length?'<text x="'+(IX+26)+'" y="'+(y0+NL*19+28)+'" class="lyQ"'+TA+'>'+esc(l2.join(', '))+'</text>':'');});
+    svg+='<text x="'+IXR+'" y="'+yq+'" class="lyQ"'+TA+'>QC: '+esc(l1.join(', '))+'</text>'+(l2.length?'<text x="'+(IXR+26)+'" y="'+(yq+18)+'" class="lyQ"'+TA+'>'+esc(l2.join(', '))+'</text>':'');});
   svg+='</svg>';
-  var h='<div class="layw">'+svg+'</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>tổ ráp <i class="kw"></i>tổ hàn <i class="kp"></i>tổ sơn / thành phẩm</span> · ô tổ cao theo tấn sản xuất tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · dưới mỗi xưởng: từng line (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
+  var h='<div class="layw">'+svg+'</div><div class="muted bcsrc"><span class="lgx"><i class="kf"></i>tổ ráp <i class="kw"></i>tổ hàn <i class="kp"></i>tổ sơn / thành phẩm</span> · ô tổ rộng theo tỷ lệ tấn sản xuất trong line, tháng '+K.m+' · rê chuột lên ô để xem dự án, bấm để mở tổ trên bản đồ · bên phải mỗi xưởng: từng line (dự án · cấu kiện · tấn) và QC đảm nhận ('+(Object.keys(GIAO).length?'theo phân công, ':'')+'nếu chưa phân công thì là QC nghiệm thu nhiều nhất) · tổ → line theo TO_LINE, chưa khai báo thì xếp TẠM.</div>';
   return h;}
 function slpbData(){
   var K=bcKy(),X={};function gx(x){return X[x]=X[x]||{x:x,kl:0,r:0,h:0,sl:0,pj:{},sx:0,sf:0,sw:0,nt:0};}
