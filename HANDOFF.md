@@ -718,3 +718,4 @@ Phiên Claude Code kế tiếp nên:
 - (05/11 tối) Tab PB bản chốt theo user+sếp: mỗi QC = 1 DÒNG NGANG (.qrow) với 5 CỘT ĐỨNG (dự án · CK · SX · đã NT · chờ NT, 3 cột tấn chung thang trong xưởng); nhà xưởng SVG được kéo cao = cột QC sau render (preserveAspectRatio none, chỉ khi ≤1.6×). Đã chuẩn bị cột 3 "KH NT khách hàng / nội bộ" (.lyb.co3, đọc PB.KH_NT[xuong]={kh:[{ten,ngay,tan}],nb:[...]}) — chưa có dữ liệu nên chưa hiện.
 - (05/11 tối) Sửa trùng class .qrow (đã có ở panel QC, display:flex) → dòng QC tab PB đổi tên .pqr; lưới 40/60; nhà xưởng SVG kéo cao bằng cột QC sau render.
 - (05/11 tối) vb(): cột đứng cao theo % trong .vbt (max-height 100%, overflow hidden) → không tràn lên số ở mobile; mobile .pqr = flex 2 dòng (tên / 5 cột), header .qhd ẩn.
+- (05/11 tối) Tab PB: cụm QC dồn SÁT nhà xưởng (lyb justify-content:start, nhà xưởng 360–520px, cột chart cố định 56–110px, không giãn theo màn rộng).
