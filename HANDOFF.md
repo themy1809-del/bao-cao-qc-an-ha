@@ -696,3 +696,4 @@ Phiên Claude Code kế tiếp nên:
 - (04/11 tối) QC phụ trách theo TỔ hiện thêm DỰ ÁN của từng tổ (đã làm / phân bổ t · CK, còn lại, %, chờ NT) — cả bản đồ (bcXuong) và PDF AH9.
 - (05/11) Trang rộng hết màn hình (bỏ max-width 1880), panel phải không cuộn riêng, sửa tràn ngang trên điện thoại (grid min-width:0); thêm **NM An Hạ mở rộng** bên phải mặt bằng site (`PB.MO_RONG` trong phan_bo_qc.js: khu phụ trợ + xưởng chính, chỉ vẽ, chưa có SPM; tên khu chờ user xác nhận).
 - (05/11) Logo Đại Dũng (logo_daidung_trong.png, nền trong suốt) trên bãi cỏ góc trái dưới mặt bằng (thay mảng che tối). Mái giữ ảnh mặt bằng cũ (user từ chối mái pin).
+- (05/11) AH9: RHT2 (TO2RH) chuyển Dinh; TO5RH giao Trưởng.
