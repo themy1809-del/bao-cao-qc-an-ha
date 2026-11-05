@@ -700,3 +700,4 @@ Phiên Claude Code kế tiếp nên:
 - (05/11) Tab **Sản lượng PB** cạnh tiêu đề bản đồ (`#tabSeg`, `veSLPB`, `doiTab`): theo xưởng — còn ráp / còn hàn phân bổ KHSX (thanh đặc), SX & NT tháng chốt SPM (thanh sọc), bấm xưởng mở danh sách dự án (ráp, hàn còn, %), nút 'Xem trên bản đồ'. SX = Fitup+Hàn+Sơn.
 - (05/11) Tab Sản lượng PB giữ MẶT BẰNG 3D ở trên (nhãn xưởng = PB còn, Ráp, Hàn, SX tháng; mái tô theo PB còn lại), biểu đồ PB ở dưới (#pbView trước .stageFoot).
 - (05/11) Tab Sản lượng PB = MẶT BẰNG 2D (class .m2d: khối phẳng, cam nhìn thẳng, ẩn nút 3D, fit vừa khung).
+- (05/11) Tab PB dưới mặt bằng 2D: **Bức tranh tổng quan xưởng** (`tongQuanXuong`) theo bảng trắng user — AH1→AH2→AH3…, mỗi xưởng 1 khung, mỗi LINE 1 hàng kèm TỔ GC; cột Năm (12 tháng chốt) + Tháng (từng ngày) KL tấn + SL CK sản xuất. Tổ→line theo TO_LINE (đang trống → xếp TẠM luân phiên; cần user khai báo).
