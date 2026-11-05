@@ -156,6 +156,8 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
   background:repeating-linear-gradient(90deg,var(--roofHi) 0 3px,var(--roof) 3px 18px);
   outline:1px solid rgba(255,255,255,.08);transition:filter .2s}
 .siteLogo{position:absolute;transform:translateZ(4px);pointer-events:none;display:flex;align-items:center;justify-content:center}.siteLogo img{max-width:100%;max-height:100%;filter:drop-shadow(0 1px 0 rgba(255,255,255,.6))}
+.world.m2d .bld{--h:0px!important}.world.m2d .bld .fc:not(.top){display:none}.world.m2d .bld .top{transform:none;outline:2px solid rgba(255,255,255,.85)}
+.world.m2d .bld.mr .top{outline:2px dashed rgba(30,41,59,.8)}.world.m2d .ring{display:none}
 .world .bld.maido .top{background:repeating-linear-gradient(90deg,#d9655a 0 4px,#b9473d 4px 20px)!important;outline:2px solid rgba(255,255,255,.6)}
 .world .bld.maido .fc:not(.top){background:#cbd5e1}.world .bld.maido .tagMini{white-space:nowrap}
 .world .ground.mrg{inset:auto;background:linear-gradient(135deg,#c9d6c9,#b8cbb8)!important;box-shadow:0 0 0 10px #8fa395,0 40px 80px rgba(0,0,0,.5)}
@@ -812,7 +814,7 @@ if(NEN.src){W.style.setProperty('--nen','url("'+NEN.src.replace(/["\\()]/g,'')+'
 var WD=null; /* kich thuoc mat bang ben trong xuong (dung doc) */
 function fitScale(){var w=ST.clientWidth,h=ST.clientHeight;
   if(VIEW!=='site'&&WD)return Math.max(.2,Math.min(w/(WD.w+60),h/(WD.h*1.02+60)));
-  return Math.max(.22,Math.min(w/(SITEW+120),h/(NEN.h+60))*1.22);}
+  return Math.max(.22,Math.min(w/(SITEW+120),h/(NEN.h+60))*(TAB==='pb'?1:1.22));}
 function applyCam(){W.style.setProperty('--rx',cam.rx+'deg');W.style.setProperty('--rz',cam.rz+'deg');W.style.setProperty('--s',cam.s);}
 function heat(v,mx){if(!(v>0)||!(mx>0))return 'transparent';var a=Math.min(1,v/mx);
   /* xanh nhat -> vang -> do (muc tai) */
@@ -1308,6 +1310,11 @@ function veSLPB(){var el=document.getElementById('pbView');if(!el)return;if(TAB!
   el.innerHTML=h;el.hidden=false;}
 function doiTab(t){TAB=t;[].forEach.call(document.querySelectorAll('#tabSeg .btn'),function(b){var on=b.getAttribute('data-tab')===t;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false');});
   if(t==='pb'&&VIEW!=='site')raNgoai();
+  /* 05/11 user: tab PB = MAT BANG 2D (nhin thang, khoi phang) */
+  W.classList.toggle('m2d',t==='pb');stopSpin();
+  if(t==='pb'){cam.rx=0;cam.rz=0;setCamBtn('top');}else{cam.rx=56;cam.rz=-28;setCamBtn('iso');}
+  cam.s=fitScale();applyCam();
+  var cs=document.getElementById('camSeg');if(cs)cs.style.display=t==='pb'?'none':'';
   document.getElementById('stTitle').textContent=t==='pb'?'Mặt bằng — sản lượng phân bổ':(VIEW==='site'?'Tổng mặt bằng NM An Hạ — 3D':'Bên trong xưởng '+KHU[VIEW].ten+' — tổ gia công & QC');
   veCanh();veSLPB();}
 document.getElementById('tabSeg').addEventListener('click',function(e){var b=e.target.closest('[data-tab]');if(b)doiTab(b.getAttribute('data-tab'));});

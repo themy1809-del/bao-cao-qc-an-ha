@@ -699,3 +699,4 @@ Phiên Claude Code kế tiếp nên:
 - (05/11) AH9: RHT2 (TO2RH) chuyển Dinh; TO5RH giao Trưởng.
 - (05/11) Tab **Sản lượng PB** cạnh tiêu đề bản đồ (`#tabSeg`, `veSLPB`, `doiTab`): theo xưởng — còn ráp / còn hàn phân bổ KHSX (thanh đặc), SX & NT tháng chốt SPM (thanh sọc), bấm xưởng mở danh sách dự án (ráp, hàn còn, %), nút 'Xem trên bản đồ'. SX = Fitup+Hàn+Sơn.
 - (05/11) Tab Sản lượng PB giữ MẶT BẰNG 3D ở trên (nhãn xưởng = PB còn, Ráp, Hàn, SX tháng; mái tô theo PB còn lại), biểu đồ PB ở dưới (#pbView trước .stageFoot).
+- (05/11) Tab Sản lượng PB = MẶT BẰNG 2D (class .m2d: khối phẳng, cam nhìn thẳng, ẩn nút 3D, fit vừa khung).
