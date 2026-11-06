@@ -153,7 +153,7 @@ th{color:#4b5563}
 function _docTheme(t){var d=document.documentElement;t=t||(d.getAttribute('data-theme')==='dark'?'light':'dark');d.setAttribute('data-theme',t);try{localStorage.setItem('doc_theme',t);}catch(e){}if(arguments.length===0){try{for(var k in CH){CH[k].dispose();delete CH[k];}}catch(e){}try{_dcRender();}catch(e){}}}
 (function(){var t='light';try{t=localStorage.getItem('doc_theme')||'light';}catch(e){}document.documentElement.setAttribute('data-theme',t);})();
 </script>
-<script src="ddc_data.js"></script>
+<script>/* chong cache: tham so ?v= doi moi 5 phut de trinh duyet luon lay ban moi tu GitHub Pages */(function(){var v=Math.floor(Date.now()/3e5);["ddc_data.js"].forEach(function(f){document.write('<script src="'+f+'?v='+v+'"><\/script>');});})();</script>
 <script>
 /* ==== helper thay cho khung qc.html ==== */
 var CH={};

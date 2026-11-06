@@ -399,12 +399,7 @@ button:active,[role=button]:active{filter:brightness(.92)}
 </head>
 <body><!-- 29/09: bỏ huy hiệu "BẢN MỚI 20/9 v100" nổi góc phải — nó đè lên bảng/biểu đồ ở mọi tab --><script>window.__ERRS=[];window.onerror=function(m,src,l){try{window.__ERRS.push(String(m)+" @"+l)}catch(e){};return false;};console.log("QC-BUILD v2 2026-07-10");</script>
 <div id="splash"><div class="sp"></div><div class="st">Đang tải dữ liệu QC…</div></div>
-<script src="qcdata.js"></script>
-<script src="qc_khoa.js"></script><!-- 29/09: chot chan dang nhap — qcdata.js chua khoa thi khong lam gi -->
-<script src="apiurl.js"></script>
-<script src="ncr_data.js"></script>
-<script src="khsx_data.js"></script>
-<script src="ddc_data.js"></script>
+<script>/* chong cache: tham so ?v= doi moi 5 phut de trinh duyet luon lay ban moi tu GitHub Pages */(function(){var v=Math.floor(Date.now()/3e5);["qcdata.js","qc_khoa.js","apiurl.js","ncr_data.js","khsx_data.js","ddc_data.js"].forEach(function(f){document.write('<script src="'+f+'?v='+v+'"><\/script>');});})();</script><!-- 29/09: qc_khoa.js chot chan dang nhap — qcdata.js chua khoa thi khong lam gi -->
 <script>
 /* NCR LIVE tu Google Sheet (tab noi bo, gid=0) — ghi de rows cua ncr_data.js; neu offline/het quyen xem thi giu ban tinh */
 (function(){try{
@@ -436,7 +431,7 @@ try{if(typeof renderAll==='function')renderAll();else if(typeof renderNCR==='fun
 }).catch(function(e){});
 }catch(e){}})();
 </script>
-<script src="aop_data.js"></script>
+<script>/* chong cache: tham so ?v= doi moi 5 phut de trinh duyet luon lay ban moi tu GitHub Pages */(function(){var v=Math.floor(Date.now()/3e5);["aop_data.js"].forEach(function(f){document.write('<script src="'+f+'?v='+v+'"><\/script>');});})();</script>
 <script>window.__LQ=window.QCDATA;</script>
 <script>if(window.QCDATA&&window.QCDATA.rows&&window.QCDATA.rows.length&&window.QCDATA!==window.__LQ){window.__QCSRC='live';}else{window.QCDATA=window.__LQ;window.__QCSRC='local';}</script>
 <script>
