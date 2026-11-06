@@ -729,4 +729,4 @@ Phiên Claude Code kế tiếp nên:
 - (06/11) Sheet tổ 1vsNT…: export xlsx bị proxy chặn (403), chỉ gviz; DATA_GOC vẫn rỗng → chưa có AH1/sơ chế. Cần link file gốc của DATA_GOC hoặc dán tĩnh.
 - (06/11) User: Đại Phát (Team Hàn) lên bảng Kích thước → bảng QC tab PB chỉ hiện QC THUỘC TEAM đang chọn (roster NGUOI theo mã SPM/tên).
 - (06/11) User: AH4 thiếu Xuân Hòa (chỉ Final DIM) → QC có Fitup HOẶC Final DIM đều hiện, nhưng chỉ ở XƯỞNG ĐƯỢC GIAO (roster khu, kể cả kiêm); nhờ vậy Anh Trưởng không lên AH3.
-- (06/11) User: 'k kéo Trưởng, Phát, Long' → bỏ ràng buộc xưởng giao; QC thuộc TEAM đang chọn hiện ở mọi xưởng đã ký (kiêm vẫn hiện). Giữ: có Fitup hoặc Final DIM.
+- (06/11) User chốt: 'không kéo Trưởng/Phát/Long lên, chỉ đưa Hòa lên' → QC chỉ hiện ở XƯỞNG ĐƯỢC GIAO (roster khu, kể cả kiêm) và thuộc TEAM đang chọn; có Fitup hoặc Final DIM. (AH3 không có Trưởng; AH4 có Hòa.)
