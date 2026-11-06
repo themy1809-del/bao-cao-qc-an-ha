@@ -725,3 +725,5 @@ Phiên Claude Code kế tiếp nên:
 - (06/11) Sheet KL tổ hàng ngày user gửi: 1vsNTmoV_4IEm1yHN59LMhnMCz_vpf29QOYZQQB9-nWA — tab DATA_GOC (gid 1344841053) + TỔNG HỢP TỔ / TỔ×THÁNG trả #VALUE!/rỗng qua gviz (IMPORTRANGE/QUERY chưa cấp quyền). Đọc được: KH_THANG (gid 1003: PB theo xưởng, 391 dự án), MD_PRJ_KH_PB (gid 1004: danh mục dự án). Cần link sheet GỐC của DATA_GOC hoặc dán tĩnh.
 - (06/11) Nhà xưởng SVG luôn kéo cao = cột QC (bỏ giới hạn 1.6×); nếu QC ngắn hơn thì cột QC giãn đều (flex space-between) cho bằng nhà xưởng.
 - (06/11) User: AH3 bỏ Bùi Anh Trưởng, Phạm Hoàng Long (chỉ Final DIM) → bảng QC tab PB chỉ hiện QC có NT Fitup trong tháng; Final DIM thuần không lên dòng riêng.
+- (06/11) Tab PB: BẤM CỘT của QC (.vbc[data-pbq="xuong|qc|cot"]) → popup #pbPop (pbqPopup): danh sách dự án theo đúng chỉ số cột (pj/ck/sx/nt/cl/fd), mỗi dự án: tấn/CK + tổ; bấm ngoài / Esc đóng. Dữ liệu chi tiết lưu PBQ[xuong] (Q.pd theo dự án, toPJ theo tổ).
+- (06/11) Sheet tổ 1vsNT…: export xlsx bị proxy chặn (403), chỉ gviz; DATA_GOC vẫn rỗng → chưa có AH1/sơ chế. Cần link file gốc của DATA_GOC hoặc dán tĩnh.
