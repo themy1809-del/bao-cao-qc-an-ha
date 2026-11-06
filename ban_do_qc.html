@@ -793,7 +793,8 @@ label.ck input{width:20px;height:20px}
 
 <script src="qcdata.js"></script>
 <script src="qc_khoa.js"></script>
-<script src="phan_bo_qc.js?v=20261105e"></script><!-- ?v= : doi moi lan sua phan_bo_qc.js de trinh duyet khong dung ban cu -->
+<script src="phan_bo_qc.js?v=20261106a"></script>
+<script src="md_to.js?v=20261106a"></script><!-- san luong TO tu MASTERDATA (PKHSX), sinh boi cong_cu_pc/md_to_trich.py --><!-- ?v= : doi moi lan sua phan_bo_qc.js de trinh duyet khong dung ban cu -->
 <script src="pms_api.js"></script>
 <script>
 (function(){
@@ -1395,6 +1396,11 @@ function tongQuanXuong(PX){
   function thangCua(d){var y=+d.slice(0,4),m=+d.slice(5,7);if(+d.slice(8,10)>20){m++;if(m>12){m=1;y++;}}return y+'-'+_pad2(m);}
   var xs=PB.KHU.filter(function(k){return !k.gop&&(k.spmX||k.line)&&/^AH\d$/.test(k.id);}).slice().sort(function(a,b){return a.id.localeCompare(b.id,'vi',{numeric:true});});
   var LT={};xs.forEach(function(k){if(!k.spmX)return;var NL=Math.max(1,k.line||1);cacTo(k.spmX).forEach(function(tk,i){var l=+TOL[tk];LT[tk]=(l>=1&&l<=NL)?l-1:i%NL;});});
+  /* 06/11 user: SAN LUONG TO tu MASTERDATA (md_to.js) — dung cho thang <= thang cuoi cua file (hien T9/2026) va cho AH1 (khong co SPM). Thang moi hon: SPM. */
+  var MD=window.MD_TO||null,MDmax=MD?MD.rows.reduce(function(m,r){return r[0]>m?r[0]:m;},''):'',MDon=!!(MD&&K.y+'-'+_pad2(K.m)<=MDmax);
+  var MDST={f:/^(05\.Fitup|04\.EndPlateFitup|05\.Completed|08\.TrialFit)$/,w:/^(06\.Welding|02\.RawWelding|07\.Clean)$/,p:/^(09\.Blasting|10\.Painting)$/}[TEAM.cd||'f'],MDST1=/^(Cutting|Cutting 1|Drill|Bevel|Bending|Forming|Press Braking 1|03\.Straighten|01\.BuiltUp)$/;
+  function mdTo(xw){var NL=Math.max(1,(xs.filter(function(k){return (k.spmX||k.id)===xw;})[0]||{}).line||1),ym=K.y+'-'+_pad2(K.m),out={},i=0;if(!MD)return out;
+    MD.rows.forEach(function(r){if(r[1]!==xw||r[0]!==ym)return;if(!(xw==='AH1'?MDST1:MDST).test(r[4]))return;var nm=r[3]||r[2],tk=xw+'.'+nm;if(!(tk in out)){out[tk]={t:0,q:0,n:0,li:(TOL[tk]>=1?TOL[tk]-1:(i++)%NL)};}out[tk].t+=r[5];out[tk].q+=r[6];out[tk].n+=r[7];});return out;}
   /* 05/11 user: chi the hien 1 TEAM (dang chon) — Kich thuoc = cot Fitup, Han = cot Han, Son = cot Son. Khong gop 3 khau. */
   var CDI=TEAM.cd==='w'?8:(TEAM.cd==='p'?9:7),CQI=CDI+3;
   var A={};D.rows.forEach(function(r){if(r[6]===MI||!r[4])return;var x=D.X[r[1]],tk=x+'.'+D.T[r[2]];if(!(tk in LT))return;
@@ -1402,6 +1408,9 @@ function tongQuanXuong(PX){
     var key=x+'|'+LT[tk],o=A[key]=A[key]||{m:{},d:{},to:{}},tm=thangCua(r[4]);
     if(mons.indexOf(tm)>=0){var a=o.m[tm]=o.m[tm]||[0,0];a[0]+=t;a[1]+=n;}
     if(r[4]>=K.tu&&r[4]<=K.den){var b=o.d[r[4]]=o.d[r[4]]||[0,0];b[0]+=t;b[1]+=n;o.to[tk]=(o.to[tk]||0)+t;var pm=bcMa(D.P[r[0]]),pp=(o.pj=o.pj||{})[pm]=(o.pj||{})[pm]||{t:0,n:0,ten:D.P[r[0]]};pp.t+=t;pp.n+=n;}});
+  if(MDon||MD){xs.forEach(function(k){var xw=k.spmX||k.id;if(!(MDon||xw==='AH1'))return;var T=mdTo(xw);if(!Object.keys(T).length)return;
+    for(var li=0;li<Math.max(1,k.line||1);li++){var key=xw+'|'+li;A[key]=A[key]||{m:{},d:{},to:{}};A[key].to={};A[key].md=1;}
+    Object.keys(T).forEach(function(tk){var o=A[xw+'|'+T[tk].li];o.to[tk]=(o.to[tk]||0)+T[tk].t;o.mdq=(o.mdq||0)+T[tk].q;o.mdn=(o.mdn||0)+T[tk].n;LT[tk]=T[tk].li;});});}
   /* QC dam nhan line: QC ky "Da QC (AH)" trong thang chot cho cac to cua line (+ Final DIM ghi ACC) */
   var OKq=D.PL.indexOf('Đã QC (AH)');D.rows.forEach(function(r){if(r[6]!==OKq||!r[3]||r[3]<K.tu||r[3]>K.den)return;var x=D.X[r[1]],tk=x+'.'+D.T[r[2]];if(!(tk in LT))return;
     var o=A[x+'|'+LT[tk]];if(!o)return;o.qc=o.qc||{};
@@ -1425,13 +1434,13 @@ function tongQuanXuong(PX){
   /* 05/11 user lan 7: nha xuong ben TRAI, thong tin xuong + QC ben PHAI; LINE nho, hang deu (nha xuong can giua theo cot thong tin) */
   /* 05/11 user: QC BEN CANH xuong (cung 1 hang) -> SVG chi ve nha xuong, thong tin + QC thanh HTML */
   var VW=900,INFO=0,GAP=22,PAD=8,LG=6,LBW=52,X0=6,BW=VW-12,IXR=X0+BW+14,n=xs.length;
-  var CO=xs.map(function(k){var co=false;if(k.spmX)for(var li=0;li<Math.max(1,k.line||1);li++){var o=A[k.spmX+'|'+li];if(o&&Object.keys(o.to).length)co=true;}return co;});
+  var CO=xs.map(function(k){var co=false,xk=k.spmX||k.id;for(var li=0;li<Math.max(1,k.line||1);li++){var o=A[xk+'|'+li];if(o&&Object.keys(o.to).length)co=true;}return co;});
   /* 05/11 user: co gian can bang — nha xuong cao theo so the QC (2 cot the, moi the ~128px), nhung khong thap hon 60px/line */
   var NQC=xs.map(function(k){if(!k.spmX)return 0;try{return (chartXuong(k,true)||0);}catch(e){return 0;}});
   var BHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1),rowsQC=NQC[ix],target=20+rowsQC*60-4;var lb=CO[ix]?Math.max(60,Math.min(190,Math.round((target-PAD*2-(NL-1)*LG)/NL))):26;return PAD*2+NL*lb+(NL-1)*LG;});
   var LBHS=xs.map(function(k,ix){var NL=Math.max(1,k.line||1);return (BHS[ix]-PAD*2-(NL-1)*LG)/NL;});
   /* 05/11 tac tu thiet ke: tach chart khoi SVG -> moi xuong 1 khoi HTML (svg nha xuong + dai chart), dien thoai doc duoc, het de chu */
-  var RHS=xs.map(function(k,ix){return k.spmX?BHS[ix]+14:40;});
+  var RHS=xs.map(function(k,ix){return (k.spmX||CO[ix])?BHS[ix]+14:40;});
   var FILL={f:'var(--tf)',w:'var(--tw)',p:'var(--tp)'},STROKE={f:'#1d4ed8',w:'#b45309',p:'#15803d'};
   function vbar(tit,items,c,u,dp,legend){var mx=Math.max.apply(null,items.map(function(z){return Math.max(z.v,z.v2||0);}).concat([0]));
     return '<div class="chm"><div class="cht">'+tit+(legend||'')+'</div><div class="vc">'+items.map(function(z){var hh=mx>0?Math.max(z.v>0?3:0,Math.round(70*z.v/mx)):0,h2=z.v2!=null?(mx>0?Math.max(z.v2>0?3:0,Math.round(70*z.v2/mx)):0):null;
@@ -1439,7 +1448,7 @@ function tongQuanXuong(PX){
   /* 05/11 user: chart theo TUNG NHAN VIEN QC (khong theo line): so du an · so cau kien · khoi luong · da nghiem thu · con lai */
   var plChoQ=D.PL.indexOf('Chưa QC');
   function qIndexTen(nm){for(var kk in NGUOI){var p=NGUOI[kk];if(p.qi>=0&&qName(p.qi)===nm)return p.qi;}for(var i2=0;i2<D.Q.length;i2++){if(qName(i2)===nm)return i2;}return -1;}
-  function chartXuong(k,countOnly){var iX=D.X.indexOf(k.spmX),Q={};
+  function chartXuong(k,countOnly){if(!k.spmX){if(countOnly)return 0;return '<div class="chrow"><div class="muted" style="font-size:12.5px;padding:6px 0">'+esc(k.ten)+': sản lượng tổ từ PKHSX; QC sơ chế theo sơ đồ: '+esc(nguoiKhu(k.id).map(function(e){return titleCase(e.p.ten);}).join(', ')||'—')+'. Chưa có dữ liệu nghiệm thu theo QC.</div></div>';}var iX=D.X.indexOf(k.spmX),Q={};
     function g(n){return Q[n]=Q[n]||{pj:{},ck:0,nt:0,ntc:0,fd:0,to:{},pd:{}};} /* pd[ma] = {ten,ck,nt,ntc,fd,to:{}} chi tiet theo du an (06/11: bam cot -> xem du an) */
     function gp(o,r){var m=bcMa(D.P[r[0]]);return o.pd[m]=o.pd[m]||{ten:D.P[r[0]],ck:0,nt:0,ntc:0,fd:0,to:{}};} /* nt = NT Fitup hang SX trong ky; ntc = NT ton cu; fd = Final DIM (tan han ghi ACC, chi team Kich thuoc) */
     D.rows.forEach(function(r){if(r[1]!==iX)return;var tk=k.spmX+'.'+D.T[r[2]];if(!(tk in LT))return;
@@ -1482,13 +1491,13 @@ function tongQuanXuong(PX){
   var out='';
   xs.forEach(function(k,ix){var Y0=4,BH=BHS[ix],NL=Math.max(1,k.line||1),px=PX&&k.spmX&&PX[k.spmX],LBH=LBHS[ix],TA=' style="text-anchor:start"',BY=Y0+6;
     var svg='<svg class="lay" viewBox="0 0 '+VW+' '+RHS[ix]+'" role="img" aria-label="'+esc(k.ten)+'">';
-    if(!k.spmX){svg+='<rect x="'+X0+'" y="4" width="'+(VW-20)+'" height="30" rx="6" class="lyB"/><text x="'+(X0+14)+'" y="24" class="lyN" style="font-size:18px;text-anchor:start">'+esc(k.ten)+' <tspan class="lyS">· '+esc(k.mo||'')+' · chưa có SPM</tspan></text></svg>';out+='<div class="lyx">'+svg+'</div>';return;}
+    if(!k.spmX&&!(A[k.id+'|0']&&A[k.id+'|0'].md)){svg+='<rect x="'+X0+'" y="4" width="'+(VW-20)+'" height="30" rx="6" class="lyB"/><text x="'+(X0+14)+'" y="24" class="lyN" style="font-size:18px;text-anchor:start">'+esc(k.ten)+' <tspan class="lyS">· '+esc(k.mo||'')+' · chưa có SPM</tspan></text></svg>';out+='<div class="lyx">'+svg+'</div>';return;}
     var KHNT=(PB.KH_NT||{})[k.spmX]||null; /* 05/11 user: cot KH NT khach hang / noi bo — khai bao trong phan_bo_qc.js KH_NT:{AH3:{kh:[{ten,ngay,tan}],nb:[...]}} */
-    var sxT=0,ntT=0;for(var q=0;q<NL;q++){var oq=A[k.spmX+'|'+q];if(oq){sxT+=days.reduce(function(a2,d){return a2+((oq.d[d]||[0,0])[0]);},0);ntT+=oq.nt||0;}}
-    var pbK=px?(TEAM.cd==='w'?'PB còn hàn '+fm(px.h,0)+' t':(TEAM.cd==='p'?'PB còn ráp '+fm(px.r,0)+' · hàn '+fm(px.h,0)+' t':'PB còn ráp '+fm(px.r,0)+' t')):(k.spmX?'—':'chưa có SPM');
+    var xkey=k.spmX||k.id,sxT=0,ntT=0;for(var q=0;q<NL;q++){var oq=A[xkey+'|'+q];if(oq){if(oq.md){var tt=0;for(var kk2 in oq.to)tt+=oq.to[kk2];sxT+=tt;ntT+=oq.mdq||0;}else{sxT+=days.reduce(function(a2,d){return a2+((oq.d[d]||[0,0])[0]);},0);ntT+=oq.nt||0;}}}
+    var pbK=px?(TEAM.cd==='w'?'PB còn hàn '+fm(px.h,0)+' t':(TEAM.cd==='p'?'PB còn ráp '+fm(px.r,0)+' · hàn '+fm(px.h,0)+' t':'PB còn ráp '+fm(px.r,0)+' t')):'—';
     svg+='<rect x="'+X0+'" y="'+BY+'" width="'+BW+'" height="'+BH+'" rx="6" class="lyB"/>';
     var qall=[],sumL=[];
-    for(var li=0;li<NL;li++){var o=A[k.spmX+'|'+li]||{m:{},d:{},to:{}},by=BY+PAD+li*(LBH+LG),tx0=X0+PAD+LBW+8,tw=BW-PAD*2-LBW-8;
+    for(var li=0;li<NL;li++){var o=A[xkey+'|'+li]||{m:{},d:{},to:{}},by=BY+PAD+li*(LBH+LG),tx0=X0+PAD+LBW+8,tw=BW-PAD*2-LBW-8;
       svg+='<rect x="'+(X0+PAD)+'" y="'+by+'" width="'+LBW+'" height="'+LBH+'" rx="4" class="lyLh"/><text x="'+(X0+PAD+LBW/2)+'" y="'+(by+LBH/2+5)+'" class="lyLt">L'+(li+1)+'</text>';
       svg+='<rect x="'+tx0+'" y="'+by+'" width="'+tw+'" height="'+LBH+'" rx="4" class="lyL"/>';
       var tos=Object.keys(o.to).sort(function(a,b){return o.to[b]-o.to[a];}),tot=tos.reduce(function(a,t){return a+o.to[t];},0);
@@ -1500,17 +1509,17 @@ function tongQuanXuong(PX){
           +(ww>=(nm.length+String(fm(v,0)).length)*8+40?'<text x="'+cx+'" y="'+(by+4+bh/2+5)+'" class="lyTt" style="font-size:'+fs+'px">'+nm+' <tspan class="lyTv" style="font-size:'+(fs-1)+'px">'+fm(v,0)+' t</tspan></text>':(ww>=46?'<text x="'+cx+'" y="'+(by+4+bh/2-2)+'" class="lyTt">'+nm+'</text><text x="'+cx+'" y="'+(by+4+bh/2+11)+'" class="lyTv">'+fm(v,0)+' t</text>':''))+'</g>';
         xx+=ww+6;});
       if(!tos.length)svg+='<text x="'+(tx0+tw/2)+'" y="'+(by+LBH/2+5)+'" class="lyE">'+(k.spmX?'chưa có SX':'—')+'</text>';
-      var pjN=Object.keys(o.pj||{}).length,ck=days.reduce(function(a,d){return a+((o.d[d]||[0,0])[1]);},0);sumL.push({n:pjN,ck:ck,t:tot});
+      var pjN=Object.keys(o.pj||{}).length,ck=o.md?(o.mdn||0):days.reduce(function(a,d){return a+((o.d[d]||[0,0])[1]);},0);sumL.push({n:pjN,ck:ck,t:tot,md:!!o.md});
       Object.keys(o.qc||{}).forEach(function(nm){if(nm&&nm!=='—'&&o.qc[nm]>=1){var f=qall.filter(function(q){return q.n===nm;})[0];if(f)f.t+=o.qc[nm];else qall.push({n:nm,t:o.qc[nm]});}});}
     var y0=Y0+(px?92:66);
-    var lineTxt=CO[ix]?sumL.map(function(L,li){return '<span><b>L'+(li+1)+'</b> '+L.n+' dự án · '+fm(L.ck,0)+' CK · '+fm(L.t,0)+' t</span>';}).join(''):'';
+    var lineTxt=CO[ix]?sumL.map(function(L,li){return '<span><b>L'+(li+1)+'</b> '+(L.md?fm(L.ck,0)+' dòng · ':L.n+' dự án · '+fm(L.ck,0)+' CK · ')+fm(L.t,0)+' t</span>';}).join(''):'';
     var yq=y0+(CO[ix]?NL*18+8:0);
     var giao=[];Object.keys(GIAO).forEach(function(key){if(key.indexOf(k.spmX+'.')===0||key===k.spmX+'*')GIAO[key].forEach(function(nm){if(giao.indexOf(nm)<0)giao.push(nm);});});
     qall.sort(function(a,b){return b.t-a.t;});
     var qtxt=(giao.length?giao.map(function(nm){return nm.split(' ').slice(-2).join(' ');}).join(', '):qall.slice(0,3).map(function(q){return q.n.split(' ').slice(-2).join(' ');}).join(', '));
     var qs=(qtxt||'—').split(', '),l1=[],l2=[];qs.forEach(function(q){((l1.join(', ').length+q.length<28)&&!l2.length?l1:l2).push(q);});
     svg+='</svg>';
-    out+='<div class="lyx"><div class="lyxh"><b>'+esc(k.ten)+'</b><span class="lyk"><i class="lkk">Kế hoạch PB (KHSX): <b>'+esc(pbK.replace('PB còn ','còn '))+'</b></i><i class="lkk">Thực hiện T'+K.m+' (SPM): SX <b>'+fm(sxT,0)+' t</b> · NT <b>'+fm(ntT,0)+' t</b></i>'+lineTxt+'</span></div>'
+    out+='<div class="lyx"><div class="lyxh"><b>'+esc(k.ten)+'</b><span class="lyk"><i class="lkk">Kế hoạch PB (KHSX): <b>'+esc(pbK.replace('PB còn ','còn '))+'</b></i><i class="lkk">Thực hiện T'+K.m+' ('+((A[xkey+'|0']||{}).md?'PKHSX':'SPM')+'): SX <b>'+fm(sxT,0)+' t</b> · NT <b>'+fm(ntT,0)+' t</b></i>'+lineTxt+'</span></div>'
       +'<div class="lyb'+(KHNT?' co3':'')+'"><div class="lysv">'+svg+'</div><div class="lyR">'+chartXuong(k)+'</div>'
       +(KHNT?'<div class="lyKH"><h4>KH nghiệm thu khách hàng</h4>'+(KHNT.kh||[]).map(function(z){return '<div class="kh"><span>'+esc(z.ten)+(z.ngay?' · '+esc(z.ngay):'')+'</span><b>'+(z.tan!=null?fm(z.tan,0)+' t':'')+'</b></div>';}).join('')+'<h4 style="margin-top:8px">KH nghiệm thu nội bộ</h4>'+(KHNT.nb||[]).map(function(z){return '<div class="kh"><span>'+esc(z.ten)+(z.ngay?' · '+esc(z.ngay):'')+'</span><b>'+(z.tan!=null?fm(z.tan,0)+' t':'')+'</b></div>';}).join('')+'</div>':'')+'</div></div>';
       +'<div class="lyR"><div class="lyqh">QC '+esc(TEAM.ngan||TEAM.ten)+' tại '+esc(k.ten)+'</div>'+chartXuong(k)+'</div></div>';});

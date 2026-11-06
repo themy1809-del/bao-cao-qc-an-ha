@@ -730,3 +730,4 @@ Phiên Claude Code kế tiếp nên:
 - (06/11) User: Đại Phát (Team Hàn) lên bảng Kích thước → bảng QC tab PB chỉ hiện QC THUỘC TEAM đang chọn (roster NGUOI theo mã SPM/tên).
 - (06/11) User: AH4 thiếu Xuân Hòa (chỉ Final DIM) → QC có Fitup HOẶC Final DIM đều hiện, nhưng chỉ ở XƯỞNG ĐƯỢC GIAO (roster khu, kể cả kiêm); nhờ vậy Anh Trưởng không lên AH3.
 - (06/11) User chốt: 'không kéo Trưởng/Phát/Long lên, chỉ đưa Hòa lên' → QC chỉ hiện ở XƯỞNG ĐƯỢC GIAO (roster khu, kể cả kiêm) và thuộc TEAM đang chọn; có Fitup hoặc Final DIM. (AH3 không có Trưởng; AH4 có Hòa.)
+- 06/11/2026: Sản lượng PB — thêm md_to.js (sinh từ MASTERDATA 1 PKHSX, gid 944713689, bằng cong_cu_pc/md_to_trich.py): tháng ≤ T9/2026 sản lượng tổ (tấn SX/NT) lấy từ PKHSX, AH1 vẽ sơ chế (cắt CNC, cánh bụng, khoan/đột, chấn); T10+ dùng SPM. Chạy lại script khi PKHSX cập nhật thêm tháng.
