@@ -720,3 +720,4 @@ Phiên Claude Code kế tiếp nên:
 - (05/11 tối) vb(): cột đứng cao theo % trong .vbt (max-height 100%, overflow hidden) → không tràn lên số ở mobile; mobile .pqr = flex 2 dòng (tên / 5 cột), header .qhd ẩn.
 - (05/11 tối) Tab PB: cụm QC dồn SÁT nhà xưởng (lyb justify-content:start, nhà xưởng 360–520px, cột chart cố định 56–110px, không giãn theo màn rộng).
 - (05/11 tối) Dồn chặt hơn: cột chart 52–78px, khe 2px, hàng QC ~60px.
+- (06/11) User: kế hoạch PB chỉ đến cấp XƯỞNG → thẻ tổ bỏ "phân bổ ước", chỉ hiện THÁNG (SX t, CK, chờ NT, dự án theo tháng); header xưởng tab PB ghi rõ "Kế hoạch PB (KHSX) ↔ Thực hiện (SPM)"; thêm chọn tháng chốt `#pbThang` (PB_T, 12 tháng gần nhất, bcKy() đọc theo). Tab NĂM: chưa làm (user yêu cầu, chờ duyệt tháng).
