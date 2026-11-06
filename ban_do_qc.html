@@ -1451,7 +1451,9 @@ function tongQuanXuong(PX){
     var toSX={},toTon={},toPJ={};D.rows.forEach(function(r){if(r[1]!==iX||r[6]===MI)return;var tk=k.spmX+'.'+D.T[r[2]],t=+r[CDI]||0;if(t<=0)return;var m=bcMa(D.P[r[0]]),pj=toPJ[tk]=toPJ[tk]||{};var e=pj[m]=pj[m]||{ten:D.P[r[0]],sx:0,ton:0};
       if(r[4]&&r[4]>=K.tu&&r[4]<=K.den){toSX[tk]=(toSX[tk]||0)+t;e.sx+=t;}if(r[6]===plChoQ){toTon[tk]=(toTon[tk]||0)+t;e.ton+=t;}});
     /* 06/11 user (AH3): QC chi co Final DIM (khong NT Fitup trong thang) thi KHONG len dong rieng */
-    var qs=Object.keys(Q).filter(function(n){return Q[n].nt+Q[n].ntc>=1;}).sort(function(a,b){return (Q[b].nt+Q[b].ntc+Q[b].fd)-(Q[a].nt+Q[a].ntc+Q[a].fd);}).slice(0,8);
+    /* 06/11 user: chi hien QC THUOC TEAM dang chon (roster NGUOI theo ma SPM) — nguoi team khac ky nham khau thi bo */
+    var ROS={};Object.keys(NGUOI).forEach(function(kk){var p=NGUOI[kk];if(p.qi>=0)ROS[qName(p.qi)]=1;if(p.spm)ROS[String(p.spm).toLowerCase()]=1;});
+    var qs=Object.keys(Q).filter(function(n){return Q[n].nt+Q[n].ntc>=1&&(ROS[n]||ROS[String(n).toLowerCase()]);}).sort(function(a,b){return (Q[b].nt+Q[b].ntc+Q[b].fd)-(Q[a].nt+Q[a].ntc+Q[a].fd);}).slice(0,8);
     if(countOnly)return qs.length;
     if(!qs.length)return '<div class="chrow"><div class="muted" style="font-size:12.5px;padding:6px 0">Chưa có QC '+esc(TEAM.ngan||TEAM.ten)+' nghiệm thu tại '+esc(k.ten)+' trong tháng '+K.m+'.</div></div>';
     /* khoi luong & con lai: chia theo ty le QC do da NT tren tung to (tranh 2 QC cung to -> dem trung); chi to co SX khau nay */

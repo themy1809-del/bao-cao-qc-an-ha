@@ -727,3 +727,4 @@ Phiên Claude Code kế tiếp nên:
 - (06/11) User: AH3 bỏ Bùi Anh Trưởng, Phạm Hoàng Long (chỉ Final DIM) → bảng QC tab PB chỉ hiện QC có NT Fitup trong tháng; Final DIM thuần không lên dòng riêng.
 - (06/11) Tab PB: BẤM CỘT của QC (.vbc[data-pbq="xuong|qc|cot"]) → popup #pbPop (pbqPopup): danh sách dự án theo đúng chỉ số cột (pj/ck/sx/nt/cl/fd), mỗi dự án: tấn/CK + tổ; bấm ngoài / Esc đóng. Dữ liệu chi tiết lưu PBQ[xuong] (Q.pd theo dự án, toPJ theo tổ).
 - (06/11) Sheet tổ 1vsNT…: export xlsx bị proxy chặn (403), chỉ gviz; DATA_GOC vẫn rỗng → chưa có AH1/sơ chế. Cần link file gốc của DATA_GOC hoặc dán tĩnh.
+- (06/11) User: Đại Phát (Team Hàn) lên bảng Kích thước → bảng QC tab PB chỉ hiện QC THUỘC TEAM đang chọn (roster NGUOI theo mã SPM/tên).
