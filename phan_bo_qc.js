@@ -135,5 +135,7 @@ window.PHAN_BO_QC = {
   /* Du an user xac nhan DANG CHAY tai xuong du SPM chua co dong (04/11/2026) */
   DANG_CHAY: {AH3:['10626-110','TCTN.DNS.26.004','10725-007']},
   /* Du an user BO khoi bao cao xuong (04/11/2026): Thuan Giao, GA T2 Phu Quoc */
-  BO_QUA: {AH3:['10626-142','10625-030']}
+  BO_QUA: {AH3:['10626-142','10625-030']},
+  /* 06/11: sheet PHAN BO DU AN THEO TO cua tung xuong — ban_do_qc.html doc truc tiep moi 5 phut neu sheet chia se "bat ky ai co lien ket"; khong doc duoc thi dung ban tinh pb_to.js. Them xuong: AH4:{id:'...',gid:'0'} */
+  PB_SHEETS: {AH3:{id:'1cTlLxIoPYKZu8T9gYmFV16pVgKQXm6Mxoq0CF5wOq-A', gid:'0'}}
 };
