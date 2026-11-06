@@ -1540,7 +1540,8 @@ function veSLPB(){var el=document.getElementById('pbView');if(!el)return;if(TAB!
   h+='</details>';
   el.innerHTML=h;el.hidden=false;
   /* 05/11: can bang 2 cot — sau render, dat chieu cao SVG nha xuong = chieu cao cot QC (keo doc nhe: o to cao len) */
-  if(window.innerWidth>1000)el.querySelectorAll('.lyb').forEach(function(b){var sv=b.querySelector('.lysv svg'),r=b.querySelector('.lyR');if(!sv||!r)return;var hR=r.getBoundingClientRect().height,hS=sv.getBoundingClientRect().height;if(hR>hS+4&&hR<hS*1.6){sv.setAttribute('preserveAspectRatio','none');sv.style.height=hR+'px';sv.classList.add('stretch');}});}
+  if(window.innerWidth>1000)el.querySelectorAll('.lyb').forEach(function(b){var sv=b.querySelector('.lysv svg'),r=b.querySelector('.lyR');if(!sv||!r)return;var hR=r.getBoundingClientRect().height,hS=sv.getBoundingClientRect().height;
+    if(hS>hR+4){r.style.display='flex';r.style.flexDirection='column';r.style.justifyContent='space-between';r.style.minHeight=hS+'px';return;}if(hR>hS+4){sv.setAttribute('preserveAspectRatio','none');sv.style.height=hR+'px';sv.classList.add('stretch');}});}
 var THEME_PRE=null; /* 05/11 user: tab PB mac dinh NEN SANG (bang trinh chieu); ve 3D tra lai theme cu; nut Sang/Toi van bam duoc */
 function doiTab(t){TAB=t;var H=document.documentElement;
   if(t==='pb'){if(THEME_PRE===null){THEME_PRE=H.dataset.theme||'dark';H.dataset.theme=ls('bdqcThemePB')||'light';}}
