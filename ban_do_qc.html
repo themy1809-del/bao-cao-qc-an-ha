@@ -1448,7 +1448,8 @@ function tongQuanXuong(PX){
     /* khoi luong (tan SX khau nay, thang) va con lai (ton Chua QC khau nay) cua cac TO ma QC da nghiem thu */
     var toSX={},toTon={};D.rows.forEach(function(r){if(r[1]!==iX||r[6]===MI)return;var tk=k.spmX+'.'+D.T[r[2]],t=+r[CDI]||0;if(t<=0)return;
       if(r[4]&&r[4]>=K.tu&&r[4]<=K.den)toSX[tk]=(toSX[tk]||0)+t;if(r[6]===plChoQ)toTon[tk]=(toTon[tk]||0)+t;});
-    var qs=Object.keys(Q).filter(function(n){return Q[n].nt+Q[n].ntc+Q[n].fd>=1;}).sort(function(a,b){return (Q[b].nt+Q[b].ntc+Q[b].fd)-(Q[a].nt+Q[a].ntc+Q[a].fd);}).slice(0,8);
+    /* 06/11 user (AH3): QC chi co Final DIM (khong NT Fitup trong thang) thi KHONG len dong rieng */
+    var qs=Object.keys(Q).filter(function(n){return Q[n].nt+Q[n].ntc>=1;}).sort(function(a,b){return (Q[b].nt+Q[b].ntc+Q[b].fd)-(Q[a].nt+Q[a].ntc+Q[a].fd);}).slice(0,8);
     if(countOnly)return qs.length;
     if(!qs.length)return '<div class="chrow"><div class="muted" style="font-size:12.5px;padding:6px 0">Chưa có QC '+esc(TEAM.ngan||TEAM.ten)+' nghiệm thu tại '+esc(k.ten)+' trong tháng '+K.m+'.</div></div>';
     /* khoi luong & con lai: chia theo ty le QC do da NT tren tung to (tranh 2 QC cung to -> dem trung); chi to co SX khau nay */
