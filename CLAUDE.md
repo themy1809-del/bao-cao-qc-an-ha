@@ -164,6 +164,11 @@ Do not invent missing business rules.
 - Báo cáo PDF (đánh giá QC, sản lượng…): theo cùng quy tắc — biểu đồ theo tháng = đường, phân biệt chuỗi bằng kiểu nét + chú giải,
   số căn phải có phân cách nghìn. File có dữ liệu nhân sự KHÔNG commit vào repo công khai.
 
+### 4C. Skill Obsidian (12/11/2026)
+- `.claude/skills/obsidian/` (obsidian-markdown, obsidian-bases, json-canvas, knap, defuddle, obsidian-cli, obsidian-headless; MIT, nguồn trong `NGUON.txt`).
+  Dùng khi xuất ghi chú / vault Obsidian: `node cong_cu_pc/obsidian_dump.js data.json` rồi
+  `python cong_cu_pc/obsidian_xuat.py data.json khsx.csv <thư mục vault> [YYYY-MM]`. Vault sinh ra có tên nhân sự → không commit.
+
 ## 5. WORKFLOW
 Before editing:
 1. Read HANDOFF.md.

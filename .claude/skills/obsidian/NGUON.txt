@@ -1,0 +1,3 @@
+Nguon: https://github.com/obsidianmd/obsidian-skills (MIT, Steph Ango @kepano) — thu muc plugins/obsidian/skills/, chep ngay 12/11/2026.
+Dung de: xuat du lieu QC (du an / xuong / to / QC) thanh vault Obsidian (ghi chu .md co properties + wikilink, bang .base, so do .canvas) bang cong_cu_pc/obsidian_xuat.py.
+Cap nhat: git clone repo tren roi chep de len thu muc nay.
