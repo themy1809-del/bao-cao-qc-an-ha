@@ -175,7 +175,7 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .mpg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}.mpg .bdc{margin:0}@media(max-width:1000px){.mpg{grid-template-columns:1fr}}
 .mpsv{width:100%;height:auto;display:block}.mpsv text{font-family:inherit}.mpsv .ax{fill:var(--mut);font-size:11px}.mpsv .vl{fill:var(--ink);font-size:11px;font-weight:700}.mpsv .gl{stroke:var(--line);stroke-width:1}
 .mpg .lg{display:inline-flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--mut);align-items:center}.mpg .lg i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:3px}.mpg .lg i.ln{height:0;border-top:2.5px solid;border-radius:0;width:22px}.mpg .lg i.ln.d{border-top-style:dashed}.mpl i{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-2px;margin-right:4px}.mpl .ln{width:26px;height:3px;border-radius:2px}
-@media(prefers-reduced-motion:reduce){.mpv .mpk .mpPlay{display:none}}
+
 .pbh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.pbh h2{margin:0;font-size:19px}.pbh .muted{font-size:13px}.pbh .btn{min-height:44px;display:inline-flex;align-items:center;gap:4px;flex:none}
 .pbk{grid-template-columns:repeat(4,minmax(0,1fr))}
 .pbx{border-top:1px solid var(--line);padding:6px 0}.pbx:first-of-type{border-top:0}.pbx .hb+.hb{padding-top:0}
@@ -1592,7 +1592,7 @@ function mpBuild(){var el=document.getElementById('mpView');var Z=mpData();MP.K=
   var mx=1;Object.keys(Z.TO).forEach(function(tk){mx=Math.max(mx,Z.TO[tk].t);});
   Object.keys(Z.TO).forEach(function(tk){var o=Z.TO[tk],fr=XS[o.x];if(!fr||(o.t<0.5&&o.cho<0.5))return;var r=Math.max(10,Math.min(Math.min(fr.w,fr.h)*0.22,8+26*Math.sqrt(o.t/mx)));
     var li=((+(PB.TO_LINE||{})[tk]||0)>=1)?+(PB.TO_LINE||{})[tk]-1:fr.tos.length%fr.line;
-    var n={kind:'to',id:tk,ten:tk.split('.').slice(1).join('.'),xw:o.x,t:o.t,n:o.n,cho:o.cho,qc:o.qc,r:r,fr:fr,li:li,x:fr.x+fr.w*(0.25+0.5*Math.random()),y:fr.y+fr.h*0.18+ (fr.h*0.62)*((li+0.5)/fr.line),vx:0,vy:0};fr.tos.push(n);fr.sx+=o.t;fr.cho+=o.cho;nodes.push(n);});
+    var n={kind:'to',id:tk,ten:tk.split('.').slice(1).join('.'),xw:o.x,t:o.t,n:o.n,cho:o.cho,qc:o.qc,r:r,fr:fr,li:li,ph:Math.random()*6.283,sp:0.6+Math.random()*0.5,x:fr.x+fr.w*(0.25+0.5*Math.random()),y:fr.y+fr.h*0.18+ (fr.h*0.62)*((li+0.5)/fr.line),vx:0,vy:0};fr.tos.push(n);fr.sx+=o.t;fr.cho+=o.cho;nodes.push(n);});
   /* khung chat (AH6, AH4): keo cao khung cho du cho bong bong (uoc so hang khi xep theo be rong), day cac khung nam duoi xuong theo */
   var order=Object.keys(XS).map(function(xw){return XS[xw];}).sort(function(a,b){return a.y-b.y;});
   order.forEach(function(fr){if(!fr.tos.length)return;var ds=fr.tos.map(function(n){return 2*n.r+12;}).sort(function(a,b){return b-a;}),rows=1,line=0,rh=0,rowH=[];
@@ -1609,8 +1609,9 @@ function mpBuild(){var el=document.getElementById('mpView');var Z=mpData();MP.K=
   var bot=0;Object.keys(XS).forEach(function(xw){bot=Math.max(bot,XS[xw].y+XS[xw].h);});MP.H=Math.max(MP.H,Math.round(bot)+20);
   MP.nodes=nodes;MP.links=links;MP.XS=XS;MP.parts=[];MP.ready=true;MP.hover=null;}
 function mpStep(dt){var nodes=MP.nodes;
-  nodes.forEach(function(n){if(n.kind!=='to')return;var fr=n.fr;var top=fr.y+46,bot=fr.y+fr.h-(fr.qcs.length?56:10),cy=top+(bot-top)*((n.li+0.5)/fr.line),cx=fr.x+fr.w/2;
-    n.vx+=(cx-n.x)*0.0025*dt*0.06;n.vy+=(cy-n.y)*0.012*dt*0.06;
+  var tt=MP.clock=(MP.clock||0)+dt;
+  nodes.forEach(function(n){if(n.kind!=='to')return;var fr=n.fr;var top=fr.y+46,bot=fr.y+fr.h-(fr.qcs.length?56:10),cy=top+(bot-top)*((n.li+0.5)/fr.line)+Math.sin(tt/900*n.sp+n.ph)*10,cx=fr.x+fr.w/2+Math.cos(tt/1300*n.sp+n.ph)*Math.min(40,fr.w*0.12); /* troi lien tuc quanh vi tri line: len xuong ±10px chu ky ~5s, ngang ±12% be rong khung chu ky ~8s */
+    n.vx+=(cx-n.x)*0.01*dt*0.06;n.vy+=(cy-n.y)*0.014*dt*0.06;
     nodes.forEach(function(m){if(m===n||m.kind!=='to'||m.fr!==fr)return;var dx=n.x-m.x,dy=n.y-m.y,d=Math.sqrt(dx*dx+dy*dy)||1,min=n.r+m.r+10;if(d<min){var f=(min-d)/d*0.18*dt*0.06;n.vx+=dx*f;n.vy+=dy*f;}});
     n.vx*=0.86;n.vy*=0.86;n.x+=n.vx;n.y+=n.vy;
     var pad=n.r+6;n.x=Math.max(fr.x+pad,Math.min(fr.x+fr.w-pad,n.x));n.y=Math.max(fr.y+pad+44,Math.min(fr.y+fr.h-pad-(fr.qcs.length?54:8),n.y));});
@@ -1652,19 +1653,19 @@ function mpDraw(ctx,st){var W=MP.W,H=MP.H,dark=(document.documentElement.dataset
     ctx.fillStyle='#fff';ctx.font='800 11px system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(ini,q.x,q.y);
     ctx.fillStyle=C.mut;ctx.font='600 10px system-ui,sans-serif';ctx.fillText(fm(q.t,0)+' t',q.x,q.y+q.r+8);});}
 function mpLoop(ts){if(!MP.ready||TAB!=='mp')return;var cv=document.getElementById('mpCv');if(!cv)return;var ctx=cv.getContext('2d');var dpr=window.devicePixelRatio||1;ctx.setTransform(dpr,0,0,dpr,0,0);
-  var dt=MP.t0?Math.min(50,ts-MP.t0):16;MP.t0=ts;if(MP.run&&!MP.rm)mpStep(dt);mpDraw(ctx,ts);if(MP.run&&!MP.rm)MP.raf=requestAnimationFrame(mpLoop);else MP.raf=0;}
+  var dt=MP.t0?Math.min(50,ts-MP.t0):16;MP.t0=ts;if(MP.run)mpStep(dt);mpDraw(ctx,ts);if(MP.run)MP.raf=requestAnimationFrame(mpLoop);else MP.raf=0;}
 function mpHit(mx,my){var best=null;MP.nodes.forEach(function(n){var dx=mx-n.x,dy=my-n.y;if(dx*dx+dy*dy<=(n.r+4)*(n.r+4))best=n;});return best;}
 function mpTip(n){if(!n)return '';if(n.kind==='qc'){return '<b>'+esc(n.ten)+'</b><br>'+esc(n.xw)+' · nghiệm thu tháng '+MP.K.m+': <b>'+fm(n.t,1)+' t</b><br><span class="muted">bấm để xem các tổ</span>';}
   var qs=Object.keys(n.qc).sort(function(a,b){return n.qc[b]-n.qc[a];}).slice(0,3).map(function(q){return esc(q.split(' ').slice(-2).join(' '))+' '+fm(n.qc[q],0)+' t';}).join(' · ');
   return '<b>'+esc(n.id)+'</b><br>SX tháng '+MP.K.m+': <b>'+fm(n.t,1)+' t</b> · '+fm(n.n,0)+' CK'+(n.cho>0.5?'<br><span style="color:var(--warn)">chờ NT '+fm(n.cho,1)+' t</span>':'')+(qs?'<br>QC: '+qs:'')+'<br><span class="muted">bấm để mở thẻ tổ</span>';}
 function veMP(){var el=document.getElementById('mpView');if(!el)return;if(TAB!=='mp'){el.hidden=true;if(MP.raf){cancelAnimationFrame(MP.raf);MP.raf=0;}MP.ready=false;return;}
-  el.hidden=false;MP.rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;var K=bcKy();
+  el.hidden=false;var rm=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);if(rm&&MP.rm!==true){MP.run=false;} /* may bat "giam chuyen dong": mo ra o trang thai tam dung, bam Chay de xem */MP.rm=rm;var K=bcKy();
   var opts='';(function(){var d=MAXD||homNay(),y=+d.slice(0,4),m=+d.slice(5,7);if(+d.slice(8,10)>20){m++;if(m>12){m=1;y++;}}var cur=PB_T||(y+'-'+_pad2(m));
     for(var i=0;i<12;i++){var v=y+'-'+_pad2(m);opts+='<option value="'+v+'"'+(v===cur?' selected':'')+'>Tháng '+m+'/'+y+'</option>';m--;if(m<1){m=12;y--;}}})();
   el.innerHTML='<div class="mph"><div><h2>Mô phỏng dòng hàng — <select id="mpThang" aria-label="Chọn tháng chốt">'+opts+'</select> · Team '+esc(TEAM.ngan||TEAM.ten)+'</h2><div class="muted">Bong bóng = tổ, to theo tấn SX tháng (khâu của team đang chọn) · hạt vàng = tấn QC đã nghiệm thu chảy về QC · viền cam nhấp nháy = tổ còn hàng chờ NT · bấm tổ / QC để xem chi tiết</div></div>'
     +'<div class="mpk"><button class="btn mpPlay" id="mpPlay" aria-label="Tạm dừng">'+(MP.run?'Tạm dừng':'Chạy')+'</button><button class="btn" id="mpShuffle" aria-label="Sắp xếp lại">Sắp lại</button></div></div>'
     +'<div class="mpc"><canvas id="mpCv" role="img" aria-label="Mô phỏng tổ và QC theo xưởng"></canvas><div class="mpt" id="mpTip" hidden></div></div>'
-    +'<div class="mpl"><span><i style="background:var(--'+(TEAM.cd||'f')+')"></i>Tổ — khâu '+esc(TEAM.ngan||'')+'</span><span><i style="background:#0F766E"></i>QC nghiệm thu (chữ cái tên)</span><span><i class="ln" style="background:#D4A017"></i>Hạt = tấn đã NT (dày = nhiều)</span><span><i style="border:2px solid var(--warn);background:transparent"></i>Chờ NT</span>'+(MP.rm?'<span>Chế độ giảm chuyển động: hiển thị tĩnh</span>':'')+'</div><div class="mpg" id="mpCh"></div>';
+    +'<div class="mpl"><span><i style="background:var(--'+(TEAM.cd||'f')+')"></i>Tổ — khâu '+esc(TEAM.ngan||'')+'</span><span><i style="background:#0F766E"></i>QC nghiệm thu (chữ cái tên)</span><span><i class="ln" style="background:#D4A017"></i>Hạt = tấn đã NT (dày = nhiều)</span><span><i style="border:2px solid var(--warn);background:transparent"></i>Chờ NT</span>'+(MP.rm?'<span style="color:var(--warn)">Máy đang bật “giảm chuyển động” (Windows: Accessibility → Visual effects → Animation effects) — bấm Chạy để xem mô phỏng</span>':'')+'</div><div class="mpg" id="mpCh"></div>';
   mpBuild();document.getElementById('mpCh').innerHTML=mpCharts();var cv=document.getElementById('mpCv'),dpr=window.devicePixelRatio||1;cv.width=Math.round(MP.W*dpr);cv.height=Math.round(MP.H*dpr);cv.style.height=MP.H+'px';
   for(var i=0;i<60;i++)mpStep(16); /* tien sap xep truoc, khong rung khi mo */
   MP.t0=0;if(MP.raf)cancelAnimationFrame(MP.raf);MP.raf=requestAnimationFrame(mpLoop);
