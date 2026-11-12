@@ -516,6 +516,11 @@ graph LR
         '\n'.join('- [[Xưởng/%s|%s]] — [[Sơ đồ/%s.canvas|sơ đồ]]'%(x,KHU.get(x,{}).get('ten',x),x) for x in xs))
     W('QC An Hạ.md',home)
     os.makedirs(os.path.join(OUT,'.obsidian'),exist_ok=True)
-    W('.obsidian/app.json','{}');W('.obsidian/core-plugins.json',json.dumps(['file-explorer','global-search','graph','backlink','canvas','outgoing-link','tag-pane','properties','page-preview','bases','outline','word-count','file-recovery']))
+    W('.obsidian/app.json','{}');
+    # Graph view: to mau theo tag de "ban do chuyen dong" (mo phong luc) doc duoc ngay: xuong do, du an xanh, to cam, QC xanh la
+    W('.obsidian/graph.json',json.dumps({"collapse-filter":False,"search":"","showTags":False,"showAttachments":False,"hideUnresolved":True,"showOrphans":False,
+      "collapse-color-groups":False,"colorGroups":[{"query":"tag:#xuong","color":{"a":1,"rgb":0xE2231A}},{"query":"tag:#du-an","color":{"a":1,"rgb":0x2563EB}},{"query":"tag:#to","color":{"a":1,"rgb":0xF59E0B}},{"query":"tag:#qc","color":{"a":1,"rgb":0x16A34A}},{"query":"tag:#home","color":{"a":1,"rgb":0x0F766E}}],
+      "collapse-display":False,"showArrow":False,"textFadeMultiplier":0,"nodeSizeMultiplier":1.6,"lineSizeMultiplier":1,"collapse-forces":False,"centerStrength":0.4,"repelStrength":12,"linkStrength":1,"linkDistance":220,"scale":0.6,"close":False},ensure_ascii=False))
+    W('.obsidian/core-plugins.json',json.dumps(['file-explorer','global-search','graph','backlink','canvas','outgoing-link','tag-pane','properties','page-preview','bases','outline','word-count','file-recovery']))
     print('OK vault %s: %d dự án, %d tổ, %d QC, %d xưởng — tháng %s'%(OUT,n_pj,len([1 for f in os.listdir(os.path.join(OUT,'Tổ'))]),len(os.listdir(os.path.join(OUT,'QC'))),len(xs),ym))
 if __name__=='__main__': main()
