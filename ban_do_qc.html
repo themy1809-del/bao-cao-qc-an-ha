@@ -172,6 +172,14 @@ h1{font-size:20px;margin:0;font-weight:900;letter-spacing:.06em;color:var(--gold
 .mpc{position:relative;width:100%;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surf)}.mpc canvas{display:block;width:100%;height:auto;cursor:crosshair}
 .mpt{position:absolute;pointer-events:none;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12.5px;line-height:1.35;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:280px;z-index:5}.mpt b{font-size:13.5px}.mpt[hidden]{display:none}
 .mpl{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin-top:8px;align-items:center}
+.mplv{margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--surf2);padding:12px 14px}
+.mplh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.mplh b{font-size:14.5px}.mplh .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#16A34A;margin-right:6px;box-shadow:0 0 0 0 rgba(22,163,74,.5);animation:mpdot 1.6s infinite}@keyframes mpdot{0%{box-shadow:0 0 0 0 rgba(22,163,74,.5)}70%{box-shadow:0 0 0 8px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+.mpkp{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}@media(max-width:1100px){.mpkp{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:600px){.mpkp{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mpkp>div{background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:10px 12px;position:relative;overflow:hidden;min-height:78px}.mpkp b{display:block;font-size:26px;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1.1}.mpkp span{display:block;font-size:11.5px;color:var(--mut);margin-top:3px}.mpkp i{position:absolute;left:0;bottom:0;height:3px;background:var(--f);transition:width .6s ease}.mpkp .up{color:#16A34A}.mpkp .dn{color:var(--warn)}
+.mpkp>div.flash{animation:mpflash .6s}@keyframes mpflash{0%{box-shadow:inset 0 0 0 2px var(--gold)}100%{box-shadow:inset 0 0 0 0 transparent}}
+.mptk{margin-top:10px;overflow:hidden;white-space:nowrap;border-top:1px dashed var(--line);padding-top:8px;font-size:13px;color:var(--ink)}.mptk>div{display:inline-block;padding-left:100%;animation:mptk 60s linear infinite}.mptk>div:hover{animation-play-state:paused}.mptk b{color:#B8860B}[data-theme=light] .mptk b{color:#6b5100}.mptk .w{color:var(--warn)}.mptk .s{margin:0 18px;color:var(--mut)}@keyframes mptk{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+@media(prefers-reduced-motion:reduce){.mptk>div{animation:none;padding-left:0;white-space:normal}.mplh .dot{animation:none}}
+.mpgo{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:10px}.mpgo>div{background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:10px 12px}.mpgo h4{margin:0 0 4px;font-size:14px;display:flex;justify-content:space-between;align-items:center}.mpgo h4 em{font-style:normal;font-size:11.5px;padding:2px 8px;border-radius:999px;color:#fff}.mpgo .bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin:6px 0;position:relative}.mpgo .bar i{display:block;height:100%;border-radius:4px}.mpgo .bar u{position:absolute;top:-3px;width:2px;height:14px;background:var(--ink)}.mpgo small{display:block;color:var(--mut);font-size:11.5px;line-height:1.4}
 .mpg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}.mpg .bdc{margin:0}@media(max-width:1000px){.mpg{grid-template-columns:1fr}}
 .mpsv{width:100%;height:auto;display:block}.mpsv text{font-family:inherit}.mpsv .ax{fill:var(--mut);font-size:11px}.mpsv .vl{fill:var(--ink);font-size:11px;font-weight:700}.mpsv .gl{stroke:var(--line);stroke-width:1}
 .mpg .lg{display:inline-flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--mut);align-items:center}.mpg .lg i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:3px}.mpg .lg i.ln{height:0;border-top:2.5px solid;border-radius:0;width:22px}.mpg .lg i.ln.d{border-top-style:dashed}.mpl i{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-2px;margin-right:4px}.mpl .ln{width:26px;height:3px;border-radius:2px}
@@ -1581,7 +1589,7 @@ var MP={raf:0,run:true,nodes:[],links:[],parts:[],hover:null,W:0,H:0,sc:1,K:null
 function mpData(){var K=bcKy(),MI=D.PL.indexOf('Miễn QC'),OK=D.PL.indexOf('Đã QC (AH)'),CHO=D.PL.indexOf('Chưa QC'),CDI=TEAM.cd==='w'?8:(TEAM.cd==='p'?9:7);
   var TO={},QC={},LK={};
   D.rows.forEach(function(r){if(r[6]===MI)return;var x=D.X[r[1]];if(!/^AH\d$/.test(x))return;var tk=x+'.'+D.T[r[2]],t=+r[CDI]||0;
-    if(r[6]===CHO&&t>0){(TO[tk]=TO[tk]||{x:x,t:0,n:0,cho:0,qc:{}}).cho+=t;}
+    if(r[6]===CHO&&t>0){var oc=TO[tk]=TO[tk]||{x:x,t:0,n:0,cho:0,qc:{}};oc.cho+=t;var pmc=bcMa(D.P[r[0]]);oc.pjc=oc.pjc||{};var pc=oc.pjc[pmc]=oc.pjc[pmc]||{ten:D.P[r[0]],t:0,n:0};pc.t+=t;pc.n+=(+r[CDI+3]||0);}
     if(r[4]&&r[4]>=K.tu&&r[4]<=K.den&&t>0){var o=TO[tk]=TO[tk]||{x:x,t:0,n:0,cho:0,qc:{}};o.t+=t;o.n+=(+r[CDI+3]||0);var pm=bcMa(D.P[r[0]]);o.pj=o.pj||{};var pe=o.pj[pm]=o.pj[pm]||{ten:D.P[r[0]],t:0};pe.t+=t;}
     if(r[6]===OK&&r[3]&&r[3]>=K.tu&&r[3]<=K.den){var nm=t>0?qName(+r[5]):'';if(TEAM.cd==='f'){var f=_fdName(r);if(f){var qi=qIndex(f);nm=qi>=0?qName(qi):f;t=+r[8]||0;}}
       if(nm&&t>0){var o2=TO[tk]=TO[tk]||{x:x,t:0,n:0,cho:0,qc:{}};o2.qc[nm]=(o2.qc[nm]||0)+t;var q=QC[x+'|'+nm]=QC[x+'|'+nm]||{x:x,n:nm,t:0};q.t+=t;LK[tk+'|'+nm]=(LK[tk+'|'+nm]||0)+t;}}});
@@ -1636,7 +1644,7 @@ function mpDraw(ctx,st){var W=MP.W,H=MP.H,dark=(document.documentElement.dataset
     /* day QC: dai nhat */
     if(fr.qcs.length){rr(fr.x+8,fr.y+fr.h-52,fr.w-16,46,8);ctx.fillStyle=dark?'rgba(15,118,110,.14)':'rgba(15,118,110,.08)';ctx.fill();}});
   /* lien ket to -> qc (mo), hat */
-  ctx.lineWidth=1;MP.links.forEach(function(L){ctx.strokeStyle=dark?'rgba(212,160,23,.18)':'rgba(180,120,0,.18)';ctx.beginPath();ctx.moveTo(L.a.x,L.a.y);ctx.quadraticCurveTo(L.a.x,L.b.y-30,L.b.x,L.b.y-L.b.r);ctx.stroke();});
+  ctx.lineWidth=1.2;MP.links.forEach(function(L){ctx.strokeStyle=dark?'rgba(212,160,23,.35)':'rgba(180,120,0,.35)';ctx.setLineDash([6,8]);ctx.lineDashOffset=-(st*(0.05+0.08*Math.min(1,L.t/300)))%14;ctx.beginPath();ctx.moveTo(L.a.x,L.a.y);ctx.quadraticCurveTo(L.a.x,L.b.y-30,L.b.x,L.b.y-L.b.r);ctx.stroke();});ctx.setLineDash([]);ctx.lineDashOffset=0;
   MP.parts.forEach(function(p){var L=p.L,t=p.p,x0=L.a.x,y0=L.a.y,cx=L.a.x,cy=L.b.y-30,x1=L.b.x,y1=L.b.y-L.b.r;var x=(1-t)*(1-t)*x0+2*(1-t)*t*cx+t*t*x1,y=(1-t)*(1-t)*y0+2*(1-t)*t*cy+t*t*y1;
     ctx.fillStyle=C.gold;ctx.globalAlpha=0.9;ctx.beginPath();ctx.arc(x,y,2.4,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;});
   /* bong bong to */
@@ -1656,32 +1664,36 @@ function mpDraw(ctx,st){var W=MP.W,H=MP.H,dark=(document.documentElement.dataset
    Nut = xuong (do thuong hieu), to (mau khau), QC (xanh FD), du an (vang); canh = to—xuong, to—QC (tan NT), to—du an (tan SX).
    Luc: day nhau (Coulomb), lo xo theo canh, hut ve tam, rung Brown nhe de luon "song"; keo tha bang chuot; re = sang hang xom; bam = the. */
 function mpNetBuild(){var el=document.getElementById('mpView');var Z=mpData();MP.K=Z.K;var W=Math.max(640,el.clientWidth-2),H=Math.max(620,Math.round(W*0.58));MP.W=W;MP.H=H;MP.sc=1;
-  var nodes=[],links=[],byId={};function add(n){byId[n.id]=n;nodes.push(n);return n;}
+  var nodes=[],links=[],byId={};function add(n){n.ph=Math.random()*6.283;n.sp=0.7+Math.random()*0.6;byId[n.id]=n;nodes.push(n);return n;}
   var xws=[];Object.keys(Z.TO).forEach(function(tk){var x=Z.TO[tk].x;if(xws.indexOf(x)<0)xws.push(x);});xws.sort();
   var cx=W/2,cy=H/2,R=Math.min(W,H)*0.36;
   xws.forEach(function(x,i){var a=-Math.PI/2+i*2*Math.PI/xws.length;add({kind:'xw',id:'X:'+x,ten:x,xw:x,r:24,x:cx+R*Math.cos(a),y:cy+R*Math.sin(a),vx:0,vy:0,t:0,nt:0});});
   var mx=1;Object.keys(Z.TO).forEach(function(tk){mx=Math.max(mx,Z.TO[tk].t);});
   Object.keys(Z.TO).forEach(function(tk){var o=Z.TO[tk];if(o.t<0.5&&o.cho<0.5)return;var hub=byId['X:'+o.x];if(!hub)return;hub.t+=o.t;
-    var n=add({kind:'to',id:tk,ten:tk.split('.').slice(1).join('.'),xw:o.x,t:o.t,n:o.n,cho:o.cho,qc:o.qc,pj:o.pj||{},r:7+15*Math.sqrt(o.t/mx),x:hub.x+(Math.random()-0.5)*160,y:hub.y+(Math.random()-0.5)*160,vx:0,vy:0,hub:hub});
+    var n=add({kind:'to',id:tk,ten:tk.split('.').slice(1).join('.'),xw:o.x,t:o.t,n:o.n,cho:o.cho,qc:o.qc,pj:o.pj||{},pjc:o.pjc||{},r:7+15*Math.sqrt(o.t/mx),x:hub.x+(Math.random()-0.5)*160,y:hub.y+(Math.random()-0.5)*160,vx:0,vy:0,hub:hub});
     links.push({a:n,b:hub,kind:'hub',w:1,len:110+70*Math.sqrt(o.t/mx)});});
   var mxq=1;Object.keys(Z.QC).forEach(function(k){mxq=Math.max(mxq,Z.QC[k].t);});
   Object.keys(Z.QC).forEach(function(key){var q=Z.QC[key];if(q.t<0.5)return;var hub=byId['X:'+q.x];if(!hub)return;hub.nt+=q.t;
     var qn=add({kind:'qc',id:key,ten:q.n,xw:q.x,t:q.t,r:9+10*Math.sqrt(q.t/mxq),x:hub.x+(Math.random()-0.5)*220,y:hub.y+(Math.random()-0.5)*220,vx:0,vy:0});});
   var mxl=1;Object.keys(Z.LK).forEach(function(k){mxl=Math.max(mxl,Z.LK[k]);});
   Object.keys(Z.LK).forEach(function(k){var a=k.split('|'),to=byId[a[0]];if(!to)return;var qc=byId[to.xw+'|'+a[1]];if(!qc)return;links.push({a:to,b:qc,kind:'nt',w:Z.LK[k],len:85+40*(1-Z.LK[k]/mxl),rate:0.2+1.6*Math.sqrt(Z.LK[k]/mxl),acc:0});});
-  /* du an: top 3 theo to, >= 2 t; cung ma dung chung 1 nut (noi nhieu to / nhieu xuong) */
-  nodes.slice().forEach(function(n){if(n.kind!=='to')return;Object.keys(n.pj).map(function(m){return [m,n.pj[m]];}).sort(function(u,v){return v[1].t-u[1].t;}).slice(0,3).forEach(function(e){if(e[1].t<2)return;
-    var pid='P:'+e[0],pn=byId[pid];if(!pn)pn=add({kind:'pj',id:pid,ma:e[0],ten:bcTenDep(bcTen(e[1].ten)),t:0,r:6,x:n.x+(Math.random()-0.5)*120,y:n.y+(Math.random()-0.5)*120,vx:0,vy:0,tos:[]});pn.t+=e[1].t;pn.tos.push(n.id);
-    links.push({a:n,b:pn,kind:'pj',w:e[1].t,len:75});});});
-  var mxp=1;nodes.forEach(function(n){if(n.kind==='pj')mxp=Math.max(mxp,n.t);});nodes.forEach(function(n){if(n.kind==='pj')n.r=5+9*Math.sqrt(n.t/mxp);});
+  /* du an DANG HOAT DONG: SX thang >= 2 t (top 4 moi to) HOAC dang cho QC kiem tra >= 1 t (tat ca); cung ma dung chung 1 nut (noi nhieu to / nhieu xuong).
+     12/11 user: trang thai "QC dang kiem tra" = ton Chua QC (vien cam nhap nhay, canh dut cam tu to) */
+  function pjNode(ma,ten,n){var pid='P:'+ma,pn=byId[pid];if(!pn)pn=add({kind:'pj',id:pid,ma:ma,ten:bcTenDep(bcTen(ten)),t:0,cho:0,chon:0,r:6,x:n.x+(Math.random()-0.5)*120,y:n.y+(Math.random()-0.5)*120,vx:0,vy:0,tos:[],tosc:[]});return pn;}
+  nodes.slice().forEach(function(n){if(n.kind!=='to')return;
+    Object.keys(n.pj).map(function(m){return [m,n.pj[m]];}).sort(function(u,v){return v[1].t-u[1].t;}).slice(0,4).forEach(function(e){if(e[1].t<2)return;var pn=pjNode(e[0],e[1].ten,n);pn.t+=e[1].t;if(pn.tos.indexOf(n.id)<0)pn.tos.push(n.id);links.push({a:n,b:pn,kind:'pj',w:e[1].t,len:75});});
+    Object.keys(n.pjc).forEach(function(m){var e=n.pjc[m];if(e.t<5)return;var pn=pjNode(m,e.ten,n);pn.cho+=e.t;pn.chon+=e.n;if(pn.tosc.indexOf(n.id)<0)pn.tosc.push(n.id);
+      if(!links.some(function(L){return L.a===n&&L.b===pn;}))links.push({a:n,b:pn,kind:'cho',w:e.t,len:70});else links.filter(function(L){return L.a===n&&L.b===pn;})[0].cho=e.t;});});
+  var mxp=1;nodes.forEach(function(n){if(n.kind==='pj')mxp=Math.max(mxp,n.t+n.cho);});nodes.forEach(function(n){if(n.kind==='pj')n.r=5+9*Math.sqrt((n.t+n.cho)/mxp);});
   nodes.forEach(function(n){n.deg=0;});links.forEach(function(L){L.a.deg++;L.b.deg++;});
   nodes.forEach(function(n){if(n.kind==='qc'&&n.deg===0){var hub=byId['X:'+n.xw];if(hub){links.push({a:n,b:hub,kind:'hub',w:1,len:150});n.deg=1;}}}); /* QC chi co Final DIM, khong noi to -> neo vao xuong */
   MP.nodes=nodes;MP.links=links;MP.parts=[];MP.ready=true;MP.hover=null;MP.drag=null;MP.XS=MP.XS||{};}
-function mpNetStep(dt){var nodes=MP.nodes,W=MP.W,H=MP.H,k=Math.min(2,dt/16),cx=W/2,cy=H/2;
+function mpNetStep(dt){var nodes=MP.nodes,W=MP.W,H=MP.H,k=Math.min(2,dt/16),cx=W/2,cy=H/2;MP.clock=(MP.clock||0)+dt;
   for(var i=0;i<nodes.length;i++){var a=nodes[i];if(a===MP.drag)continue;var fx=0,fy=0;
     for(var j=0;j<nodes.length;j++){if(i===j)continue;var b=nodes[j],dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy+0.01;if(d2>300000)continue;var d=Math.sqrt(d2),rep=(a.kind==='xw'||b.kind==='xw'?4200:1500)/d2;fx+=dx/d*rep*Math.min(1,(a.r+b.r+40)/d*2);fy+=dy/d*rep*Math.min(1,(a.r+b.r+40)/d*2);}
     fx+=(cx-a.x)*(a.kind==='xw'?0.0022:0.0006);fy+=(cy-a.y)*(a.kind==='xw'?0.0022:0.0006);
-    fx+=(Math.random()-0.5)*0.9;fy+=(Math.random()-0.5)*0.9; /* rung Brown: luon song */
+    var tt=(MP.clock||0);fx+=Math.cos(tt/2600*a.sp+a.ph)*0.55+(Math.random()-0.5)*0.6;fy+=Math.sin(tt/2100*a.sp+a.ph)*0.55+(Math.random()-0.5)*0.6; /* troi lien tuc theo pha rieng + rung Brown: luon song */
+    if(a.kind==='xw'){var ang=Math.atan2(a.y-cy,a.x-cx)+0.00012*dt,rr=Math.hypot(a.x-cx,a.y-cy);fx+=(cx+rr*Math.cos(ang)-a.x)*0.03;fy+=(cy+rr*Math.sin(ang)-a.y)*0.03;} /* xuong xoay cham quanh tam */
     a.vx=(a.vx+fx*k)*0.8;a.vy=(a.vy+fy*k)*0.8;}
   MP.links.forEach(function(L){var dx=L.b.x-L.a.x,dy=L.b.y-L.a.y,d=Math.sqrt(dx*dx+dy*dy)||1,f=(d-L.len)*0.03*k;var ux=dx/d*f,uy=dy/d*f;
     if(L.a!==MP.drag){L.a.vx+=ux;L.a.vy+=uy;}if(L.b!==MP.drag){L.b.vx-=ux*(L.b.kind==='xw'?0.3:1);L.b.vy-=uy*(L.b.kind==='xw'?0.3:1);}});
@@ -1695,40 +1707,43 @@ function mpNetDraw(ctx,st){var W=MP.W,H=MP.H,dark=(document.documentElement.data
   var g=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*0.6);g.addColorStop(0,dark?'rgba(37,99,235,.10)':'rgba(37,99,235,.06)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
   var hv=MP.hover,nb={};if(hv){nb[hv.id]=1;MP.links.forEach(function(L){if(L.a===hv)nb[L.b.id]=1;if(L.b===hv)nb[L.a.id]=1;});}
   MP.links.forEach(function(L){var on=hv&&(L.a===hv||L.b===hv);var al=on?0.9:(hv?0.06:(L.kind==='hub'?0.22:(L.kind==='nt'?0.35:0.18)));
-    ctx.strokeStyle=(L.kind==='nt'?'rgba(212,160,23,':L.kind==='pj'?'rgba(212,160,23,':C.edge)+al+')';ctx.lineWidth=on?2.2:(L.kind==='nt'?0.8+2.2*Math.min(1,L.w/300):1);
-    ctx.beginPath();ctx.moveTo(L.a.x,L.a.y);ctx.lineTo(L.b.x,L.b.y);ctx.stroke();});
+    var choE=L.kind==='cho'||L.cho>0;ctx.strokeStyle=(choE?'rgba(245,158,11,':L.kind==='nt'?'rgba(212,160,23,':L.kind==='pj'?'rgba(212,160,23,':C.edge)+(choE?Math.min(1,al+0.15):al)+')';ctx.lineWidth=on?2.2:(L.kind==='nt'?0.8+2.2*Math.min(1,L.w/300):(choE?1.4:1));
+    /* 12/11 user "kieu dong chay chuyen dong": net dut TROI doc canh tu to -> QC/du an (tốc độ theo tấn), canh to-xuong dung yen */
+    if(L.kind!=='hub'){var spd=L.kind==='nt'?0.05+0.08*Math.min(1,L.w/300):0.035;ctx.setLineDash(choE?[5,5]:[7,9]);ctx.lineDashOffset=-(st*spd)%16;}
+    ctx.beginPath();ctx.moveTo(L.a.x,L.a.y);ctx.lineTo(L.b.x,L.b.y);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;});
   MP.parts.forEach(function(p){var L=p.L,t=p.p,x=L.a.x+(L.b.x-L.a.x)*t,y=L.a.y+(L.b.y-L.a.y)*t;ctx.fillStyle=C.gold;ctx.globalAlpha=hv&&!(L.a===hv||L.b===hv)?0.15:0.9;ctx.beginPath();ctx.arc(x,y,2.2,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;});
   var pulse=0.5+0.5*Math.sin(st/600);
   MP.nodes.forEach(function(n){var dim=hv&&!nb[n.id];var col=n.kind==='xw'?C.xw:n.kind==='qc'?C.qc:n.kind==='pj'?C.pj:kc;
     ctx.globalAlpha=dim?0.18:1;
-    if(n.kind==='to'&&n.cho>0.5&&!dim){ctx.beginPath();ctx.arc(n.x,n.y,n.r+3+3*pulse,0,Math.PI*2);ctx.strokeStyle='rgba(245,158,11,'+(0.25+0.35*pulse)+')';ctx.lineWidth=2;ctx.stroke();}
+    if(((n.kind==='to'&&n.cho>0.5)||(n.kind==='pj'&&n.cho>0.5))&&!dim){ctx.beginPath();ctx.arc(n.x,n.y,n.r+3+3*pulse,0,Math.PI*2);ctx.strokeStyle='rgba(245,158,11,'+(0.3+0.4*pulse)+')';ctx.lineWidth=2;ctx.stroke();}
     ctx.save();if(!dim){ctx.shadowColor=col;ctx.shadowBlur=n===hv?26:(n.kind==='xw'?22:10);}
     var gr=ctx.createRadialGradient(n.x-n.r*0.35,n.y-n.r*0.35,n.r*0.1,n.x,n.y,n.r);gr.addColorStop(0,dark?'rgba(255,255,255,.45)':'rgba(255,255,255,.95)');gr.addColorStop(1,col);
     ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();ctx.restore();
     ctx.globalAlpha=dim?0.18:1;ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.strokeStyle=n===hv?C.ink:'rgba(255,255,255,.55)';ctx.lineWidth=n===hv?2.5:1;ctx.stroke();
     var lab=n.kind==='xw'?n.ten:n.kind==='qc'?n.ten.split(' ').slice(-2).join(' '):n.kind==='pj'?n.ten:n.ten;
     if(n.kind==='xw'){ctx.fillStyle='#fff';ctx.font='800 13px system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lab,n.x,n.y);}
-    else if(n.kind==='to'||n.kind==='qc'||n===hv||(n.kind==='pj'&&n.r>=10)){ctx.fillStyle=C.ink;ctx.font=(n.kind==='pj'?'500 10.5px':'700 11.5px')+' system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';var tx=n.kind==='pj'&&lab.length>26?lab.slice(0,25)+'…':lab;ctx.fillText(tx,n.x,n.y+n.r+3);
-      if(n.kind!=='pj'){ctx.fillStyle=C.mut;ctx.font='600 10px system-ui,sans-serif';ctx.fillText(fm(n.t,0)+' t',n.x,n.y+n.r+16);}}
+    else if(n.kind==='to'||n.kind==='qc'||n===hv||(n.kind==='pj'&&n.r>=11)){ctx.fillStyle=C.ink;ctx.font=(n.kind==='pj'?'500 10.5px':'700 11.5px')+' system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';var tx=n.kind==='pj'&&lab.length>26?lab.slice(0,25)+'…':lab;ctx.fillText(tx,n.x,n.y+n.r+3);
+      if(n.kind!=='pj'){ctx.fillStyle=C.mut;ctx.font='600 10px system-ui,sans-serif';ctx.fillText(fm(n.t,0)+' t',n.x,n.y+n.r+16);}
+      else if(n.cho>0.5&&(n.r>=12||n===hv)){ctx.fillStyle=C.warn;ctx.font='700 10px system-ui,sans-serif';ctx.fillText('QC đang kiểm tra '+fm(n.cho,0)+' t',n.x,n.y+n.r+16);}}
     ctx.globalAlpha=1;});}
 function mpLoop(ts){if(!MP.ready||TAB!=='mp')return;var cv=document.getElementById('mpCv');if(!cv)return;var ctx=cv.getContext('2d');var dpr=window.devicePixelRatio||1;ctx.setTransform(dpr,0,0,dpr,0,0);
   var dt=MP.t0?Math.min(50,ts-MP.t0):16;MP.t0=ts;var net=MP.mode==='net';if(MP.run||MP.drag){if(net)mpNetStep(dt);else mpStep(dt);}if(net)mpNetDraw(ctx,ts);else mpDraw(ctx,ts);if(MP.run||MP.drag)MP.raf=requestAnimationFrame(mpLoop);else MP.raf=0;}
 function mpHit(mx,my){var best=null;MP.nodes.forEach(function(n){var dx=mx-n.x,dy=my-n.y;if(dx*dx+dy*dy<=(n.r+4)*(n.r+4))best=n;});return best;}
 function mpTip(n){if(!n)return '';if(n.kind==='xw'){return '<b>'+esc(n.ten)+'</b><br>SX tháng '+MP.K.m+': <b>'+fm(n.t,0)+' t</b> · NT <b>'+fm(n.nt,0)+' t</b><br><span class="muted">kéo để sắp xếp · bấm để xem xưởng</span>';}
-  if(n.kind==='pj'){return '<b>'+esc(n.ten)+'</b><br>'+esc(n.ma)+' · SX tháng '+MP.K.m+': <b>'+fm(n.t,1)+' t</b><br>tổ: '+esc(n.tos.join(', '))+'<br><span class="muted">bấm để xem dự án</span>';}
+  if(n.kind==='pj'){return '<b>'+esc(n.ten)+'</b><br>'+esc(n.ma)+' · SX tháng '+MP.K.m+': <b>'+fm(n.t,1)+' t</b>'+(n.cho>0.5?'<br><span style="color:var(--warn)">QC đang kiểm tra (chờ NT): <b>'+fm(n.cho,1)+' t</b> · '+fm(n.chon,0)+' CK</span>':'<br><span style="color:#16A34A">không còn hàng chờ QC</span>')+'<br>tổ: '+esc((n.tos.concat(n.tosc.filter(function(t){return n.tos.indexOf(t)<0;}))).join(', '))+'<br><span class="muted">bấm để xem dự án</span>';}
   if(n.kind==='qc'){return '<b>'+esc(n.ten)+'</b><br>'+esc(n.xw)+' · nghiệm thu tháng '+MP.K.m+': <b>'+fm(n.t,1)+' t</b><br><span class="muted">bấm để xem các tổ</span>';}
   var qs=Object.keys(n.qc).sort(function(a,b){return n.qc[b]-n.qc[a];}).slice(0,3).map(function(q){return esc(q.split(' ').slice(-2).join(' '))+' '+fm(n.qc[q],0)+' t';}).join(' · ');
   return '<b>'+esc(n.id)+'</b><br>SX tháng '+MP.K.m+': <b>'+fm(n.t,1)+' t</b> · '+fm(n.n,0)+' CK'+(n.cho>0.5?'<br><span style="color:var(--warn)">chờ NT '+fm(n.cho,1)+' t</span>':'')+(qs?'<br>QC: '+qs:'')+'<br><span class="muted">bấm để mở thẻ tổ</span>';}
-function veMP(){var el=document.getElementById('mpView');if(!el)return;if(TAB!=='mp'){el.hidden=true;if(MP.raf){cancelAnimationFrame(MP.raf);MP.raf=0;}MP.ready=false;return;}
-  el.hidden=false;var rm=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);if(rm&&MP.rm!==true){MP.run=false;} /* may bat "giam chuyen dong": mo ra o trang thai tam dung, bam Chay de xem */MP.rm=rm;var K=bcKy();
+function veMP(){var el=document.getElementById('mpView');if(!el)return;if(TAB!=='mp'){el.hidden=true;if(MP.raf){cancelAnimationFrame(MP.raf);MP.raf=0;}MP.ready=false;clearTimeout(MPL.timer);return;}
+  el.hidden=false;var rm=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);MP.rm=rm; /* 12/11 user (lan 2 'k thay chuyen dong'): KHONG tu tam dung nua — mo phong la de xem chuyen dong; van co nut Tam dung + dong canh bao */var K=bcKy();
   var opts='';(function(){var d=MAXD||homNay(),y=+d.slice(0,4),m=+d.slice(5,7);if(+d.slice(8,10)>20){m++;if(m>12){m=1;y++;}}var cur=PB_T||(y+'-'+_pad2(m));
     for(var i=0;i<12;i++){var v=y+'-'+_pad2(m);opts+='<option value="'+v+'"'+(v===cur?' selected':'')+'>Tháng '+m+'/'+y+'</option>';m--;if(m<1){m=12;y--;}}})();
   var net=MP.mode==='net';
   el.innerHTML='<div class="mph"><div><h2>Mô phỏng dòng hàng — <select id="mpThang" aria-label="Chọn tháng chốt">'+opts+'</select> · Team '+esc(TEAM.ngan||TEAM.ten)+'</h2><div class="muted">'+(net?'Mạng lưới: xưởng (đỏ) — tổ (màu khâu, to theo tấn SX) — QC (xanh đậm) — dự án (vàng). Mọi nút tự đẩy / hút nhau như Graph view; <b>kéo</b> một nút để sắp xếp, <b>rê</b> để sáng hàng xóm, <b>bấm</b> để mở thẻ. Hạt vàng = tấn QC đã nghiệm thu.':'Bong bóng = tổ, to theo tấn SX tháng (khâu của team đang chọn) · hạt vàng = tấn QC đã nghiệm thu chảy về QC · viền cam nhấp nháy = tổ còn hàng chờ NT · bấm tổ / QC để xem chi tiết')+'</div></div>'
     +'<div class="mpk"><div class="seg" role="tablist" aria-label="Kiểu mô phỏng"><button class="btn'+(net?' on':'')+'" data-mpmode="net" role="tab" aria-selected="'+net+'">Mạng lưới</button><button class="btn'+(net?'':' on')+'" data-mpmode="plan" role="tab" aria-selected="'+(!net)+'">Mặt bằng</button></div><button class="btn mpPlay" id="mpPlay" aria-label="Tạm dừng">'+(MP.run?'Tạm dừng':'Chạy')+'</button><button class="btn" id="mpShuffle" aria-label="Sắp xếp lại">Sắp lại</button></div></div>'
     +'<div class="mpc"><canvas id="mpCv" role="img" aria-label="Mô phỏng tổ và QC theo xưởng"></canvas><div class="mpt" id="mpTip" hidden></div></div>'
-    +'<div class="mpl">'+(net?'<span><i style="background:#E2231A"></i>Xưởng</span>':'')+'<span><i style="background:var(--'+(TEAM.cd||'f')+')"></i>Tổ — khâu '+esc(TEAM.ngan||'')+'</span><span><i style="background:#0F766E"></i>QC nghiệm thu'+(net?'':' (chữ cái tên)')+'</span>'+(net?'<span><i style="background:#D4A017"></i>Dự án (top 3 của mỗi tổ)</span>':'')+'<span><i class="ln" style="background:#D4A017"></i>Hạt = tấn đã NT (dày = nhiều)</span><span><i style="border:2px solid var(--warn);background:transparent"></i>Chờ NT</span>'+(MP.rm?'<span style="color:var(--warn)">Máy đang bật “giảm chuyển động” (Windows: Accessibility → Visual effects → Animation effects) — bấm Chạy để xem mô phỏng</span>':'')+'</div><div class="mpg" id="mpCh"></div>';
-  mpBuild();document.getElementById('mpCh').innerHTML=mpCharts();if(net)mpNetBuild();var cv=document.getElementById('mpCv'),dpr=window.devicePixelRatio||1;cv.width=Math.round(MP.W*dpr);cv.height=Math.round(MP.H*dpr);cv.style.height=MP.H+'px';
+    +'<div class="mpl">'+(net?'<span><i style="background:#E2231A"></i>Xưởng</span>':'')+'<span><i style="background:var(--'+(TEAM.cd||'f')+')"></i>Tổ — khâu '+esc(TEAM.ngan||'')+'</span><span><i style="background:#0F766E"></i>QC nghiệm thu'+(net?'':' (chữ cái tên)')+'</span>'+(net?'<span><i style="background:#D4A017"></i>Dự án đang hoạt động</span><span><i style="border:2px dashed var(--warn);background:transparent"></i>Dự án QC đang kiểm tra (chờ NT)</span>':'')+'<span><i class="ln" style="background:#D4A017"></i>Hạt = tấn đã NT (dày = nhiều)</span><span><i style="border:2px solid var(--warn);background:transparent"></i>Chờ NT</span>'+(MP.rm?'<span style="color:var(--warn)">Máy đang bật “giảm chuyển động” (Windows: Accessibility → Visual effects → Animation effects) — mô phỏng vẫn chạy, bấm Tạm dừng nếu khó chịu</span>':'')+'</div><div class="mplv" id="mpLive"></div><div class="mpg" id="mpCh"></div>';
+  mpBuild();document.getElementById('mpCh').innerHTML=mpCharts();mpLiveInit();if(net)mpNetBuild();var cv=document.getElementById('mpCv'),dpr=window.devicePixelRatio||1;cv.width=Math.round(MP.W*dpr);cv.height=Math.round(MP.H*dpr);cv.style.height=MP.H+'px';
   for(var i=0;i<(net?120:60);i++){if(net)mpNetStep(16);else mpStep(16);} /* tien sap xep truoc, khong rung khi mo */
   MP.t0=0;if(MP.raf)cancelAnimationFrame(MP.raf);MP.raf=requestAnimationFrame(mpLoop);
   var tip=document.getElementById('mpTip');
@@ -1747,9 +1762,54 @@ function veMP(){var el=document.getElementById('mpView');if(!el)return;if(TAB!==
   [].forEach.call(el.querySelectorAll('[data-mpmode]'),function(b){b.addEventListener('click',function(){MP.mode=this.getAttribute('data-mpmode');ls('bdqcMpMode',MP.mode);veMP();});});
   document.getElementById('mpPlay').addEventListener('click',function(){MP.run=!MP.run;this.textContent=MP.run?'Tạm dừng':'Chạy';if(MP.run){MP.t0=0;MP.raf=requestAnimationFrame(mpLoop);}});
   document.getElementById('mpShuffle').addEventListener('click',function(){if(MP.mode==='net'){mpNetBuild();for(var i=0;i<60;i++)mpNetStep(16);}else{mpBuild();for(var i2=0;i2<20;i2++)mpStep(16);}if(!MP.raf)mpLoop(performance.now());});}
+/* ===== 12/11 user "hien thong so nhay lien tuc o bang duoi, phat trien de dat ket qua" =====
+   mpLive: bang dien tu — 6 the so DEM LEN (tabular-nums), tu chieu lan luot Toan nha may -> tung xuong (5 s/luot, nut Tu chieu), bang chu chay (ticker),
+   va khoi VE DICH: con lai KHSX (khau team) / so ngay lam viec con lai = toc do CAN, so voi toc do DANG LAM (SX thang / ngay da qua) -> Dat / Can tang / Nguy co. */
+var MPL={tour:true,i:0,timer:0,anim:{}};
+function mpNgayLV(a,b){var n=0;for(var d=a;d<=b;d=ngayCong(d,1)){if(new Date(d+'T00:00:00').getDay()!==0)n++;}return n;} /* bo Chu nhat */
+function mpLiveData(){var K=MP.K,Z=mpData(),MI=D.PL.indexOf('Miễn QC');var out={ALL:{id:'ALL',ten:'Toàn nhà máy',sx:0,nt:0,cho:0,to:0,qc:0,con:0}},xs={};
+  Object.keys(Z.TO).forEach(function(tk){var o=Z.TO[tk];var x=xs[o.x]=xs[o.x]||{id:o.x,ten:o.x,sx:0,nt:0,cho:0,to:0,qc:0,con:0};x.sx+=o.t;x.cho+=o.cho;if(o.t>0.5)x.to++;});
+  Object.keys(Z.QC).forEach(function(k){var q=Z.QC[k];var x=xs[q.x]=xs[q.x]||{id:q.x,ten:q.x,sx:0,nt:0,cho:0,to:0,qc:0,con:0};x.nt+=q.t;if(q.t>0.5)x.qc++;});
+  if(KH_TT==='ok'){var KS=_ksGop();Object.keys(KS).forEach(function(m){Object.keys(KS[m]).forEach(function(w){var z=KS[m][w];if(!xs[w])return;xs[w].con+=TEAM.cd==='w'?z.h:z.r;});});}
+  var a=out.ALL;Object.keys(xs).sort().forEach(function(x){var o=xs[x];a.sx+=o.sx;a.nt+=o.nt;a.cho+=o.cho;a.to+=o.to;a.qc+=o.qc;a.con+=o.con;out[x]=o;});
+  var last=MAXD||K.den,daQua=mpNgayLV(K.tu,last<K.den?last:K.den),conLai=last<K.den?mpNgayLV(ngayCong(last,1),K.den):0;
+  out._days={daQua:daQua,conLai:conLai,last:last};return out;}
+function mpCount(el,to,dec){var from=+(el.getAttribute('data-v')||0);el.setAttribute('data-v',to);var t0=performance.now(),dur=900;if(MP.rm){el.textContent=fm(to,dec);return;}
+  (function f(ts){var p=Math.min(1,(ts-t0)/dur),e=1-Math.pow(1-p,3);el.textContent=fm(from+(to-from)*e,dec);if(p<1)requestAnimationFrame(f);})(t0);}
+function mpLiveInit(){var box=document.getElementById('mpLive');if(!box)return;var L=mpLiveData();MPL.L=L;var keys=['ALL'].concat(Object.keys(L).filter(function(k){return k!=='ALL'&&k[0]!=='_';}));MPL.keys=keys;if(MPL.i>=keys.length)MPL.i=0;
+  box.innerHTML='<div class="mplh"><b><span class="dot" aria-hidden="true"></span>Bảng điện tử — <span id="mpLvTen"></span> · tháng '+MP.K.m+'/'+MP.K.y+'</b><div class="mpk"><span class="muted" id="mpLvNote">tự chiếu 5 s / xưởng</span><button class="btn" id="mpTour" aria-pressed="'+MPL.tour+'">'+(MPL.tour?'Dừng chiếu':'Tự chiếu')+'</button></div></div>'
+    +'<div class="mpkp" role="status" aria-live="off">'+['sx|SX tháng (t)','nt|Đã nghiệm thu (t)','cho|Chờ NT (t)','hs|NT / SX','to|Tổ đang có việc','qc|QC đang nghiệm thu'].map(function(k){var a=k.split('|');return '<div data-k="'+a[0]+'"><b data-v="0">0</b><span>'+a[1]+'</span><i style="width:0"></i></div>';}).join('')+'</div>'
+    +'<div class="mptk" aria-hidden="true"><div id="mpTk"></div></div>'
+    +'<div class="mpgo" id="mpGoal"></div>';
+  document.getElementById('mpTour').addEventListener('click',function(){MPL.tour=!MPL.tour;this.textContent=MPL.tour?'Dừng chiếu':'Tự chiếu';this.setAttribute('aria-pressed',MPL.tour);mpLiveTick(true);});
+  /* ticker: doc tu nut mang (to, QC) — mot dong dai, lap vo han */
+  var items=[];MP.nodes.filter(function(n){return n.kind==='to'&&n.t>0.5;}).sort(function(a,b){return b.t-a.t;}).slice(0,14).forEach(function(n){items.push('<b>'+esc(n.id)+'</b> SX '+fm(n.t,0)+' t'+(n.cho>0.5?' <span class="w">· chờ NT '+fm(n.cho,0)+' t</span>':''));});
+  MP.nodes.filter(function(n){return n.kind==='qc'&&n.t>0.5;}).sort(function(a,b){return b.t-a.t;}).slice(0,10).forEach(function(n){items.push('<b>'+esc(n.ten.split(' ').slice(-2).join(' '))+'</b> ('+esc(n.xw)+') NT '+fm(n.t,0)+' t');});
+  document.getElementById('mpTk').innerHTML=items.join('<span class="s">◆</span>');
+  mpGoal(L);mpLiveTick(true);}
+function mpLiveTick(now){if(!MPL.L||TAB!=='mp')return;var keys=MPL.keys,k=keys[MPL.i]||'ALL',o=MPL.L[k];if(!o)return;
+  var box=document.getElementById('mpLive');if(!box)return;document.getElementById('mpLvTen').textContent=o.ten;
+  var vals={sx:o.sx,nt:o.nt,cho:o.cho,hs:o.sx>0.5?100*o.nt/o.sx:0,to:o.to,qc:o.qc},mx=MPL.L.ALL;
+  [].forEach.call(box.querySelectorAll('.mpkp>div'),function(d){var key=d.getAttribute('data-k'),b=d.querySelector('b'),v=vals[key];mpCount(b,v,key==='hs'?0:0);if(key==='hs')b.textContent=fm(v,0)+'%';
+    var pc=key==='hs'?Math.min(100,v):(mx[key]>0?100*v/mx[key]:0);d.querySelector('i').style.width=pc.toFixed(1)+'%';d.querySelector('i').style.background=key==='cho'?'var(--warn)':(key==='nt'?'#D4A017':'var(--'+(TEAM.cd||'f')+')');
+    d.classList.remove('flash');void d.offsetWidth;d.classList.add('flash');});
+  key_fix_hs(box,vals);
+  clearTimeout(MPL.timer);if(MPL.tour&&!MP.rm){MPL.timer=setTimeout(function(){MPL.i=(MPL.i+1)%keys.length;mpLiveTick();},5000);}}
+function key_fix_hs(box,vals){var b=box.querySelector('.mpkp>div[data-k="hs"] b');if(b)setTimeout(function(){b.textContent=fm(vals.hs,0)+'%';},950);return false;}
+function mpGoal(L){var g=document.getElementById('mpGoal');if(!g)return;var d=L._days,khau=TEAM.cd==='w'?'hàn':'ráp';
+  if(KH_TT!=='ok'){g.innerHTML='<div><h4>Về đích</h4><small>Chưa đọc được KHSX — chưa tính được tốc độ cần.</small></div>';return;}
+  var h='';Object.keys(L).filter(function(k){return k!=='ALL'&&k[0]!=='_';}).forEach(function(x){var o=L[x];if(o.sx<0.5&&o.con<0.5)return;
+    var rateCo=d.daQua>0?o.sx/d.daQua:0,rateCan=d.conLai>0?o.con/d.conLai:(o.con>0.5?Infinity:0);
+    var tt=o.con<0.5?['Đã hết hàng '+khau,'#16A34A']:(rateCan===Infinity?['Hết kỳ, còn '+fm(o.con,0)+' t','#dc2626']:(rateCo>=rateCan?['Đang đạt nhịp','#16A34A']:(rateCo>=rateCan*0.7?['Cần tăng '+fm(100*(rateCan/rateCo-1),0)+'%','#f59e0b']:['Nguy cơ trễ','#dc2626'])));
+    var tong=o.sx+o.con,pc=tong>0?100*o.sx/tong:0,mark=d.daQua+d.conLai>0?100*d.daQua/(d.daQua+d.conLai):0;
+    h+='<div><h4>'+esc(x)+' <em style="background:'+tt[1]+'">'+tt[0]+'</em></h4><div class="bar" title="Đã làm '+fm(pc,0)+'% khối lượng (SX tháng + KHSX còn); vạch = % thời gian kỳ đã qua"><i style="width:'+pc.toFixed(1)+'%;background:'+tt[1]+'"></i><u style="left:'+mark.toFixed(1)+'%"></u></div>'
+      +'<small>Đã '+khau+' <b>'+fm(o.sx,0)+' t</b> · KHSX còn <b>'+fm(o.con,0)+' t</b> · '+d.conLai+' ngày LV còn lại</small><small>Đang: <b>'+fm(rateCo,1)+' t/ngày</b> · Cần: <b>'+(rateCan===Infinity?'—':fm(rateCan,1)+' t/ngày')+'</b> để hết trước '+MP.K.den.slice(8)+'/'+(+MP.K.den.slice(5,7))+'</small></div>';});
+  g.innerHTML=h||'<div><small>Không có xưởng nào có số.</small></div>';}
 function mpPjCard(n){var h='<div class="toc"><div class="toh"><div><h2 style="font-size:17px">'+esc(n.ten)+'</h2><div class="tos">'+esc(n.ma)+' · sản xuất tháng '+MP.K.m+'/'+MP.K.y+' (khâu '+esc(TEAM.ngan||'')+')</div></div><button class="btn" data-toclose="1" aria-label="Đóng">'+I('x')+'</button></div>';
-  h+='<div class="tobig"><b>'+fm(n.t,1)+' t</b><span>từ các tổ nối trong mạng</span></div><div class="tot2">Tổ</div>';
-  MP.links.filter(function(L){return L.b===n;}).sort(function(a,b){return b.w-a.w;}).forEach(function(L){h+='<div class="topr"><div class="bcp1"><span class="bcpn">'+esc(L.a.id)+'</span><b>'+fm(L.w,1)+' t</b></div></div>';});
+  h+='<div class="tobig"><b>'+fm(n.t,1)+' t</b><span>sản xuất tháng, từ các tổ nối trong mạng</span></div>';
+  h+='<div class="tol"><span>QC đang kiểm tra</span><b'+(n.cho>0.5?' style="color:var(--warn)"':'')+'>'+fm(n.cho,1)+' t</b><b>'+(n.cho>0.5?fm(n.chon,0)+' CK chờ nghiệm thu':'không còn hàng chờ')+'</b></div><div class="tot2">Tổ</div>';
+  MP.links.filter(function(L){return L.b===n;}).sort(function(a,b){return (b.kind==='cho'?b.w:b.w)-(a.kind==='cho'?a.w:a.w);}).forEach(function(L){var choT=L.kind==='cho'?L.w:(L.cho||0),sxT=L.kind==='cho'?0:L.w;
+    h+='<div class="topr"><div class="bcp1"><span class="bcpn">'+esc(L.a.id)+'</span><b>'+(sxT>0?'SX '+fm(sxT,1)+' t':'')+(choT>0?' <span style="color:var(--warn)">chờ QC '+fm(choT,1)+' t</span>':'')+'</b></div></div>';});
   return h+'</div>';}
 /* 12/11 user "them chart nua": 4 bieu do duoi canvas — SVG noi tuyen, nhan truc tiep, khong chi dua vao mau */
 function mpCharts(){var K=MP.K,kc={f:'#2563EB',w:'#F59E0B',p:'#16A34A'}[TEAM.cd||'f'],gold='#D4A017',warn='#f59e0b',CDI=TEAM.cd==='w'?8:(TEAM.cd==='p'?9:7),MI=D.PL.indexOf('Miễn QC'),OK=D.PL.indexOf('Đã QC (AH)');
