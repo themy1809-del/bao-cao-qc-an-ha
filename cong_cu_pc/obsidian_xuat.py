@@ -240,6 +240,42 @@ def main():
         ids=[n['id'] for n in nodes];assert len(ids)==len(set(ids))
         for e in edges: assert e['fromNode'] in ids and e['toNode'] in ids
         W('Sơ đồ/%s.canvas'%x,json.dumps({'nodes':nodes,'edges':edges},ensure_ascii=False,indent=1))
+    # ---- Canvas toan nha may: dat 6 xuong dung vi tri mat bang (PB.KHU x,y,w,h cua so_do_nha_may 1440x864), phong to SC lan
+    SC=2.6;nodes=[];edges=[]
+    nodes.append({'id':hid('nmtit'),'type':'text','x':0,'y':-170,'width':1440*SC,'height':120,'text':'# Nhà máy An Hạ — tháng %d/%d\nVị trí xưởng theo mặt bằng thật. Ô tổ to nhỏ theo tấn sản xuất tháng (xanh = ráp, cam = hàn, xanh lá = sơn). Dưới mỗi xưởng là QC nghiệm thu nhiều nhất; mũi tên = tấn đã nghiệm thu cho tổ.'%(m,y)})
+    for k in PB['KHU']:
+        x=k['id']
+        if x not in xs or not re.match(r'^AH\d$',x): continue
+        gx,gy,gw,gh=int(k['x']*SC),int(k['y']*SC),int(k['w']*SC),int(k['h']*SC)
+        tos=[(tk,v) for tk,v in TO.items() if tk.startswith(x+' ') and (v['f']+v['w']+v['p']>0.05 or tk in PBT)]
+        tos.sort(key=lambda a:-(a[1]['f']+a[1]['w']+a[1]['p']))
+        sx=sum(v['f']+v['w']+v['p'] for _,v in tos);nt=sum(v['nt'] for pj in PJ.values() for xx,v in pj['x'].items() if xx==x)
+        cr=sum(z['r'] for (ma,xx),z in KH.items() if xx==x)
+        qcs=collections.Counter()
+        for tk,v in tos:
+            for q,t in v['qc'].items(): qcs[q]+=t
+        nodes.append({'id':hid('g'+x),'type':'group','x':gx,'y':gy,'width':gw,'height':gh,'label':'%s · SX %s t · NT %s t · KHSX còn ráp %s t'%(x,fm(sx),fm(nt),fm(cr)),'color':'1' if cr>500 else ('2' if cr>100 else '4')})
+        nodes.append({'id':hid('f'+x),'type':'file','file':'Xưởng/%s.md'%x,'x':gx+12,'y':gy+36,'width':min(gw-24,260),'height':70})
+        # o to: xep theo hang, rong theo can bac 2 tan, cao 64
+        mx=max([v['f']+v['w']+v['p'] for _,v in tos]+[1]);cx,cy=gx+12,gy+36+70+14;rowh=64
+        n_to=0
+        for tk,v in tos:
+            if cy+rowh>gy+gh-10: break
+            s2=v['f']+v['w']+v['p'];w=int(90+140*(s2/mx)**0.5)
+            if cx+w>gx+gw-12: cx=gx+12;cy+=rowh+10
+            if cy+rowh>gy+gh-10: break
+            col='5' if v['w']>v['f'] and v['w']>v['p'] else ('4' if v['p']>v['f'] else '6')
+            nodes.append({'id':hid('nm'+tk),'type':'file','file':'Tổ/%s.md'%ten_file(tk),'x':cx,'y':cy,'width':w,'height':rowh,'color':col});n_to+=1;cx+=w+10
+        # QC duoi xuong
+        qx=gx
+        for q,t in qcs.most_common(max(1,min(4,gw//230))):
+            qid=hid('nmqc'+x+q);nodes.append({'id':qid,'type':'file','file':'QC/%s.md'%ten_file(q),'x':qx,'y':gy+gh+24,'width':220,'height':64,'color':'4'});qx+=230
+            best=[(tk,v['qc'][q]) for tk,v in tos if v['qc'].get(q,0)>=1][:3]
+            for tk,t2 in best:
+                if any(n['id']==hid('nm'+tk) for n in nodes): edges.append({'id':hid('e'+x+q+tk),'fromNode':hid('nm'+tk),'toNode':qid,'fromSide':'bottom','toSide':'top','label':'%s t'%fm(t2)})
+    ids=[n['id'] for n in nodes];assert len(ids)==len(set(ids))
+    for e in edges: assert e['fromNode'] in ids and e['toNode'] in ids
+    W('Sơ đồ/Nhà máy An Hạ.canvas',json.dumps({'nodes':nodes,'edges':edges},ensure_ascii=False,indent=1))
     # ---- Bases
     W('Bases/Dự án.base','''filters:
   and:
@@ -445,6 +481,8 @@ spm: %s
 > Vault này do `cong_cu_pc/obsidian_xuat.py` sinh ra — **đừng sửa tay số liệu**, chạy lại script để cập nhật.
 
 ## Xưởng
+
+Sơ đồ toàn nhà máy: [[Sơ đồ/Nhà máy An Hạ.canvas|Nhà máy An Hạ.canvas]]
 
 %s
 
