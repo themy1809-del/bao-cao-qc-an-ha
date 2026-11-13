@@ -179,3 +179,31 @@ NOT CHANGED:
 TESTED:
 RISK:
 NEXT STEP:
+
+## 7. HARNESS — LUẬT TỰ KIỂM CHUNG CHO MỌI CHAT (từ 13/11/2026)
+
+Áp cho **mọi chat, mọi hệ** (dashboard web trong repo này, Apps Script, và các app riêng tư làm ngoài repo).
+Mục đích: sửa chỗ này không làm hỏng chỗ kia; không giao thứ chưa kiểm.
+
+**Trước khi sửa**
+1. Đọc tài liệu bàn giao của đúng hệ đang làm (repo này: `HANDOFF.md`, `PROJECT_STATUS.md`).
+2. Chạy bộ kiểm hiện có để biết mã đang sạch. Đang đỏ sẵn → báo user trước, không sửa chồng lên.
+
+**Trước khi giao** — đủ các cổng, cổng nào FAIL thì KHÔNG giao:
+| Cổng | Nội dung |
+|---|---|
+| 1. Phiên bản | Tăng phiên bản / ngày ở mọi chỗ ghi phiên bản; có ghi chú thay đổi |
+| 2. Cú pháp | `node --check` (JS / Apps Script bản copy), `python -m py_compile`; soát trùng tên hàm |
+| 3. Luật cứng | Mục 3 của file này (không đổi cột Sheet, không tạo deployment /exec mới, không sửa tay `qcdata.js`, dữ liệu vào HTML phải escape…) |
+| 4. Số liệu chuẩn | Kết quả **trước ↔ sau** phải khớp: dashboard → `QCDATA.check.f/w/p` + KPI Tổng quan **lệch 0**; báo cáo / Excel → so từng ô với bản chuẩn |
+| 5. Test | Bộ test của hệ đó 0 FAIL |
+| 6. Giao diện | Thay đổi giao diện → mở trình duyệt thật (Playwright), 0 lỗi console, chụp ảnh làm bằng chứng |
+| 7. Gói giao | Không chứa bí mật / dữ liệu / chữ ký; đúng phiên bản; đúng file |
+
+**Quy tắc**
+- Hệ nào đã có lệnh harness riêng (ghi trong tài liệu bàn giao của hệ đó) thì giao **chỉ qua lệnh đó**, không đóng gói tay.
+- Kết quả số liệu chỉ được đổi khi **user yêu cầu**; đổi ngoài ý muốn = lỗi hồi quy → sửa mã, không sửa bản chuẩn.
+- Thêm chức năng mới → thêm bài kiểm cho nó. Gặp lỗi mới → thêm bài kiểm bắt lỗi đó trước khi sửa.
+- Sửa cho một dự án / hạng mục **không được** làm đổi dự án / hạng mục khác — phải có kiểm chứng.
+- Báo cáo ghi rõ đã chạy cổng nào, kết quả gì; cổng nào không chạy được phải nói rõ lý do. Không viết "đã test" khi chưa chạy.
+- Mã của app riêng tư **không** đưa vào repo công khai này; chỉ ghi luật, không ghi bí mật.
