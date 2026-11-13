@@ -17,5 +17,19 @@
     "enterprise-search@knowledge-work-plugins": true,
     "pdf-viewer@knowledge-work-plugins": true,
     "human-resources@knowledge-work-plugins": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "SendUserFile",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/quet_goi.py\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
   }
 }
