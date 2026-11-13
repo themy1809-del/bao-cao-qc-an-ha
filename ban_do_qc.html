@@ -1456,7 +1456,30 @@ function pbtPopup(xw){var Z=PBXP[xw];if(!Z)return '';var P=Z.P,K=Z.K,KS=KH_TT===
     h+='<div class="topr"><div class="bcp1"><span class="bcpn">'+esc(e.ten)+'</span><b>'+(e.pb>0.05?bcT(e.sx)+' / '+bcT(e.pb)+' t <span style="color:'+c+'">'+fm(p2,0)+'%</span>':bcT(e.sx)+' t')+'</b></div>'
       +'<div class="tom">'+esc(e.m)+(e.to.length?' · tổ: '+esc(e.to.join(', ')):'')+(e.pb>0.05?'':' · <span style="color:var(--mut)">không trong sheet PB tổ</span>')+' · '+fm(e.n,0)+' CK'+(e.kh!=null?' · KHSX còn '+bcT(e.kh)+' t':(KS?' · <span style="color:var(--mut)">KHSX không có</span>':''))+(e.cl>0.05?' · sheet ghi còn lại '+bcT(e.cl)+' t':'')+(e.lt>0?' · lắp thử '+bcT(e.lt)+' t':'')+'</div></div>';});
   return h+'</div>';}
-function pbToXuong(xw,ym){var z=((window.PB_TO||{}).xuong||{})[xw];z=z&&z[ym];if(!z)return null;var to={},tong=0;
+/* 13/11 user gui sheet AH4 "BAN HANH GIA CONG" (danh sach TUNG CAU KIEN, khong phai bang phan bo thang) -> quy doi ve cung khuon PB to:
+   viec cua thang = cau kien DA BAN HANH (co ngay lenh SX <= cuoi ky) ma (rap xong TRONG ky) hoac (chua rap);
+   to = "Fitup Workshop" (to thuc te, vd TO3RHAH4) neu da rap, khong thi "Plan Workshop" (RHT3 -> TO3RH); "RHT1+5" chia cho TO1RH/TO5RH theo ty le 2 to da rap trong ky.
+   Hoan thanh van tinh tu SPM nhu cac xuong khac (pbSoSanh). */
+var PB_BH={},_PBBHC={};
+function pbBHDoc(rows){var hi=-1;for(var i=0;i<Math.min(6,rows.length);i++){if(rows[i].some(function(c){return /^\s*Member No\s*$/i.test(c);})&&rows[i].some(function(c){return /Plan Workshop/i.test(c);})){hi=i;break;}}if(hi<0)return null;
+  var H=rows[hi].map(function(c){return String(c||'').trim().toLowerCase();});function ix(n){for(var j=0;j<H.length;j++)if(H[j]===n)return j;return -1;}
+  var cP=ix('project'),cS=ix('section'),cT=ix('tên gọi'),cPl=ix('plan workshop'),cF=ix('fitup workshop');if(cP<0||cS<0||cT<0||cPl<0||cF<0)return null;var cW=cS+2,cR=cT+1,cD=cF+1;
+  function dt(v){var m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(String(v||'').trim());return m?m[3]+'-'+_pad2(+m[2])+'-'+_pad2(+m[1]):'';}
+  var out=[];for(var r=hi+1;r<rows.length;r++){var a=rows[r],pj=String(a[cP]||'').trim();if(!pj)continue;var w=parseFloat(String(a[cW]||'').replace(/\./g,'').replace(',','.'))||0;if(w<=0)continue;
+    var ft=/^TO(\d+)R([HT])AH\d$/i.exec(String(a[cF]||'').trim());out.push([pj,w/1000,dt(a[cR]),String(a[cPl]||'').trim().toUpperCase(),ft?'TO'+ft[1]+'R'+ft[2].toUpperCase():'',dt(a[cD])]);}
+  return out.length?out:null;}
+function pbBHThang(xw,ym){var M=PB_BH[xw];if(!M)return null;var key=xw+'|'+ym+'|'+M.length;if(_PBBHC[key])return _PBBHC[key];
+  var y=+ym.slice(0,4),m=+ym.slice(5,7),py=m===1?y-1:y,pm=m===1?12:m-1,tu=py+'-'+_pad2(pm)+'-21',den=ym+'-20',G={},doneT={},pend15=[];
+  function add(pj,to,w){var ma=pj.split(' ')[0],g=G[ma]=G[ma]||{ma:ma,ten:pj,kl:0,conLai:0,rt:[],to:{},lapThu:0,khuLT:''};g.kl+=w;g.to[to]=(g.to[to]||0)+w;}
+  M.forEach(function(r){if(!r[2]||r[2]>den)return; /* chua ban hanh / ban hanh sau ky */
+    if(r[5]){if(r[5]<tu||r[5]>den)return;var to=r[4]||'';if(!to)return;add(r[0],to,r[1]);doneT[to]=(doneT[to]||0)+r[1];return;}
+    var pl=r[3],mm=/^RHT(\d+)$/.exec(pl);if(mm){add(r[0],'TO'+mm[1]+'RH',r[1]);return;}
+    var m2=/^RHT(\d+)\+(\d+)$/.exec(pl);if(m2){pend15.push([r[0],r[1],'TO'+m2[1]+'RH','TO'+m2[2]+'RH']);return;}
+    if(pl)add(r[0],pl,r[1]);});
+  pend15.forEach(function(p){var a=doneT[p[2]]||0,b=doneT[p[3]]||0,sh=a+b>0?a/(a+b):0.5;add(p[0],p[2],p[1]*sh);add(p[0],p[3],p[1]*(1-sh));});
+  var rows=Object.keys(G).map(function(k){var g=G[k];g.to=Object.keys(g.to).map(function(t){return {to:t,kl:Math.round(g.to[t]*10)/10,ghi:''};}).filter(function(t){return t.kl>0.05;});g.kl=Math.round(g.kl*10)/10;return g;}).filter(function(g){return g.to.length;});
+  return _PBBHC[key]={src:PB_BH[xw].src||('sheet ban hành gia công '+xw),don:'t',bh:1,rows:rows};}
+function pbToXuong(xw,ym){var z=PB_BH[xw]?pbBHThang(xw,ym):(((window.PB_TO||{}).xuong||{})[xw]||{})[ym];if(!z)return null;var to={},tong=0;
   z.rows.forEach(function(r){tong+=r.kl||0;(r.to||[]).forEach(function(t){if(!t.to)return;var k=xw+'.'+t.to,o=to[k]=to[k]||{kl:0,ds:[]};o.kl+=t.kl||0;o.ds.push({ma:r.ma,ten:r.ten,kl:t.kl||0,ghi:t.ghi||'',rt:r.rt||[],lapThu:r.lapThu||0,khuLT:r.khuLT||''});});});
   return {to:to,tong:tong,n:z.rows.length,rows:z.rows,src:z.src};}
 /* 13/11 user: "ghi nhan hoan thanh / con ton so voi phan bo" — so tung dong PB (to x du an) voi SX thang cua CHINH to do, du an do (SPM, tan rap r[7], theo ngay SX trong ky).
@@ -1515,14 +1538,17 @@ function pbONoi(xw,K){var m=PBNOI.msg[xw]||null,cur=(PB.PB_SHEETS||{})[xw];
 function pbNoi(xw,url){var m=/\/d\/([\w-]{20,})/.exec(url||''),g=/[#?&]gid=(\d+)/.exec(url||'');if(!m){PBNOI.msg[xw]={ok:false,t:'Link không đúng dạng Google Sheet (cần có /d/<mã file>/).'};veSLPB();return;}
   var id=m[1],gid=g?g[1]:'0';PBNOI.msg[xw]={ok:true,t:'Đang đọc sheet…'};veSLPB();
   fetch('https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:csv&gid='+gid,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
-   .then(function(t){if(/^\s*</.test(t))throw new Error('rieng');var z=pbTuBang(_csv(t));if(!z.ym)throw new Error('thang');if(!z.rows.length)throw new Error('rong');
-     PB.PB_SHEETS=PB.PB_SHEETS||{};PB.PB_SHEETS[xw]={id:id,gid:gid};try{var o=JSON.parse(localStorage.getItem('bdqcPbSheets')||'{}');o[xw]={id:id,gid:gid};localStorage.setItem('bdqcPbSheets',JSON.stringify(o));}catch(e){}
+   .then(function(t){if(/^\s*</.test(t))throw new Error('rieng');var R0=_csv(t),bh=pbBHDoc(R0);
+     function luu(){PB.PB_SHEETS=PB.PB_SHEETS||{};PB.PB_SHEETS[xw]={id:id,gid:gid};try{var o=JSON.parse(localStorage.getItem('bdqcPbSheets')||'{}');o[xw]={id:id,gid:gid};localStorage.setItem('bdqcPbSheets',JSON.stringify(o));}catch(e){}}
+     if(bh){luu();bh.src='sheet ban hành gia công '+xw+' đọc trực tiếp lúc '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});PB_BH[xw]=bh;var zz=pbBHThang(xw,bcKy().y+'-'+_pad2(bcKy().m));PBNOI.msg[xw]={ok:true,t:'Đã nối (dạng Ban hành gia công): '+fm(bh.length,0)+' cấu kiện · việc tháng '+bcKy().m+': '+(zz?zz.rows.length:0)+' dự án · '+fm(zz?zz.rows.reduce(function(a,r){return a+r.kl;},0):0,0)+' t.',cfg:xw+":{id:'"+id+"',gid:'"+gid+"'}"};PBNOI.mo='';veSLPB();return;}
+     var z=pbTuBang(R0);if(!z.ym)throw new Error('thang');if(!z.rows.length)throw new Error('rong');
+     luu();
      window.PB_TO=window.PB_TO||{xuong:{}};var X=window.PB_TO.xuong=window.PB_TO.xuong||{};X[xw]=X[xw]||{};X[xw][z.ym]={src:'sheet PB '+xw+' đọc trực tiếp lúc '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),don:'t',rows:z.rows};
      var tong=z.rows.reduce(function(a,r){return a+(r.kl||0);},0);PBNOI.msg[xw]={ok:true,t:'Đã nối: tháng '+(+z.ym.slice(5))+'/'+z.ym.slice(0,4)+' · '+z.rows.length+' dự án · '+fm(tong,0)+' t.'+(z.ym!==bcKy().y+'-'+_pad2(bcKy().m)?' Sheet là tháng khác tháng đang xem — đổi tháng ở trên để thấy.':''),cfg:xw+":{id:'"+id+"',gid:'"+gid+"'}"};PBNOI.mo='';veSLPB();})
    .catch(function(e){var t={rieng:'Sheet chưa chia sẻ công khai — vào Chia sẻ → “Bất kỳ ai có liên kết: Người xem” rồi bấm lại.',thang:'Không thấy chữ “THÁNG mm/yyyy” ở tiêu đề sheet — xem mẫu.',rong:'Không đọc được dòng dự án nào — cột C phải bắt đầu bằng mã dự án (vd 10626-051 …).'}[e.message]||('Không đọc được sheet ('+e.message+'). Kiểm tra quyền chia sẻ và link.');PBNOI.msg[xw]={ok:false,t:t};veSLPB();});}
 function pbBangTong(K){ /* bang tong tat ca xuong — dat tren cung tab PB */
   var xs=PB.KHU.filter(function(k){return !k.gop&&k.spmX&&/^AH\d$/.test(k.id);}).slice().sort(function(a,b){return a.id.localeCompare(b.id,'vi',{numeric:true});});
-  var T={pb:0,done:0,con:0,vuot:0,ngoai:0},h='<div class="bdc pbtg"><div class="bdh"><b>Hoàn thành so với phân bổ tháng '+K.m+' — theo sheet PB tổ của từng xưởng (tấn ráp)</b><span class="muted">xưởng chưa có sheet: gửi link theo mẫu <code>mau/PB_TO_MAU.csv</code></span></div><div class="tw3"><table class="tto xbt bdt"><thead><tr><th>Xưởng</th><th>Phân bổ</th><th>Hoàn thành</th><th>Còn lại</th><th>Vượt PB</th><th>Ngoài PB</th><th style="min-width:180px">Tiến độ</th></tr></thead><tbody>';
+  var T={pb:0,done:0,con:0,vuot:0,ngoai:0},h='<div class="bdc pbtg"><div class="bdh"><b>Hoàn thành so với phân bổ tháng '+K.m+' — theo sheet PB tổ của từng xưởng (tấn ráp)</b><span class="muted">'+(PB.PB_DANHMUC&&PB.PB_DANHMUC.id?'<a href="https://docs.google.com/spreadsheets/d/'+esc(PB.PB_DANHMUC.id)+'/edit" target="_blank" rel="noopener" style="color:inherit;font-weight:700">Link chung (danh mục)</a>: '+(PB_DM.tt==='ok'?'đã đọc '+PB_DM.n+' xưởng lúc '+esc(PB_DM.luc):(PB_DM.tt==='rieng'?'<span style="color:var(--warn)">chưa chia sẻ công khai — đang dùng cấu hình sẵn</span>':(PB_DM.tt?'<span style="color:var(--warn)">không đọc được</span>':'đang đọc…')))+' · ':'')+'mẫu: <code>mau/PB_TO_MAU.csv</code></span></div><div class="tw3"><table class="tto xbt bdt"><thead><tr><th>Xưởng</th><th>Phân bổ</th><th>Hoàn thành</th><th>Còn lại</th><th>Vượt PB</th><th>Ngoài PB</th><th style="min-width:180px">Tiến độ</th></tr></thead><tbody>';
   xs.forEach(function(k){var S=pbSoSanh(k.spmX,K);if(!S){h+='<tr><td><b>'+esc(k.id)+'</b></td><td colspan="6">'+pbONoi(k.spmX,K)+'</td></tr>';return;}
     T.pb+=S.pb;T.done+=S.done;T.con+=S.con;T.vuot+=S.vuot;T.ngoai+=S.ngoai;var c=S.pc>=99.5?'var(--ok)':(S.pc>=50?'var(--warn)':'var(--bad)');
     h+='<tr><td><b>'+esc(k.id)+'</b></td><td class="n">'+fm(S.pb,0)+'</td><td class="n"><b>'+fm(S.done,0)+'</b></td><td class="n">'+fm(S.con,0)+'</td><td class="n">'+fm(S.vuot,0)+'</td><td class="n">'+fm(S.ngoai,0)+'</td><td><div class="bt"><div class="hbt"><i style="width:'+Math.min(100,S.pc).toFixed(1)+'%;background:var(--f)"></i></div><span style="color:'+c+';font-weight:800">'+fm(S.pc,0)+'%</span></div><div class="muted" style="font-size:11px">'+((PB.PB_SHEETS||{})[k.spmX]?'đã nối link':'bản tĩnh')+' · <a href="#" data-pbdoi="'+esc(k.spmX)+'" style="color:inherit">đổi link</a></div>'+(PBNOI.mo===k.spmX?pbONoi(k.spmX,K):(PBNOI.msg[k.spmX]?'<div class="pbnm" role="status" style="color:'+(PBNOI.msg[k.spmX].ok?'var(--ok)':'var(--bad)')+'">'+esc(PBNOI.msg[k.spmX].t)+'</div>'+(PBNOI.msg[k.spmX].cfg?'<div class="muted" style="font-size:11.5px">Lưu trên máy này. Cho mọi máy: thêm vào <code>phan_bo_qc.js</code> → PB_SHEETS: <code>'+esc(PBNOI.msg[k.spmX].cfg)+'</code></div>':''):''))+'</td></tr>';});
@@ -2417,10 +2443,20 @@ function pbTuBang(rows){var out=[],cur=null,ym='';rows.forEach(function(r){var a
     if(pj&&/^\d{5}-\d{3}/.test(pj)){cur={ma:pj.split(' ')[0],ten:pj,kl:kl||0,conLai:cl||0,rt:rt?rt.split(/\s*[-,\/]\s*/).filter(Boolean).map(pbMaTo):[],to:[],lapThu:klt||0,khuLT:khu};out.push(cur);}
     if(!cur)return;if(rht){cur.to.push({to:pbMaTo(rht),kl:klr||0,ghi:klr==null?String(r[7]||'').trim():''});}else if(khu&&!cur.khuLT)cur.khuLT=khu;});
   return {ym:ym,rows:out};}
-var PB_LAST=0;
-function pbLamMoi(){var SH=PB.PB_SHEETS||{};PB_LAST=Date.now();Object.keys(SH).forEach(function(xw){var c=SH[xw];
+var PB_LAST=0;setTimeout(function(){try{pbLamMoi();}catch(e){}},400); /* 13/11: doc sheet PB ngay khi mo trang (truoc day chi doc o chu ky 5 phut) */
+/* 13/11 user: "dua ve LINK CHUNG cua minh de kiem soat" — file danh muc Google Sheet (PB.PB_DANHMUC): cot A = xuong (AHx), cot B = link sheet phan bo cua xuong.
+   Trang doc danh muc truoc (moi 5 phut) -> gop vao PB.PB_SHEETS (danh muc THANG cau hinh trong phan_bo_qc.js; link dan tay tren may van uu tien cao nhat). Khong doc duoc danh muc (chua chia se) thi dung cau hinh san co. */
+var PB_DM={tt:'',luc:'',n:0};
+function pbDanhMuc(cb){var dm=PB.PB_DANHMUC;if(!dm||!dm.id){cb();return;}
+  fetch('https://docs.google.com/spreadsheets/d/'+dm.id+'/gviz/tq?tqx=out:csv&headers=1&gid='+(dm.gid||'0'),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+   .then(function(t){if(/^\s*</.test(t))throw new Error('rieng');var loc={};try{loc=JSON.parse(localStorage.getItem('bdqcPbSheets')||'{}');}catch(e){}var n=0;PB.PB_SHEETS=PB.PB_SHEETS||{};
+     _csv(t).forEach(function(r){var x=String(r[0]||'').trim().toUpperCase(),u=String(r[1]||'');if(!/^AH\d$/.test(x))return;var m=/\/d\/([\w-]{20,})/.exec(u),g=/[#?&]gid=(\d+)/.exec(u);if(!m)return;n++;if(loc[x])return;PB.PB_SHEETS[x]={id:m[1],gid:g?g[1]:'0',dm:1};});
+     PB_DM={tt:'ok',luc:new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),n:n};cb();})
+   .catch(function(e){PB_DM={tt:e.message==='rieng'?'rieng':'loi',luc:'',n:0};cb();});}
+function pbLamMoi(){pbDanhMuc(pbLamMoi2);}
+function pbLamMoi2(){var SH=PB.PB_SHEETS||{};PB_LAST=Date.now();if(TAB==='pb')veSLPB();Object.keys(SH).forEach(function(xw){var c=SH[xw];
   fetch('https://docs.google.com/spreadsheets/d/'+c.id+'/gviz/tq?tqx=out:csv&gid='+(c.gid||'0'),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
-   .then(function(t){if(/^\s*</.test(t))throw new Error('html');var z=pbTuBang(_csv(t));if(!z.ym||!z.rows.length)return;window.PB_TO=window.PB_TO||{xuong:{}};var X=window.PB_TO.xuong=window.PB_TO.xuong||{};X[xw]=X[xw]||{};
+   .then(function(t){if(/^\s*</.test(t))throw new Error('html');var R0=_csv(t),bh=pbBHDoc(R0);if(bh){bh.src='sheet ban hành gia công '+xw+' đọc trực tiếp lúc '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});PB_BH[xw]=bh;if(TAB==='pb')veSLPB();return;}var z=pbTuBang(R0);if(!z.ym||!z.rows.length)return;window.PB_TO=window.PB_TO||{xuong:{}};var X=window.PB_TO.xuong=window.PB_TO.xuong||{};X[xw]=X[xw]||{};
      X[xw][z.ym]={src:'sheet PB '+xw+' đọc trực tiếp lúc '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),don:'t',rows:z.rows};if(TAB==='pb')veSLPB();})
    .catch(function(){});});}
 function khLamMoi(){pbLamMoi();if(window.KHSX_SNAP)return;KH_LAST=Date.now();

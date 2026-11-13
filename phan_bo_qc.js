@@ -137,5 +137,9 @@ window.PHAN_BO_QC = {
   /* Du an user BO khoi bao cao xuong (04/11/2026): Thuan Giao, GA T2 Phu Quoc */
   BO_QUA: {AH3:['10626-142','10625-030']},
   /* 06/11: sheet PHAN BO DU AN THEO TO cua tung xuong — ban_do_qc.html doc truc tiep moi 5 phut neu sheet chia se "bat ky ai co lien ket"; khong doc duoc thi dung ban tinh pb_to.js. Them xuong: AH4:{id:'...',gid:'0'} */
-  PB_SHEETS: {AH3:{id:'1cTlLxIoPYKZu8T9gYmFV16pVgKQXm6Mxoq0CF5wOq-A', gid:'0'}}
+  /* 13/11 user: LINK CHUNG de kiem soat — file danh muc trong Drive cua user (cot A xuong, cot B link sheet phan bo). Trang doc file nay moi 5 phut;
+     PB_SHEETS ben duoi chi la du phong khi danh muc chua chia se / khong doc duoc. */
+  PB_DANHMUC: {id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gid:'0'},
+  PB_SHEETS: {AH3:{id:'1cTlLxIoPYKZu8T9gYmFV16pVgKQXm6Mxoq0CF5wOq-A', gid:'0'},
+              AH4:{id:'1D35_CAD57fFx_JLmEXZhl_DXKpHx2YwvW-4sfCEZPWI', gid:'2103915313'}} /* AH4 13/11: sheet "BAN HANH GIA CONG" (tung cau kien) — trang tu nhan dang va quy doi */
 };
