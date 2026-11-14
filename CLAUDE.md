@@ -169,6 +169,16 @@ Do not invent missing business rules.
   Dùng khi xuất ghi chú / vault Obsidian: `node cong_cu_pc/obsidian_dump.js data.json` rồi
   `python cong_cu_pc/obsidian_xuat.py data.json khsx.csv <thư mục vault> [YYYY-MM]`. Vault sinh ra có tên nhân sự → không commit.
 
+### 4D. HARNESS (14/11/2026) — tự động hoá kiểm tra & chốt chặn
+- **Lệnh tổng**: `bash kiem_tra/harness.sh` (đầy đủ ~5 phút) · `--nhanh` (bỏ giao diện, ~5 giây) · `--trang ban_do_qc.html`.
+  Gồm: 1 cú pháp JS mọi trang + tệp .js (`kiem_tra/kiem_cu_phap.js`) · 2 dữ liệu: `qcdata.js` khớp `check`, `phan_bo_qc.js`/`pb_to.js`/`md_to.js` nạp được (`kiem_tra/kiem_du_lieu.js`)
+  · 3 bảo vệ: `qcdata.js` không bị sửa/stage, vault Obsidian không vào repo · 4–6 `ui_audit` mọi trang + tab Sản lượng PB + tab Mô phỏng.
+  Phải "DAT HET" trước khi giao / đẩy main. Lệnh tắt trong Claude Code: `/kiem-tra` (`.claude/commands/kiem-tra.md`).
+- **Hook** (`.claude/settings.json` → `.claude/hooks/`): SessionStart `mo_phien.sh` (nạp quy tắc, trạng thái git, ngày SPM, 5 dòng HANDOFF);
+  PreToolUse `chan_qcdata.py` CHẶN sửa / ghi đè / stage `qcdata.js` và chặn đưa thư mục vault Obsidian vào git; PostToolUse `kiem_sau_sua.py` kiểm cú pháp ngay sau mỗi lần sửa .html/.js (lỗi → báo lại để sửa liền).
+  Hook chặn xét theo từng dòng lệnh — nếu một lệnh shell chứa CHỮ mô tả các thao tác trên (vd viết tài liệu bằng heredoc) có thể bị chặn nhầm: ghi tài liệu bằng công cụ Edit/Write.
+- `kiem_tra/ui_audit.js` nhận biến môi trường `UA_BASE` (gốc URL), `UA_PRE` (JS chạy sau khi tải, vd bấm tab), `UA_WAIT`; mã thoát 1 khi còn lỗi.
+
 ## 5. WORKFLOW
 Before editing:
 1. Read HANDOFF.md.

@@ -31,11 +31,13 @@ const AUDIT=()=>{
   noName:out.noName.slice(0,6),noLabel:out.noLabel.slice(0,10),noAlt:out.noAlt.slice(0,5),small:agg(out.small),clickDiv:agg(out.clickDiv)};
 };
 const RX='[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{2712}\\u{2715}-\\u{27BF}\\u{2300}-\\u{23FF}]'; // ✓ ✔ (2713/2714) la dau chu duoc phep (CLAUDE.md 4B)
+/* 14/11 harness: UA_BASE = goc URL (mac dinh http://localhost:8765/), UA_PRE = doan JS chay sau khi tai trang (vd bam tab), UA_WAIT = ms cho them */
+const BASE=process.env.UA_BASE||'http://localhost:8765/',PRE=process.env.UA_PRE||'',WAIT=+process.env.UA_WAIT||0;
 const PAGES=process.argv.slice(2).length?process.argv.slice(2):['qc.html','ban_do_qc.html','app.html','doc.html','kiem_tra_waiting.html','section_tracker.html'];
 (async()=>{const b=await chromium.launch();let bad=0;
 for(const pg of PAGES)for(const th of ['dark','light'])for(const [w,h] of [[1400,900],[375,812]]){
   const c=await b.newContext({viewport:{width:w,height:h},hasTouch:w<900,isMobile:w<900});const p=await c.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
-  await p.route(/^https?:\/\/(?!localhost)/,r=>r.abort());await p.goto('http://localhost:8765/'+pg);await p.waitForTimeout(3000);
+  await p.route(/^https?:\/\/(?!localhost)/,r=>r.abort());await p.goto(BASE+pg);await p.waitForTimeout(3000);if(PRE){await p.evaluate(PRE).catch(()=>{});await p.waitForTimeout(WAIT||1500);}
   await p.evaluate(t=>document.documentElement.setAttribute('data-theme',t),th);await p.waitForTimeout(200);
   const r=await p.evaluate(AUDIT);
   const emo=await p.evaluate(rx=>(document.body.innerText.match(new RegExp(rx,'gu'))||[]).length,RX);
@@ -43,4 +45,4 @@ for(const pg of PAGES)for(const th of ['dark','light'])for(const [w,h] of [[1400
   const row={contrast:r.n.contrast,noLabel:r.n.noLabel,clickDiv:r.n.clickDiv,emoji:emo,lt44,loiJS:errs.length};bad+=Object.values(row).reduce((a,x)=>a+x,0);
   console.log(pg.padEnd(24),th.padEnd(6),String(w).padEnd(5),JSON.stringify(row));r.contrast.slice(0,3).forEach(x=>console.log('     tuong phan',x.cr,x.sel,x.t));
   await c.close();}
-console.log(bad?'CON LOI: '+bad+' (xem tren; tru ngoai le da biet)':'DAT HET');await b.close();})();
+console.log(bad?'CON LOI: '+bad+' (xem tren; tru ngoai le da biet)':'DAT HET');await b.close();if(bad)process.exitCode=1;})();
