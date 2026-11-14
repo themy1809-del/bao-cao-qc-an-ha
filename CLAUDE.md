@@ -143,6 +143,47 @@ Do not invent missing business rules.
 - Báo cáo phải để người ngoài đọc hiểu: tên dự án ĐẦY ĐỦ, nói rõ nợ HỒ SƠ GÌ
   kèm số lượng, đơn vị đúng (khối lượng = TẤN), số làm tròn 2 chữ số.
 
+### 4B. BẮT BUỘC dùng skill `ui-ux-pro-max` cho MỌI việc giao diện (user chốt 02/11/2026 — áp cho mọi phiên chat)
+- Skill nằm trong repo: `.claude/skills/ui-ux-pro-max/` (MIT, nguồn ghi ở `NGUON.txt`). Mỗi khi thiết kế / sửa / soát
+  trang web, báo cáo PDF, biểu đồ → gọi skill `ui-ux-pro-max` trước, tra quy tắc bằng
+  `python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<truy vấn>" --domain ux` (hoặc `chart`, `color`…).
+  Chỉ lấy QUY TẮC UX; bảng màu / font / bố cục landing mà skill gợi ý KHÔNG được thay màu thương hiệu & màu khâu ở trên.
+  Không dùng `--persist` trong repo nếu user chưa đồng ý.
+- Mọi trang HTML đang dùng đều có 3 khối chung — trang MỚI phải chép nguyên 3 khối này từ `qc.html`:
+  `<style id="uxpm">` (cuối `<head>`: viền focus, giảm chuyển động, vùng bấm 44px khi `pointer:coarse`, con trỏ, `.uxi/.uxdot`),
+  `<script id="uxpmico">` (đổi emoji/ký hiệu làm icon → SVG trên DOM; KHÔNG đụng dữ liệu, chữ copy Zalo/xuất file, biểu đồ, option, placeholder),
+  `<script id="uxpmjs">` (aria-label cho ô thiếu nhãn; `[onclick]`/`.clickable` → `tabindex=0 role=button`, Enter/Space).
+  Bảng icon `uxpmico` phải GIỐNG HỆT nhau ở mọi trang — sửa một chỗ thì đồng bộ tất cả.
+- Không dùng emoji làm icon trong UI (dùng SVG nét, 1 bộ). Giữ ✓ ✔ ↔ ↗ khi là dấu chữ trong câu/bảng; regex đọc dữ liệu (vd `/✓/`) không được đổi.
+  Chữ copy gửi Zalo / CSV được giữ emoji.
+- Tương phản chữ ≥ 4,5:1 (chữ lớn ≥ 3:1) ở CẢ theme sáng và tối; màu khâu dùng làm CHỮ được đậm/sáng hơn theo theme
+  (vd `qc.html`: tối `--fd #2DD4BF --f #60A5FA --p #4ADE80`; sáng `--w #B45309`) — màu tô biểu đồ giữ nguyên.
+  Trạng thái không chỉ dựa vào màu (kèm chữ / dấu). Không dùng tím (đã đổi `#7c3aed` → `#0e7490`; khâu Sơn = xanh lá).
+- Trước khi giao bất kỳ thay đổi giao diện: chạy `python3 -m http.server 8765 &` rồi `node kiem_tra/ui_audit.js [trang.html]`
+  → phải "DAT HET" (trừ ngoại lệ ghi trong đầu file). Với `qc.html` vẫn phải đối chiếu KPI Tổng quan + `QCDATA.check` lệch 0.
+- Báo cáo PDF (đánh giá QC, sản lượng…): theo cùng quy tắc — biểu đồ theo tháng = đường, phân biệt chuỗi bằng kiểu nét + chú giải,
+  số căn phải có phân cách nghìn. File có dữ liệu nhân sự KHÔNG commit vào repo công khai.
+
+### 4C. Skill Obsidian (12/11/2026)
+- `.claude/skills/obsidian/` (obsidian-markdown, obsidian-bases, json-canvas, knap, defuddle, obsidian-cli, obsidian-headless; MIT, nguồn trong `NGUON.txt`).
+  Dùng khi xuất ghi chú / vault Obsidian: `node cong_cu_pc/obsidian_dump.js data.json` rồi
+  `python cong_cu_pc/obsidian_xuat.py data.json khsx.csv <thư mục vault> [YYYY-MM]`. Vault sinh ra có tên nhân sự → không commit.
+
+### 4D. HARNESS (14/11/2026) — tự động hoá kiểm tra & chốt chặn
+- **Lệnh tổng**: `bash kiem_tra/harness.sh` (đầy đủ ~5 phút) · `--nhanh` (bỏ giao diện, ~5 giây) · `--trang ban_do_qc.html`.
+  Gồm: 1 cú pháp JS mọi trang + tệp .js (`kiem_tra/kiem_cu_phap.js`) · 2 dữ liệu: `qcdata.js` khớp `check`, `phan_bo_qc.js`/`pb_to.js`/`md_to.js` nạp được (`kiem_tra/kiem_du_lieu.js`)
+  · 3 bảo vệ: `qcdata.js` không bị sửa/stage, vault Obsidian không vào repo · 4–6 `ui_audit` mọi trang + tab Sản lượng PB + tab Mô phỏng.
+  Phải "DAT HET" trước khi giao / đẩy main. Lệnh tắt trong Claude Code: `/kiem-tra` (`.claude/commands/kiem-tra.md`).
+- **Hook** (`.claude/settings.json` → `.claude/hooks/`): SessionStart `mo_phien.sh` (nạp quy tắc, trạng thái git, ngày SPM, 5 dòng HANDOFF);
+  PreToolUse `chan_qcdata.py` CHẶN sửa / ghi đè / stage `qcdata.js` và chặn đưa thư mục vault Obsidian vào git; PostToolUse `kiem_sau_sua.py` kiểm cú pháp ngay sau mỗi lần sửa .html/.js (lỗi → báo lại để sửa liền).
+  Hook chặn xét theo từng dòng lệnh — nếu một lệnh shell chứa CHỮ mô tả các thao tác trên (vd viết tài liệu bằng heredoc) có thể bị chặn nhầm: ghi tài liệu bằng công cụ Edit/Write.
+- `kiem_tra/ui_audit.js` nhận biến môi trường `UA_BASE` (gốc URL), `UA_PRE` (JS chạy sau khi tải, vd bấm tab), `UA_WAIT`; mã thoát 1 khi còn lỗi.
+- **LINK CHUNG** (file Google Sheet của user, id `1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ`): tab `TAT CA LINK` = danh mục MỌI nguồn
+  (sheet dữ liệu, web app, file DATA Doc Control, trang web) kèm chủ sở hữu + quyền chia sẻ; tab `PHAN BO XUONG` (gid 73111327) = link phân bổ từng xưởng,
+  `ban_do_qc.html` đọc mỗi 5 phút. Bản sao không email trong repo: `kiem_tra/link_chung.csv`.
+  Thêm / đổi link nào trong mã thì cập nhật CẢ file link chung lẫn `link_chung.csv` — harness bước 3b (`kiem_link.js`) báo lỗi nếu mã có link chưa vào danh mục;
+  bước 3c (`kiem_nguon.js`) mở thật từng sheet nguồn, báo LỖI nếu sai tab / sai mẫu (14/11 xưởng AH4 xoá tab cũ → trang âm thầm mất số).
+
 ## 5. WORKFLOW
 Before editing:
 1. Read HANDOFF.md.
@@ -182,26 +223,32 @@ NEXT STEP:
 
 ## 7. HARNESS — LUẬT TỰ KIỂM CHUNG CHO MỌI CHAT (từ 13/11/2026)
 
-Áp cho **mọi chat, mọi hệ** (dashboard web trong repo này, Apps Script, và các app riêng tư làm ngoài repo).
+Áp cho **mọi chat, mọi hệ**: dashboard web trong repo này, Apps Script, và các app riêng tư làm ngoài repo.
 Mục đích: sửa chỗ này không làm hỏng chỗ kia; không giao thứ chưa kiểm.
+
+**Lệnh harness của từng hệ**
+- Repo này (hệ 3): `bash kiem_tra/harness.sh` — chi tiết ở mục 4D. Phải "DAT HET" trước khi giao / đẩy main.
+- App riêng tư (làm ngoài repo): lệnh harness ghi trong tài liệu bàn giao đi kèm gói mã nguồn của app đó.
+- Hệ chưa có lệnh harness (Apps Script): tự chạy đủ các cổng dưới đây bằng tay và ghi kết quả vào báo cáo.
 
 **Trước khi sửa**
 1. Đọc tài liệu bàn giao của đúng hệ đang làm (repo này: `HANDOFF.md`, `PROJECT_STATUS.md`).
-2. Chạy bộ kiểm hiện có để biết mã đang sạch. Đang đỏ sẵn → báo user trước, không sửa chồng lên.
+2. Chạy harness để biết mã đang sạch. Đang đỏ sẵn → báo user trước, không sửa chồng lên.
 
 **Trước khi giao** — đủ các cổng, cổng nào FAIL thì KHÔNG giao:
+
 | Cổng | Nội dung |
 |---|---|
 | 1. Phiên bản | Tăng phiên bản / ngày ở mọi chỗ ghi phiên bản; có ghi chú thay đổi |
 | 2. Cú pháp | `node --check` (JS / Apps Script bản copy), `python -m py_compile`; soát trùng tên hàm |
-| 3. Luật cứng | Mục 3 của file này (không đổi cột Sheet, không tạo deployment /exec mới, không sửa tay `qcdata.js`, dữ liệu vào HTML phải escape…) |
+| 3. Luật cứng | Mục 3 của file này (không đổi cột Sheet, không tạo deployment /exec mới, không sửa tay file dữ liệu SPM do PC đẩy, dữ liệu vào HTML phải escape…) |
 | 4. Số liệu chuẩn | Kết quả **trước ↔ sau** phải khớp: dashboard → `QCDATA.check.f/w/p` + KPI Tổng quan **lệch 0**; báo cáo / Excel → so từng ô với bản chuẩn |
 | 5. Test | Bộ test của hệ đó 0 FAIL |
 | 6. Giao diện | Thay đổi giao diện → mở trình duyệt thật (Playwright), 0 lỗi console, chụp ảnh làm bằng chứng |
 | 7. Gói giao | Không chứa bí mật / dữ liệu / chữ ký; đúng phiên bản; đúng file |
 
 **Quy tắc**
-- Hệ nào đã có lệnh harness riêng (ghi trong tài liệu bàn giao của hệ đó) thì giao **chỉ qua lệnh đó**, không đóng gói tay.
+- Hệ đã có lệnh harness thì giao **chỉ qua lệnh đó**, không đóng gói tay, không bỏ cổng.
 - Kết quả số liệu chỉ được đổi khi **user yêu cầu**; đổi ngoài ý muốn = lỗi hồi quy → sửa mã, không sửa bản chuẩn.
 - Thêm chức năng mới → thêm bài kiểm cho nó. Gặp lỗi mới → thêm bài kiểm bắt lỗi đó trước khi sửa.
 - Sửa cho một dự án / hạng mục **không được** làm đổi dự án / hạng mục khác — phải có kiểm chứng.

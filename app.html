@@ -12,6 +12,8 @@
 (function(){ if(!/[?&]embed=1/.test(location.search))return;
   var h=document.documentElement; h.classList.add('embed');
   try{ var t=parent.document.documentElement.dataset.theme; if(t) h.dataset.theme=(t==='dark'?'dark':'light'); }catch(e){}
+  /* 02/11/2026: doi theme o trang cha thi app nhung doi theo ngay (truoc chi doc 1 lan luc nap) */
+  try{ var pd=parent.document.documentElement; new MutationObserver(function(){ var t2=pd.dataset.theme; if(t2) h.dataset.theme=(t2==='dark'?'dark':'light'); }).observe(pd,{attributes:true,attributeFilter:['data-theme']}); }catch(e){}
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -74,14 +76,14 @@ button{cursor:pointer;background:none;border:0}
 svg.i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
 /* ---------- HEADER ---------- */
-.hdr{position:sticky;top:0;z-index:100;background:linear-gradient(103deg,var(--brand-hi),var(--brand) 46%,var(--brand-lo));
+.hdr{position:sticky;top:0;z-index:100;background:linear-gradient(103deg,#D01E16,var(--brand) 46%,var(--brand-lo));
   color:#fff;box-shadow:0 1px 0 rgba(0,0,0,.12),0 4px 18px -6px rgba(0,0,0,.4)}
 .hdr-in{max-width:1460px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .bd{display:flex;align-items:center;gap:11px;white-space:nowrap}
 .bd-m{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.28);
   display:grid;place-items:center;font-size:15px;box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
 .bd-t{font-size:14.5px;font-weight:800;letter-spacing:.01em;line-height:1.2}
-.bd-s{font-size:10px;font-weight:600;color:#ffd3d0;letter-spacing:.11em;text-transform:uppercase;line-height:1.5}
+.bd-s{font-size:10px;font-weight:600;color:#fff;letter-spacing:.11em;text-transform:uppercase;line-height:1.5}
 .hdr .gap{flex:1}
 .gap{flex:1;min-width:0}
 .hstat{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#ffe2e0;
@@ -271,6 +273,32 @@ tbody tr:hover td.stick{background:var(--row)}
   body{background:#fff}
 }
 </style>
+<style id="uxpm">
+/* ==== ux-pro-max (02/11/2026): lop chung theo skill ui-ux-pro-max — chi them, khong doi bo cuc ==== */
+:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+button,select,summary,[role=button],[onclick],label[for]{cursor:pointer}
+button:active,[role=button]:active{filter:brightness(.92)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+@media (pointer:coarse){button,select,input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea{min-height:44px}}
+.uxi{display:inline-flex;width:1.05em;height:1.05em;vertical-align:-.16em;flex:none}.uxi svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+[data-theme=light] [style*="color:#eab308"]{color:#A16207!important}
+[data-theme=light] [style*="color:#f97316"]{color:#C2410C!important}
+[data-theme=light] [style*="color:#16a34a"]{color:#15803D!important}
+[data-theme=light] [style*="color:#dc2626"],[data-theme=light] [style*="color:#DC2626"]{color:#B91C1C!important}
+[data-theme=dark] .view [style*="color:#dc2626"],[data-theme=dark] .view [style*="color:#DC2626"]{color:#F87171!important}
+[data-theme=dark] .view [style*="color:#2563eb"],[data-theme=dark] .view [style*="color:#2563EB"]{color:#60A5FA!important}
+[data-theme=dark] .view [style*="color:#0e7490"]{color:#22D3EE!important}
+[data-theme=dark] .view [style*="color:#888"]{color:#A3B0A8!important}
+[data-theme=dark] #dcMain a:not([class]),[data-theme=dark] #dcNav a:not([class]){color:#93C5FD}
+[data-theme=dark] .tag[style*="background:var(--bad)"]{color:#3b0a0a!important}
+[data-theme=light] .nav-item.active small{color:#fff}
+[data-theme=light] [style*="color:#888"]{color:#5f6772!important}
+[data-theme=light]{--muted:#5f6772}
+[data-theme=dark]{--muted:#A3B0A8}
+[data-theme=light]{--pzok:#14532d;--pzy:#713f12;--pzo:#7c2d12;--pzr:#7f1d1d}
+[data-theme=dark]{--pzok:#4ade80;--pzy:#facc15;--pzo:#fb923c;--pzr:#f87171}
+.uxdot{display:inline-block;width:.62em;height:.62em;border-radius:50%;vertical-align:.05em;margin:0 .15em}.uxdot.rong{background:transparent;border:1.5px solid #9CA3AF}
+</style>
 </head>
 <body>
 
@@ -301,7 +329,7 @@ tbody tr:hover td.stick{background:var(--row)}
       <div class="sub">Gõ đủ mã hoặc một phần. Tìm trong <b>tất cả dự án đã tải</b>.</div></div>
       <div class="gap"></div><span class="hint" id="idxSt"></span></div>
     <div class="srch">
-      <span class="ic">⌕</span>
+      <span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></span>
       <input class="fld" id="q1" placeholder="Ví dụ 05ASL2001-054" autocomplete="off" spellcheck="false" aria-label="Mã cấu kiện">
       <span class="kb"><kbd>/</kbd> <kbd>Enter</kbd></span>
     </div>
@@ -387,7 +415,7 @@ tbody tr:hover td.stick{background:var(--row)}
 </main>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="ddc_core.js"></script>
+<script>/* chong cache: tham so ?v= doi moi 5 phut de trinh duyet luon lay ban moi tu GitHub Pages */(function(){var v=Math.floor(Date.now()/3e5);["ddc_core.js"].forEach(function(f){document.write('<script src="'+f+'?v='+v+'"><\/script>');});})();</script>
 <script>
 /* ==================================================================
    APP TRA CUU HO SO QC — DDC AN HA
@@ -633,7 +661,7 @@ function tra1(){
   if(IDX[q])hits=IDX[q].slice();
   else KEYS.forEach(function(k){if(k.indexOf(q)>=0)IDX[k].forEach(function(x){hits.push(x);});});
   if(!hits.length){
-    box.innerHTML='<div class="void"><span class="ic">⌕</span><b>Không tìm thấy «'+esc(q)+'»</b>'+
+    box.innerHTML='<div class="void"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></span><b>Không tìm thấy «'+esc(q)+'»</b>'+
       '<p>Đã tìm trong '+N(KEYS.length)+' mã của các dự án đã tải. Thử tải thêm dự án khác ở thẻ <b>Dự án</b>.</p></div>';return;}
   nhoMa(q);
   var extra = hits.length>30 ? '<div class="hint" style="margin-bottom:8px">Khớp '+N(hits.length)+' cấu kiện — hiện 30 cây đầu.</div>' : '';
@@ -985,6 +1013,32 @@ function st(cls,l,v,s){return '<div class="stat '+cls+'"><div class="l">'+l+'</d
 /* ================= KHOI DONG ================= */
 veRecent(); veKQ(); taiReg();
 setTimeout(function(){ if(!Object.keys(IDX).length) go('du'); },600);
+</script>
+<script id="uxpmico">/* ux-pro-max (02/11/2026): doi emoji / ky hieu lam icon -> SVG ngay tren DOM hien thi. KHONG doi du lieu, chu copy/xuat file, bieu do, option, placeholder. */
+(function(){var P={"alert": "<path d=\"M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z\"/><path d=\"M12 9v4M12 17h.01\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m21 21-4.3-4.3\"/>", "okc": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"m8 12 3 3 5-6\"/>", "bell": "<path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\"/><path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\"/>", "folder": "<path d=\"M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z\"/>", "chart": "<path d=\"M3 3v18h18\"/><path d=\"M8 17V11M13 17V7M18 17v-4\"/>", "file": "<path d=\"M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z\"/><path d=\"M14 3v6h6\"/>", "files": "<path d=\"M15 2H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7Z\"/><path d=\"M15 2v5h5\"/><path d=\"M4 7v13a2 2 0 0 0 2 2h9\"/>", "archive": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"5\" rx=\"1\"/><path d=\"M5 9v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9M10 13h4\"/>", "refresh": "<path d=\"M21 12a9 9 0 1 1-3-6.7L21 8\"/><path d=\"M21 3v5h-5\"/>", "siren": "<path d=\"M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86Z\"/><path d=\"M12 8v4M12 16h.01\"/>", "map": "<path d=\"M9 4 3 6v14l6-2 6 2 6-2V4l-6 2Z\"/><path d=\"M9 4v14M15 6v14\"/>", "puzzle": "<rect x=\"4\" y=\"4\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"13\" y=\"4\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"4\" y=\"13\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"13\" y=\"13\" width=\"7\" height=\"7\" rx=\"1\"/>", "repeat": "<path d=\"m17 2 4 4-4 4\"/><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\"/><path d=\"m7 22-4-4 4-4\"/><path d=\"M21 13v1a4 4 0 0 1-4 4H3\"/>", "truck": "<path d=\"M3 6h11v10H3zM14 9h4l3 3v4h-7\"/><circle cx=\"7\" cy=\"18\" r=\"2\"/><circle cx=\"17\" cy=\"18\" r=\"2\"/>", "thumb": "<path d=\"M7 10v11H4V10Z\"/><path d=\"M7 10l4-8a3 3 0 0 1 3 3v4h5a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 20H7\"/>", "monitor": "<rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\"/><path d=\"M8 21h8M12 17v4\"/>", "pin": "<path d=\"M12 17v5\"/><path d=\"M9 3h6l-1 5 3 3v2H7v-2l3-3Z\"/>", "note": "<path d=\"M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z\"/><path d=\"M8 13h8M8 17h5\"/>", "link": "<path d=\"M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7\"/><path d=\"M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7\"/>", "clip": "<rect x=\"8\" y=\"2\" width=\"8\" height=\"4\" rx=\"1\"/><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"/>", "user": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21a8 8 0 0 1 16 0\"/>", "hourglass": "<path d=\"M6 2h12M6 22h12M7 2v4l5 6 5-6V2M7 22v-4l5-6 5 6v4\"/>", "alarm": "<circle cx=\"12\" cy=\"13\" r=\"8\"/><path d=\"M12 9v4l2 2M5 3 2 6M22 6l-3-3\"/>", "x": "<path d=\"M18 6 6 18M6 6l12 12\"/>", "rot": "<path d=\"M21 12a9 9 0 1 1-3-6.7L21 8\"/><path d=\"M21 3v5h-5\"/>", "menu": "<path d=\"M4 6h16M4 12h16M4 18h16\"/>", "pen": "<path d=\"M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z\"/>", "star": "<path fill=\"currentColor\" d=\"m12 2 3 6.5 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.1l1.5-7L2 9.3l7-.8Z\"/>", "lr": "<path d=\"m8 7-5 5 5 5M16 7l5 5-5 5\"/>", "help": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01\"/>"},M={"⚠️": "alert", "⚠": "alert", "🔍": "search", "✅": "okc", "🔔": "bell", "📁": "folder", "📊": "chart", "📄": "file", "📑": "files", "🗂️": "archive", "🗂": "archive", "🔄": "refresh", "🚨": "siren", "🗺️": "map", "🗺": "map", "🧩": "puzzle", "♻️": "repeat", "♻": "repeat", "🚚": "truck", "👍": "thumb", "🖥️": "monitor", "🖥": "monitor", "📌": "pin", "📝": "note", "🔗": "link", "📋": "clip", "👤": "user", "⏳": "hourglass", "⏰": "alarm", "✕": "x", "↻": "rot", "☰": "menu", "✎": "pen", "★": "star", "⇔": "lr", "❓": "help", "❔": "help"},DOT={"🔴": "#DC2626", "🟠": "#EA580C", "🟡": "#CA8A04", "🟢": "#16A34A", "🔵": "#2563EB", "⚪": "", "🟣": "#0E7490"};
+var keys=Object.keys(M).concat(Object.keys(DOT)).sort(function(a,b){return b.length-a.length;});
+var RX=new RegExp('('+keys.map(function(k){return k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}).join('|')+')\\uFE0F?','g');
+var SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,OPTION:1,SELECT:1,TITLE:1,NOSCRIPT:1,CODE:1,PRE:1};
+function mk(k){var s=document.createElement('span');
+  if(DOT.hasOwnProperty(k)){s.className='uxdot'+(DOT[k]?'':' rong');if(DOT[k])s.style.background=DOT[k];s.setAttribute('aria-hidden','true');return s;}
+  s.className='uxi';s.setAttribute('aria-hidden','true');s.innerHTML='<svg viewBox="0 0 24 24">'+P[M[k]]+'</svg>';return s;}
+function quet(root){if(!root)return;var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(n){var p=n.parentNode;if(!p||SKIP[p.nodeName]||p.closest&&p.closest('[contenteditable],svg,.uxi'))return 2;RX.lastIndex=0;return RX.test(n.nodeValue)?1:2;}}),ds=[],n;
+  while(n=w.nextNode())ds.push(n);
+  ds.forEach(function(t){var v=t.nodeValue,f=document.createDocumentFragment(),i=0,m;RX.lastIndex=0;
+    while(m=RX.exec(v)){if(m.index>i)f.appendChild(document.createTextNode(v.slice(i,m.index)));f.appendChild(mk(m[1]));i=m.index+m[0].length;}
+    if(i<v.length)f.appendChild(document.createTextNode(v.slice(i)));t.parentNode.replaceChild(f,t);});}
+quet(document.body);
+if(window.MutationObserver){var hang=[],tm=0;new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(x){if(x.nodeType===1||x.nodeType===3)hang.push(x.nodeType===3?x.parentNode:x);});if(m.type==='characterData'&&m.target.parentNode)hang.push(m.target.parentNode);});
+  clearTimeout(tm);tm=setTimeout(function(){var a=hang;hang=[];a.forEach(function(x){if(x&&x.isConnected)quet(x);});},30);}).observe(document.body,{childList:true,subtree:true,characterData:true});}
+})();</script>
+<script id="uxpmjs">/* ux-pro-max (02/11/2026): nhan cho o chua co nhan + ban phim cho phan tu bam duoc khong phai nut. Chi them thuoc tinh, khong doi hanh vi. */
+(function(){var SEL='[onclick]:not(button):not(a):not(input):not(select):not(textarea):not(label),.clickable';
+function chay(){
+  document.querySelectorAll('select,input:not([type=hidden]),textarea').forEach(function(e){if(e.getAttribute('aria-label')||(e.labels&&e.labels.length)||e.closest('label'))return;
+    var t=e.getAttribute('placeholder')||e.title||(e.tagName==='SELECT'&&e.options[0]?e.options[0].text.replace(/^[—\-\s]+|[—\-\s]+$/g,''):'');if(t)e.setAttribute('aria-label',t);});
+  document.querySelectorAll(SEL).forEach(function(e){if(e.hasAttribute('tabindex'))return;e.setAttribute('tabindex','0');if(!e.getAttribute('role'))e.setAttribute('role','button');});}
+document.addEventListener('keydown',function(e){var t=e.target;if((e.key==='Enter'||e.key===' ')&&t&&t.getAttribute&&t.getAttribute('role')==='button'&&!/^(BUTTON|A|INPUT|SELECT|TEXTAREA)$/.test(t.tagName)){e.preventDefault();t.click();}});
+chay();if(window.MutationObserver){var k=0;new MutationObserver(function(){clearTimeout(k);k=setTimeout(chay,80);}).observe(document.body,{childList:true,subtree:true});}})();
 </script>
 </body>
 </html>

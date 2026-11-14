@@ -1,9 +1,20 @@
 # PROJECT_STATUS.md
-# Cập nhật: 29/09/2026 — rà soát số liệu + nâng cấp dashboard `qc.html`
+# Cập nhật: 02/11/2026 — soát giao diện ui-ux-pro-max (doc.html theme tối, qc.html 11 tab, Doc Control) + PDF tháng 10
 
 ## STATUS
 
 ### DONE
+**Hệ 3 — 02/11/2026: soát giao diện bằng skill ui-ux-pro-max (4 việc user giao).**
+- `doc.html`: thêm theme TỐI đầy đủ (nút mặt trăng ở đầu trang, mặc định SÁNG, nhớ theo trình duyệt `localStorage doc_theme`),
+  biểu đồ dùng theme `dark` của ECharts khi tối; sửa tương phản chữ 2 theme. `ui_audit doc.html` = DAT HET (cả 10 mục con, 2 theme × 2 cỡ màn).
+- `qc.html`: audit TỪNG tab (11 tab × 2 theme × 2 cỡ màn) → 0 lỗi. Chỉ thêm CSS trong `<style id="uxpm">`: màu khâu/trạng thái dùng làm CHỮ
+  đậm hơn ở theme sáng, sáng hơn ở theme tối (màu tô biểu đồ giữ nguyên); chữ huy hiệu xếp hạng; nút xanh + link ở theme tối.
+  KPI Tổng quan 12/12 + `QCDATA.check` so bản cũ: **lệch 0**.
+- Tab Doc Control (`app.html?embed=1`): icon tìm kiếm ⌕ → SVG; chữ phụ đề đầu trang đạt 4,5:1; app nhúng đổi theme NGAY khi trang cha đổi.
+- `kiem_tra/ui_audit.js`: không đếm ✓ ✔ là emoji (CLAUDE.md §4B cho phép).
+- Báo cáo PDF sản lượng QC tháng 10/2026 (4 trang, biểu đồ đường): tính bằng CHÍNH hàm `_monthStats` của mail tháng; đối chiếu độc lập
+  bằng Python khớp (F 5.478,24 · W 5.327,03 · P 5.394,76 · SX 15.905,09 · NT/SX 92,9%). **Không commit** vào repo (repo công khai) — giao file cho user.
+
 **Hệ 3 — 27/10/2026: trang mới `ban_do_qc.html` (Bản đồ phân bổ QC 3D) — trên nhánh, CHƯA lên `main`.**
 Trang ĐỘC LẬP (không sửa `qc.html`/`app.html`/`doc.html`). Tổng mặt bằng 3D (CSS 3D) NM An Hạ theo sơ đồ
 user gửi → bấm xưởng → bản đồ bên trong xưởng: mỗi tổ gia công 1 ô (màu = công đoạn chính, cao = tấn NT),
