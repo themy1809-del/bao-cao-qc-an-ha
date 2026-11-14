@@ -178,6 +178,11 @@ Do not invent missing business rules.
   PreToolUse `chan_qcdata.py` CHẶN sửa / ghi đè / stage `qcdata.js` và chặn đưa thư mục vault Obsidian vào git; PostToolUse `kiem_sau_sua.py` kiểm cú pháp ngay sau mỗi lần sửa .html/.js (lỗi → báo lại để sửa liền).
   Hook chặn xét theo từng dòng lệnh — nếu một lệnh shell chứa CHỮ mô tả các thao tác trên (vd viết tài liệu bằng heredoc) có thể bị chặn nhầm: ghi tài liệu bằng công cụ Edit/Write.
 - `kiem_tra/ui_audit.js` nhận biến môi trường `UA_BASE` (gốc URL), `UA_PRE` (JS chạy sau khi tải, vd bấm tab), `UA_WAIT`; mã thoát 1 khi còn lỗi.
+- **LINK CHUNG** (file Google Sheet của user, id `1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ`): tab `TAT CA LINK` = danh mục MỌI nguồn
+  (sheet dữ liệu, web app, file DATA Doc Control, trang web) kèm chủ sở hữu + quyền chia sẻ; tab `PHAN BO XUONG` (gid 73111327) = link phân bổ từng xưởng,
+  `ban_do_qc.html` đọc mỗi 5 phút. Bản sao không email trong repo: `kiem_tra/link_chung.csv`.
+  Thêm / đổi link nào trong mã thì cập nhật CẢ file link chung lẫn `link_chung.csv` — harness bước 3b (`kiem_link.js`) báo lỗi nếu mã có link chưa vào danh mục;
+  bước 3c (`kiem_nguon.js`) mở thật từng sheet nguồn, báo LỖI nếu sai tab / sai mẫu (14/11 xưởng AH4 xoá tab cũ → trang âm thầm mất số).
 
 ## 5. WORKFLOW
 Before editing:

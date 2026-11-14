@@ -1,0 +1,34 @@
+nhom,ten,link,tab_gid,dung_o,vi_tri_ma
+Dữ liệu sản xuất,TỔNG HỢP BÁO CÁO DDC AN HẠ (KHSX),https://docs.google.com/spreadsheets/d/1kqMlDG4zJljpK9l6IpZf6-RAEdZj_CcwmliRcZgUMMs/edit,gid 0 (KHSX) · gid 731881045 (Dự án),"ban_do_qc: Sản lượng PB, Về đích, thẻ tổ · qc: tab KHSX",ban_do_qc.html KHSX_SHEET · qc.html KH_SHEET
+Dữ liệu sản xuất,01. MASTERDATA SẢN LƯỢNG 2026 (PKHSX),https://docs.google.com/spreadsheets/d/1G6Kno1cLo8psJMvmf0jmmxdh_c8QspvFOfR_SBuJr2o/edit,gid 944713689,ban_do_qc: sản lượng tổ tháng ≤ T9/2026 (md_to.js),cong_cu_pc/md_to_trich.py → md_to.js
+Dữ liệu sản xuất,SPM.xlsx → qcdata.js,"(file trên PC công ty, không có link)",—,"Mọi trang: SX, NT, chờ NT theo QC/tổ",qcdata.js (KHÔNG sửa tay)
+Phân bổ xưởng,PHÂN BỔ DỰ ÁN THÁNG 11/2026 XƯỞNG AH3,https://docs.google.com/spreadsheets/d/1cTlLxIoPYKZu8T9gYmFV16pVgKQXm6Mxoq0CF5wOq-A/edit?gid=0,gid 0,"ban_do_qc: Sản lượng PB AH3 (phân bổ tổ, hoàn thành, còn lại)",phan_bo_qc.js PB_SHEETS.AH3 · tab PHAN BO XUONG
+Phân bổ xưởng,DATA-AH4 2026-2027 (Ban hành gia công),https://docs.google.com/spreadsheets/d/1D35_CAD57fFx_JLmEXZhl_DXKpHx2YwvW-4sfCEZPWI/edit?gid=2143844597,tab DỮ LIỆU CHI TIẾT · gid 2143844597,ban_do_qc: Sản lượng PB AH4,phan_bo_qc.js PB_SHEETS.AH4 · tab PHAN BO XUONG
+Phân bổ xưởng,AH2 / AH6 / AH9,(chưa có),—,ban_do_qc: Sản lượng PB,tab PHAN BO XUONG cột B
+Chất lượng,1. THEO DÕI NCR NỘI BỘ - PHÒNG QC 2026,https://docs.google.com/spreadsheets/d/1DqerGEB_XpzUjcnvf8l3Srb93WXSRPwhdYRN34BUtlg/edit?gid=0,gid 0,qc: NCR live,qc.html (NCR LIVE)
+Quản lý dự án,Quản Lý Dự án,https://docs.google.com/spreadsheets/d/1hDz5QDbf4hEJAYJhq7JLlut9pMLK9wDXnAXaXt_1LCE/edit,tab đầu · DauVao · tab section từng dự án,"qc: Quản lý dự án, section · section_tracker.html",qc.html QLDA_SHEET_ID · section_tracker.html SID
+Doc Control,DANH MUC DỰ AN (registry),https://docs.google.com/spreadsheets/d/146lyk2TjTD6LwNR9R6bpXYhKzZxXISTIDvBzEbD5tz0/edit?gid=1397171776,gid 1397171776 (cột A tên · B id),qc: Doc Control · doc.html · app.html,qc.html DDC_REG · doc.html DDC_REG · app.html REG_ID
+Doc Control — file DATA dự án,DATA - BISON_U2,https://docs.google.com/spreadsheets/d/1L_PNa0ezvCVESZIOUgrDiQ5zRmTNiKgS4u5gSB3ev9k/edit,bảng gốc + DATA QC,qc: Doc Control · doc.html · app.html,"(lấy từ registry, không nằm trong mã)"
+Doc Control — file DATA dự án,DATA - SVĐVINFATS,https://docs.google.com/spreadsheets/d/1OSoqIJel1mmrz1LN39P2uxemskv31kly59wnWimN3cI/edit,bảng gốc + DATA QC,qc: Doc Control · doc.html · app.html,"(lấy từ registry, không nằm trong mã)"
+Doc Control — file DATA dự án,DATA - 10725-008 DGRP EVAPCO-GREGORY-STRUCTURAL,https://docs.google.com/spreadsheets/d/1FGb7z2cvKbA-ExXu_tWShuHXjNNsonVS0bZ_N2xpM9A/edit,bảng gốc + DATA QC,qc: Doc Control · doc.html · app.html,"(lấy từ registry, không nằm trong mã)"
+Doc Control — file DATA dự án,DATA - CHECKLIST_BISON (STEEL)_UNIT 1_CỤM AH_21.09.2026,https://docs.google.com/spreadsheets/d/1ZsKEknifxgvRsw0_ROiMCTdBX0QKxtTxPqYwXWArER8/edit,bảng gốc + DATA QC,qc: Doc Control · doc.html · app.html,"(lấy từ registry, không nằm trong mã)"
+Doc Control — file DATA dự án,DATA - 10725-011 DGRP VIOLA - DUCTING SDM & TED,https://docs.google.com/spreadsheets/d/15zHzlQPxmOwy-Rle1MPJblGedF8Cyh65fpVKkoJMieI/edit,bảng gốc + DATA QC,qc: Doc Control · doc.html · app.html,"(lấy từ registry, không nằm trong mã)"
+Doc Control — file DATA dự án,DATA - 10726-054 DG VIOLA CONDENSATE TANK,https://docs.google.com/spreadsheets/d/1EsChDAJNBFMnYwYiwgoKxA852wrpVAwuaqenAaOedJ0/edit,bảng gốc + DATA QC,qc: Doc Control · doc.html · app.html,"(lấy từ registry, không nằm trong mã)"
+Doc Control — file DATA dự án,DATA - EVAPCO - GREGORY - DUCTING,https://docs.google.com/spreadsheets/d/1ee9XfyCOnV1-ovW0I8SJayjhfrm3ejE7fJKI4uNQCGo/edit,bảng gốc + DATA QC,qc: Doc Control · doc.html · app.html,"(lấy từ registry, không nằm trong mã)"
+Doc Control — file DATA dự án,DATA - 10726-043 WOLF SUMMIT_STEEL (200POR17540),https://docs.google.com/spreadsheets/d/1WSM5ZIbYO_tlsLl4QGES1oC-TtQGBP-idghMCHq35W8/edit,bảng gốc + DATA QC,qc: Doc Control · doc.html · app.html,"(lấy từ registry, không nằm trong mã)"
+Doc Control — file DATA dự án,DATA - VIOLA-STRUCTURAL STEEL,https://docs.google.com/spreadsheets/d/1Og3ARe0vUScBCkaOcnGQkf-iqbT1KLFoBpQuohHT8zQ/edit,bảng gốc + DATA QC,qc: Doc Control · doc.html · app.html,"(lấy từ registry, không nằm trong mã)"
+Web App,Phân công QC (Apps Script /exec),https://script.google.com/macros/s/AKfycbwXuNubSP2_0jbLfpQPQEpfFl0Dg0vrRaDUtKguPedtIFBYxeh8wDMmJYwC4pBTY_jx4g/exec,—,qc: lưu phân công QC dùng chung,apiurl.js QC_ASSIGN_API
+Web App,QC công việc (PMS),(chưa cấu hình),—,ban_do_qc: bảng công việc QC,pms_api.js QC_PMS_API
+Web App,Web App daidung.vn (user gửi 06/11),https://script.google.com/a/macros/daidung.vn/s/AKfycbxLMogGasnncseWDOjEHspXGqWHAlnStnpCphoDPJpt4Z_Fy940aGl_XwhzOdW9-xPe/exec,—,CHƯA dùng trong trang,—
+Nhân sự,Danh sách nhân sự (tab “Danh sach nhan su”),"(link do người dùng dán trên trang, lưu trên trình duyệt)","tab Danh sach nhan su · cột C,D,R,X",ban_do_qc: ảnh/trạng thái nhân sự,ban_do_qc.html (ô dán link)
+Nhân sự,Ảnh nhân sự (46 file Drive),"(id trong phan_bo_qc.js, trường anh:)",—,ban_do_qc: ảnh đại diện QC,phan_bo_qc.js NGUOI[].anh
+Khác (chưa dùng),Khối lượng tổ cập nhật hàng ngày,https://docs.google.com/spreadsheets/d/1vsNTmoV_4IEm1yHN59LMhnMCz_vpf29QOYZQQB9-nWA/edit,—,CHƯA dùng (đọc ra trống / khoá),—
+Link chung,QC An Hạ — LINK CHUNG (file này),https://docs.google.com/spreadsheets/d/1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ/edit,TAT CA LINK · PHAN BO XUONG (gid 73111327),ban_do_qc: đọc tab PHAN BO XUONG mỗi 5 phút,phan_bo_qc.js PB_DANHMUC
+Trang web (GitHub Pages),Dashboard QC (chính),https://themy1809-del.github.io/bao-cao-qc-an-ha/qc.html,—,11 tab dashboard,qc.html
+Trang web (GitHub Pages),Bản đồ phân bổ QC,https://themy1809-del.github.io/bao-cao-qc-an-ha/ban_do_qc.html,—,Mặt bằng 3D · Sản lượng PB · Mô phỏng,ban_do_qc.html
+Trang web (GitHub Pages),Document Control,https://themy1809-del.github.io/bao-cao-qc-an-ha/doc.html,—,Tra hồ sơ,doc.html
+Trang web (GitHub Pages),App tra cứu,https://themy1809-del.github.io/bao-cao-qc-an-ha/app.html,—,Tra mã / danh sách / bản vẽ,app.html
+Trang web (GitHub Pages),Đăng nhập,https://themy1809-del.github.io/bao-cao-qc-an-ha/dangnhap.html,—,Mở khoá qcdata.js,dangnhap.html
+Trang web (GitHub Pages),Kiểm tra waiting,https://themy1809-del.github.io/bao-cao-qc-an-ha/kiem_tra_waiting.html,—,Trang phụ,kiem_tra_waiting.html
+Trang web (GitHub Pages),Section tracker,https://themy1809-del.github.io/bao-cao-qc-an-ha/section_tracker.html,—,Trang phụ,section_tracker.html
+Trang web (GitHub Pages),Trang gốc,https://themy1809-del.github.io/bao-cao-qc-an-ha/index.html,—,Chuyển sang qc.html,index.html

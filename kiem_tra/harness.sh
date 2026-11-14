@@ -17,6 +17,8 @@ bao_ve(){ local ok=0
   if git ls-files --error-unmatch 'QC An Ha' >/dev/null 2>&1; then echo "LOI  vault Obsidian (co ten nhan su) dang nam trong repo"; ok=1; fi
   return $ok; }
 buoc "3. Bao ve (qcdata.js, du lieu nhan su)" bao_ve
+buoc "3b. Link trong ma deu co trong danh muc LINK CHUNG" node kiem_tra/kiem_link.js
+buoc "3c. Sheet nguon truc tuyen dung tab / dung mau" node kiem_tra/kiem_nguon.js
 if [ $NHANH -eq 0 ]; then
   PORT=8765; MO=0
   if ! curl -s -o /dev/null "http://localhost:$PORT/"; then python3 -m http.server $PORT >/dev/null 2>&1 & SRV=$!; MO=1; sleep 1.5; fi
