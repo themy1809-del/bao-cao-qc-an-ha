@@ -842,7 +842,7 @@ label.ck input{width:20px;height:20px}
   <div id="nhapOv" class="nhov" hidden role="dialog" aria-label="Nhập kết quả nghiệm thu cuối ca"><div class="nhwrap"><div class="nhbt">BẢN THỬ — chưa ghi về hệ thống</div><div id="nhapBody"></div></div></div>
 </div>
 
-<script>/* chong cache: tham so ?v= doi moi 5 phut de trinh duyet luon lay ban moi tu GitHub Pages */(function(){var v=Math.floor(Date.now()/3e5);["qcdata.js","qc_khoa.js","phan_bo_qc.js","md_to.js","pb_to.js","pms_api.js"].forEach(function(f){document.write('<script src="'+f+'?v='+v+'"><\/script>');});})();</script><!-- md_to.js: san luong TO tu MASTERDATA (PKHSX), sinh boi cong_cu_pc/md_to_trich.py -->
+<script>/* chong cache: tham so ?v= doi moi 5 phut de trinh duyet luon lay ban moi tu GitHub Pages */(function(){var v=Math.floor(Date.now()/3e5);["qcdata.js","qc_khoa.js","phan_bo_qc.js","md_to.js","pb_to.js","pb_gn.js","pms_api.js"].forEach(function(f){document.write('<script src="'+f+'?v='+v+'"><\/script>');});})();</script><!-- md_to.js: san luong TO tu MASTERDATA (PKHSX), sinh boi cong_cu_pc/md_to_trich.py -->
 <script>
 (function(){
 'use strict';
@@ -1523,6 +1523,24 @@ function pbBangTo(S,xw){ /* bang theo TO cua 1 xuong */
     var qc=t.qcG.length?t.qcG.map(function(n){return esc(n.split(' ').slice(-2).join(' '));}).join(', '):(t.qcN.length?t.qcN.map(function(q){return esc(q.n.split(' ').slice(-2).join(' '))+' <span class="muted">'+fm(q.t,0)+' t</span>';}).join(', '):'<span class="muted">chưa có QC ký</span>');
     h+='<tr class="click" data-to2="'+esc(xw+'.'+t.to)+'" tabindex="0" role="button"><td><b>'+esc(t.to)+'</b><div class="muted" style="font-size:11px">'+t.xong+'/'+t.n+' dự án xong</div></td><td class="qcn">'+qc+(t.qcG.length?'':' <span class="muted" style="font-size:11px">(theo chữ ký NT)</span>')+'</td><td class="n">'+fm(t.pb,0)+'</td><td class="n"><b>'+fm(t.done,0)+'</b></td><td class="n"'+(t.con>0.5?' style="color:var(--warn);font-weight:700"':'')+'>'+fm(t.con,0)+'</td><td class="n">'+fm(t.vuot,0)+'</td><td class="n">'+fm(t.ngoai,0)+'</td><td><div class="bt"><div class="hbt"><i style="width:'+Math.min(100,t.pc).toFixed(1)+'%;background:var(--f)"></i></div><span style="color:'+c+';font-weight:800">'+fm(t.pc,0)+'%</span></div></td></tr>';});
   return h+'</tbody></table></div></details>';}
+/* 14/11 user: "lay sheet ghi nhan san luong bao cao" — xuong AH3 tu ghi nhan KL giao / da lam theo TO (pb_gn.js, CHI khoi luong, khong luong). Dat canh SX theo SPM cung to, cung ky. */
+function pbGhiNhan(K){var G=window.PB_GN;if(!G||!G.THANG)return '';var mk=K.y+'-'+_pad2(K.m),L=G.THANG[mk];
+  var h='<details class="pbtd pbgn" open><summary>Xưởng tự ghi nhận sản lượng tháng '+K.m+'/'+K.y+' — KL xưởng giao / đã làm theo tổ (so với SX theo SPM)</summary>';
+  if(!L)return h+'<div class="note">Chưa có số xưởng ghi nhận tháng '+K.m+'/'+K.y+' (bản chụp '+esc(G.cap||'')+').</div></details>';
+  var MI=D.PL.indexOf('Miễn QC'),COL={f:7,w:8,p:9},SX={};
+  D.rows.forEach(function(r){if(r[6]===MI||!r[4]||r[4]<K.tu||r[4]>K.den)return;var k=D.X[r[1]]+'.'+D.T[r[2]];var o=SX[k]=SX[k]||{f:0,w:0,p:0};o.f+=+r[7]||0;o.w+=+r[8]||0;o.p+=+r[9]||0;});
+  var KN={f:'Ráp',w:'Hàn / mài',p:'Sơn'},T={g:0,l:0},rows='';
+  L.forEach(function(x){var t=G.TO[x[0]]||{ten:x[0],spm:[],k:'f'},g=x[1],l=x[2];if(g==null&&l==null)return;g=g||0;l=l||0;T.g+=g;T.l+=l;
+    var sx=null;if(t.spm.length){sx=0;t.spm.forEach(function(m){var o=SX[m];if(o)sx+=o[t.k]||0;});}
+    var pc=g>0?100*l/g:null,c=pc==null?'var(--mut)':(pc>=99.5?'var(--ok)':(pc>=50?'var(--warn)':'var(--bad)')),con=g-l;
+    rows+='<tr><td><b>'+esc(t.ten)+'</b><div class="muted" style="font-size:11px">'+esc(t.cd||'')+(t.xw&&t.xw!=='AH3'?' · xưởng '+esc(t.xw):'')+'</div></td><td>'+esc(KN[t.k]||'')+'</td><td class="n">'+fm(g,0)+'</td><td class="n"><b>'+fm(l,0)+'</b></td><td class="n"'+(con>0.5?' style="color:var(--warn);font-weight:700"':'')+'>'+(con>0.5?fm(con,0):(con<-0.5?'vượt '+fm(-con,0):'—'))+'</td>'
+      +'<td>'+(pc==null?'<span class="muted">không giao</span>':'<div class="bt"><div class="hbt"><i style="width:'+Math.min(100,pc).toFixed(1)+'%;background:var(--f)"></i></div><span style="color:'+c+';font-weight:800">'+fm(pc,0)+'%</span></div>')+'</td>'
+      +'<td class="n">'+(sx==null?'<span class="muted">không có mã SPM</span>':fm(sx,0)+'<div class="muted" style="font-size:11px">'+esc(t.spm.map(function(m){return m.split('.')[1];}).join(' + '))+(t.chua?' · chưa xác nhận mã':'')+'</div>')+'</td></tr>';});
+  var pT=T.g>0?100*T.l/T.g:0;
+  h+='<div class="tw3"><table class="tto xbt bdt"><thead><tr><th>Tổ</th><th>Khâu</th><th>Xưởng giao</th><th>Đã làm</th><th>Còn lại</th><th style="min-width:150px">Tiến độ</th><th>SX theo SPM cùng kỳ</th></tr></thead><tbody>'+rows
+    +'<tr class="tot"><td><b>Cộng</b></td><td></td><td class="n"><b>'+fm(T.g,0)+'</b></td><td class="n"><b>'+fm(T.l,0)+'</b></td><td class="n"><b>'+fm(Math.max(0,T.g-T.l),0)+'</b></td><td><b>'+fm(pT,0)+'%</b></td><td></td></tr></tbody></table></div>'
+    +'<div class="muted" style="font-size:11.5px">Nguồn: '+esc(G.nguon||'')+' · bản chụp '+esc(G.cap||'')+' · chỉ lấy cột khối lượng · đơn vị theo file xưởng. Cột SPM tính kỳ '+dVN(K.tu).slice(0,5)+' → '+dVN(K.den).slice(0,5)+' (ráp = Fitup, hàn = Welding, sơn = Painting); kỳ chốt của xưởng có thể khác.</div></details>';
+  return h;}
 function pbDai(S,m){ /* dai tien do 1 xuong */
   var tot=Math.max(1,S.pb+S.vuot),c=S.pc>=99.5?'var(--ok)':(S.pc>=50?'var(--warn)':'var(--bad)');
   return '<div class="pbst" title="So từng dòng phân bổ (tổ × dự án) với sản xuất tháng của chính tổ đó theo SPM"><div class="pbsb"><i style="width:'+(100*S.done/tot).toFixed(1)+'%;background:var(--f)"></i><i class="soc" style="width:'+(100*S.con/tot).toFixed(1)+'%;background:var(--mut)"></i><i style="width:'+(100*S.vuot/tot).toFixed(1)+'%;background:var(--gold)"></i></div>'
@@ -2170,6 +2188,7 @@ function veSLPB(){var el=document.getElementById('pbView');if(!el)return;if(TAB!
   h+='<div class="xbk pbk"><div><b>'+(KH_TT==='ok'?bcT(T.r):'—')+' t</b><span>Còn ráp — phân bổ KHSX</span></div><div><b>'+(KH_TT==='ok'?bcT(T.h):'—')+' t</b><span>Còn hàn — phân bổ KHSX</span></div><div><b>'+bcT(T.sx)+' t</b><span>Sản xuất tháng '+K.m+' (SPM)</span></div><div><b>'+bcT(T.nt)+' t</b><span>QC nghiệm thu tháng '+K.m+'</span></div></div>';
   if(KH_TT!=='ok')h+='<div class="note">'+(KH_TT==='err'?'Không đọc được KHSX — chưa có số phân bổ.':'Đang đọc KHSX…')+'</div>';
   if(TEAM.cd==='f')h+=pbBangTong(K);
+  h+=pbGhiNhan(K);
   h+=tongQuanXuong(X);
   h+='<details class="xbd"><summary>Chi tiết phân bổ theo xưởng & dự án</summary>';
   h+='<div class="bdc"><div class="bdh"><b>Phân bổ còn lại & sản xuất tháng theo xưởng (tấn)</b><span class="lg"><i style="background:var(--f)"></i>Còn ráp <i style="background:var(--w)"></i>Còn hàn <i class="soc" style="background:var(--mut)"></i>Sọc = SX tháng '+K.m+'</span></div>';
