@@ -948,7 +948,7 @@ setTimeout(_applyUi,0);
   var _base=null;
   function _fs(cb){try{fetch('qcdata.js?_cb='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){var i=t.indexOf('{'),j=t.lastIndexOf('}');if(i<0||j<=i){cb(null);return;}try{cb(_sig(JSON.parse(t.slice(i,j+1))));}catch(e){cb(null);}}).catch(function(){cb(null);});}catch(e){cb(null);}}
   _fs(function(s){_base=s;});
-  setInterval(function(){_fs(function(s){if(s&&_base&&s!==_base){ if(!sessionStorage.getItem('qc_rl')){ try{sessionStorage.setItem('qc_rl','1');}catch(e){} location.reload(); } }});},180000);
+  setInterval(function(){_fs(function(s){if(s&&_base&&s!==_base){ /* 14/11 user 'cap nhat lien tuc': truoc day chi tai lai 1 lan / phien (qc_rl='1'); nay tai lai MOI LAN co phien ban moi, chan lap bang chu ky da tai */ var _da='';try{_da=sessionStorage.getItem('qc_rl')||'';}catch(e){} if(_da!==s){ try{sessionStorage.setItem('qc_rl',s);}catch(e){} location.reload(); } }});},180000);
 })();
 
 document.getElementById('srcd').textContent=D.updated;var _ls=document.getElementById('liveSt');if(_ls)_ls.textContent=(window.__QCSRC==='live'?'\u25CF Google \u00b7 LIVE':'\u25CF SPM n\u1ed9i b\u1ed9');
