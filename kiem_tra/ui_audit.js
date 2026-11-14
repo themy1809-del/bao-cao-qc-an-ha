@@ -33,7 +33,7 @@ const AUDIT=()=>{
 const RX='[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{2712}\\u{2715}-\\u{27BF}\\u{2300}-\\u{23FF}]'; // ✓ ✔ (2713/2714) la dau chu duoc phep (CLAUDE.md 4B)
 /* 14/11 harness: UA_BASE = goc URL (mac dinh http://localhost:8765/), UA_PRE = doan JS chay sau khi tai trang (vd bam tab), UA_WAIT = ms cho them */
 const BASE=process.env.UA_BASE||'http://localhost:8765/',PRE=process.env.UA_PRE||'',WAIT=+process.env.UA_WAIT||0;
-const PAGES=process.argv.slice(2).length?process.argv.slice(2):['qc.html','ban_do_qc.html','app.html','doc.html','kiem_tra_waiting.html','section_tracker.html'];
+const PAGES=process.argv.slice(2).length?process.argv.slice(2):['qc.html','ban_do_qc.html','app.html','doc.html','kiem_tra_waiting.html','section_tracker.html','cong_cu_pc/binh_chon/binh_chon.html'];
 (async()=>{const b=await chromium.launch();let bad=0;
 for(const pg of PAGES)for(const th of ['dark','light'])for(const [w,h] of [[1400,900],[375,812]]){
   const c=await b.newContext({viewport:{width:w,height:h},hasTouch:w<900,isMobile:w<900});const p=await c.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));

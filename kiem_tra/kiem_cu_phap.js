@@ -6,6 +6,7 @@ const fs=require('fs'),path=require('path'),vm=require('vm');
 const ROOT=path.resolve(__dirname,'..');
 let files=process.argv.slice(2);
 if(!files.length)files=fs.readdirSync(ROOT).filter(f=>/\.(html|js)$/.test(f)&&!/backup|truoc_/.test(f)).map(f=>path.join(ROOT,f));
+if(!process.argv.slice(2).length)files.push(path.join(ROOT,'cong_cu_pc/binh_chon/binh_chon.html')); /* 14/11: trang binh chon (HtmlService) nam trong thu muc con */
 let bad=0;
 function thu(code,ten,dong0){try{new vm.Script(code,{filename:ten});return null;}catch(e){const m=/:(\d+)/.exec((e.stack||'').split('\n')[0]);const ln=m?(+m[1]+dong0-1):'?';return ten+':'+ln+'  '+e.message;}}
 files.forEach(f=>{const ten=path.relative(ROOT,path.resolve(f));if(!fs.existsSync(f)){return;}const s=fs.readFileSync(f,'utf8');const loi=[];

@@ -38,6 +38,21 @@ Current deployment / environment:
 
 ## 2. CURRENT TASK
 
+**14/11/2026 — BÌNH CHỌN QC (user: "tạo file bình chọn, mỗi nhân viên chọn 2 người, cập nhật liền, đăng nhập mail công ty, 34 người được đánh giá, tập thể phòng QC bầu, layout đẹp kèm ảnh").**
+- Mới `cong_cu_pc/binh_chon/`: `BINH_CHON.gs` (Apps Script gắn Sheet, `'14/11 ban-1'`), `binh_chon.html` (HtmlService, có chế độ xem thử khi mở trực tiếp),
+  `HUONG_DAN_BINH_CHON.md`. Sheet **"QC An Hạ — BÌNH CHỌN (phiếu + kết quả)"** id `1yzJkKXO4VVUvZfV-dbCu4_1viZ7QXgoYm4jA71AFD6w`
+  (Drive `mydt@daidung.vn`) đã tạo + nạp: `UNG_VIEN` 34 người (từ file "Trích thâm niên hơn 1 năm"), `NGUOI_BO_PHIEU` 57 người (từ thư mục ảnh "Anh profile"
+  của thaonm, id `1IQg_d8LknxqrStGKtUadux41UefhCkKn`), `CAU_HINH` (SO_NGUOI_CHON=2, CHO_SUA_PHIEU, HIEN_KET_QUA, QUAN_TRI_EMAIL=mydt…).
+- Cơ chế: web app "Bất kỳ ai trong daidung.vn", thực thi với tư cách chủ sở hữu → `Session.getActiveUser()` cho email người bầu; lần đầu chọn tên → gắn email;
+  1 email = 1 phiếu (gửi lại thay phiếu cũ); không chọn chính mình (so MSNV + tên không dấu); `LockService`; `KET_QUA` ghi lại sau mỗi phiếu; trang poll 10 s.
+  Ảnh đọc từ Drive theo MSNV (fallback tên), base64, cache 6 h, theo lô 6 người.
+- Kiểm: `kiem_cu_phap` OK; `ui_audit` trang mới **DAT HET** (2 theme × 2 cỡ màn, 0 lỗi JS); đã thêm trang vào danh sách mặc định của `kiem_cu_phap.js` + `ui_audit.js`;
+  LINK CHUNG tab `TAT CA LINK` dòng 35 + `kiem_tra/link_chung.csv`. 3 khối `uxpm/uxpmico/uxpmjs` chép nguyên văn từ `qc.html` (đã xác minh giống hệt) —
+  lưu ý khối đó có `[data-theme=dark] .btn:not(.sec){color:#052e1c}` nên trang dùng class `.nut` thay `.btn`.
+- **CHƯA LÀM ĐƯỢC từ đây**: dán code vào Apps Script + Deploy (user làm theo HUONG_DAN §2). Chưa chạy thật với email thật → chưa xác minh `getActiveUser` trả email
+  (chỉ đúng khi deploy "trong daidung.vn"). Tiêu đề đợt bình chọn và tiêu chí = **UNKNOWN — NEED USER CONFIRMATION** (đang để "Nhân viên QC tiêu biểu 2026" trong `CAU_HINH`).
+- Tin nhắn link AH3 `GhiNhan_SL_BaoCao` user đã rút lại ("nhầm") → không làm gì; dòng 34 trong TAT CA LINK do user tự thêm trước đó, giữ nguyên.
+
 **15/10 — CÁCH 2: XỬ LÝ SPM TRÊN GOOGLE (IT không cho cài Python/Git trên máy công ty).**
 - Mới: `cong_cu_pc/SPM_TU_DONG.gs` (Apps Script độc lập, `v2026-10-15-goc`) + `cong_cu_pc/HUONG_DAN_SPM_GOOGLE.md`.
   Luồng: Export SPM → kéo vào Drive `SPM_UPLOAD` → trigger 30' → `spmXuLy_` (chuyển nguyên văn `spm_flatten.py`, nhánh

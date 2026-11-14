@@ -4,6 +4,10 @@
 ## STATUS
 
 ### DONE
+**Bình chọn QC — 14/11/2026 (nhánh, chờ user deploy Apps Script).** `cong_cu_pc/binh_chon/` (`BINH_CHON.gs` + `binh_chon.html` + hướng dẫn);
+Sheet "QC An Hạ — BÌNH CHỌN" đã tạo và nạp 34 ứng viên / 57 người bầu / cấu hình; đăng nhập email công ty, mỗi người 2 phiếu, kết quả tự cập nhật 10 s,
+ảnh nhân sự từ Drive. `ui_audit` DAT HET. Chi tiết HANDOFF.md §2 (14/11).
+
 **Hệ 3 — 02/11/2026: soát giao diện bằng skill ui-ux-pro-max (4 việc user giao).**
 - `doc.html`: thêm theme TỐI đầy đủ (nút mặt trăng ở đầu trang, mặc định SÁNG, nhớ theo trình duyệt `localStorage doc_theme`),
   biểu đồ dùng theme `dark` của ECharts khi tối; sửa tương phản chữ 2 theme. `ui_audit doc.html` = DAT HET (cả 10 mục con, 2 theme × 2 cỡ màn).

@@ -32,3 +32,4 @@ Trang web (GitHub Pages),Đăng nhập,https://themy1809-del.github.io/bao-cao-q
 Trang web (GitHub Pages),Kiểm tra waiting,https://themy1809-del.github.io/bao-cao-qc-an-ha/kiem_tra_waiting.html,—,Trang phụ,kiem_tra_waiting.html
 Trang web (GitHub Pages),Section tracker,https://themy1809-del.github.io/bao-cao-qc-an-ha/section_tracker.html,—,Trang phụ,section_tracker.html
 Trang web (GitHub Pages),Trang gốc,https://themy1809-del.github.io/bao-cao-qc-an-ha/index.html,—,Chuyển sang qc.html,index.html
+Bình chọn,QC An Hạ — BÌNH CHỌN (phiếu + kết quả),https://docs.google.com/spreadsheets/d/1yzJkKXO4VVUvZfV-dbCu4_1viZ7QXgoYm4jA71AFD6w/edit,CAU_HINH · UNG_VIEN · NGUOI_BO_PHIEU · PHIEU · KET_QUA · NHAT_KY,"Web app bình chọn QC (Apps Script gắn sheet): bỏ phiếu 2 người, kết quả tự cập nhật",cong_cu_pc/binh_chon/BINH_CHON.gs + binh_chon.html (không ghi ID vào mã)
