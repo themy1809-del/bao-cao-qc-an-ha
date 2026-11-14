@@ -1470,17 +1470,17 @@ function pbBHDoc(rows){var hi=-1;for(var i=0;i<Math.min(6,rows.length);i++){if(r
   return out.length?out:null;}
 function pbBHThang(xw,ym){var M=PB_BH[xw];if(!M)return null;var key=xw+'|'+ym+'|'+M.length;if(_PBBHC[key])return _PBBHC[key];
   var y=+ym.slice(0,4),m=+ym.slice(5,7),py=m===1?y-1:y,pm=m===1?12:m-1,tu=py+'-'+_pad2(pm)+'-21',den=ym+'-20',G={},doneT={},pend15=[];
-  function add(pj,to,w){var ma=pj.split(' ')[0],g=G[ma]=G[ma]||{ma:ma,ten:pj,kl:0,conLai:0,rt:[],to:{},lapThu:0,khuLT:''};g.kl+=w;g.to[to]=(g.to[to]||0)+w;}
+  function add(pj,to,w,n){var ma=pj.split(' ')[0],g=G[ma]=G[ma]||{ma:ma,ten:pj,kl:0,conLai:0,rt:[],to:{},ck:{},lapThu:0,khuLT:''};g.kl+=w;g.to[to]=(g.to[to]||0)+w;g.ck[to]=(g.ck[to]||0)+(n==null?1:n);}
   M.forEach(function(r){if(!r[2]||r[2]>den)return; /* chua ban hanh / ban hanh sau ky */
     if(r[5]){if(r[5]<tu||r[5]>den)return;var to=r[4]||'';if(!to)return;add(r[0],to,r[1]);doneT[to]=(doneT[to]||0)+r[1];return;}
     var pl=r[3],mm=/^RHT(\d+)$/.exec(pl);if(mm){add(r[0],'TO'+mm[1]+'RH',r[1]);return;}
     var m2=/^RHT(\d+)\+(\d+)$/.exec(pl);if(m2){pend15.push([r[0],r[1],'TO'+m2[1]+'RH','TO'+m2[2]+'RH']);return;}
     if(pl)add(r[0],pl,r[1]);});
-  pend15.forEach(function(p){var a=doneT[p[2]]||0,b=doneT[p[3]]||0,sh=a+b>0?a/(a+b):0.5;add(p[0],p[2],p[1]*sh);add(p[0],p[3],p[1]*(1-sh));});
-  var rows=Object.keys(G).map(function(k){var g=G[k];g.to=Object.keys(g.to).map(function(t){return {to:t,kl:Math.round(g.to[t]*10)/10,ghi:''};}).filter(function(t){return t.kl>0.05;});g.kl=Math.round(g.kl*10)/10;return g;}).filter(function(g){return g.to.length;});
+  pend15.forEach(function(p){var a=doneT[p[2]]||0,b=doneT[p[3]]||0,sh=a+b>0?a/(a+b):0.5;add(p[0],p[2],p[1]*sh,sh);add(p[0],p[3],p[1]*(1-sh),1-sh);});
+  var rows=Object.keys(G).map(function(k){var g=G[k];g.to=Object.keys(g.to).map(function(t){return {to:t,kl:Math.round(g.to[t]*10)/10,ghi:'',ck:g.ck[t]||0};}).filter(function(t){return t.kl>0.05;});g.kl=Math.round(g.kl*10)/10;return g;}).filter(function(g){return g.to.length;});
   return _PBBHC[key]={src:PB_BH[xw].src||('sheet ban hành gia công '+xw),don:'t',bh:1,rows:rows,doneT:doneT};}
 function pbToXuong(xw,ym){var z=PB_BH[xw]?pbBHThang(xw,ym):(((window.PB_TO||{}).xuong||{})[xw]||{})[ym];if(!z)return null;var to={},tong=0;
-  z.rows.forEach(function(r){tong+=r.kl||0;(r.to||[]).forEach(function(t){if(!t.to)return;var k=xw+'.'+t.to,o=to[k]=to[k]||{kl:0,ds:[]};o.kl+=t.kl||0;o.ds.push({ma:r.ma,ten:r.ten,kl:t.kl||0,ghi:t.ghi||'',rt:r.rt||[],lapThu:r.lapThu||0,khuLT:r.khuLT||''});});});
+  z.rows.forEach(function(r){tong+=r.kl||0;(r.to||[]).forEach(function(t){if(!t.to)return;var k=xw+'.'+t.to,o=to[k]=to[k]||{kl:0,ds:[]};o.kl+=t.kl||0;o.ds.push({ma:r.ma,ten:r.ten,kl:t.kl||0,ck:t.ck||0,ghi:t.ghi||'',rt:r.rt||[],lapThu:r.lapThu||0,khuLT:r.khuLT||''});});});
   return {to:to,tong:tong,n:z.rows.length,rows:z.rows,src:z.src,bhDone:z.doneT||null};}
 /* 13/11 user: "ghi nhan hoan thanh / con ton so voi phan bo" — so tung dong PB (to x du an) voi SX thang cua CHINH to do, du an do (SPM, tan rap r[7], theo ngay SX trong ky).
    hoan thanh = min(SX, PB) · con lai = PB - SX (neu > 0) · vuot = SX - PB (neu > 0) · ngoai PB = SX cua to/du an khong co trong sheet · thau phu = dong PB cua to khong co ma SPM (khong theo doi duoc). */
@@ -1489,10 +1489,10 @@ function pbSoSanh(xw,K){var P=pbToXuong(xw,K.y+'-'+_pad2(K.m));if(!P)return null
   var o={pb:0,done:0,con:0,vuot:0,ngoai:0,thau:0,nDong:0,nXong:0,ds:[],src:P.src},used={};
   Object.keys(P.to).forEach(function(tk){var spm=/\.TO\d+R[HT]$/.test(tk);P.to[tk].ds.forEach(function(d){if(!(d.kl>0))return;if(!spm){o.thau+=d.kl;return;}
     var key=tk+'|'+bcMa(d.ma),sx=SX[key]||0;used[key]=1;o.pb+=d.kl;o.nDong++;var dn=Math.min(sx,d.kl);o.done+=dn;o.con+=Math.max(0,d.kl-sx);o.vuot+=Math.max(0,sx-d.kl);if(sx>=d.kl*0.995)o.nXong++;
-    o.ds.push({to:tk.split('.').slice(1).join('.'),ma:d.ma,ten:bcTenDep(bcTen(d.ten)),pb:d.kl,sx:sx});});});
+    o.ds.push({to:tk.split('.').slice(1).join('.'),ma:d.ma,ten:bcTenDep(bcTen(d.ten)),pb:d.kl,sx:sx,ck:d.ck||0});});});
   Object.keys(SX).forEach(function(k){if(!used[k])o.ngoai+=SX[k];});o.pc=o.pb>0?100*o.done/o.pb:0;
   /* 13/11 user: "muon ca tung to, vi QC phu trach theo to" — gop theo TO + QC phu trach (PHU_TRACH khai bao; khong co thi lay QC ky NT nhieu nhat cho to trong ky) */
-  var TT={};o.ds.forEach(function(d){var t=TT[d.to]=TT[d.to]||{to:d.to,pb:0,done:0,con:0,vuot:0,ngoai:0,n:0,xong:0};t.pb+=d.pb;t.done+=Math.min(d.sx,d.pb);t.con+=Math.max(0,d.pb-d.sx);t.vuot+=Math.max(0,d.sx-d.pb);t.n++;if(d.sx>=d.pb*0.995)t.xong++;});
+  var TT={};o.ds.forEach(function(d){var t=TT[d.to]=TT[d.to]||{to:d.to,pb:0,done:0,con:0,vuot:0,ngoai:0,n:0,xong:0,ck:0,pjs:[]};t.ck+=d.ck||0;if(d.ck>0)o.coCK=1;t.pjs.push(bcMa(d.ma));t.pb+=d.pb;t.done+=Math.min(d.sx,d.pb);t.con+=Math.max(0,d.pb-d.sx);t.vuot+=Math.max(0,d.sx-d.pb);t.n++;if(d.sx>=d.pb*0.995)t.xong++;});
   Object.keys(SX).forEach(function(k){if(used[k])return;var to=k.split('|')[0].split('.').slice(1).join('.');var t=TT[to];if(t)t.ngoai+=SX[k];});
   var OK=D.PL.indexOf('Đã QC (AH)'),QT={};D.rows.forEach(function(r){if(r[1]!==iX||r[6]!==OK||!r[3]||r[3]<K.tu||r[3]>K.den)return;var t=+r[7]||0;if(t<=0)return;var to=D.T[r[2]];if(!TT[to])return;var q=QT[to]=QT[to]||{};var nm=qName(+r[5]);q[nm]=(q[nm]||0)+t;});
   var GI={};(PB.PHU_TRACH||[]).forEach(function(pp){if(pp.x!==xw||!pp.to)return;pp.to.forEach(function(tn){(GI[tn]=GI[tn]||[]).push(bcQC(pp.qc));});});
@@ -1681,8 +1681,8 @@ function tongQuanXuong(PX){
     var toNT={};qs.forEach(function(n){Object.keys(Q[n].to).forEach(function(tk){toNT[tk]=(toNT[tk]||0)+Q[n].to[tk];});});
     /* 13/11 user: "thiet ke tren cai bang nay de nhin tong quan nhat" -> 3 cot PB to / Hoan thanh / Con lai ngay tren dong QC (PB cua cac to QC phu trach, chia theo ty le QC da NT tren to) */
     var SPB=(TEAM.cd==='f')?pbSoSanh(k.spmX,K):null,TPB={};if(SPB)SPB.tos.forEach(function(t){TPB[k.spmX+'.'+t.to]=t;});
-    var rows=qs.map(function(n){var o=Q[n],kl=0,cl=0,pb=0,pd=0,pc2=0;Object.keys(o.to).forEach(function(tk){var sh=toNT[tk]>0?o.to[tk]/toNT[tk]:0;kl+=(toSX[tk]||0)*sh;cl+=(toTon[tk]||0)*sh;var tp=TPB[tk];if(tp){pb+=tp.pb*sh;pd+=tp.done*sh;pc2+=tp.con*sh;}});
-      var nm=(/^[a-z0-9._]+$/.test(n)?(bcQC(n)!==n?bcQC(n):'QC '+n):n),key=(/^[a-z0-9._]+$/.test(n)?n:(D.Q[qIndexTen(n)]||''));return {n:nm,key:key,key0:n,pb:pb,pd:pd,pcl:pc2,ntc:o.ntc,fd:o.fd,pj:Object.keys(o.pj).length,ck:o.ck,kl:kl,nt:o.nt,cl:cl,tos:Object.keys(o.to).sort(function(a,b){return o.to[b]-o.to[a];}).map(function(t){return t.split('.').slice(1).join('.');}).join(', ')};});
+    var rows=qs.map(function(n){var o=Q[n],kl=0,cl=0,pb=0,pd=0,pc2=0,pbck=0,pbpj={};Object.keys(o.to).forEach(function(tk){var sh=toNT[tk]>0?o.to[tk]/toNT[tk]:0;kl+=(toSX[tk]||0)*sh;cl+=(toTon[tk]||0)*sh;var tp=TPB[tk];if(tp){pb+=tp.pb*sh;pd+=tp.done*sh;pc2+=tp.con*sh;pbck+=tp.ck*sh;if(sh>0)tp.pjs.forEach(function(m){pbpj[m]=1;});}});
+      var nm=(/^[a-z0-9._]+$/.test(n)?(bcQC(n)!==n?bcQC(n):'QC '+n):n),key=(/^[a-z0-9._]+$/.test(n)?n:(D.Q[qIndexTen(n)]||''));return {n:nm,key:key,key0:n,pb:pb,pd:pd,pcl:pc2,ntc:o.ntc,fd:o.fd,pj:SPB?Object.keys(pbpj).length:Object.keys(o.pj).length,ck:SPB?Math.round(pbck):o.ck,kl:kl,nt:o.nt,cl:cl,tos:Object.keys(o.to).sort(function(a,b){return o.to[b]-o.to[a];}).map(function(t){return t.split('.').slice(1).join('.');}).join(', ')};});
     var mx={pj:0,ck:0,t:0};rows.forEach(function(z){mx.pj=Math.max(mx.pj,z.pj);mx.ck=Math.max(mx.ck,z.ck);mx.t=Math.max(mx.t,z.kl,z.nt,z.cl,z.fd||0,z.pb||0);});var FD=TEAM.cd==='f',HP=!!SPB;
     PBQ[k.spmX]={rows:rows,Q:Q,toPJ:toPJ,toNT:toNT,K:K};
     function col(v,m,c){var hh=m>0?Math.max(v>0?3:0,Math.round(64*v/m)):0;return '<i style="height:'+hh+'px;background:'+c+'"></i>';}
@@ -1694,12 +1694,13 @@ function tongQuanXuong(PX){
     function vb(v,m,cls,lbl,dl,note){var pc=m>0?Math.max(v>0?8:0,Math.round(100*v/m)):0;return '<div class="vbx"'+(dl?' data-l="'+esc(dl)+'"':'')+'><b'+(cls==='kcl'&&v<=0.5?' class="muted"':'')+'>'+fm(v,0)+(note?'<small class="vbn">'+esc(note)+'</small>':'')+'</b><div class="vbt"><i class="'+cls+'" style="height:'+pc+'%"></i></div>'+(lbl?'<span>'+lbl+'</span>':'')+'</div>';}
     /* 05/11 user: moi QC 1 DONG NGANG, 5 cot thang hang, cung thang trong xuong de so sanh anh em; dong sat nhau */
     var GC=HP?' style="grid-template-columns:minmax(170px,230px) repeat('+(FD?9:8)+',minmax(52px,78px))"':'';
-    var h='<div class="pqr qhd"'+GC+'><div></div><div>Dự án</div><div>Cấu kiện</div>'+(HP?'<div class="pbc">Phân bổ T'+K.m+' (t)</div><div class="pbc">Hoàn thành PB (t)</div><div class="pbc">Còn lại PB (t)</div>':'')+'<div>SX T'+K.m+' (t)</div><div>Đã NT hàng T'+K.m+' (t)</div><div>Chờ NT (t)</div>'+(FD?'<div>Final DIM (t)</div>':'')+'</div>';
+    var h='<div class="pqr qhd"'+GC+'><div></div>'+(HP?'<div class="pbc">Dự án phân bổ</div><div class="pbc">Cấu kiện phân bổ</div><div class="pbc">Tấn phân bổ T'+K.m+'</div>':'<div>Dự án</div><div>Cấu kiện</div>')+(HP?'<div class="pbc">Hoàn thành PB (t)</div><div class="pbc">Còn lại PB (t)</div>':'')+'<div>SX T'+K.m+' (t)</div><div>Đã NT hàng T'+K.m+' (t)</div><div>Chờ NT (t)</div>'+(FD?'<div>Final DIM (t)</div>':'')+'</div>';
     rows.forEach(function(z){var tl=z.tos.split(', '),tos=tl.slice(0,4).join(', ')+(tl.length>4?' +'+(tl.length-4):'');
       h+='<div class="pqr"'+GC+' title="Tổ: '+esc(z.tos)+'"><div class="qn">'+(z.p?avHtml(z.p,null,false):'<span class="av">'+esc(ini(z.n))+'</span>')+'<div><b>'+esc(z.n)+'</b><span>'+esc(tos)+'</span></div></div>'
-        +['pj','ck'].concat(HP?['pb','pd','pl']:[]).concat(['sx','nt','cl']).concat(FD?['fd']:[]).map(function(c){var V={pj:[z.pj,mx.pj,'kpj','Dự án'],ck:[z.ck,mx.ck,'kck','CK'],pb:[z.pb,mx.t,'kpb','PB'],pd:[z.pd,mx.t,'kpd','Xong PB'],pl:[z.pcl,mx.t,'kpl','Còn PB'],sx:[z.kl,mx.t,'ksx','SX t'],nt:[z.nt,mx.t,'knt','Đã NT'],cl:[z.cl,mx.t,'kcl','Chờ NT'],fd:[z.fd||0,mx.t,'kfd','Final DIM']}[c];
+        +['pj','ck'].concat(HP?['pb','pd','pl']:[]).concat(['sx','nt','cl']).concat(FD?['fd']:[]).map(function(c){var V={pj:[z.pj,mx.pj,'kpj','Dự án'],ck:[z.ck,mx.ck,'kck','CK'],pb:[z.pb,mx.t,'kpb','Tấn PB'],pd:[z.pd,mx.t,'kpd','Xong PB'],pl:[z.pcl,mx.t,'kpl','Còn PB'],sx:[z.kl,mx.t,'ksx','SX t'],nt:[z.nt,mx.t,'knt','Đã NT'],cl:[z.cl,mx.t,'kcl','Chờ NT'],fd:[z.fd||0,mx.t,'kfd','Final DIM']}[c];
+          if(c==='ck'&&HP&&!SPB.coCK)return '<div class="vbx pbc" data-l="CK PB" title="Sheet phân bổ của xưởng này không ghi số cấu kiện"><b class="muted">—</b><div class="vbt"></div></div>';
           var note=c==='nt'&&z.ntc>0.5?'+ tồn cũ '+fm(z.ntc,0)+' t':(c==='pd'&&z.pb>0.5?fm(100*z.pd/z.pb,0)+'% PB':'');var b=vb(V[0],V[1],V[2],'',V[3],note);
-          if(c==='pb'||c==='pd'||c==='pl')return b.replace('<div class="vbx"','<div class="vbx pbc" data-pbt="'+esc(k.spmX)+'" role="button" tabindex="0" title="PB của các tổ QC này phụ trách (chia theo tỷ lệ nghiệm thu) — bấm xem đối chiếu dự án"');
+          if(c==='pb'||c==='pd'||c==='pl'||(HP&&(c==='pj'||c==='ck')))return b.replace('<div class="vbx"','<div class="vbx pbc" data-pbt="'+esc(k.spmX)+'" role="button" tabindex="0" title="PB của các tổ QC này phụ trách (chia theo tỷ lệ nghiệm thu) — bấm xem đối chiếu dự án"');
           return b.replace('<div class="vbx"','<div class="vbx vbc" role="button" tabindex="0" data-pbq="'+esc(k.spmX+'|'+n0(z)+'|'+c)+'" title="Bấm xem dự án"');}).join('')+'</div>';});
     return h;}
   var out='';
