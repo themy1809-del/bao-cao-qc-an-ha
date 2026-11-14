@@ -141,7 +141,7 @@ window.PHAN_BO_QC = {
      PB_SHEETS ben duoi chi la du phong khi danh muc chua chia se / khong doc duoc. */
   /* 14/11 user "tiep tuc": sheet TRUNG GIAN cua user — IMPORTRANGE CHI cot khoi luong (A-E, I) tab GhiNhan_SL_BaoCao file luong xuong AH3 (file goc rieng tu, KHONG mo).
      Trang doc moi 5 phut; chua cho phep truy cap / chua chia se thi dung ban chup pb_gn.js. */
-  PB_GN_SHEET: {AH3:{id:'13yYS6Rk9Me8VHxlKXTzOc7pBqwSvDdtrXImsEeK7bMI', gid:'0'}},
+  PB_GN_SHEET: {AH3:{id:'13yYS6Rk9Me8VHxlKXTzOc7pBqwSvDdtrXImsEeK7bMI', gid:'0', gidDA:'11'}}, /* gidDA: tab DU AN = thang nay + thang truoc tu tab 'MM.YYYY QUAN TRI SAN XUAT' M:R */
   PB_DANHMUC: {id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gid:'73111327'}, /* 14/11: tab PHAN BO XUONG (tab TAT CA LINK = danh muc moi link, xem kiem_tra/link_chung.csv) */
   PB_SHEETS: {AH3:{id:'1cTlLxIoPYKZu8T9gYmFV16pVgKQXm6Mxoq0CF5wOq-A', gid:'0'},
               AH4:{id:'1D35_CAD57fFx_JLmEXZhl_DXKpHx2YwvW-4sfCEZPWI', gid:'2143844597'}} /* 14/11: tab cu 2103915313 bi xoa -> tab DU LIEU CHI TIET */ /* AH4 13/11: sheet "BAN HANH GIA CONG" (tung cau kien) — trang tu nhan dang va quy doi */
