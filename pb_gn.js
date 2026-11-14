@@ -2,7 +2,7 @@
    Nguon: file "XUONG AH3 - BANG LUONG XUONG" (rieng tu cua xuong), tab GhiNhan_SL_BaoCao,
    CHI lay cot A Xuong · B To · C Cong doan · D KL xuong giao · E KL da thuc hien · I Thang.
    KHONG lay cot don gia / thanh tien / luong (F–H) — repo cong khai.
-   Chup ngay 14/11/2026. Don vi theo file xuong (UNKNOWN — NEED USER CONFIRMATION: tan hay khac).
+   Chup ngay 14/11/2026. Thang cua xuong = THANG DUONG LICH (1 -> cuoi thang): doi chieu SPM T11 khop tung to (24, 85, 29, 521, 144, 143, 727). Don vi theo file xuong (UNKNOWN — NEED USER CONFIRMATION: tan hay khac).
    Moi dong: [ma to, giao, da lam]; null = o trong tren sheet. Ten to + khau + to SPM o mang TO. */
 window.PB_GN = {
   cap: '14/11/2026',
@@ -17,8 +17,8 @@ window.PB_GN = {
     RH4: {ten: 'Tổ ráp hoàn thiện 4 AH3', xw: 'AH3', cd: '05 Fitup', k: 'f', spm: ['AH3.TO4RH']},
     RH5: {ten: 'Tổ ráp hoàn thiện 5 AH3', xw: 'AH3', cd: '05 Fitup', k: 'f', spm: ['AH3.TO5RH']},
     RH6: {ten: 'Tổ ráp hoàn thiện 6 AH3', xw: 'AH3', cd: '05 Fitup', k: 'f', spm: ['AH3.TO6RH']},
-    /* Tổ hàn 1 ↔ mã SPM "HH": CHUA XAC NHAN (UNKNOWN — NEED USER CONFIRMATION) */
-    HA1: {ten: 'Tổ hàn 1 AH3', xw: 'AH3', cd: '06 Welding', k: 'w', spm: ['AH3.TO1HA', 'AH3.HH'], chua: 1},
+    /* 14/11 user xac nhan: Tổ hàn 1 = TO1HA. Tren SPM to nay ghi duoi ma HH tu 02/2026 (HH T11 = 727 = xuong ghi nhan 727; TO1HA chi co T01 = 57 ~ 56) -> cong ca hai */
+    HA1: {ten: 'Tổ hàn 1 AH3', xw: 'AH3', cd: '06 Welding', k: 'w', spm: ['AH3.TO1HA', 'AH3.HH']},
     HA2: {ten: 'Tổ hàn 2 AH3', xw: 'AH3', cd: '06 Welding', k: 'w', spm: ['AH3.TO2HA']},
     NM:  {ten: 'Tổ nắn chỉnh/mài chà AH3', xw: 'AH3', cd: '07 Clean', k: 'w', spm: []},
     TP3: {ten: 'Tổ thành phẩm AH3', xw: 'AH7', cd: '10 Painting', k: 'p', spm: ['AH3.TO1TP']},

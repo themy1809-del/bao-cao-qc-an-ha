@@ -1527,19 +1527,19 @@ function pbBangTo(S,xw){ /* bang theo TO cua 1 xuong */
 function pbGhiNhan(K){var G=window.PB_GN;if(!G||!G.THANG)return '';var mk=K.y+'-'+_pad2(K.m),L=G.THANG[mk];
   var h='<details class="pbtd pbgn" open><summary>Xưởng tự ghi nhận sản lượng tháng '+K.m+'/'+K.y+' — KL xưởng giao / đã làm theo tổ (so với SX theo SPM)</summary>';
   if(!L)return h+'<div class="note">Chưa có số xưởng ghi nhận tháng '+K.m+'/'+K.y+' (bản chụp '+esc(G.cap||'')+').</div></details>';
-  var MI=D.PL.indexOf('Miễn QC'),COL={f:7,w:8,p:9},SX={};
-  D.rows.forEach(function(r){if(r[6]===MI||!r[4]||r[4]<K.tu||r[4]>K.den)return;var k=D.X[r[1]]+'.'+D.T[r[2]];var o=SX[k]=SX[k]||{f:0,w:0,p:0};o.f+=+r[7]||0;o.w+=+r[8]||0;o.p+=+r[9]||0;});
+  var MI=D.PL.indexOf('Miễn QC'),SX={};
+  D.rows.forEach(function(r){if(r[6]===MI||!r[4]||r[4].slice(0,7)!==mk)return; /* thang duong lich — cung cach xuong ghi nhan */var k=D.X[r[1]]+'.'+D.T[r[2]];var o=SX[k]=SX[k]||{f:0,w:0,p:0};o.f+=+r[7]||0;o.w+=+r[8]||0;o.p+=+r[9]||0;});
   var KN={f:'Ráp',w:'Hàn / mài',p:'Sơn'},T={g:0,l:0},rows='';
   L.forEach(function(x){var t=G.TO[x[0]]||{ten:x[0],spm:[],k:'f'},g=x[1],l=x[2];if(g==null&&l==null)return;g=g||0;l=l||0;T.g+=g;T.l+=l;
     var sx=null;if(t.spm.length){sx=0;t.spm.forEach(function(m){var o=SX[m];if(o)sx+=o[t.k]||0;});}
     var pc=g>0?100*l/g:null,c=pc==null?'var(--mut)':(pc>=99.5?'var(--ok)':(pc>=50?'var(--warn)':'var(--bad)')),con=g-l;
     rows+='<tr><td><b>'+esc(t.ten)+'</b><div class="muted" style="font-size:11px">'+esc(t.cd||'')+(t.xw&&t.xw!=='AH3'?' · xưởng '+esc(t.xw):'')+'</div></td><td>'+esc(KN[t.k]||'')+'</td><td class="n">'+fm(g,0)+'</td><td class="n"><b>'+fm(l,0)+'</b></td><td class="n"'+(con>0.5?' style="color:var(--warn);font-weight:700"':'')+'>'+(con>0.5?fm(con,0):(con<-0.5?'vượt '+fm(-con,0):'—'))+'</td>'
       +'<td>'+(pc==null?'<span class="muted">không giao</span>':'<div class="bt"><div class="hbt"><i style="width:'+Math.min(100,pc).toFixed(1)+'%;background:var(--f)"></i></div><span style="color:'+c+';font-weight:800">'+fm(pc,0)+'%</span></div>')+'</td>'
-      +'<td class="n">'+(sx==null?'<span class="muted">không có mã SPM</span>':fm(sx,0)+'<div class="muted" style="font-size:11px">'+esc(t.spm.map(function(m){return m.split('.')[1];}).join(' + '))+(t.chua?' · chưa xác nhận mã':'')+'</div>')+'</td></tr>';});
+      +'<td class="n">'+(sx==null?'<span class="muted">không có mã SPM</span>':fm(sx,0)+'<div class="muted" style="font-size:11px">'+esc(t.spm.map(function(m){return m.split('.')[1];}).join(' + '))+'</div>')+'</td></tr>';});
   var pT=T.g>0?100*T.l/T.g:0;
-  h+='<div class="tw3"><table class="tto xbt bdt"><thead><tr><th>Tổ</th><th>Khâu</th><th>Xưởng giao</th><th>Đã làm</th><th>Còn lại</th><th style="min-width:150px">Tiến độ</th><th>SX theo SPM cùng kỳ</th></tr></thead><tbody>'+rows
+  h+='<div class="tw3"><table class="tto xbt bdt"><thead><tr><th>Tổ</th><th>Khâu</th><th>Xưởng giao</th><th>Đã làm</th><th>Còn lại</th><th style="min-width:150px">Tiến độ</th><th>SPM cùng tháng</th></tr></thead><tbody>'+rows
     +'<tr class="tot"><td><b>Cộng</b></td><td></td><td class="n"><b>'+fm(T.g,0)+'</b></td><td class="n"><b>'+fm(T.l,0)+'</b></td><td class="n"><b>'+fm(Math.max(0,T.g-T.l),0)+'</b></td><td><b>'+fm(pT,0)+'%</b></td><td></td></tr></tbody></table></div>'
-    +'<div class="muted" style="font-size:11.5px">Nguồn: '+esc(G.nguon||'')+' · bản chụp '+esc(G.cap||'')+' · chỉ lấy cột khối lượng · đơn vị theo file xưởng. Cột SPM tính kỳ '+dVN(K.tu).slice(0,5)+' → '+dVN(K.den).slice(0,5)+' (ráp = Fitup, hàn = Welding, sơn = Painting); kỳ chốt của xưởng có thể khác.</div></details>';
+    +'<div class="muted" style="font-size:11.5px">Nguồn: '+esc(G.nguon||'')+' · bản chụp '+esc(G.cap||'')+' · chỉ lấy cột khối lượng · đơn vị theo file xưởng. Xưởng ghi nhận theo tháng dương lịch (1 → cuối tháng), cột SPM tính cùng cách (ráp = Fitup, hàn = Welding, sơn = Painting) — lệch nhiều là dấu hiệu ghi sai tổ / sai mã.</div></details>';
   return h;}
 function pbDai(S,m){ /* dai tien do 1 xuong */
   var tot=Math.max(1,S.pb+S.vuot),c=S.pc>=99.5?'var(--ok)':(S.pc>=50?'var(--warn)':'var(--bad)');
