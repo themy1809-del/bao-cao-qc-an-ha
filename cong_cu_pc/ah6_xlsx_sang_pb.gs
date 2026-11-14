@@ -1,17 +1,18 @@
 /* ah6_xlsx_sang_pb.gs — TU CHUYEN file Excel "KE HOACH GIA CONG XUONG AH6-KCC (....).xlsx" (xuong AH6 up len Drive, anh chi co quyen XEM)
-   sang sheet dich "QC An Ha — PB AH6" theo MAU PB (mau/PB_TO_MAU.csv) de ban_do_qc.html tab San luong PB doc truc tiep.
+   sang tab WEB AH6 PHAN BO (gid 2003) cua file LINK CHUNG theo MAU PB (mau/PB_TO_MAU.csv) de ban_do_qc.html tab San luong PB doc truc tiep.
    Ly do: file .xlsx tren Drive KHONG doc duoc bang gviz / IMPORTRANGE — phai chuyen sang Google Sheet truoc.
-   PHIEN_BAN '14/11 ah6-xlsx'.
+   PHIEN_BAN '14/11 ah6-linkchung'.
 
    CAI DAT (1 lan, tai khoan mydt@daidung.vn):
      1. script.google.com -> Du an moi -> dan toan bo file nay.
      2. Bang ben trai: Dich vu (+) -> "Drive API" -> Them (giu ten "Drive").
      3. Cai dat du an (banh rang) -> Mui gio (GMT+07:00) Ho Chi Minh.
      4. Chon ham caiDat -> Chay -> cho phep quyen. (tao trigger 30 phut; chay thu 1 lan luon)
-   Chi DOC file xuong; chi GHI vao tab dau (gid 0) cua sheet dich. Ghi de tai cho, khong xoa / tao lai tab. */
-var PHIEN_BAN = '14/11 ah6-xlsx';
+   Chi DOC file xuong; chi GHI vao tab gid 2003 cua LINK CHUNG (khong dung tab khac). Ghi de tai cho, khong xoa / tao lai tab. */
+var PHIEN_BAN = '14/11 ah6-linkchung';
 var NGUON_ID = '1RfEk6C4suWi4PoBhNW1WIg3ctFjvm8eh';            // file Excel ke hoach gia cong AH6 (cua xuong, chi xem)
-var DICH_ID = '16HLvP_jiTy7cH33NgYFW8B_7mvxJ0yNsyKZ__eu1rI4';   // sheet dich trong Drive anh (tab dau = gid 0)
+var DICH_ID = '1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ';   // LINK CHUNG cua anh (14/11 gom ve 1 link)
+var DICH_GID = 2003;   // tab WEB AH6 PHAN BO
 var TZ = 'Asia/Ho_Chi_Minh';
 
 function caiDat() {
@@ -103,7 +104,8 @@ function ghiDich(kq) {
       out.push(['', j ? '' : String(i + 1), j ? '' : g.ten, j ? '' : tan(g.kl), '', '', t, tan(g.to[t]), '', '']);
     });
   });
-  var sh = SpreadsheetApp.openById(DICH_ID).getSheets()[0];   // gid 0 — ghi de tai cho
+  var sh = SpreadsheetApp.openById(DICH_ID).getSheets().filter(function (x) { return x.getSheetId() === DICH_GID; })[0];
+  if (!sh) throw new Error('Khong thay tab gid ' + DICH_GID + ' (WEB AH6 PHAN BO) trong LINK CHUNG — dung xoa / tao lai tab nay');
   sh.getRange(1, 1, Math.max(sh.getMaxRows(), out.length), 10).clearContent();
   if (sh.getMaxRows() < out.length) sh.insertRowsAfter(sh.getMaxRows(), out.length - sh.getMaxRows());
   var rg = sh.getRange(1, 1, out.length, 10);

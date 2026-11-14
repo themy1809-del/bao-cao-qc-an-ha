@@ -141,9 +141,9 @@ window.PHAN_BO_QC = {
      PB_SHEETS ben duoi chi la du phong khi danh muc chua chia se / khong doc duoc. */
   /* 14/11 user "tiep tuc": sheet TRUNG GIAN cua user — IMPORTRANGE CHI cot khoi luong (A-E, I) tab GhiNhan_SL_BaoCao file luong xuong AH3 (file goc rieng tu, KHONG mo).
      Trang doc moi 5 phut; chua cho phep truy cap / chua chia se thi dung ban chup pb_gn.js. */
-  PB_GN_SHEET: {AH3:{id:'13yYS6Rk9Me8VHxlKXTzOc7pBqwSvDdtrXImsEeK7bMI', gid:'0', gidDA:'11'}}, /* gidDA: tab DU AN = thang nay + thang truoc tu tab 'MM.YYYY QUAN TRI SAN XUAT' M:R */
+  PB_GN_SHEET: {AH3:{id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gid:'2001', gidDA:'2002'}}, /* 14/11 user "gom ve 1 link chung": tab WEB AH3 THEO TO (2001) / WEB AH3 THEO DU AN (2002) trong LINK CHUNG */ /* gidDA: tab DU AN = thang nay + thang truoc tu tab 'MM.YYYY QUAN TRI SAN XUAT' M:R */
   PB_DANHMUC: {id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gid:'73111327'}, /* 14/11: tab PHAN BO XUONG (tab TAT CA LINK = danh muc moi link, xem kiem_tra/link_chung.csv) */
   PB_SHEETS: {AH3:{id:'1cTlLxIoPYKZu8T9gYmFV16pVgKQXm6Mxoq0CF5wOq-A', gid:'0'},
               AH4:{id:'1D35_CAD57fFx_JLmEXZhl_DXKpHx2YwvW-4sfCEZPWI', gid:'2143844597'},
-              AH6:{id:'16HLvP_jiTy7cH33NgYFW8B_7mvxJ0yNsyKZ__eu1rI4', gid:'0'}} /* 14/11: AH6 = sheet DICH do cong_cu_pc/ah6_xlsx_sang_pb.gs tu chuyen tu file Excel .xlsx cua xuong (mau PB thang theo to) */ /* 14/11: tab cu 2103915313 bi xoa -> tab DU LIEU CHI TIET */ /* AH4 13/11: sheet "BAN HANH GIA CONG" (tung cau kien) — trang tu nhan dang va quy doi */
+              AH6:{id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gid:'2003'}} /* 14/11: AH6 = tab WEB AH6 PHAN BO (2003) trong LINK CHUNG, do cong_cu_pc/ah6_xlsx_sang_pb.gs tu chuyen tu file Excel .xlsx cua xuong (mau PB thang theo to) */ /* 14/11: tab cu 2103915313 bi xoa -> tab DU LIEU CHI TIET */ /* AH4 13/11: sheet "BAN HANH GIA CONG" (tung cau kien) — trang tu nhan dang va quy doi */
 };
