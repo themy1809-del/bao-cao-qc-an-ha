@@ -32,3 +32,4 @@ Trang web (GitHub Pages),Đăng nhập,https://themy1809-del.github.io/bao-cao-q
 Trang web (GitHub Pages),Kiểm tra waiting,https://themy1809-del.github.io/bao-cao-qc-an-ha/kiem_tra_waiting.html,—,Trang phụ,kiem_tra_waiting.html
 Trang web (GitHub Pages),Section tracker,https://themy1809-del.github.io/bao-cao-qc-an-ha/section_tracker.html,—,Trang phụ,section_tracker.html
 Trang web (GitHub Pages),Trang gốc,https://themy1809-del.github.io/bao-cao-qc-an-ha/index.html,—,Chuyển sang qc.html,index.html
+Dữ liệu sản xuất,QC An Hạ — SL XƯỞNG AH3 GHI NHẬN (sheet trung gian chỉ khối lượng),https://docs.google.com/spreadsheets/d/13yYS6Rk9Me8VHxlKXTzOc7pBqwSvDdtrXImsEeK7bMI/edit,gid 0 (IMPORTRANGE cột A–E + I tab GhiNhan_SL_BaoCao — không cột lương),ban_do_qc: Sản lượng PB → Xưởng tự ghi nhận sản lượng,phan_bo_qc.js PB_GN_SHEET (dự phòng pb_gn.js)
