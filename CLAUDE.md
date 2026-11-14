@@ -181,6 +181,8 @@ Do not invent missing business rules.
 - **LINK CHUNG** (file Google Sheet của user, id `1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ`): tab `TAT CA LINK` = danh mục MỌI nguồn
   (sheet dữ liệu, web app, file DATA Doc Control, trang web) kèm chủ sở hữu + quyền chia sẻ; tab `PHAN BO XUONG` (gid 73111327) = link phân bổ từng xưởng,
   `ban_do_qc.html` đọc mỗi 5 phút. Bản sao không email trong repo: `kiem_tra/link_chung.csv`.
+  **14/11 gom về 1 link**: thêm tab `WEB AH3 THEO TO` (gid 2001, IMPORTRANGE file lương AH3 CHỈ cột khối lượng), `WEB AH3 THEO DU AN` (2002), `WEB AH6 PHAN BO` (2003, Apps Script `cong_cu_pc/ah6_xlsx_sang_pb.gs` ghi từ file .xlsx xưởng AH6).
+  File này sẽ chia sẻ công khai (Người xem) → tab TAT CA LINK KHÔNG được chứa email, link file mở quyền SỬA, link file lương (đã che 14/11). Không xoá / tạo lại 3 tab WEB (mất gid).
   Thêm / đổi link nào trong mã thì cập nhật CẢ file link chung lẫn `link_chung.csv` — harness bước 3b (`kiem_link.js`) báo lỗi nếu mã có link chưa vào danh mục;
   bước 3c (`kiem_nguon.js`) mở thật từng sheet nguồn, báo LỖI nếu sai tab / sai mẫu (14/11 xưởng AH4 xoá tab cũ → trang âm thầm mất số).
 
