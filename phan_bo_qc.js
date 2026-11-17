@@ -144,6 +144,11 @@ window.PHAN_BO_QC = {
   PB_GN_SHEET: {AH3:{id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gid:'2001', gidDA:'2002'}}, /* 14/11 user "gom ve 1 link chung": tab WEB AH3 THEO TO (2001) / WEB AH3 THEO DU AN (2002) trong LINK CHUNG */ /* gidDA: tab DU AN = thang nay + thang truoc tu tab 'MM.YYYY QUAN TRI SAN XUAT' M:R */
   /* 17/11 user gui file "NHAP BAO CAO - AH1" (so che: cat, khoan). LINK CHUNG tab WEB AH1 DA CAT (2006) = QUERY(IMPORTRANGE '3.Bang Tong Hop') theo thang x xuong nhan x cong trinh x may;
      WEB AH1 KE HOACH (2007) = QUERY(IMPORTRANGE '1-CHI TIET AH1') ban hanh theo thang x xuong nhan x du an. Chi so tong, khong ten nguoi. */
+  /* 17/11 user gui file "KE HOACH CAT THEP AH1" (chia se: ai co link xem) — tab "1. Ke hoach cat theo lenh": moi LSX co Tong KL / Da cat / Con lai (TAN), ngay ban hanh, bat dau, ket thuc, canh bao tre. Doc truc tiep. */
+  AH1_LENH: {id:'17yFpN1X73_3j92P9L5gGpvlfmScvwCCTUgV9yioiUJA', gid:'2014866369', range:'A3:Y'},
+  /* 17/11 user (tin nhan 09:23): QC AH1 — LE MINH TRI phu trach CP2X, Ca phe Trung Nguyen, Cau diem nhan, Nui Tuyet; VU DAI PHONG cac du an con lai */
+  AH1_QC: [{qc:'Lê Minh Trí', ma:['10726-171','10626-110','10626-181','10626-155'], ten:/CP2X|TRUNG NGUY|ĐIỂM NHẤN|DIEM NHAN|SUNSET|NÚI TUYẾT|NUI TUYET/i},
+           {qc:'Vũ Đại Phong', conlai:1}],
   AH1_SHEET: {id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gidCat:'2006', gidKh:'2007'},
   PB_DANHMUC: {id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gid:'73111327'}, /* 14/11: tab PHAN BO XUONG (tab TAT CA LINK = danh muc moi link, xem kiem_tra/link_chung.csv) */
   PB_SHEETS: {AH3:{id:'1cTlLxIoPYKZu8T9gYmFV16pVgKQXm6Mxoq0CF5wOq-A', gid:'0'},
