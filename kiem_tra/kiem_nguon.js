@@ -11,6 +11,7 @@ const ban=fs.readFileSync(path.join(ROOT,'ban_do_qc.html'),'utf8'),qc=fs.readFil
 const khsx=(/KHSX_SHEET='([\w-]+)',KHSX_GID='(\d+)'/.exec(ban)||[]),reg=(/DDC_REG=\{id:'([\w-]+)',gid:'(\d+)'\}/.exec(qc)||[]);
 const DS=[];Object.keys(PB.PB_SHEETS||{}).forEach(x=>DS.push({ten:'Phân bổ '+x,id:PB.PB_SHEETS[x].id,gid:PB.PB_SHEETS[x].gid||'0',ok:t=>/Plan Workshop/i.test(t)||(/TH[AÁ]NG\s*\d{1,2}\s*\/\s*\d{4}/i.test(t)&&/\n[^\n]*\d{5}-\d{3}/.test(t))}));
 Object.keys(PB.PB_GN_SHEET||{}).forEach(x=>DS.push({ten:'Xưởng tự ghi nhận '+x+' (sheet trung gian)',id:PB.PB_GN_SHEET[x].id,gid:PB.PB_GN_SHEET[x].gid||'0',ok:t=>/KL xuong giao/i.test(t)&&/\d{1,2}\/\d{4}/.test(t)}));
+if(PB.AH1_SHEET){DS.push({ten:'AH1 đã cắt (link chung)',id:PB.AH1_SHEET.id,gid:PB.AH1_SHEET.gidCat,ok:t=>/xuong_nhan/i.test(t)&&/kg/i.test(t)});DS.push({ten:'AH1 kế hoạch (link chung)',id:PB.AH1_SHEET.id,gid:PB.AH1_SHEET.gidKh,ok:t=>/xuong_nhan/i.test(t)&&/kg/i.test(t)});}
 if(PB.PB_DANHMUC)DS.push({ten:'Link chung (PHAN BO XUONG)',id:PB.PB_DANHMUC.id,gid:PB.PB_DANHMUC.gid||'0',ok:t=>/(^|\n)"?AH\d"?,/.test(t)});
 if(khsx[1])DS.push({ten:'KHSX',id:khsx[1],gid:khsx[2],ok:t=>/T[oổ]ng kh[oố]i l[uư][oợ]ng/i.test(t),h2:1});
 if(reg[1])DS.push({ten:'Registry Doc Control',id:reg[1],gid:reg[2],ok:t=>/Spreadsheet ID/i.test(t)});
