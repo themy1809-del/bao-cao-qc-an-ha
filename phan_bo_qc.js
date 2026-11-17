@@ -142,6 +142,9 @@ window.PHAN_BO_QC = {
   /* 14/11 user "tiep tuc": sheet TRUNG GIAN cua user — IMPORTRANGE CHI cot khoi luong (A-E, I) tab GhiNhan_SL_BaoCao file luong xuong AH3 (file goc rieng tu, KHONG mo).
      Trang doc moi 5 phut; chua cho phep truy cap / chua chia se thi dung ban chup pb_gn.js. */
   PB_GN_SHEET: {AH3:{id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gid:'2001', gidDA:'2002'}}, /* 14/11 user "gom ve 1 link chung": tab WEB AH3 THEO TO (2001) / WEB AH3 THEO DU AN (2002) trong LINK CHUNG */ /* gidDA: tab DU AN = thang nay + thang truoc tu tab 'MM.YYYY QUAN TRI SAN XUAT' M:R */
+  /* 17/11 user gui file "NHAP BAO CAO - AH1" (so che: cat, khoan). LINK CHUNG tab WEB AH1 DA CAT (2006) = QUERY(IMPORTRANGE '3.Bang Tong Hop') theo thang x xuong nhan x cong trinh x may;
+     WEB AH1 KE HOACH (2007) = QUERY(IMPORTRANGE '1-CHI TIET AH1') ban hanh theo thang x xuong nhan x du an. Chi so tong, khong ten nguoi. */
+  AH1_SHEET: {id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gidCat:'2006', gidKh:'2007'},
   PB_DANHMUC: {id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gid:'73111327'}, /* 14/11: tab PHAN BO XUONG (tab TAT CA LINK = danh muc moi link, xem kiem_tra/link_chung.csv) */
   PB_SHEETS: {AH3:{id:'1cTlLxIoPYKZu8T9gYmFV16pVgKQXm6Mxoq0CF5wOq-A', gid:'0'},
               AH4:{id:'1D35_CAD57fFx_JLmEXZhl_DXKpHx2YwvW-4sfCEZPWI', gid:'2143844597'},
