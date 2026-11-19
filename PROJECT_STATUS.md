@@ -4,6 +4,12 @@
 ## STATUS
 
 ### DONE
+**Hệ 3 — 19/11/2026: thêm app QC Sơ chế & Truy xuất bản GitHub (`soche.html`) — TRÊN NHÁNH LÀM VIỆC, chưa gộp main.**
+- File mới: `soche.html`, `soche_core.js`, `soche_core.css` (sinh tự động từ mã app ngoài repo, không sửa tay), `soche_api.js` (URL Web App).
+- Không có dữ liệu trong repo. Trang gọi Web App Apps Script riêng của app (fetch POST), đăng nhập email + PIN; quyền kiểm ở máy chủ.
+- Chờ user: dán bộ nạp bản 2 (có doPost) + đặt quyền truy cập Web App = Anyone thì trang mới gọi được máy chủ.
+- Không đụng `qc.html`, `doc.html`, `app.html`, dữ liệu SPM.
+
 **Hệ 3 — 02/11/2026: soát giao diện bằng skill ui-ux-pro-max (4 việc user giao).**
 - `doc.html`: thêm theme TỐI đầy đủ (nút mặt trăng ở đầu trang, mặc định SÁNG, nhớ theo trình duyệt `localStorage doc_theme`),
   biểu đồ dùng theme `dark` của ECharts khi tối; sửa tương phản chữ 2 theme. `ui_audit doc.html` = DAT HET (cả 10 mục con, 2 theme × 2 cỡ màn).

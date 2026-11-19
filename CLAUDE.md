@@ -52,6 +52,7 @@ Toàn bộ là trang tĩnh; **không có backend riêng, không có đăng nhậ
 | **`app.html`** | **APP TRA CỨU riêng biệt** (mới 28/09) — tra 1 mã / tra danh sách / import Excel / xuất Excel / duyệt bản vẽ / tổng quan. Chỉ đọc gviz. | 28/09/2026 |
 | **`ddc_core.js`** | Bộ đọc bảng gốc dùng chung — tách **nguyên văn** từ `doc.html`. | 28/09/2026 |
 | `dangnhap.html` / `qc_khoa.js` / `khoa_qcdata.py` | **Đăng nhập** (29/09): PC mã hoá `qcdata.js`; trình duyệt giải mã. Chưa khoá thì không làm gì. Xem `HUONG_DAN_DANG_NHAP.md` | 29/09/2026 |
+| **`soche.html`** / `soche_core.js` / `soche_core.css` / `soche_api.js` | **APP QC SƠ CHẾ + TRUY XUẤT (bản GitHub, 19/11)** — giao diện tĩnh; **KHÔNG có dữ liệu trong repo**: mọi số liệu gọi Web App Apps Script riêng (`soche_api.js` = URL /exec) qua `fetch` POST, đăng nhập email + PIN ở máy chủ. 3 file `soche.html` / `soche_core.*` là **SINH TỰ ĐỘNG** từ mã nguồn app (giữ ngoài repo) — **không sửa tay**; cần đổi thì báo user để sinh lại. Độc lập với `qc.html` / `doc.html` / dữ liệu SPM. | 19/11/2026 |
 
 > **Khi sửa `app.html`:** đây là file ĐỘC LẬP, không ảnh hưởng `qc.html`/`doc.html`.
 > Logic đọc dữ liệu nằm ở `ddc_core.js` — **đừng viết lại**, hãy gọi `DDC_CORE.*`.
