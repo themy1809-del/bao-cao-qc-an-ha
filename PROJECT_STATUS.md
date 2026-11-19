@@ -7,7 +7,10 @@
 **Hệ 3 — 19/11/2026: thêm app QC Sơ chế & Truy xuất bản GitHub (`soche.html`) — TRÊN NHÁNH LÀM VIỆC, chưa gộp main.**
 - File mới: `soche.html`, `soche_core.js`, `soche_core.css` (sinh tự động từ mã app ngoài repo, không sửa tay), `soche_api.js` (URL Web App).
 - Không có dữ liệu trong repo. Trang gọi Web App Apps Script riêng của app (fetch POST), đăng nhập email + PIN; quyền kiểm ở máy chủ.
-- Chờ user: dán bộ nạp bản 2 (có doPost) + đặt quyền truy cập Web App = Anyone thì trang mới gọi được máy chủ.
+- Bộ nạp bản 2 (có doPost) + quyền Web App = Anyone: user ĐÃ làm 19/11; máy chủ đang chạy `19/11 ban-3`.
+- Bản 3 (19/11): ghi lỗi nhanh có ảnh không cần phiếu, sổ "Khối lượng QC xác nhận", phiếu tự gợi ý tấm thép theo hồ sơ truy xuất (MRIR). Chi tiết: HANDOFF.md dòng 19/11 BẢN 3.
+- Bản 4 (19/11, máy chủ đang chạy `19/11 ban-4b`): màn "Nạp hồ sơ dự án" (MRIR + báo cáo truy xuất theo dự án, nạp ngay trên app), kiểm soát hồ sơ theo dự án, tăng tốc (nhớ kết quả tra truy xuất, bộ nhớ đọc theo từng bảng). Chi tiết + số đo: HANDOFF.md dòng 19/11 BẢN 4.
+- Chờ user: gộp nhánh làm việc vào `main` (trang trên `main` còn là bản cũ); quyết định tên miền qcanha.com.
 - Không đụng `qc.html`, `doc.html`, `app.html`, dữ liệu SPM.
 
 **Hệ 3 — 02/11/2026: soát giao diện bằng skill ui-ux-pro-max (4 việc user giao).**
