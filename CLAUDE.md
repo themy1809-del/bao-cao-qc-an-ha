@@ -187,6 +187,15 @@ Do not invent missing business rules.
   Thêm / đổi link nào trong mã thì cập nhật CẢ file link chung lẫn `link_chung.csv` — harness bước 3b (`kiem_link.js`) báo lỗi nếu mã có link chưa vào danh mục;
   bước 3c (`kiem_nguon.js`) mở thật từng sheet nguồn, báo LỖI nếu sai tab / sai mẫu (14/11 xưởng AH4 xoá tab cũ → trang âm thầm mất số).
 
+### 4E. TÁC TỬ KIỂM SOÁT APP QC SƠ CHẾ (19/11/2026 — user yêu cầu)
+- Skill trong repo: `.claude/skills/soche-kiem-soat/` — **BẮT BUỘC gọi khi thiết kế / sửa / nâng cấp / rà soát
+  app QC Sơ chế** (`soche.html` + Apps Script). Chứa kiến trúc, luật cứng, chuỗi dựng `xay.sh`,
+  7 cổng kiểm phải DAT trước khi giao, và các bẫy đã gặp. Không giao bản chưa qua đủ cổng.
+- Mã nguồn + bộ kiểm của app KHÔNG nằm trong repo công khai: gói `GOI NGUON - QC SO CHE - <bản>.tar.gz`
+  trong thư mục Drive mã nguồn (id `1Cn-CzgOb18Um6XSeNurS-nOeqQd6L6Kw`); mỗi bản phát hành đóng gói lại.
+- File `Code.gs - QC SO CHE - *.txt` mới nhất trong thư mục đó là bản đang chạy (bộ nạp tự lấy);
+  KHÔNG bỏ file bản cũ vào thùng rác khi chưa hỏi user.
+
 ## 5. WORKFLOW
 Before editing:
 1. Read HANDOFF.md.
