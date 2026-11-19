@@ -9,6 +9,7 @@
 - Không có dữ liệu trong repo. Trang gọi Web App Apps Script riêng của app (fetch POST), đăng nhập email + PIN; quyền kiểm ở máy chủ.
 - Bộ nạp bản 2 (có doPost) + quyền Web App = Anyone: user ĐÃ làm 19/11; máy chủ đang chạy `19/11 ban-3`.
 - Bản 3 (19/11): ghi lỗi nhanh có ảnh không cần phiếu, sổ "Khối lượng QC xác nhận", phiếu tự gợi ý tấm thép theo hồ sơ truy xuất (MRIR). Chi tiết: HANDOFF.md dòng 19/11 BẢN 3.
+- Bản 4 (19/11, máy chủ đang chạy `19/11 ban-4b`): màn "Nạp hồ sơ dự án" (MRIR + báo cáo truy xuất theo dự án, nạp ngay trên app), kiểm soát hồ sơ theo dự án, tăng tốc (nhớ kết quả tra truy xuất, bộ nhớ đọc theo từng bảng). Chi tiết + số đo: HANDOFF.md dòng 19/11 BẢN 4.
 - Chờ user: gộp nhánh làm việc vào `main` (trang trên `main` còn là bản cũ); quyết định tên miền qcanha.com.
 - Không đụng `qc.html`, `doc.html`, `app.html`, dữ liệu SPM.
 

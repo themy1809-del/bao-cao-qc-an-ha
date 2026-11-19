@@ -1,4 +1,4 @@
-/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 19/11 ban-3 */
+/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 19/11 ban-4b */
 /* nt_core.js — LÕI DÙNG CHUNG app "Nghiệm thu Vật tư & Sơ chế" (giao diện điện thoại + web)
    PHIEN_BAN '17/11 mau-giao-dien' — BẢN MẪU: dữ liệu mẫu, lưu tạm trên trình duyệt.
    NT.API giả lập ĐÚNG TÊN HÀM sẽ viết ở Apps Script. Khi nối thật: thay phần "KHO" bằng google.script.run,
@@ -11,8 +11,8 @@
   var QUA_GAS = typeof window !== 'undefined' && typeof google !== 'undefined' && google.script && google.script.run;
   var NT_URL = typeof window !== 'undefined' && !QUA_GAS && window.NT_API_URL ? String(window.NT_API_URL) : '';
   var CHE_DO = typeof window === 'undefined' ? 'may_chu' : (QUA_GAS || NT_URL ? 'that' : 'mau');
-  var PHIEN_BAN = '19/11 ban-3';
-  var BAN_SO = 2026111904; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
+  var PHIEN_BAN = '19/11 ban-4b';
+  var BAN_SO = 2026111906; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
 
   /* ---------- tiện ích ---------- */
   function pad(n, k) { return String(n).padStart(k || 2, '0'); }
@@ -478,6 +478,94 @@
   }
 
   /* ---------- API (cùng tên hàm sẽ có ở Apps Script) ---------- */
+  /* ===== HỒ SƠ TRUY XUẤT: nhận bảng theo TÊN cột + chuyển dòng. Dùng chung cho bản mẫu và máy chủ (nạp trên app).
+     Bảng khai cột phải GIỐNG HỆT COT_TX trong Code_TX.gs (bài kiểm so 2 bảng). ===== */
+  var TX_COT = {
+    TX_CHI_TIET: [['ban_ve', ['drawing no', 'drawing']], ['rev', ['rev']], ['cau_kien', ['member no', 'member']], ['part', ['part no', 'part mark'], 1], ['sl', ['quantity pcs', 'q ty pcs', 'quantity', 'q ty']],
+      ['quy_cach', ['description']], ['mac', ['grade']], ['so_mtc', ['mill certificate no', 'mill certificate']], ['so_heat', ['heat no'], 1], ['ma_tam', ['id no', 'id']], ['so_mrir', ['mrir no', 'mrir']], ['kl', ['weight']]],
+    TX_VAT_TU: [['ma_tam', ['code'], 1], ['su_dung', ['used']], ['quy_cach', ['material description'], 1], ['tieu_chuan', ['material specification']], ['nha_sx', ['manufacturers', 'manufactures origin', 'manufactures', 'manufacturer']],
+      ['mac', ['grade']], ['so_mtc', ['mill certificate no', 'mill certificate']], ['so_heat', ['heat no'], 1], ['sl', ['quantity pcs', 'quantity']], ['kl_kg', ['weight kg']], ['ket_qua', ['result acc rej', 'result']],
+      ['ghi_chu', ['remark']], ['so_mrir', ['so bao cao report no', 'report no', 'mrir no', 'mrir']]]
+  };
+  var TX_KHOA = { TX_CHI_TIET: ['k_part', 'k_ck', 'k_bv', 'k_heat', 'k_tam', 'k_mtc'], TX_VAT_TU: ['k_tam', 'k_heat', 'k_mtc', 'k_mrir'] };
+  var TX_NGUON_KHOA = { k_part: 'part', k_ck: 'cau_kien', k_bv: 'ban_ve', k_heat: 'so_heat', k_tam: 'ma_tam', k_mtc: 'so_mtc', k_mrir: 'so_mrir' };
+  var TX_TEN_LOAI = { TX_VAT_TU: 'Nghiệm thu vật tư đầu vào (MRIR)', TX_CHI_TIET: 'Báo cáo truy xuất (bản vẽ → part → heat)' };
+  var TX_LO_TOI_DA = 4000; /* số dòng tối đa mỗi lượt gửi */
+  function txGt(v) { if (v instanceof Date) return isoNgay(v); return v === null || v === undefined ? '' : String(v).trim(); }
+  /* dau = các dòng đầu của bảng. Trả null nếu không phải MRIR / báo cáo truy xuất. tuDong = chỉ số (từ 0) của dòng dữ liệu đầu tiên. */
+  function txNhan(dau) {
+    var hi = -1, ten = null, i;
+    function la(x, c) { return x === c || x.indexOf(c + ' ') === 0; }
+    function co(k, c) { return k.some(function (x) { return la(x, c); }); }
+    for (i = 0; i < Math.min(15, (dau || []).length) && hi < 0; i++) { var k = (dau[i] || []).map(chuanTen); if (co(k, 'heat no')) { hi = i; ten = k; } }
+    if (hi < 0) return null;
+    var loai = (co(ten, 'part no') || co(ten, 'part mark')) ? 'TX_CHI_TIET' : (co(ten, 'code') && co(ten, 'material description') ? 'TX_VAT_TU' : null);
+    if (!loai) return null;
+    var map = {}, dung = {};
+    [function (a, b) { return a === b; }, function (a, b) { return a.indexOf(b + ' ') === 0; }].forEach(function (khop) {
+      TX_COT[loai].forEach(function (c) { if (map[c[0]] >= 0) return; map[c[0]] = -1;
+        c[1].some(function (cand) { for (var j = 0; j < ten.length; j++) if (!dung[j] && ten[j] && khop(ten[j], cand)) { map[c[0]] = j; dung[j] = 1; return true; } return false; }); });
+    });
+    return { loai: loai, tuDong: hi + 1, map: map, thieu: TX_COT[loai].filter(function (c) { return c[2] && !(map[c[0]] >= 0); }).map(function (c) { return c[0]; }) };
+  }
+  function txChuyen(rows, nb, tenDuAn, nguon) {
+    var cs = TX_COT[nb.loai], ds = [], bo = 0;
+    (rows || []).forEach(function (row) {
+      if (!row || !row.some(function (x) { return x !== '' && x !== null && x !== undefined; })) return;
+      var o = { du_an: tenDuAn, nguon: nguon };
+      cs.forEach(function (c) { var ix = nb.map[c[0]]; o[c[0]] = ix >= 0 ? txGt(row[ix]) : ''; });
+      if (nb.loai === 'TX_CHI_TIET' ? !o.part : !(o.ma_tam && (o.so_heat || o.quy_cach))) { bo++; return; }
+      TX_KHOA[nb.loai].forEach(function (k) { o[k] = chuanHeat(o[TX_NGUON_KHOA[k]]); });
+      ds.push(o);
+    });
+    return { ds: ds, bo_qua: bo };
+  }
+  /* Kiểm đầu vào 1 lượt nạp. Lượt đầu (chưa có ma_lan): bảng gồm cả dòng tiêu đề → nhận loại + vị trí cột. Lượt sau: gửi lại nb. */
+  function txNapMo(o) {
+    canVai(['QC_VT', 'QUAN_LY'], 'nạp hồ sơ truy xuất');
+    o = o || {}; var bang = o.bang;
+    if (!bang || !bang.length) loi('Không có dòng nào để nạp.');
+    if (bang.length > TX_LO_TOI_DA + 20) loi('Mỗi lượt gửi tối đa ' + TX_LO_TOI_DA + ' dòng.');
+    if (o.ma_lan) {
+      var nb0 = o.nb || {}; if (!TX_COT[nb0.loai] || !nb0.map) loi('Thiếu thông tin cột của lần nạp ' + o.ma_lan + '.');
+      var map = {}; TX_COT[nb0.loai].forEach(function (c) { var v = Number(nb0.map[c[0]]); map[c[0]] = v >= 0 && v < 500 ? Math.floor(v) : -1; });
+      return { moi: false, nb: { loai: nb0.loai, map: map }, rows: bang };
+    }
+    var da = layDuAn(o.du_an); if (!da) loi('Chọn dự án trước khi nạp hồ sơ.');
+    var tf = String(o.ten_file || '').trim(); if (!tf) loi('Thiếu tên file.');
+    var nb = txNhan(bang);
+    if (!nb) loi('Tab "' + (o.tab || '') + '" không phải bảng nghiệm thu vật tư (MRIR) hay báo cáo truy xuất: cần cột "Heat no" cùng với "Part no" (báo cáo truy xuất) hoặc "Code" + "Material description" (MRIR).');
+    if (nb.thieu.length) loi('Tab "' + (o.tab || '') + '" thiếu cột bắt buộc: ' + nb.thieu.join(', ') + '.');
+    return { moi: true, da: da, nb: nb, rows: bang.slice(nb.tuDong), ten_file: tf.slice(0, 120), tab: String(o.tab || '').trim().slice(0, 80) };
+  }
+  function txNhanLan(lan) { return 'Nạp trên app › ' + lan.ten_file + (lan.tab ? ' › ' + lan.tab : '') + ' [' + lan.ma_lan + ']'; }
+  function txMaLanMoi(L) { var m = 0; L.forEach(function (x) { var n = Number(String(x.ma_lan).replace(/\D/g, '')); if (n > m) m = n; }); return 'TXN-' + pad(m + 1, 4); }
+  function txCungLan(x, m) { return x.trang_thai !== 'XOA' && x.ma_du_an === m.da.ma && x.ten_file === m.ten_file && x.tab === m.tab && x.loai === m.nb.loai; }
+  function txTomLan(L) {
+    var ds = L.filter(function (x) { return x.trang_thai !== 'XOA'; }).slice().sort(function (a, b) { return a.luc < b.luc ? 1 : a.luc > b.luc ? -1 : (a.ma_lan < b.ma_lan ? 1 : -1); }), m = {}, tong = [];
+    ds.forEach(function (x) { var g = m[x.du_an]; if (!g) { g = m[x.du_an] = { du_an: x.du_an, ma_du_an: x.ma_du_an, vt: 0, ct: 0, lan: 0 }; tong.push(g); } g.lan++; var n = so(x.so_dong); if (isFinite(n)) g[x.loai === 'TX_VAT_TU' ? 'vt' : 'ct'] += n; });
+    return { ds: ds, tong: tong };
+  }
+  /* KIỂM SOÁT HỒ SƠ 1 DỰ ÁN: so báo cáo truy xuất với danh sách nghiệm thu vật tư. vt / ct = toàn bộ dòng của dự án. */
+  function txKiem(tenDuAn, vt, ct) {
+    var T = {}, dem = function (a, f) { var m = {}, n = 0; a.forEach(function (x) { if (x[f] && !m[x[f]]) { m[x[f]] = 1; n++; } }); return n; }, kg = 0;
+    vt.forEach(function (v) { if (!v.k_tam) return; (T[v.k_tam] = T[v.k_tam] || []).push(v); var k = so(v.kl_kg); if (isFinite(k)) kg += k; });
+    var dung = {}, koMR = {}, lech = {}, koDat = {}, koTam = 0;
+    ct.forEach(function (x) {
+      if (!x.k_tam) { koTam++; return; }
+      dung[x.k_tam] = 1; var vs = T[x.k_tam];
+      if (!vs) { var g = koMR[x.k_tam] = koMR[x.k_tam] || { ma_tam: x.ma_tam, so_heat: x.so_heat, so_dong: 0, part: [] }; g.so_dong++; if (g.part.length < 5 && g.part.indexOf(x.part) < 0) g.part.push(x.part); return; }
+      if (x.k_heat && !vs.some(function (v) { return v.k_heat === x.k_heat; })) { var kL = x.k_tam + '|' + x.k_heat, h = lech[kL] = lech[kL] || { ma_tam: x.ma_tam, heat_truy_xuat: x.so_heat, heat_mrir: vs.map(function (v) { return v.so_heat; }).filter(function (z, i, a) { return a.indexOf(z) === i; }).join(', '), so_dong: 0, part: [] }; h.so_dong++; if (h.part.length < 5 && h.part.indexOf(x.part) < 0) h.part.push(x.part); }
+      vs.forEach(function (v) { var kq = chuanTen(v.ket_qua); if (kq && kq.indexOf('acc') !== 0 && kq !== 'dat') { var d = koDat[x.k_tam] = koDat[x.k_tam] || { ma_tam: v.ma_tam, so_heat: v.so_heat, ket_qua: v.ket_qua, so_dong: 0 }; d.so_dong++; } });
+    });
+    function ds(m) { var a = Object.keys(m).map(function (k) { return m[k]; }).sort(function (x, y) { return y.so_dong - x.so_dong; }); return { tong: a.length, ds: a.slice(0, 60) }; }
+    var chuaDung = Object.keys(T).filter(function (k) { return !dung[k]; }).length, a1 = ds(koMR), a2 = ds(lech), a3 = ds(koDat);
+    return { du_an: tenDuAn, so_tam: Object.keys(T).length, so_heat_mrir: dem(vt, 'k_heat'), kl_mrir_tan: Math.round(kg) / 1000, so_dong_ct: ct.length, so_part: dem(ct, 'k_part'), so_cau_kien: dem(ct, 'k_ck'), so_ban_ve: dem(ct, 'k_bv'),
+      tam_da_dung: Object.keys(dung).length, tam_chua_dung: chuaDung, dong_khong_ma_tam: koTam, tam_khong_mrir: a1, lech_heat: a2, tam_khong_dat: a3,
+      dat: !a1.tong && !a2.tong && !a3.tong && !koTam && ct.length > 0 && vt.length > 0, thieu: !vt.length ? 'Chưa có danh sách nghiệm thu vật tư (MRIR) của dự án này.' : !ct.length ? 'Chưa có báo cáo truy xuất của dự án này.' : '' };
+  }
+  function txDuAn(vt, ct) { var m = {}, o = []; function c(a, f) { a.forEach(function (x) { var g = m[x.du_an]; if (!g) { g = m[x.du_an] = { ten: x.du_an, vt: 0, ct: 0 }; o.push(g); } g[f]++; }); } c(vt, 'vt'); c(ct, 'ct'); return o.sort(function (a, b) { return a.ten < b.ten ? -1 : 1; }); }
+
   var API_GOC = {
     phienBan: function () { return goi(function () { return PHIEN_BAN; }); },
     traVatTu: function (q) {
@@ -706,6 +794,34 @@
     },
     trangThaiTX: function () { return goi(function () { return sao({ tt: S.tx_tt || null, nguon: S.tx_nguon || [] }); }); },
     dongBoTX: function () { return goi(function () { canVai(['QUAN_LY'], 'đồng bộ nguồn truy xuất'); return 'Bản mẫu: không có file nguồn thật để đồng bộ.'; }); },
+    /* NẠP HỒ SƠ TRUY XUẤT NGAY TRÊN APP (theo dự án, từng lượt ≤ 4.000 dòng). Trên máy chủ: Code_TX.gs ghi thẳng vào kho truy xuất (không qua đây). */
+    napTX: function (o) {
+      return goi(function () {
+        var m = txNapMo(o), L = S.tx_lan = S.tx_lan || [], lan, thay = 0;
+        if (m.moi) {
+          L.forEach(function (x) { if (!txCungLan(x, m)) return; var nh = '[' + x.ma_lan + ']'; ['tx_vt', 'tx_ct'].forEach(function (f) { S[f] = (S[f] || []).filter(function (r) { return String(r.nguon || '').slice(-nh.length) !== nh; }); }); x.trang_thai = 'XOA'; x.ghi_chu = 'Thay bằng lần nạp mới'; thay++; });
+          lan = { ma_lan: txMaLanMoi(L), du_an: m.da.ten, ma_du_an: m.da.ma, loai: m.nb.loai, ten_file: m.ten_file, tab: m.tab, so_dong: 0, so_bo_qua: 0, nguoi: tenNguoi(), luc: homNay() + ' ' + gioPhut(), trang_thai: 'DANG', ghi_chu: '' }; L.push(lan);
+        } else { lan = L.filter(function (x) { return x.ma_lan === o.ma_lan; })[0]; if (!lan || lan.trang_thai !== 'DANG') loi('Lần nạp ' + o.ma_lan + ' không còn mở. Nạp lại từ đầu.'); if (lan.loai !== m.nb.loai) loi('Sai loại bảng của lần nạp ' + o.ma_lan + '.'); }
+        var c = txChuyen(m.rows, m.nb, lan.du_an, txNhanLan(lan)), f = lan.loai === 'TX_VAT_TU' ? 'tx_vt' : 'tx_ct';
+        S[f] = (S[f] || []).concat(c.ds); lan.so_dong = (so(lan.so_dong) || 0) + c.ds.length; lan.so_bo_qua = (so(lan.so_bo_qua) || 0) + c.bo_qua;
+        if (o.cuoi) { lan.trang_thai = 'XONG'; ghiNK('Nạp hồ sơ truy xuất', 'LAN_NAP_TX', lan.ma_lan, '', lan.du_an + ' · ' + lan.ten_file + (lan.tab ? ' › ' + lan.tab : '') + ' · ' + lan.so_dong + ' dòng'); }
+        return sao({ ma_lan: lan.ma_lan, nb: m.nb, loai: lan.loai, them: c.ds.length, bo_qua: c.bo_qua, so_dong: lan.so_dong, xong: lan.trang_thai === 'XONG', thay: thay });
+      });
+    },
+    dsLanNapTX: function () { return goi(function () { return sao(txTomLan(S.tx_lan || [])); }); },
+    xoaLanNapTX: function (ma) {
+      return goi(function () {
+        canVai(['QUAN_LY'], 'xoá lần nạp hồ sơ truy xuất');
+        var lan = (S.tx_lan || []).filter(function (x) { return x.ma_lan === ma && x.trang_thai !== 'XOA'; })[0]; if (!lan) loi('Không thấy lần nạp ' + ma + '.');
+        var nh = '[' + lan.ma_lan + ']', truoc = (S.tx_vt || []).length + (S.tx_ct || []).length;
+        ['tx_vt', 'tx_ct'].forEach(function (f) { S[f] = (S[f] || []).filter(function (r) { return String(r.nguon || '').slice(-nh.length) !== nh; }); });
+        lan.trang_thai = 'XOA'; lan.ghi_chu = 'Xoá bởi ' + tenNguoi() + ' ' + homNay() + ' ' + gioPhut();
+        var n = truoc - (S.tx_vt || []).length - (S.tx_ct || []).length; ghiNK('Xoá lần nạp hồ sơ truy xuất', 'LAN_NAP_TX', lan.ma_lan, lan.du_an + ' · ' + lan.ten_file, n + ' dòng'); return { ma_lan: ma, da_xoa: n };
+      });
+    },
+    /* Trên máy chủ: Code_TX.gs nạp sẵn TOÀN BỘ dòng của dự án vào S.tx_vt / S.tx_ct trước khi gọi */
+    kiemTX: function (tenDuAn) { return goi(function () { var t = String(tenDuAn || ''); if (!t) loi('Chọn dự án cần kiểm soát.'); return sao(txKiem(t, (S.tx_vt || []).filter(function (x) { return x.du_an === t; }), (S.tx_ct || []).filter(function (x) { return x.du_an === t; }))); }); },
+    duAnTX: function () { return goi(function () { return sao(S.tx_da || txDuAn(S.tx_vt || [], S.tx_ct || [])); }); },
     capNhatPunch: function (ma, viec, opt) {
       opt = opt || {};
       return goi(function () {
@@ -1114,7 +1230,7 @@
     }
   };
 
-  var GHI = ['napVatTu', 'capNhatVatTu', 'luuPhieu', 'capNhatPunch', 'luuDuAn', 'luuKeHoach', 'huyKeHoach', 'napSDC', 'huyPhieu', 'moLaiPhieu', 'luuChungChi', 'dongBoTX', 'luuYeuCau', 'tatYeuCau', 'xacNhanKL', 'huyXacNhanKL', 'dungVatTuTX', 'taoPunch'];
+  var GHI = ['napTX', 'xoaLanNapTX', 'napVatTu', 'capNhatVatTu', 'luuPhieu', 'capNhatPunch', 'luuDuAn', 'luuKeHoach', 'huyKeHoach', 'napSDC', 'huyPhieu', 'moLaiPhieu', 'luuChungChi', 'dongBoTX', 'luuYeuCau', 'tatYeuCau', 'xacNhanKL', 'huyXacNhanKL', 'dungVatTuTX', 'taoPunch'];
   /* gửi 1 yêu cầu lên máy chủ, trả nguyên { kq, du_an } */
   function guiMayChu(ten, args) {
     if (NT_URL) return fetch(NT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ ten: ten, args: args, daChon: daChon, dn: dangNhap() }), redirect: 'follow' })
@@ -1127,7 +1243,7 @@
     });
   }
   /* ĐỆM PHÍA TRÌNH DUYỆT (hiện ngay số lần trước, làm mới phía sau): chỉ cho các màn danh sách / tổng hợp; KHÔNG đệm truy xuất, hồ sơ, phân tích */
-  var DEM_API = { soKhoiLuong: 1, hienTruong: 1, dsYeuCau: 1, keHoachXuong: 1, khoiDong: 1, dsKeHoach: 1, tongQuan: 1, keHoachAH1: 1, tienDoCatAH1: 1, dsChoNT: 1, dsPhieu: 1, dsPunch: 1, dsVatTu: 1, dsDuAn: 1, dsLanNap: 1, kiemSoat: 1, baoCao: 1, dsSDC: 1, cauHinh: 1, trangThaiTX: 1 };
+  var DEM_API = { truyXuatTX: 1, goiYTX: 1, dsLanNapTX: 1, kiemTX: 1, duAnTX: 1, soKhoiLuong: 1, hienTruong: 1, dsYeuCau: 1, keHoachXuong: 1, khoiDong: 1, dsKeHoach: 1, tongQuan: 1, keHoachAH1: 1, tienDoCatAH1: 1, dsChoNT: 1, dsPhieu: 1, dsPunch: 1, dsVatTu: 1, dsDuAn: 1, dsLanNap: 1, kiemSoat: 1, baoCao: 1, dsSDC: 1, cauHinh: 1, trangThaiTX: 1 };
   var KHOA_DEM = 'nt_dem_v1|', DEM_TUOI = 8000, DEM_HAN = 12 * 3600e3, henMoi = null;
   function apRaw(r) { if (r && r.du_an) { DU_AN = r.du_an; S.du_an = DU_AN; } return r ? r.kq : r; }
   /* tatCa = true: đăng xuất / mất quyền → bỏ hết. Sau khi LƯU: chỉ bỏ số liệu danh sách, giữ phần người dùng + cấu hình (khoiDong) để lần sau mở vẫn vào được khi mạng yếu */
@@ -1543,7 +1659,7 @@
   }
 
   GOC.NT = {
-    CHE_DO: CHE_DO, LOAI_YC: LOAI_YC, BAN_SO: BAN_SO, sanSang: sanSang, API_GOC: API_GOC, GHI: GHI,
+    CHE_DO: CHE_DO, TX_COT: TX_COT, TX_TEN_LOAI: TX_TEN_LOAI, TX_LO_TOI_DA: TX_LO_TOI_DA, txNhan: txNhan, txChuyen: txChuyen, txNapMo: txNapMo, txNhanLan: txNhanLan, txMaLanMoi: txMaLanMoi, txCungLan: txCungLan, txTomLan: txTomLan, LOAI_YC: LOAI_YC, BAN_SO: BAN_SO, sanSang: sanSang, API_GOC: API_GOC, GHI: GHI,
     datKho: function (k) { S = k; DU_AN = S.du_an; }, layKho: function () { return S; }, khoRong: khoRong, duLieuMau: duLieuMau,
     datNguCanh: function (c) { vai = c.vai; daChon = c.daChon && layDuAn(c.daChon) ? c.daChon : ''; tenND = c.ten || ''; },
     tenNguoiDung: function () { return tenND; }, dangXuat: function () { ls(KHOA_DN, null); xoaDem(true); location.reload(); }, xoaDem: xoaDem, QUA_WEB: !!NT_URL,
