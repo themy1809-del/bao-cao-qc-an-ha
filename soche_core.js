@@ -1,4 +1,4 @@
-/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 19/11 ban-7b */
+/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 20/11 ban-8 */
 /* nt_core.js — LÕI DÙNG CHUNG app "Nghiệm thu Vật tư & Sơ chế" (giao diện điện thoại + web)
    PHIEN_BAN '17/11 mau-giao-dien' — BẢN MẪU: dữ liệu mẫu, lưu tạm trên trình duyệt.
    NT.API giả lập ĐÚNG TÊN HÀM sẽ viết ở Apps Script. Khi nối thật: thay phần "KHO" bằng google.script.run,
@@ -11,8 +11,8 @@
   var QUA_GAS = typeof window !== 'undefined' && typeof google !== 'undefined' && google.script && google.script.run;
   var NT_URL = typeof window !== 'undefined' && !QUA_GAS && window.NT_API_URL ? String(window.NT_API_URL) : '';
   var CHE_DO = typeof window === 'undefined' ? 'may_chu' : (QUA_GAS || NT_URL ? 'that' : 'mau');
-  var PHIEN_BAN = '19/11 ban-7b';
-  var BAN_SO = 2026111910; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
+  var PHIEN_BAN = '20/11 ban-8';
+  var BAN_SO = 2026112001; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
 
   /* ---------- tiện ích ---------- */
   function pad(n, k) { return String(n).padStart(k || 2, '0'); }
@@ -761,6 +761,40 @@
         ghiNK('Ghi lỗi tại hiện trường', 'PUNCH', u.ma_punch, '', [u.lsx, u.ma_chi_tiet, loai, mt].filter(Boolean).join(' · ')); return sao(ganDA(u));
       });
     },
+    /* BẢNG ĐIỀU HÀNH (1 lần gọi cho cả màn): KPI tháng theo sổ lệnh + nhịp 14 ngày + tồn theo dự án + lệnh trễ + lỗi mở theo loại */
+    bangDieuHanh: function (thang) {
+      return goi(function () {
+        if (!/^\d{4}-\d{2}$/.test(String(thang || ''))) thang = homNay().slice(0, 7);
+        var t0 = thang + '-01', t1 = thang + '-31', hn = homNay(), s0 = function (v) { var k = so(v); return isFinite(k) ? k : 0; };
+        /* KPI theo sổ lệnh (cùng cách tính với màn Kế hoạch cắt) */
+        var kpi = { so_lenh: 0, ke_hoach: 0, da_cat: 0, ton: 0, xn: 0, tre: 0 }, mDA = {}, tonDA = [], tre = [];
+        (S.ah1_lsx || []).forEach(function (x) {
+          var a = chuanNgay(x.bat_dau), b = chuanNgay(x.ket_thuc); if (!x.lsx || !a || !b || a > t1 || b < t0) return;
+          var tong = s0(x.tong_kl), cat = s0(x.da_cat), ton = s0(x.con_lai), xn = klXacNhan(x.lsx);
+          var tt = ton <= 0.005 && tong > 0 ? 'XONG' : (String(x.canh_bao_tre || '').indexOf('Trễ') >= 0 || (b < hn && ton > 0.005)) ? 'TRE' : (a > hn) ? 'SAP' : 'DANG';
+          kpi.so_lenh++; kpi.ke_hoach += tong; kpi.da_cat += cat; kpi.ton += ton; kpi.xn += xn; if (tt === 'TRE') { kpi.tre++; tre.push({ lsx: x.lsx, cong_trinh: x.du_an || '', ton: ton, tong: tong, ket_thuc: b, tre_ngay: b < hn ? soNgay(b, hn) : 0 }); }
+          var k = x.du_an || '(chưa ghi công trình)', g = mDA[k]; if (!g) { g = mDA[k] = { ten: k, ton: 0, tong: 0, da_cat: 0 }; tonDA.push(g); }
+          g.ton += ton; g.tong += tong; g.da_cat += cat;
+        });
+        kpi.so_da = tonDA.length;
+        tonDA.sort(function (a, b) { return b.ton - a.ton; }); tre.sort(function (a, b) { return b.tre_ngay - a.tre_ngay || b.ton - a.ton; });
+        /* nhịp 14 ngày: xưởng ra bài (lượt) ↔ QC đã kiểm (phiếu + kiểm nhanh, không tính huỷ) */
+        var ds14 = [], mN = {}, i, d;
+        for (i = 13; i >= 0; i--) { d = new Date(); d.setDate(d.getDate() - i); var n = isoNgay(d); mN[n] = { ngay: n, ra_bai: 0, tan: 0, kiem: 0 }; ds14.push(mN[n]); }
+        (S.ah1_cat || []).forEach(function (x) { var n = chuanNgay(x.ngay_ra_bai), o = mN[n]; if (o && x.ten_chi_tiet) { o.ra_bai++; o.tan += s0(x.kl_tong) / 1000; } });
+        S.phieu.forEach(function (ph) { var o = mN[ph.ngay]; if (o && ph.trang_thai !== 'HUY') o.kiem++; });
+        (S.kn || []).forEach(function (x) { var o = mN[x.ngay]; if (o && x.kq !== 'HUY') o.kiem++; });
+        /* lỗi mở theo loại */
+        var mL = {}, loai = [], quaHan = 0, moL = S.punch.filter(function (u) { return u.trang_thai !== 'DA_DONG'; });
+        moL.forEach(function (u) { var k = u.loai_loi || 'Khác', g = mL[k]; if (!g) { g = mL[k] = { ten: k, so: 0 }; loai.push(g); } g.so++; if (u.han && u.han < hn) quaHan++; });
+        loai.sort(function (a, b) { return b.so - a.so; });
+        var kn7 = (S.kn || []).filter(function (x) { return x.kq !== 'HUY' && x.ngay >= ngayCach(-6); });
+        return sao({ thang: thang, luc: homNay() + ' ' + gioPhut(), kpi: kpi, ngay: ds14, ton_da: tonDA.slice(0, 8), lenh_tre: tre.slice(0, 10),
+          punch: { mo: moL.length, qua_han: quaHan, loai: loai },
+          kn: { hom_nay_dat: (S.kn || []).filter(function (x) { return x.kq === 'DAT' && x.ngay === hn; }).length, hom_nay_loi: (S.kn || []).filter(function (x) { return x.kq === 'KHONG_DAT' && x.ngay === hn; }).length, ngoai_lenh7: kn7.filter(function (x) { return x.ngoai_lenh === 'CO'; }).length },
+          phieu_homnay: S.phieu.filter(function (ph) { return ph.ngay === hn && ph.trang_thai !== 'HUY'; }).length });
+      });
+    },
     /* KIỂM NHANH TẠI HIỆN TRƯỜNG — QC kiểm thực tế ĐẠT thì ghi 1 chạm, không cần lập phiếu đo đầy đủ.
        Cho ghi cả khi CHƯA CÓ LỆNH trong sổ xưởng (ngoai_lenh = CO). */
     accNhanh: function (o) {
@@ -1289,7 +1323,7 @@
     });
   }
   /* ĐỆM PHÍA TRÌNH DUYỆT (hiện ngay số lần trước, làm mới phía sau): chỉ cho các màn danh sách / tổng hợp; KHÔNG đệm truy xuất, hồ sơ, phân tích */
-  var DEM_API = { dsKiemNhanh: 1, truyXuatTX: 1, goiYTX: 1, dsLanNapTX: 1, kiemTX: 1, duAnTX: 1, soKhoiLuong: 1, hienTruong: 1, dsYeuCau: 1, keHoachXuong: 1, khoiDong: 1, dsKeHoach: 1, tongQuan: 1, keHoachAH1: 1, tienDoCatAH1: 1, dsChoNT: 1, dsPhieu: 1, dsPunch: 1, dsVatTu: 1, dsDuAn: 1, dsLanNap: 1, kiemSoat: 1, baoCao: 1, dsSDC: 1, cauHinh: 1, trangThaiTX: 1 };
+  var DEM_API = { bangDieuHanh: 1, dsKiemNhanh: 1, truyXuatTX: 1, goiYTX: 1, dsLanNapTX: 1, kiemTX: 1, duAnTX: 1, soKhoiLuong: 1, hienTruong: 1, dsYeuCau: 1, keHoachXuong: 1, khoiDong: 1, dsKeHoach: 1, tongQuan: 1, keHoachAH1: 1, tienDoCatAH1: 1, dsChoNT: 1, dsPhieu: 1, dsPunch: 1, dsVatTu: 1, dsDuAn: 1, dsLanNap: 1, kiemSoat: 1, baoCao: 1, dsSDC: 1, cauHinh: 1, trangThaiTX: 1 };
   var KHOA_DEM = 'nt_dem_v1|', DEM_TUOI = 8000, DEM_HAN = 12 * 3600e3, henMoi = null;
   function apRaw(r) { if (r && r.du_an) { DU_AN = r.du_an; S.du_an = DU_AN; } return r ? r.kq : r; }
   /* tatCa = true: đăng xuất / mất quyền → bỏ hết. Sau khi LƯU: chỉ bỏ số liệu danh sách, giữ phần người dùng + cấu hình (khoiDong) để lần sau mở vẫn vào được khi mạng yếu */

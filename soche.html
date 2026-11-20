@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) — KHÔNG SỬA TAY. Vỏ mở app: giao diện trong repo = soche_app.html (bản 2026111910); nếu máy chủ của app có bản mới hơn thì trang tự dùng bản đó ở lần mở sau. Thêm ?goc=1 để ép dùng bản trong repo. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) — KHÔNG SỬA TAY. Vỏ mở app: giao diện trong repo = soche_app.html (bản 2026112001); nếu máy chủ của app có bản mới hơn thì trang tự dùng bản đó ở lần mở sau. Thêm ?goc=1 để ép dùng bản trong repo. -->
 <style>:root{color-scheme:light dark}body{margin:0;min-height:100vh;display:grid;place-items:center;font:600 16px system-ui,sans-serif;background:#f5f7fa;color:#142033}@media (prefers-color-scheme:dark){body{background:#0e131a;color:#e7ecf3}}</style>
 </head>
 <body>
 <p role="status" id="voTT">Đang mở QC Sơ chế An Hạ…</p>
 <script>
 (function(){
-  var SO=2026111910, L=window.localStorage;
+  var SO=2026112001, L=window.localStorage;
   function mo(h){document.open();document.write(h);document.close();}
   function goc(){fetch('soche_app.html?v='+SO).then(function(r){if(!r.ok)throw new Error(r.status);return r.text();}).then(mo)
     .catch(function(){document.getElementById('voTT').textContent='Không tải được app. Kiểm tra mạng rồi tải lại trang.';});}
