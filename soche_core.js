@@ -1,4 +1,4 @@
-/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 20/11 ban-18 */
+/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 20/11 ban-20 */
 /* nt_core.js — LÕI DÙNG CHUNG app "Nghiệm thu Vật tư & Sơ chế" (giao diện điện thoại + web)
    PHIEN_BAN '17/11 mau-giao-dien' — BẢN MẪU: dữ liệu mẫu, lưu tạm trên trình duyệt.
    NT.API giả lập ĐÚNG TÊN HÀM sẽ viết ở Apps Script. Khi nối thật: thay phần "KHO" bằng google.script.run,
@@ -11,8 +11,8 @@
   var QUA_GAS = typeof window !== 'undefined' && typeof google !== 'undefined' && google.script && google.script.run;
   var NT_URL = typeof window !== 'undefined' && !QUA_GAS && window.NT_API_URL ? String(window.NT_API_URL) : '';
   var CHE_DO = typeof window === 'undefined' ? 'may_chu' : (QUA_GAS || NT_URL ? 'that' : 'mau');
-  var PHIEN_BAN = '20/11 ban-18';
-  var BAN_SO = 2026112012; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
+  var PHIEN_BAN = '20/11 ban-20';
+  var BAN_SO = 2026112014; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
 
   /* ---------- tiện ích ---------- */
   function pad(n, k) { return String(n).padStart(k || 2, '0'); }
@@ -907,6 +907,14 @@
     /* Trên máy chủ: Code_TX.gs nạp sẵn TOÀN BỘ dòng của dự án vào S.tx_vt / S.tx_ct trước khi gọi */
     kiemTX: function (tenDuAn) { return goi(function () { var t = String(tenDuAn || ''); if (!t) loi('Chọn dự án cần kiểm soát.'); return sao(txKiem(t, (S.tx_vt || []).filter(function (x) { return x.du_an === t; }), (S.tx_ct || []).filter(function (x) { return x.du_an === t; }))); }); },
     duAnTX: function () { return goi(function () { return sao(S.tx_da || txDuAn(S.tx_vt || [], S.tx_ct || [])); }); },
+    /* Duyệt hồ sơ 1 dự án theo trang: loai 'vt' = vật tư đầu vào (MRIR) · 'ct' = dòng truy xuất */
+    trangTX: function (tenDA, loai, trang) {
+      return goi(function () {
+        var ds = (loai === 'ct' ? (S.tx_ct || []) : (S.tx_vt || [])).filter(function (x) { return String(x.du_an) === String(tenDA); });
+        var kich = 50; trang = Math.max(1, Number(trang) || 1);
+        return sao({ tong: ds.length, trang: trang, kich: kich, so_trang: Math.max(1, Math.ceil(ds.length / kich)), ds: ds.slice((trang - 1) * kich, trang * kich) });
+      });
+    },
     /* Kho đang có gì + ví dụ mã THẬT để bấm thử (màn Tra nguồn gốc không bao giờ trống trơn) */
     viDuTX: function () {
       return goi(function () {
@@ -1344,7 +1352,7 @@
     });
   }
   /* ĐỆM PHÍA TRÌNH DUYỆT (hiện ngay số lần trước, làm mới phía sau): chỉ cho các màn danh sách / tổng hợp; KHÔNG đệm truy xuất, hồ sơ, phân tích */
-  var DEM_API = { viDuTX: 1, bangDieuHanh: 1, dsKiemNhanh: 1, truyXuatTX: 1, goiYTX: 1, dsLanNapTX: 1, kiemTX: 1, duAnTX: 1, soKhoiLuong: 1, hienTruong: 1, dsYeuCau: 1, keHoachXuong: 1, khoiDong: 1, dsKeHoach: 1, tongQuan: 1, keHoachAH1: 1, tienDoCatAH1: 1, dsChoNT: 1, dsPhieu: 1, dsPunch: 1, dsVatTu: 1, dsDuAn: 1, dsLanNap: 1, kiemSoat: 1, baoCao: 1, dsSDC: 1, cauHinh: 1, trangThaiTX: 1 };
+  var DEM_API = { trangTX: 1, viDuTX: 1, bangDieuHanh: 1, dsKiemNhanh: 1, truyXuatTX: 1, goiYTX: 1, dsLanNapTX: 1, kiemTX: 1, duAnTX: 1, soKhoiLuong: 1, hienTruong: 1, dsYeuCau: 1, keHoachXuong: 1, khoiDong: 1, dsKeHoach: 1, tongQuan: 1, keHoachAH1: 1, tienDoCatAH1: 1, dsChoNT: 1, dsPhieu: 1, dsPunch: 1, dsVatTu: 1, dsDuAn: 1, dsLanNap: 1, kiemSoat: 1, baoCao: 1, dsSDC: 1, cauHinh: 1, trangThaiTX: 1 };
   var KHOA_DEM = 'nt_dem_v1|', DEM_TUOI = 8000, DEM_HAN = 12 * 3600e3, henMoi = null;
   function apRaw(r) { if (r && r.du_an) { DU_AN = r.du_an; S.du_an = DU_AN; } return r ? r.kq : r; }
   /* tatCa = true: đăng xuất / mất quyền → bỏ hết. Sau khi LƯU: chỉ bỏ số liệu danh sách, giữ phần người dùng + cấu hình (khoiDong) để lần sau mở vẫn vào được khi mạng yếu */
