@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-12b — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-13 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2011ban12b">
+<link rel="stylesheet" href="soche_core.css?v=2011ban13">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -356,8 +356,10 @@ label[for=selVai],#selVai{display:none!important}
         </div>
       </section>
       <section data-man="tv" hidden>
+        <p class="nho" id="tvGioiThieu">Màn này tra <b>vật tư đã khai trong app</b> (dùng để lập phiếu sơ chế). Tra tấm thép / heat theo <b>hồ sơ nhà máy</b> (MRIR, báo cáo truy xuất) → dùng màn <button type="button" class="nb" data-tab="tx">Tra nguồn gốc vật tư</button></p>
         <form class="tim" id="fTv" role="search"><label for="tvQ" class="sr">Heat no, mã vật tư hoặc số MTC</label><input id="tvQ" placeholder="Nhập heat no…" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="search"><button class="nb nb-pri" type="submit" id="tvNut"></button></form>
         <div id="tvKq" class="kq" aria-live="polite"></div>
+        <div class="hop" id="tvKho"><h2>Vật tư đang có trong app <small id="tvKhoDem"></small></h2><div class="cuon"><table class="bg" id="tbTvKho"></table></div></div>
       </section>
       <section data-man="ks" hidden>
         <p class="nho">Tự dò các chỗ thiếu thông tin hoặc lệch quy trình (giống "nợ hồ sơ" của hệ DATA HỒ SƠ). Bấm từng dòng để mở hồ sơ truy xuất.</p>
@@ -447,8 +449,8 @@ label[for=selVai],#selVai{display:none!important}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2011ban12b"></script>
-<script src="soche_core.js?v=2011ban12b"></script>
+<script src="soche_api.js?v=2011ban13"></script>
+<script src="soche_core.js?v=2011ban13"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
@@ -1050,11 +1052,16 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-nt-a
   form=NT.PhieuForm($('#formPhieu'),{tuAH1:x,onLuu:function(r){onLuuPhieu(r);veChoNT();}});moTab('lap');});
 /* tra vật tư (QC hiện trường) */
 $('#tvNut').innerHTML=ic('search')+'Tra';
-function veTV(){setTimeout(function(){$('#tvQ').focus();},50);}
+function veTV(){setTimeout(function(){$('#tvQ').focus();},50);
+  A.dsVatTu().then(function(ds){ds=ds.slice().sort(function(a,b){return String(b.ma_vt).localeCompare(String(a.ma_vt));});
+    $('#tvKhoDem').textContent=ds.length?ds.length+' vật tư · mới nhất lên đầu · bấm dòng để truy xuất':'';
+    $('#tbTvKho').innerHTML='<thead><tr><th scope="col">Mã VT</th><th scope="col">Heat</th><th scope="col">Quy cách · mác</th><th scope="col">Dự án</th><th scope="col">Trạng thái</th></tr></thead><tbody>'+
+     (ds.length?ds.slice(0,15).map(function(v){return '<tr><td><button type="button" class="nb mono" data-mo="VT" data-ma="'+E(v.ma_vt)+'">'+E(v.ma_vt)+'</button></td><td class="mono">'+E(v.so_heat)+'</td><td>'+E([v.quy_cach,v.mac_thep].filter(Boolean).join(' · '))+'</td><td>'+E(NT.tenDuAn(v.du_an))+'</td><td>'+NT.pill('VT',v.trang_thai)+'</td></tr>';}).join('')
+      :'<tr><td colspan="5" class="tr-rong">App chưa có vật tư nào. Vật tư tự sinh khi QC bấm "Dùng tấm này" trong phiếu (lấy từ MRIR), hoặc QC vật tư nạp ở màn "Nạp hồ sơ dự án".</td></tr>')+'</tbody>';}).catch(function(){});}
 $('#fTv').addEventListener('submit',function(e){e.preventDefault();var q=$('#tvQ').value.trim(),o=$('#tvKq');
   if(!q){o.innerHTML='<p class="pf-loi">Nhập heat no, mã vật tư hoặc số MTC.</p>';$('#tvQ').focus();return;}
   A.traVatTu(q).then(function(ds){
-    if(!ds.length){o.innerHTML='<div class="the chan"><p class="canh">'+ic('alert')+'<span>Không có vật tư "'+E(q)+'" trong danh sách đã nghiệm thu. Chưa được sơ chế. Báo QC vật tư.</span></p></div>';return;}
+    if(!ds.length){o.innerHTML='<div class="the chan"><p class="canh">'+ic('alert')+'<span>Không có vật tư "'+E(q)+'" trong danh sách ĐÃ KHAI TRONG APP.</span></p><div class="nt-act" style="margin-top:8px"><button type="button" class="nb nb-pri" id="tvSangTX">'+ic('link')+'Tìm "'+E(q)+'" trong hồ sơ nhà máy (MRIR / truy xuất)</button></div><p class="nho">Có trong hồ sơ nhà máy mà chưa có trong app nghĩa là tấm đã nghiệm thu nhưng chưa ai dùng lập phiếu — QC bấm "Dùng tấm này" trong phiếu là app tự khai.</p></div>';var qS=q;$('#tvSangTX').addEventListener('click',function(){txLS=[];moTab('tx');$('#txQ').value=qS;txTim(qS,true);});return;}
     o.innerHTML='<p class="nho">Tìm thấy '+ds.length+' vật tư</p>'+ds.map(function(v){var daC=NT.layDA(),khac=daC&&v.du_an&&v.du_an!==daC,ok=v.trang_thai==='DAT'&&!khac;
       return '<article class="the'+(ok?'':' chan')+'"><div class="the-t"><div><b class="mono">'+E(v.so_heat)+'</b><p class="the-q">'+E(v.quy_cach)+' · '+E(v.mac_thep)+'</p></div>'+NT.pill('VT',v.trang_thai)+'</div>'+
       '<dl class="nt-dl"><div><dt>Mã VT</dt><dd class="mono">'+E(v.ma_vt)+'</dd></div><div><dt>Số MTC</dt><dd class="mono">'+E(v.so_mtc||'chưa có')+'</dd></div><div><dt>MIR</dt><dd class="mono">'+E(v.so_mir||'—')+'</dd></div><div><dt>Dự án</dt><dd>'+E(NT.tenDuAn(v.du_an))+'</dd></div><div><dt>SL · KL</dt><dd>'+E(NT.fmtSo(v.so_luong))+' · '+E(NT.fmt(v.khoi_luong_tan,2))+' tấn</dd></div><div><dt>Ngày NT</dt><dd>'+E(NT.hienNgay(v.ngay_nt))+'</dd></div></dl>'+
