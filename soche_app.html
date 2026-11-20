@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-11 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-12b — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2011ban11">
+<link rel="stylesheet" href="soche_core.css?v=2011ban12b">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -447,8 +447,8 @@ label[for=selVai],#selVai{display:none!important}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2011ban11"></script>
-<script src="soche_core.js?v=2011ban11"></script>
+<script src="soche_api.js?v=2011ban12b"></script>
+<script src="soche_core.js?v=2011ban12b"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
@@ -1068,13 +1068,23 @@ function veKS(){A.kiemSoat().then(function(r){ksR=r;$('#ksN').innerHTML=(r.tong?
 /* truy xuất (chỉ đọc) */
 var txLS=[],txHT=null,txHen=0,NHAN={VT:'Vật tư',CT:'Part mark',PHIEU:'Phiếu',MIR:'Lô nhập',SDC:'Sơ đồ cắt',LSX:'Lệnh SX',TX:'Hồ sơ truy xuất'};
 $('#txNut').innerHTML=ic('search')+'Truy xuất';
+var txKho=null;
+function veTXKho(){A.viDuTX().then(function(r){txKho=r;
+  if(NT.CHE_DO==='that'&&r.vd.length){$('#txGoi').innerHTML='<span>Thử mã thật trong kho:</span>'+r.vd.map(function(v){return '<button type="button" class="nb mono" data-goi="'+E(v.ma)+'" title="'+E(v.loai+(v.du_an?' · '+v.du_an:''))+'">'+E(v.ma)+'</button>';}).join('');}
+  var t0=$('#txMan');if(!txHT&&(t0.getAttribute('data-rong')==='1'||!t0.innerHTML||(t0.firstElementChild&&t0.firstElementChild.tagName==='P'&&/^Nhập/.test(t0.textContent.trim()))))veTXTrong();}).catch(function(){});}
+function veTXTrong(){var r=txKho;if(!r)return;var tong=r.da.reduce(function(a,d){return {vt:a.vt+d.vt,ct:a.ct+d.ct};},{vt:0,ct:0});
+  $('#txMan').setAttribute('data-rong','1');
+  $('#txMan').innerHTML='<div class="hop"><h2>Kho hồ sơ truy xuất hiện có <small>'+E(NT.fmtSo(tong.vt))+' tấm vật tư (MRIR) · '+E(NT.fmtSo(tong.ct))+' dòng truy xuất'+(r.tt&&r.tt.luc?' · chép nguồn lúc '+E(r.tt.luc):'')+'</small></h2>'+
+   '<div class="cuon"><table class="bg"><thead><tr><th scope="col">Dự án</th><th scope="col" class="num" style="text-align:right">Tấm MRIR</th><th scope="col" class="num" style="text-align:right">Dòng truy xuất</th></tr></thead><tbody>'+
+   (r.da.length?r.da.map(function(d){return '<tr><td><b>'+E(d.ten)+'</b></td><td class="num">'+E(NT.fmtSo(d.vt))+'</td><td class="num">'+E(NT.fmtSo(d.ct))+'</td></tr>';}).join(''):'<tr><td colspan="3" class="tr-rong">Kho chưa có hồ sơ nào. Quản lý nạp ở màn "Nạp hồ sơ dự án".</td></tr>')+'</tbody></table></div>'+
+   '<p class="nho">Gõ <b>part mark · số heat · mã tấm · số MTC · số MRIR</b> vào ô trên, hoặc bấm 1 mã thử. Tìm gần đúng từ 3 ký tự. Cũng tra được SDC, phiếu, punch của app.</p></div>';}
 ['VIO-PL-1022','BIS-B-2211','H23A1187','SDC-AH1-0103','MIR-BIS-014','SC-AH1-0088'].forEach(function(x){$('#txGoi').insertAdjacentHTML('beforeend','<button type="button" data-goi="'+x+'">'+x+'</button>');});
-function veTX(){if(txHT)txMo(txHT[0],txHT[1],false);else if(!$('#txMan').innerHTML)$('#txMan').innerHTML='<p class="nho">Nhập <b>part mark</b> để biết part cắt từ sơ đồ cắt nào, tấm / heat nào, MTC, MIR, nhà cung cấp, và đã nghiệm thu sơ chế những gì. Cũng tra được heat, SDC, MIR, phiếu, punch. Tìm gần đúng từ 3 ký tự.</p>';}
+function veTX(){if(!txKho)veTXKho();if(txHT)txMo(txHT[0],txHT[1],false);else if(txKho&&(!$('#txMan').innerHTML||$('#txMan').getAttribute('data-rong')==='1'))veTXTrong();else if(!$('#txMan').innerHTML)$('#txMan').innerHTML='<p class="nho">Nhập <b>part mark</b> để biết part cắt từ sơ đồ cắt nào, tấm / heat nào, MTC, MIR, nhà cung cấp, và đã nghiệm thu sơ chế những gì. Cũng tra được heat, SDC, MIR, phiếu, punch. Tìm gần đúng từ 3 ký tự.</p>';}
 function txTim(q,tuMo){q=String(q||'').trim();if(!q)return;txHT=null;
   Promise.all([A.truyXuat(q),A.timAH1(q).catch(function(){return {cat:[],ct:[],lsx:[]};}),A.truyXuatTX(q).catch(function(){return null;})]).then(function(kq){var ds=kq[0];themAH1(ds,kq[1],q);
     var tx=kq[2];if(tx&&(tx.ct.length||tx.vt.length))ds.unshift({loai:'TX',ma:tx.q.trim(),nhan:'Hồ sơ truy xuất "'+tx.q.trim()+'" (khớp '+tx.khop.join(', ')+')',phu:(tx.tom.du_an||[]).join(', ')+' · '+tx.tong_ct+' dòng part · '+tx.tom.heat.length+' heat · '+tx.vt.length+' tấm vật tư'+(tx.canh.length?' · '+tx.canh.length+' cảnh báo':'')});
     if(tuMo&&ds.length===1){txLS=[];txMo(ds[0].loai,ds[0].ma);return;}
-    if(!ds.length){$('#txMan').innerHTML='<div class="hop"><h2>Không tìm thấy "'+E(q)+'"</h2><ul class="nho"><li>Kiểm tra lại mã, bỏ dấu cách thừa.</li><li>Đang lọc dự án <b>'+E(NT.layDA()?NT.tenDuAn(NT.layDA()):'Tất cả')+'</b>. Thử chọn "Tất cả dự án".</li><li>Nhập ít nhất 3 ký tự để tìm gần đúng.</li></ul></div>';return;}
+    $('#txMan').removeAttribute('data-rong');if(!ds.length){$('#txMan').innerHTML='<div class="hop"><h2>Không tìm thấy "'+E(q)+'"</h2>'+(txKho&&txKho.da.length?'<p class="nho">Kho đang có hồ sơ của: <b>'+txKho.da.map(function(d){return E(d.ten);}).join('</b> · <b>')+'</b>.</p>':'')+'<ul class="nho"><li>Kiểm tra lại mã, bỏ dấu cách thừa.</li><li>Đang lọc dự án <b>'+E(NT.layDA()?NT.tenDuAn(NT.layDA()):'Tất cả')+'</b>. Thử chọn "Tất cả dự án".</li><li>Nhập ít nhất 3 ký tự để tìm gần đúng.</li></ul></div>';return;}
     $('#txMan').innerHTML='<p class="nho">'+ds.length+' kết quả cho "'+E(q)+'"</p><div class="kq">'+ds.map(function(x){return '<button type="button" class="kq-i" data-mo="'+x.loai+'" data-ma="'+E(x.ma)+'"><span class="kq-l">'+E(NHAN[x.loai])+'</span><span class="kq-m"><b>'+E(x.nhan)+'</b><span>'+E(x.phu)+'</span></span>'+(x.tt?NT.pill('VT',x.tt):'')+ic('chev')+'</button>';}).join('')+'</div>';});}
 $('#fTx').addEventListener('submit',function(e){e.preventDefault();clearTimeout(txHen);txTim($('#txQ').value,true);});
 $('#txQ').addEventListener('input',function(){clearTimeout(txHen);var v=this.value;txHen=setTimeout(function(){if(v.trim().length>=3)txTim(v,false);},300);});
