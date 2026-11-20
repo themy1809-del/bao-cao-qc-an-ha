@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-14 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-15 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2011ban14">
+<link rel="stylesheet" href="soche_core.css?v=2011ban15">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -145,6 +145,17 @@ table.bg tr.gap td{background:var(--badbg)}
 }
 </style>
 <style>
+        #bdThe{display:grid;gap:12px;grid-template-columns:1fr}
+        @media(min-width:700px){#bdThe{grid-template-columns:1fr 1fr}}
+        .bd-the{display:grid;grid-template-columns:34px 1fr;gap:4px 12px;align-items:center;text-align:left;
+          background:var(--panel);color:var(--fg);border:1px solid var(--vien,rgba(128,128,128,.25));border-radius:14px;
+          padding:14px 16px;min-height:76px;cursor:pointer;font:inherit;width:100%}
+        .bd-the:hover{border-color:var(--f,#2563EB)}
+        .bd-the .ic,.bd-the svg{width:26px;height:26px;grid-row:1/3}
+        .bd-the b{font-size:16px}.bd-the span{grid-column:2;font-size:13px;opacity:.82;line-height:1.45}
+        .bd-loi{margin:14px 0 0}
+        </style>
+<style>
         .dh2{display:grid;gap:14px;grid-template-columns:1fr}.dh3{display:grid;gap:14px;grid-template-columns:1fr}
         @media(min-width:1100px){.dh2{grid-template-columns:3fr 2fr}.dh3{grid-template-columns:1fr 1fr 1fr}}
         :root{--ch1:#2563EB;--ch2:#0D9488}
@@ -217,6 +228,7 @@ button:active,[role=button]:active{filter:brightness(.92)}
   <nav class="sb" aria-label="Chức năng">
     <div class="sb-brand"><span class="logo" aria-hidden="true">DDC</span><div><b>QC Sơ chế An Hạ</b><span>Nghiệm thu vật tư &amp; sơ chế</span></div></div>
     <p class="sb-nhom">Việc hằng ngày</p>
+    <button type="button" data-tab="bd"></button>
     <button type="button" data-tab="khx"></button>
     <button type="button" data-tab="ht"></button>
     <button type="button" data-tab="kl"></button>
@@ -239,12 +251,20 @@ button:active,[role=button]:active{filter:brightness(.92)}
     <p class="sb-chan" id="ver"></p>
   </nav>
   <div class="chinh">
-    <header class="tb"><div><h1 id="tieuDe">Tổng quan</h1><span class="tieu-da" id="tieuDA"></span></div>
+    <header class="tb"><div><h1 id="tieuDe">Tổng quan</h1><span class="tieu-da" id="tieuDA"></span><p class="nho" id="tabMoTa" style="margin:2px 0 0;max-width:72ch"></p></div>
       <form class="g-tim" id="gTim" role="search"><label for="gQ" class="sr">Truy xuất nhanh</label><input id="gQ" placeholder="Truy xuất: part mark, heat, SDC…" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="submit" class="nb nb-pri" id="gNut" aria-label="Truy xuất"></button></form>
       <div class="tb-p"><label for="selDA">Dự án</label><select id="selDA" class="sel-da"></select><label for="selVai">Vai trò (demo)</label><select id="selVai"></select>
-        <button type="button" class="nb" id="nutTheme" aria-label="Đổi giao diện sáng / tối"></button></div></header>
+        <button type="button" class="nb" id="nutHD" aria-label="Hướng dẫn màn này: các bước dùng"></button><button type="button" class="nb" id="nutTheme" aria-label="Đổi giao diện sáng / tối"></button></div></header>
     <div class="mau that" id="nguoiDung">Đang kết nối…</div>
     <main>
+      <section data-man="bd" hidden>
+        
+        <div class="hop"><h2>Anh / chị muốn làm gì?</h2>
+          <p class="nho" style="margin:0 0 12px">Bấm vào một thẻ để mở đúng màn. App này ghi <b>nghiệm thu vật tư &amp; sơ chế</b> của xưởng An Hạ: kế hoạch cắt lấy tự động từ sổ xưởng, QC chỉ bấm xác nhận / ghi lỗi / tra hồ sơ.</p>
+          <div id="bdThe"></div>
+          <p class="nho bd-loi">Muốn quay lại màn này: bấm <b>Bắt đầu</b> trong menu, hoặc nút <b>?</b> ở góc trên của mọi màn. Mỗi màn đều có 1 dòng giải thích ngay dưới tiêu đề.</p>
+        </div>
+      </section>
       <section data-man="dh" hidden>
         
         <div class="hop"><h2>Bảng điều hành <small id="dhDem">Toàn cảnh tháng theo sổ lệnh xưởng AH1 · bấm vào số / thanh / dòng để mở màn chi tiết</small></h2>
@@ -448,14 +468,14 @@ button:active,[role=button]:active{filter:brightness(.92)}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2011ban14"></script>
-<script src="soche_core.js?v=2011ban14"></script>
+<script src="soche_api.js?v=2011ban15"></script>
+<script src="soche_core.js?v=2011ban15"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
 (function(){var b=document.getElementById('nguoiDung');if(!b)return;var demo=NT.DEMO_MO&&NT.tenNguoiDung()==='Khách demo';function veTK(){b.textContent=(demo?'DEMO — chưa bật đăng nhập · vai: ':'Đang dùng: '+NT.tenNguoiDung()+' · ')+NT.VAI[NT.layVai()]+' · phiên bản '+NT.PHIEN_BAN+' ';}veTK();if(demo){var sv=document.getElementById('selVai');if(sv)sv.addEventListener('change',function(){setTimeout(veTK,0);});}else{var x=document.createElement('button');x.type='button';x.className='nb';x.style.marginLeft='8px';x.textContent='Đăng xuất';x.addEventListener('click',NT.dangXuat);b.appendChild(x);}})();
 var A=NT.API,E=NT.esc,ic=NT.ic,$=function(s){return document.querySelector(s);};
-var TAB={dh:['Bảng điều hành','home'],khx:['Kế hoạch cắt của xưởng','layers'],ht:['Hiện trường hôm nay','home'],kl:['Khối lượng QC xác nhận','list'],tv:['Tra vật tư','search'],tx:['Tra nguồn gốc vật tư','link'],sdc:['Sơ đồ cắt','ruler'],ks:['Kiểm soát hồ sơ','alert'],kh:['Kế hoạch nghiệm thu','clock'],bc:['Báo cáo kết quả NT','list'],da:['Dự án','layers'],tq:['Tổng quan hồ sơ','list'],lap:['Lập phiếu sơ chế','plus'],phieu:['Phiếu sơ chế','file'],punch:['Lỗi cần xử lý (punch)','flag'],vt:['Vật tư đã nghiệm thu','box'],nap:['Nạp hồ sơ dự án','upload'],dm:['Danh mục hạng mục','ruler']};
+var TAB={bd:['Bắt đầu','star'],dh:['Bảng điều hành','home'],khx:['Kế hoạch cắt của xưởng','layers'],ht:['Hiện trường hôm nay','home'],kl:['Khối lượng QC xác nhận','list'],tv:['Tra vật tư','search'],tx:['Tra nguồn gốc vật tư','link'],sdc:['Sơ đồ cắt','ruler'],ks:['Kiểm soát hồ sơ','alert'],kh:['Kế hoạch nghiệm thu','clock'],bc:['Báo cáo kết quả NT','list'],da:['Dự án','layers'],tq:['Tổng quan hồ sơ','list'],lap:['Lập phiếu sơ chế','plus'],phieu:['Phiếu sơ chế','file'],punch:['Lỗi cần xử lý (punch)','flag'],vt:['Vật tư đã nghiệm thu','box'],nap:['Nạp hồ sơ dự án','upload'],dm:['Danh mục hạng mục','ruler']};
 var tab='tq',form=null,cache={},tt,ptich=null,tenFile='';
 var BN_NHAN={dh:'Điều hành',khx:'Kế hoạch cắt',ht:'Hiện trường',tx:'Nguồn gốc',kh:'Kế hoạch',lap:'Phiếu mới',punch:'Lỗi',kl:'Khối lượng',nap:'Nạp hồ sơ',vt:'Vật tư'};
 document.querySelectorAll('.sb [data-tab],.bn [data-tab]').forEach(function(b){var t=TAB[b.getAttribute('data-tab')];if(b.closest('.bn')){b.innerHTML=ic(t[1])+'<span>'+BN_NHAN[b.getAttribute('data-tab')]+'</span>'+(b.getAttribute('data-tab')==='punch'?'<span class="dem" id="demPunch2" hidden></span>':'');return;}b.innerHTML=ic(t[1])+'<span>'+t[0]+'</span>'+(b.getAttribute('data-tab')==='punch'?'<span class="dem" id="demPunch" hidden></span>':'');});
@@ -463,10 +483,56 @@ document.querySelectorAll('[data-chep]').forEach(function(b){b.innerHTML=ic('cop
 /* BẢN 5 — TINH GỌN: mỗi vai trò chỉ thấy đúng việc của mình. ngay = "Việc hằng ngày", khac = gom trong "Chức năng khác", bn = thanh dưới điện thoại.
    Màn không có trong cả hai danh sách bị ẨN với vai đó (nút vẫn nằm trong trang để không hỏng liên kết cũ). */
 var VM={
- QC:       {bn:['khx','ht','punch','tx'], ngay:['khx','ht','punch','tx'], khac:['lap','phieu','kl','bc','vt','sdc']},
- TO_TRUONG:{bn:['khx','ht','punch','tx'], ngay:['khx','ht','punch','tx'], khac:['phieu']},
- QC_VT:    {bn:['nap','vt','tx','ht'],    ngay:['nap','vt','tx','ks'],    khac:['khx','ht','phieu','kl','bc']},
- QUAN_LY:  {bn:['dh','khx','kl','punch'], ngay:['dh','khx','ht','kl','punch','nap'], khac:['tx','ks','bc','tq','lap','phieu','tv','vt','sdc','kh','da','dm']}};
+ QC:       {bn:['khx','ht','punch','tx'], ngay:['bd','khx','ht','punch','tx'], khac:['lap','phieu','kl','bc','vt','sdc']},
+ TO_TRUONG:{bn:['khx','ht','punch','tx'], ngay:['bd','khx','ht','punch','tx'], khac:['phieu']},
+ QC_VT:    {bn:['nap','vt','tx','ht'],    ngay:['bd','nap','vt','tx','ks'],    khac:['khx','ht','phieu','kl','bc']},
+ QUAN_LY:  {bn:['dh','khx','kl','punch'], ngay:['bd','dh','khx','ht','kl','punch','nap'], khac:['tx','ks','bc','tq','lap','phieu','tv','vt','sdc','kh','da','dm']}};
+var MOTA={bd:'Chọn việc cần làm — mỗi thẻ là một việc thường ngày của QC.',
+ dh:'Số tổng tháng này cho quản lý: kế hoạch, đã cắt, lỗi, biểu đồ theo ngày.',
+ khx:'Tháng này xưởng cắt những lệnh nào, lệnh nào trễ, còn tồn bao nhiêu tấn.',
+ ht:'Chi tiết xưởng đang cắt hôm nay — Acc nhanh 1 chạm hoặc ghi lỗi ngay tại máy.',
+ kl:'Chốt khối lượng QC đã xác nhận theo ngày / lệnh để đối chiếu sản lượng.',
+ tv:'Tra vật tư ĐÃ KHAI TRONG APP (tấm đã dùng lập phiếu sơ chế).',
+ tx:'Tra một tấm thép từ đâu ra: gõ part mark / số heat / mã tấm là ra hồ sơ MRIR, truy xuất.',
+ sdc:'Sơ đồ cắt của từng tấm: tấm nào cắt ra những chi tiết nào.',
+ ks:'Soát hồ sơ một dự án: thiếu MRIR nào, lệch heat nào.',
+ kh:'Kế hoạch nghiệm thu: hôm nay / tuần này phải nghiệm thu những gì.',
+ bc:'Kết quả nghiệm thu theo ngày: bao nhiêu phiếu, đạt / không đạt.',
+ da:'Danh mục dự án — thêm dự án mới, sửa tên, nối với tên trong sổ xưởng.',
+ tq:'Đếm tổng hồ sơ từng dự án: vật tư, phiếu, punch.',
+ lap:'Lập phiếu sơ chế: chọn tấm thép, nhập số đo, Đạt / Không đạt.',
+ phieu:'Các phiếu sơ chế đã lập — xem lại, sửa khi chưa chốt, in.',
+ punch:'Lỗi sai hỏng phát hiện khi kiểm — ghi lại, giao xử lý, theo dõi đến khi đóng.',
+ vt:'Các tấm thép đã nghiệm thu và khai trong app.',
+ nap:'Đưa file Excel MRIR / báo cáo truy xuất của dự án vào kho — có cảnh báo nạp trùng.',
+ dm:'Danh mục hạng mục kiểm tra và yêu cầu cho phép của từng công đoạn.'};
+var HDAN={khx:['Chọn tháng ở đầu màn (mặc định tháng này).','Nhìn 4 ô số tổng: kế hoạch · đã cắt · tồn · trễ.','Bấm một dự án rồi một lệnh để xem từng chi tiết.','Ô "Dự án" trên cùng lọc cả màn theo 1 dự án.'],
+ ht:['Màn tự liệt kê chi tiết xưởng đang cắt hôm nay.','Chi tiết đạt: bấm nút Acc — 1 chạm là ghi nhận xong.','Chi tiết có vấn đề: bấm Ghi lỗi, chọn loại lỗi, chụp ảnh nếu cần.','Lỡ tay Acc nhầm: bấm lại để huỷ trong màn này.'],
+ lap:['Chọn dự án (ô Dự án trên cùng) rồi chọn tấm thép.','Nhập số đo từng hạng mục — app tự so với yêu cầu.','Chọn Đạt / Không đạt rồi bấm Lưu.','Xem lại / sửa phiếu ở màn "Phiếu sơ chế".'],
+ tx:['Gõ part mark, số heat, mã tấm hoặc số MRIR vào ô tìm.','Chưa quen: bấm một mã trong hàng "Thử mã thật trong kho".','Tìm gần đúng được từ 3 ký tự.','Kết quả cho biết: tấm của dự án nào, MRIR nào, đã dùng ở phiếu nào.'],
+ tv:['Màn này chỉ tra vật tư ĐÃ KHAI TRONG APP.','Tra tấm theo hồ sơ nhà máy (MRIR) → dùng màn Tra nguồn gốc.','Không thấy mã: bấm nút "Tìm trong hồ sơ nhà máy" ngay dưới kết quả.'],
+ punch:['Bấm "Thêm punch" để ghi một lỗi mới (chọn loại lỗi, nơi phát hiện).','Lọc theo tổ / mức / trạng thái bằng các ô đầu màn.','Lỗi xử lý xong: mở punch, bấm Đóng và ghi cách xử lý.'],
+ kl:['Chọn ngày hoặc lệnh cần chốt.','Đối chiếu số app đếm với thực tế rồi bấm Xác nhận.','Nhầm thì Huỷ xác nhận — app giữ vết, không mất số.'],
+ nap:['Bước 1: chọn dự án (chưa có thì bấm "Thêm dự án mới").','Bước 2: chọn file Excel MRIR / báo cáo truy xuất.','App tự nhận cột; file đã nạp rồi sẽ được CẢNH BÁO TRÙNG.','Xem các lần nạp ở sổ ngay dưới, xoá được từng lần.'],
+ dh:['Chọn tháng ở đầu màn.','Hàng ô số: kế hoạch · đã cắt · tồn · phiếu · punch.','Biểu đồ theo ngày: đường đậm là đã cắt, đường nhạt là kế hoạch.','Bấm một dự án trong bảng để sang màn kế hoạch của dự án đó.'],
+ bd:['Bấm một thẻ việc để mở đúng màn.','Dưới tiêu đề mỗi màn luôn có 1 dòng giải thích.','Nút "?" góc trên mở hướng dẫn của màn đang xem.']};
+function veBD(){var m=VM[NT.layVai()]||VM.QC,co={};[].concat(m.bn,m.ngay,m.khac).forEach(function(k){co[k]=1;});
+ var THE=[['khx','Xem kế hoạch cắt của xưởng'],['ht','Đi kiểm hiện trường'],['lap','Nghiệm thu — lập phiếu sơ chế'],['tx','Tra một tấm thép từ đâu ra'],['punch','Ghi và theo dõi lỗi (punch)'],['kl','Xác nhận khối lượng đã cắt'],['nap','Nạp hồ sơ dự án vào kho'],['dh','Xem bảng điều hành tháng']];
+ $('#bdThe').innerHTML=THE.filter(function(c){return co[c[0]];}).map(function(c){return '<button type="button" class="bd-the" data-tab="'+c[0]+'">'+ic(TAB[c[0]][1])+'<b>'+E(c[1])+'</b><span>'+E(MOTA[c[0]])+'</span></button>';}).join('');}
+function moHD(){var cu=document.getElementById('hopHD');if(cu)cu.remove();
+ var b=HDAN[tab]||[MOTA[tab]||TAB[tab][0],'Mỗi màn đều có dòng giải thích dưới tiêu đề.'];
+ var o=document.createElement('div');o.id='hopHD';o.setAttribute('role','dialog');o.setAttribute('aria-label','Hướng dẫn: '+TAB[tab][0]);
+ o.setAttribute('style','position:fixed;inset:0;z-index:95;background:rgba(10,15,25,.55);display:grid;place-items:center;padding:16px');
+ o.innerHTML='<div style="background:var(--panel,#fff);color:var(--fg,#142033);border-radius:14px;padding:20px;width:min(100%,460px);max-height:86vh;overflow:auto">'+
+  '<h2 style="margin:0 0 4px">'+E(TAB[tab][0])+'</h2><p class="nho" style="margin:0 0 10px">'+E(MOTA[tab]||'')+'</p>'+
+  '<ol style="margin:0;padding-left:20px;display:grid;gap:8px">'+b.map(function(x){return '<li>'+E(x)+'</li>';}).join('')+'</ol>'+
+  '<div class="nt-act" style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">'+(tab!=='bd'?'<button type="button" class="nb" data-tab="bd">'+ic('star')+'Về màn Bắt đầu</button>':'')+
+  '<button type="button" class="nb nb-pri" data-dong-hd>Đã hiểu</button></div></div>';
+ document.body.appendChild(o);
+ o.addEventListener('click',function(e){if(e.target===o||e.target.closest('[data-dong-hd]')||e.target.closest('[data-tab]'))o.remove();});
+ document.addEventListener('keydown',function tt(e){if(e.key==='Escape'){o.remove();document.removeEventListener('keydown',tt);}});
+ o.querySelector('[data-dong-hd]').focus();}
+$('#nutHD').innerHTML=ic('help');$('#nutHD').addEventListener('click',moHD);
 function apDungVaiMenu(){var m=VM[NT.layVai()]||VM.QC,sb=document.querySelector('.sb'),kh=$('#sbKhac');
   var nut={};document.querySelectorAll('.sb [data-tab]').forEach(function(b){nut[b.getAttribute('data-tab')]=b;b.hidden=true;});
   function sbNut(k){var b=document.createElement('button');b.type='button';b.setAttribute('data-tab',k);b.innerHTML=ic(TAB[k][1])+'<span>'+E(TAB[k][0])+'</span>';nut[k]=b;return b;}
@@ -491,12 +557,12 @@ function toast(m,loi){var t=$('#toast');t.className='toast'+(loi?' loi':'');t.in
 function moTab(t){tab=t;(function(){var l=document.querySelector('label[for="selDA"]'),o2=$('#selDA');if(l&&o2){l.hidden=o2.hidden=(t==='khx');}})();var kh=$('#sbKhac');if(kh&&kh.querySelector('[data-tab="'+t+'"]'))kh.open=true;document.querySelectorAll('main>section').forEach(function(s){s.hidden=s.getAttribute('data-man')!==t;});
   document.querySelectorAll('.sb [data-tab]').forEach(function(b){if(b.getAttribute('data-tab')===t)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   var coBN=!!document.querySelector('.bn [data-tab="'+t+'"]');document.querySelectorAll('.bn button').forEach(function(b){var m=b.hasAttribute('data-menu')?!coBN:b.getAttribute('data-tab')===t;if(m)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
-  $('#tieuDe').textContent=TAB[t][0];try{localStorage.setItem('nt_tab',t);}catch(e){}window.scrollTo(0,0);ve();}
+  $('#tieuDe').textContent=TAB[t][0];(function(){var o=$('#tabMoTa');if(o&&typeof MOTA!=='undefined')o.textContent=MOTA[t]||'';})();try{localStorage.setItem('nt_tab',t);}catch(e){}window.scrollTo(0,0);ve();}
 /* dữ liệu đệm vừa được làm mới phía sau → vẽ lại màn đang xem (trừ khi đang nhập liệu / mở ngăn kéo / xem hồ sơ) */
 window.addEventListener('nt-du-lieu-moi',function(){var a=document.activeElement,dangGo=a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.type!=='button';
   if(['lap','nap','tx'].indexOf(tab)>=0||!$('#dk').hidden||dangGo)return;try{ve();}catch(e){}});
 var daBaoMang=0;window.addEventListener('nt-mat-mang',function(){if(Date.now()-daBaoMang<60000)return;daBaoMang=Date.now();toast('Mất kết nối: đang hiện số liệu lưu lần trước.',true);});
-function ve(){veTieuDA();({dh:veDH,khx:veKHX,ht:veHT,kl:veKL,sdc:veSDC,tv:veTV,ks:veKS,tx:veTX,kh:veKH,bc:veBC,tq:veTQ,lap:veLap,phieu:vePhieu,punch:vePunch,vt:veVT,nap:veLan,dm:veDM,da:veDA})[tab]();demPunch();}
+function ve(){veTieuDA();({bd:veBD,dh:veDH,khx:veKHX,ht:veHT,kl:veKL,sdc:veSDC,tv:veTV,ks:veKS,tx:veTX,kh:veKH,bc:veBC,tq:veTQ,lap:veLap,phieu:vePhieu,punch:vePunch,vt:veVT,nap:veLan,dm:veDM,da:veDA})[tab]();demPunch();}
 function demPunch(){A.dsPunch().then(function(ds){var n=ds.filter(function(p){return p.trang_thai!=='DA_DONG';}).length;['#demPunch','#demPunch2'].forEach(function(s){var d=$(s);if(d){d.textContent=n;d.hidden=!n;}});});}
 /* ngăn chi tiết */
 var nutTruoc=null;
@@ -1228,7 +1294,8 @@ try{var th=localStorage.getItem('nt_theme');if(th)document.documentElement.setAt
 nutTheme();veSelDA();$('#ver').textContent='Phiên bản '+NT.PHIEN_BAN;
 var t0='';try{t0=localStorage.getItem('nt_tab')||'';}catch(e){}
 var h0=decodeURIComponent((location.hash||'').slice(1));
-if(h0){moTab('tx');$('#txQ').value=h0;txTim(h0,true);}else moTab(NT.layVai()==='QUAN_LY'?'dh':'khx');
+if(h0){moTab('tx');$('#txQ').value=h0;txTim(h0,true);}else{var bdXem='';try{bdXem=localStorage.getItem('nt_bd_xem')||'';}catch(e){}
+  if(!bdXem){try{localStorage.setItem('nt_bd_xem','1');}catch(e){}moTab('bd');}else moTab(NT.layVai()==='QUAN_LY'?'dh':'khx');}
 }).catch(function(er){document.body.insertAdjacentHTML('afterbegin','<p style="padding:16px;margin:0;background:#fee2e2;color:#991b1b;font:700 16px system-ui">'+String(er&&er.message||er).replace(/[<&]/g,'')+'</p>');});
 </script>
 <script id="uxpmjs">/* ux-pro-max (02/11/2026): nhan cho o chua co nhan + ban phim cho phan tu bam duoc khong phai nut. Chi them thuoc tinh, khong doi hanh vi. */
