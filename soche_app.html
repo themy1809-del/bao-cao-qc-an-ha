@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-17 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-18 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2011ban17">
+<link rel="stylesheet" href="soche_core.css?v=2011ban18">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -476,8 +476,8 @@ button:active,[role=button]:active{filter:brightness(.92)}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2011ban17"></script>
-<script src="soche_core.js?v=2011ban17"></script>
+<script src="soche_api.js?v=2011ban18"></script>
+<script src="soche_core.js?v=2011ban18"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
@@ -1154,11 +1154,12 @@ var txKho=null;
 function veTXKho(){A.viDuTX().then(function(r){txKho=r;
   if(NT.CHE_DO==='that'&&r.vd.length){$('#txGoi').innerHTML='<span>Thử mã thật trong kho:</span>'+r.vd.map(function(v){return '<button type="button" class="nb mono" data-goi="'+E(v.ma)+'" title="'+E(v.loai+(v.du_an?' · '+v.du_an:''))+'">'+E(v.ma)+'</button>';}).join('');}
   var t0=$('#txMan');if(!txHT&&(t0.getAttribute('data-rong')==='1'||!t0.innerHTML||(t0.firstElementChild&&t0.firstElementChild.tagName==='P'&&/^Nhập/.test(t0.textContent.trim()))))veTXTrong();}).catch(function(){});}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-ks-da]');if(!b)return;hsKChon=b.getAttribute('data-ks-da');moTab('nap');setTimeout(function(){var o=document.getElementById('hsKiem');if(o)o.scrollIntoView({block:'start'});},450);});
 function veTXTrong(){var r=txKho;if(!r)return;var tong=r.da.reduce(function(a,d){return {vt:a.vt+d.vt,ct:a.ct+d.ct};},{vt:0,ct:0});
   $('#txMan').setAttribute('data-rong','1');
   $('#txMan').innerHTML='<div class="hop"><h2>Kho hồ sơ truy xuất hiện có <small>'+E(NT.fmtSo(tong.vt))+' tấm vật tư (MRIR) · '+E(NT.fmtSo(tong.ct))+' dòng truy xuất'+(r.tt&&r.tt.luc?' · chép nguồn lúc '+E(r.tt.luc):'')+'</small></h2>'+
-   '<div class="cuon"><table class="bg"><thead><tr><th scope="col">Dự án</th><th scope="col" class="num" style="text-align:right">Tấm MRIR</th><th scope="col" class="num" style="text-align:right">Dòng truy xuất</th></tr></thead><tbody>'+
-   (r.da.length?r.da.map(function(d){return '<tr><td><b>'+E(d.ten)+'</b></td><td class="num">'+E(NT.fmtSo(d.vt))+'</td><td class="num">'+E(NT.fmtSo(d.ct))+'</td></tr>';}).join(''):'<tr><td colspan="3" class="tr-rong">Kho chưa có hồ sơ nào. Quản lý nạp ở màn "Nạp hồ sơ dự án".</td></tr>')+'</tbody></table></div>'+
+   '<div class="cuon"><table class="bg"><thead><tr><th scope="col">Dự án (bấm để kiểm hồ sơ)</th><th scope="col" class="num" style="text-align:right">Tấm MRIR</th><th scope="col" class="num" style="text-align:right">Dòng truy xuất</th></tr></thead><tbody>'+
+   (r.da.length?r.da.map(function(d){return '<tr><td><button type="button" class="nb" data-ks-da="'+E(d.ten)+'" title="Mở kiểm soát hồ sơ dự án này"><b>'+E(d.ten)+'</b></button></td><td class="num">'+E(NT.fmtSo(d.vt))+'</td><td class="num">'+E(NT.fmtSo(d.ct))+'</td></tr>';}).join(''):'<tr><td colspan="3" class="tr-rong">Kho chưa có hồ sơ nào. Quản lý nạp ở màn "Nạp hồ sơ dự án".</td></tr>')+'</tbody></table></div>'+
    '<p class="nho">Gõ <b>part mark · số heat · mã tấm · số MTC · số MRIR</b> vào ô trên, hoặc bấm 1 mã thử. Tìm gần đúng từ 3 ký tự. Cũng tra được SDC, phiếu, punch của app.</p></div>';}
 ['VIO-PL-1022','BIS-B-2211','H23A1187','SDC-AH1-0103','MIR-BIS-014','SC-AH1-0088'].forEach(function(x){$('#txGoi').insertAdjacentHTML('beforeend','<button type="button" data-goi="'+x+'">'+x+'</button>');});
 function veTX(){if(!txKho)veTXKho();if(txHT)txMo(txHT[0],txHT[1],false);else if(txKho&&(!$('#txMan').innerHTML||$('#txMan').getAttribute('data-rong')==='1'))veTXTrong();else if(!$('#txMan').innerHTML)$('#txMan').innerHTML='<p class="nho">Nhập <b>part mark</b> để biết part cắt từ sơ đồ cắt nào, tấm / heat nào, MTC, MIR, nhà cung cấp, và đã nghiệm thu sơ chế những gì. Cũng tra được heat, SDC, MIR, phiếu, punch. Tìm gần đúng từ 3 ký tự.</p>';}
