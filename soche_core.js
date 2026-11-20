@@ -1,4 +1,4 @@
-/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 20/11 ban-13 */
+/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 20/11 ban-14 */
 /* nt_core.js — LÕI DÙNG CHUNG app "Nghiệm thu Vật tư & Sơ chế" (giao diện điện thoại + web)
    PHIEN_BAN '17/11 mau-giao-dien' — BẢN MẪU: dữ liệu mẫu, lưu tạm trên trình duyệt.
    NT.API giả lập ĐÚNG TÊN HÀM sẽ viết ở Apps Script. Khi nối thật: thay phần "KHO" bằng google.script.run,
@@ -11,8 +11,8 @@
   var QUA_GAS = typeof window !== 'undefined' && typeof google !== 'undefined' && google.script && google.script.run;
   var NT_URL = typeof window !== 'undefined' && !QUA_GAS && window.NT_API_URL ? String(window.NT_API_URL) : '';
   var CHE_DO = typeof window === 'undefined' ? 'may_chu' : (QUA_GAS || NT_URL ? 'that' : 'mau');
-  var PHIEN_BAN = '20/11 ban-13';
-  var BAN_SO = 2026112007; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
+  var PHIEN_BAN = '20/11 ban-14';
+  var BAN_SO = 2026112008; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
 
   /* ---------- tiện ích ---------- */
   function pad(n, k) { return String(n).padStart(k || 2, '0'); }
@@ -153,6 +153,9 @@
   function pill(loai, tt) { var x = (TT[loai] || {})[tt] || [tt || '—', 'n']; var g = x[1] === 'ok' ? 'check' : x[1] === 'b' ? 'x' : x[1] === 'w' ? 'clock' : ''; return '<span class="pill p-' + x[1] + '">' + (g ? ic(g) : '') + esc(x[0]) + '</span>'; }
 
   /* ---------- KHO (giả lập Sheet DATA NT VAT TU) ---------- */
+  /* CÔNG TẮC DEMO: true = chưa cần đăng nhập (chạy demo). BẬT LẠI đăng nhập: đổi false Ở ĐÂY
+     và DEMO_KHONG_DANG_NHAP trong gas_src/Code.gs rồi dựng + tải bản mới (build_gas kiểm 2 cờ khớp). */
+  var DEMO_MO = true;
   var KHOA = 'nt_mau_v9', KHOA_VAI = 'nt_vai_v1', KHOA_DA = 'nt_da_v1';
   function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
 
@@ -1329,7 +1332,7 @@
   var GHI = ['accNhanh', 'huyKiemNhanh', 'napTX', 'xoaLanNapTX', 'napVatTu', 'capNhatVatTu', 'luuPhieu', 'capNhatPunch', 'luuDuAn', 'luuKeHoach', 'huyKeHoach', 'napSDC', 'huyPhieu', 'moLaiPhieu', 'luuChungChi', 'dongBoTX', 'luuYeuCau', 'tatYeuCau', 'xacNhanKL', 'huyXacNhanKL', 'dungVatTuTX', 'taoPunch'];
   /* gửi 1 yêu cầu lên máy chủ, trả nguyên { kq, du_an } */
   function guiMayChu(ten, args) {
-    if (NT_URL) return fetch(NT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ ten: ten, args: args, daChon: daChon, dn: dangNhap() }), redirect: 'follow' })
+    if (NT_URL) return fetch(NT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ ten: ten, args: args, daChon: daChon, dn: dangNhap() || (DEMO_MO ? { demo_vai: vai } : null) }), redirect: 'follow' })
       .then(function (r) { if (!r.ok) throw new Error('Máy chủ trả lỗi ' + r.status + '.'); return r.text(); }, function () { throw new Error('MAT_MANG: Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'); })
       .then(function (t) { var j; try { j = JSON.parse(t); } catch (e) { throw new Error('Máy chủ chưa mở cho trang này (cần triển khai Web App quyền "Anyone").'); } if (j && j.loi) throw new Error(String(j.loi).replace(/^Error:\s*/, '')); return j; });
     return new Promise(function (ok, ko) {
@@ -1379,11 +1382,12 @@
         '<div><label for="dnEmail">Email công ty</label><input id="dnEmail" type="email" autocomplete="username" value="' + esc(d.email || '') + '" required></div>' +
         '<div><label for="dnPin">Mã PIN</label><input id="dnPin" type="password" inputmode="numeric" autocomplete="current-password" required></div>' +
         (thongBao ? '<p role="alert" style="margin:0;color:var(--bad,#b91c1c);font-weight:700">' + esc(thongBao) + '</p>' : '') +
-        '<button type="submit" class="nb nb-pri nb-lon">Đăng nhập</button></form>';
+        '<button type="submit" class="nb nb-pri nb-lon">Đăng nhập</button>' + (DEMO_MO ? '<button type="button" class="nb" id="dnDemo">Vào thẳng — chế độ demo, chưa cần đăng nhập</button>' : '') + '</form>';
       document.body.appendChild(o);
       var f = o.querySelector('form'); (d.email ? f.querySelector('#dnPin') : f.querySelector('#dnEmail')).focus();
       f.addEventListener('submit', function (e) { e.preventDefault(); var em = f.querySelector('#dnEmail').value.trim(), pin = f.querySelector('#dnPin').value.trim(); if (!em || !pin) return;
         ls(KHOA_DN, JSON.stringify({ email: em, pin: pin })); o.remove(); ok(); });
+      var bD = o.querySelector('#dnDemo'); if (bD) bD.addEventListener('click', function () { ls(KHOA_DN, null); o.remove(); ok(); });
     });
   }
   function batDau(thongBao) {
@@ -1758,7 +1762,7 @@
     CHE_DO: CHE_DO, LOAI_LOI: LOAI_LOI, TX_COT: TX_COT, TX_TEN_LOAI: TX_TEN_LOAI, TX_LO_TOI_DA: TX_LO_TOI_DA, txNhan: txNhan, txChuyen: txChuyen, txNapMo: txNapMo, txNhanLan: txNhanLan, txMaLanMoi: txMaLanMoi, txCungLan: txCungLan, txTomLan: txTomLan, LOAI_YC: LOAI_YC, BAN_SO: BAN_SO, sanSang: sanSang, API_GOC: API_GOC, GHI: GHI,
     datKho: function (k) { S = k; DU_AN = S.du_an; }, layKho: function () { return S; }, khoRong: khoRong, duLieuMau: duLieuMau,
     datNguCanh: function (c) { vai = c.vai; daChon = c.daChon && layDuAn(c.daChon) ? c.daChon : ''; tenND = c.ten || ''; },
-    tenNguoiDung: function () { return tenND; }, dangXuat: function () { ls(KHOA_DN, null); xoaDem(true); location.reload(); }, xoaDem: xoaDem, QUA_WEB: !!NT_URL,
+    DEMO_MO: DEMO_MO, tenNguoiDung: function () { return tenND; }, dangXuat: function () { ls(KHOA_DN, null); xoaDem(true); location.reload(); }, xoaDem: xoaDem, QUA_WEB: !!NT_URL,
     PHIEN_BAN: PHIEN_BAN, API: API, PhieuForm: PhieuForm,
     XUONG: XUONG, TO: TO, CONG_DOAN: CONG_DOAN, MUC: MUC, VAI: VAI, TT: TT, COT: COT, TSV_MAU: TSV_MAU,
     congDoan: congDoan, hangMuc: hangMuc, tenDuAn: tenDuAn, moTaYeuCau: moTaYeuCau, danhGia: danhGia,

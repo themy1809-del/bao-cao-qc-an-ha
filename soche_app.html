@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-13 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-14 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2011ban13">
+<link rel="stylesheet" href="soche_core.css?v=2011ban14">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -209,7 +209,6 @@ button:active,[role=button]:active{filter:brightness(.92)}
 [data-theme=dark] .btn:not(.sec){color:#052e1c}
 [data-theme=dark] .view a:not([class]){color:#93C5FD}
 [data-theme=light] .view [style*="background:var(--rowH)"][style*="color:var(--acc)"]{color:#B91C1C!important}
-label[for=selVai],#selVai{display:none!important}
 .mau.that{background:var(--panel2);color:var(--fg)}
 </style>
 </head>
@@ -242,7 +241,7 @@ label[for=selVai],#selVai{display:none!important}
   <div class="chinh">
     <header class="tb"><div><h1 id="tieuDe">Tổng quan</h1><span class="tieu-da" id="tieuDA"></span></div>
       <form class="g-tim" id="gTim" role="search"><label for="gQ" class="sr">Truy xuất nhanh</label><input id="gQ" placeholder="Truy xuất: part mark, heat, SDC…" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="submit" class="nb nb-pri" id="gNut" aria-label="Truy xuất"></button></form>
-      <div class="tb-p"><label for="selDA">Dự án</label><select id="selDA" class="sel-da"></select><label for="selVai">Vai trò (bản mẫu)</label><select id="selVai"></select>
+      <div class="tb-p"><label for="selDA">Dự án</label><select id="selDA" class="sel-da"></select><label for="selVai">Vai trò (demo)</label><select id="selVai"></select>
         <button type="button" class="nb" id="nutTheme" aria-label="Đổi giao diện sáng / tối"></button></div></header>
     <div class="mau that" id="nguoiDung">Đang kết nối…</div>
     <main>
@@ -449,12 +448,12 @@ label[for=selVai],#selVai{display:none!important}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2011ban13"></script>
-<script src="soche_core.js?v=2011ban13"></script>
+<script src="soche_api.js?v=2011ban14"></script>
+<script src="soche_core.js?v=2011ban14"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
-(function(){var b=document.getElementById('nguoiDung');if(b){b.textContent='Đang dùng: '+NT.tenNguoiDung()+' · '+NT.VAI[NT.layVai()]+' · phiên bản '+NT.PHIEN_BAN+' ';var x=document.createElement('button');x.type='button';x.className='nb';x.style.marginLeft='8px';x.textContent='Đăng xuất';x.addEventListener('click',NT.dangXuat);b.appendChild(x);}})();
+(function(){var b=document.getElementById('nguoiDung');if(!b)return;var demo=NT.DEMO_MO&&NT.tenNguoiDung()==='Khách demo';function veTK(){b.textContent=(demo?'DEMO — chưa bật đăng nhập · vai: ':'Đang dùng: '+NT.tenNguoiDung()+' · ')+NT.VAI[NT.layVai()]+' · phiên bản '+NT.PHIEN_BAN+' ';}veTK();if(demo){var sv=document.getElementById('selVai');if(sv)sv.addEventListener('change',function(){setTimeout(veTK,0);});}else{var x=document.createElement('button');x.type='button';x.className='nb';x.style.marginLeft='8px';x.textContent='Đăng xuất';x.addEventListener('click',NT.dangXuat);b.appendChild(x);}})();
 var A=NT.API,E=NT.esc,ic=NT.ic,$=function(s){return document.querySelector(s);};
 var TAB={dh:['Bảng điều hành','home'],khx:['Kế hoạch cắt của xưởng','layers'],ht:['Hiện trường hôm nay','home'],kl:['Khối lượng QC xác nhận','list'],tv:['Tra vật tư','search'],tx:['Tra nguồn gốc vật tư','link'],sdc:['Sơ đồ cắt','ruler'],ks:['Kiểm soát hồ sơ','alert'],kh:['Kế hoạch nghiệm thu','clock'],bc:['Báo cáo kết quả NT','list'],da:['Dự án','layers'],tq:['Tổng quan hồ sơ','list'],lap:['Lập phiếu sơ chế','plus'],phieu:['Phiếu sơ chế','file'],punch:['Lỗi cần xử lý (punch)','flag'],vt:['Vật tư đã nghiệm thu','box'],nap:['Nạp hồ sơ dự án','upload'],dm:['Danh mục hạng mục','ruler']};
 var tab='tq',form=null,cache={},tt,ptich=null,tenFile='';
