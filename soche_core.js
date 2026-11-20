@@ -1,4 +1,4 @@
-/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 20/11 ban-10 */
+/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 20/11 ban-11 */
 /* nt_core.js — LÕI DÙNG CHUNG app "Nghiệm thu Vật tư & Sơ chế" (giao diện điện thoại + web)
    PHIEN_BAN '17/11 mau-giao-dien' — BẢN MẪU: dữ liệu mẫu, lưu tạm trên trình duyệt.
    NT.API giả lập ĐÚNG TÊN HÀM sẽ viết ở Apps Script. Khi nối thật: thay phần "KHO" bằng google.script.run,
@@ -11,8 +11,8 @@
   var QUA_GAS = typeof window !== 'undefined' && typeof google !== 'undefined' && google.script && google.script.run;
   var NT_URL = typeof window !== 'undefined' && !QUA_GAS && window.NT_API_URL ? String(window.NT_API_URL) : '';
   var CHE_DO = typeof window === 'undefined' ? 'may_chu' : (QUA_GAS || NT_URL ? 'that' : 'mau');
-  var PHIEN_BAN = '20/11 ban-10';
-  var BAN_SO = 2026112003; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
+  var PHIEN_BAN = '20/11 ban-11';
+  var BAN_SO = 2026112004; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
 
   /* ---------- tiện ích ---------- */
   function pad(n, k) { return String(n).padStart(k || 2, '0'); }
@@ -497,14 +497,14 @@
   /* dau = các dòng đầu của bảng. Trả null nếu không phải MRIR / báo cáo truy xuất. tuDong = chỉ số (từ 0) của dòng dữ liệu đầu tiên. */
   function txNhan(dau) {
     var hi = -1, ten = null, i;
-    function la(x, c) { return x === c || x.indexOf(c + ' ') === 0; }
+    function la(x, c) { return x === c || x.indexOf(c + ' ') === 0 || (' ' + x + ' ').indexOf(' ' + c + ' ') >= 0; }
     function co(k, c) { return k.some(function (x) { return la(x, c); }); }
     for (i = 0; i < Math.min(15, (dau || []).length) && hi < 0; i++) { var k = (dau[i] || []).map(chuanTen); if (co(k, 'heat no')) { hi = i; ten = k; } }
     if (hi < 0) return null;
     var loai = (co(ten, 'part no') || co(ten, 'part mark')) ? 'TX_CHI_TIET' : (co(ten, 'code') && co(ten, 'material description') ? 'TX_VAT_TU' : null);
     if (!loai) return null;
     var map = {}, dung = {};
-    [function (a, b) { return a === b; }, function (a, b) { return a.indexOf(b + ' ') === 0; }].forEach(function (khop) {
+    [function (a, b) { return a === b; }, function (a, b) { return a.indexOf(b + ' ') === 0; }, function (a, b) { return (' ' + a + ' ').indexOf(' ' + b + ' ') >= 0; }].forEach(function (khop) {
       TX_COT[loai].forEach(function (c) { if (map[c[0]] >= 0) return; map[c[0]] = -1;
         c[1].some(function (cand) { for (var j = 0; j < ten.length; j++) if (!dung[j] && ten[j] && khop(ten[j], cand)) { map[c[0]] = j; dung[j] = 1; return true; } return false; }); });
     });
@@ -540,6 +540,7 @@
     if (nb.thieu.length) loi('Tab "' + (o.tab || '') + '" thiếu cột bắt buộc: ' + nb.thieu.join(', ') + '.');
     return { moi: true, da: da, nb: nb, rows: bang.slice(nb.tuDong), ten_file: tf.slice(0, 120), tab: String(o.tab || '').trim().slice(0, 80) };
   }
+  function txKhoaTrung(loai, o) { return loai === 'TX_VAT_TU' ? o.k_tam : (o.k_part + '|' + o.k_tam); }
   function txNhanLan(lan) { return 'Nạp trên app › ' + lan.ten_file + (lan.tab ? ' › ' + lan.tab : '') + ' [' + lan.ma_lan + ']'; }
   function txMaLanMoi(L) { var m = 0; L.forEach(function (x) { var n = Number(String(x.ma_lan).replace(/\D/g, '')); if (n > m) m = n; }); return 'TXN-' + pad(m + 1, 4); }
   function txCungLan(x, m) { return x.trang_thai !== 'XOA' && x.ma_du_an === m.da.ma && x.ten_file === m.ten_file && x.tab === m.tab && x.loai === m.nb.loai; }
@@ -877,12 +878,16 @@
         var m = txNapMo(o), L = S.tx_lan = S.tx_lan || [], lan, thay = 0;
         if (m.moi) {
           L.forEach(function (x) { if (!txCungLan(x, m)) return; var nh = '[' + x.ma_lan + ']'; ['tx_vt', 'tx_ct'].forEach(function (f) { S[f] = (S[f] || []).filter(function (r) { return String(r.nguon || '').slice(-nh.length) !== nh; }); }); x.trang_thai = 'XOA'; x.ghi_chu = 'Thay bằng lần nạp mới'; thay++; });
-          lan = { ma_lan: txMaLanMoi(L), du_an: m.da.ten, ma_du_an: m.da.ma, loai: m.nb.loai, ten_file: m.ten_file, tab: m.tab, so_dong: 0, so_bo_qua: 0, nguoi: tenNguoi(), luc: homNay() + ' ' + gioPhut(), trang_thai: 'DANG', ghi_chu: '' }; L.push(lan);
+          lan = { ma_lan: txMaLanMoi(L), du_an: m.da.ten, ma_du_an: m.da.ma, loai: m.nb.loai, ten_file: m.ten_file, tab: m.tab, so_dong: 0, so_bo_qua: 0, nguoi: tenNguoi(), luc: homNay() + ' ' + gioPhut(), trang_thai: 'DANG', ghi_chu: '', so_trung: 0 }; L.push(lan);
         } else { lan = L.filter(function (x) { return x.ma_lan === o.ma_lan; })[0]; if (!lan || lan.trang_thai !== 'DANG') loi('Lần nạp ' + o.ma_lan + ' không còn mở. Nạp lại từ đầu.'); if (lan.loai !== m.nb.loai) loi('Sai loại bảng của lần nạp ' + o.ma_lan + '.'); }
         var c = txChuyen(m.rows, m.nb, lan.du_an, txNhanLan(lan)), f = lan.loai === 'TX_VAT_TU' ? 'tx_vt' : 'tx_ct';
-        S[f] = (S[f] || []).concat(c.ds); lan.so_dong = (so(lan.so_dong) || 0) + c.ds.length; lan.so_bo_qua = (so(lan.so_bo_qua) || 0) + c.bo_qua;
+        /* cảnh báo trùng: khoá đã có trong kho CÙNG DỰ ÁN từ nguồn khác */
+        var nh = '[' + lan.ma_lan + ']', cu2 = {}, vd = [];
+        (S[f] || []).forEach(function (x) { if (x.du_an === lan.du_an && String(x.nguon || '').slice(-nh.length) !== nh) cu2[txKhoaTrung(lan.loai, x)] = x.nguon || ''; });
+        var trung = 0; c.ds.forEach(function (x) { var k2 = txKhoaTrung(lan.loai, x); if (cu2[k2] !== undefined) { trung++; if (vd.length < 5) vd.push((lan.loai === 'TX_VAT_TU' ? x.ma_tam : x.part + ' · ' + x.ma_tam) + ' (đã có từ: ' + cu2[k2] + ')'); } });
+        S[f] = (S[f] || []).concat(c.ds); lan.so_dong = (so(lan.so_dong) || 0) + c.ds.length; lan.so_bo_qua = (so(lan.so_bo_qua) || 0) + c.bo_qua; lan.so_trung = (so(lan.so_trung) || 0) + trung;
         if (o.cuoi) { lan.trang_thai = 'XONG'; ghiNK('Nạp hồ sơ truy xuất', 'LAN_NAP_TX', lan.ma_lan, '', lan.du_an + ' · ' + lan.ten_file + (lan.tab ? ' › ' + lan.tab : '') + ' · ' + lan.so_dong + ' dòng'); }
-        return sao({ ma_lan: lan.ma_lan, nb: m.nb, loai: lan.loai, them: c.ds.length, bo_qua: c.bo_qua, so_dong: lan.so_dong, xong: lan.trang_thai === 'XONG', thay: thay });
+        return sao({ ma_lan: lan.ma_lan, nb: m.nb, loai: lan.loai, them: c.ds.length, bo_qua: c.bo_qua, so_dong: lan.so_dong, xong: lan.trang_thai === 'XONG', thay: thay, trung: trung, so_trung: lan.so_trung, vd_trung: vd });
       });
     },
     dsLanNapTX: function () { return goi(function () { return sao(txTomLan(S.tx_lan || [])); }); },

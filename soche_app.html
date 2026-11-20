@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-10 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-11 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2011ban10">
+<link rel="stylesheet" href="soche_core.css?v=2011ban11">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -408,7 +408,7 @@ label[for=selVai],#selVai{display:none!important}
           <p class="nho">Chọn dự án, chọn file Excel của dự án. App tự nhận từng tab là <b>MRIR</b> (có cột Code · Material description · Heat no) hay <b>báo cáo truy xuất</b> (có cột Part no · Heat no), bỏ qua tab ẩn và tab không phải 2 loại này. Nạp lại cùng file + tab cho cùng dự án thì <b>thay bản cũ</b>, không nhân đôi. File gốc trên máy không bị sửa.</p>
           <div class="loc"><div><label for="hsDA">1. Dự án</label><select id="hsDA"></select><div class="nt-act" style="margin-top:6px"><button type="button" class="nb" id="hsThemDA">Thêm dự án mới</button></div></div><div class="rong"><label for="hsFile">2. File Excel của dự án (.xlsx, .xls, .csv — chọn được nhiều file)</label><input id="hsFile" type="file" accept=".xlsx,.xls,.xlsm,.csv" multiple></div></div>
           <p class="pf-loi" id="hsLoi" role="alert" hidden></p>
-          <div id="hsXem" hidden><div class="cuon"><table class="bg" id="tbHsXem"></table></div><div class="nt-act" style="margin-top:10px"><button type="button" class="nb nb-pri nb-lon" id="hsLuu"></button><button type="button" class="nb" id="hsBo">Bỏ, chọn file khác</button></div></div>
+          <div id="hsXem" hidden><div class="cuon"><table class="bg" id="tbHsXem"></table></div><div id="hsCanhTruoc" aria-live="polite"></div><div class="nt-act" style="margin-top:10px"><button type="button" class="nb nb-pri nb-lon" id="hsLuu"></button><button type="button" class="nb" id="hsBo">Bỏ, chọn file khác</button></div></div>
           <div id="hsTien" aria-live="polite" hidden><progress id="hsPg" max="100" value="0" aria-label="Tiến độ lưu vào kho" style="width:100%;height:14px"></progress><p class="nho" id="hsTienChu"></p></div>
           <div id="hsKq" aria-live="polite"></div>
         </div>
@@ -447,8 +447,8 @@ label[for=selVai],#selVai{display:none!important}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2011ban10"></script>
-<script src="soche_core.js?v=2011ban10"></script>
+<script src="soche_api.js?v=2011ban11"></script>
+<script src="soche_core.js?v=2011ban11"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
@@ -867,7 +867,7 @@ function veKL(){if(!$('#klTu').value)$('#klTu').value=NT.homNay().slice(0,8)+'01
    .catch(function(er){$('#klKpi').innerHTML='<p class="canh">'+ic('alert')+'<span>Chưa đọc được sổ khối lượng: '+E(er.message)+'</span></p>';});}
 ['#klTu','#klDen'].forEach(function(x){$(x).addEventListener('change',veKL);});
 /* ---- BẢN 4: nạp hồ sơ dự án (MRIR + báo cáo truy xuất) vào kho, kiểm soát theo dự án ---- */
-var hsBang=[],hsDangLuu=false,hsGiuLoi=false,HS_LO=window.NT_HS_LO||3000;
+var hsBang=[],hsLanDS=[],hsDangLuu=false,hsGiuLoi=false,HS_LO=window.NT_HS_LO||3000;
 function hsSelDA(){var o=$('#hsDA'),cu=o.value||NT.layDA()||'';o.innerHTML='<option value="">— chọn dự án —</option>'+NT.dsDA().filter(function(d){return d.trang_thai==='DANG_CHAY';}).map(function(d){return '<option value="'+E(d.ma)+'"'+(d.ma===cu?' selected':'')+'>'+E(d.ten)+'</option>';}).join('');}
 function hsBaoLoi(m){var l=$('#hsLoi');l.textContent=m||'';l.hidden=!m;}
 function hsDocFile(f){return new Promise(function(ok,ko){var fr=new FileReader();fr.onerror=function(){ko(new Error('Không đọc được file '+f.name));};
@@ -881,6 +881,10 @@ function hsVeXem(){var ok=hsBang.filter(function(x){return x.ok;}),tong=ok.reduc
   $('#hsXem').hidden=!hsBang.length;if(!hsBang.length)return;
   $('#tbHsXem').innerHTML='<thead><tr><th scope="col">File › tab</th><th scope="col">Loại bảng</th><th scope="col" class="num" style="text-align:right">Số dòng</th><th scope="col">Tình trạng</th></tr></thead><tbody>'+hsBang.map(function(x){
     return '<tr><td><b>'+E(x.file)+'</b> › '+E(x.tab)+'</td><td>'+(x.nb?E(NT.TX_TEN_LOAI[x.nb.loai]):'—')+'</td><td class="num">'+(x.ok?E(NT.fmtSo(x.so)):'—')+'</td><td>'+(x.ok?'<span class="pill p-ok">'+ic('check')+'Sẵn sàng nạp</span>':'<span class="pill p-b">Bỏ qua</span><div class="nho">'+E(x.ly_do)+'</div>')+'</td></tr>';}).join('')+'</tbody>';
+  var canhT='';ok.forEach(function(x){var cu=(hsLanDS||[]).filter(function(l){return l.trang_thai==='XONG'&&l.ten_file===x.file&&l.tab===x.tab;})[0];if(!cu)return;
+    if(da&&cu.ma_du_an===da.ma)canhT+='<p class="nho">'+ic('clock')+' '+E(x.file+' › '+x.tab)+': sẽ THAY bản đã nạp '+E(cu.ma_lan)+' ('+E(cu.luc)+').</p>';
+    else canhT+='<p class="canh">'+ic('alert')+'<span><b>'+E(x.file+' › '+x.tab)+' ĐÃ NẠP cho dự án "'+E(cu.du_an)+'"</b> ('+E(cu.ma_lan)+', '+E(cu.luc)+'). Nạp thêm cho dự án khác dễ NHÂN ĐÔI khi tra — kiểm lại trước khi Lưu.</span></p>';});
+  $('#hsCanhTruoc').innerHTML=canhT;
   var b=$('#hsLuu');b.disabled=!ok.length||!da||hsDangLuu;b.innerHTML=ic('upload')+(ok.length?'Lưu '+ok.length+' bảng · '+NT.fmtSo(tong)+' dòng vào kho'+(da?' của '+E(da.ten):''):'Không có bảng nào nạp được');
   if(ok.length&&!da)hsBaoLoi('Chọn dự án ở ô 1 rồi bấm Lưu.');else if(!hsGiuLoi)hsBaoLoi('');}
 $('#hsDA').addEventListener('change',function(){hsGiuLoi=false;hsVeXem();});
@@ -894,20 +898,23 @@ $('#hsLuu').addEventListener('click',function(){var ds=hsBang.filter(function(x)
   var tong=ds.reduce(function(s,x){return s+(x.bang.length-x.nb.tuDong);},0)||1,daGui=0,kq=[],t0=Date.now();hsDangLuu=true;hsGiuLoi=false;hsVeXem();hsBaoLoi('');$('#hsKq').innerHTML='';$('#hsTien').hidden=false;
   function tien(chu){$('#hsPg').value=Math.round(daGui/tong*100);$('#hsTienChu').textContent=chu;}
   function motBang(i){if(i>=ds.length)return Promise.resolve();var x=ds[i],dau=x.nb.tuDong,maxC=0;Object.keys(x.nb.map).forEach(function(k){if(x.nb.map[k]+1>maxC)maxC=x.nb.map[k]+1;});
-    var bang=x.bang.map(function(r){return r.slice(0,maxC);}),pos=0,lan=null,nb=null,thay=0;
+    var bang=x.bang.map(function(r){return r.slice(0,maxC);}),pos=0,lan=null,nb=null,thay=0,vdT=[];
     function luot(){var b=lan?Math.min(bang.length,pos+HS_LO):Math.min(bang.length,dau+HS_LO),cuoi=b>=bang.length,a=lan?pos:0;
       tien('Đang lưu '+x.file+' › '+x.tab+': '+NT.fmtSo(Math.max(0,a-dau))+' / '+NT.fmtSo(bang.length-dau)+' dòng…');
-      return A.napTX(lan?{ma_lan:lan,nb:nb,bang:bang.slice(a,b),cuoi:cuoi}:{du_an:da,ten_file:x.file,tab:x.tab,bang:bang.slice(0,b),cuoi:cuoi}).then(function(r){lan=r.ma_lan;nb=r.nb;thay+=r.thay||0;daGui+=b-Math.max(a,dau);pos=b;if(!cuoi)return luot();r.thay=thay;kq.push({x:x,r:r});});}
+      return A.napTX(lan?{ma_lan:lan,nb:nb,bang:bang.slice(a,b),cuoi:cuoi}:{du_an:da,ten_file:x.file,tab:x.tab,bang:bang.slice(0,b),cuoi:cuoi}).then(function(r){lan=r.ma_lan;nb=r.nb;thay+=r.thay||0;vdT=vdT.concat(r.vd_trung||[]);daGui+=b-Math.max(a,dau);pos=b;if(!cuoi)return luot();r.thay=thay;r.vd_trung=vdT.slice(0,5);kq.push({x:x,r:r});});}
     return luot().then(function(){return motBang(i+1);});}
   motBang(0).then(function(){var giay=Math.max(1,Math.round((Date.now()-t0)/1000)),n=kq.reduce(function(s2,k){return s2+k.r.so_dong;},0);daGui=tong;tien('Xong.');
     $('#hsKq').innerHTML='<p class="canh" style="background:var(--okbg);color:var(--ok)">'+ic('check')+'<span>Đã lưu <b>'+E(NT.fmtSo(n))+' dòng</b> vào kho của <b>'+E(dao.ten)+'</b> trong '+giay+' giây: '+kq.map(function(k){return E(k.x.tab)+' ('+E(NT.fmtSo(k.r.so_dong))+(k.r.thay?', thay bản cũ':'')+')';}).join(' · ')+'. Tra được ngay ở mục "Tra nguồn gốc vật tư".</span></p>';
+    var tongTrung=kq.reduce(function(s2,k){return s2+(Number(k.r.so_trung)||0);},0);
+    if(tongTrung){var vdAll=[].concat.apply([],kq.map(function(k){return k.r.vd_trung||[];})).slice(0,5);
+      $('#hsKq').innerHTML+='<p class="canh">'+ic('alert')+'<span><b>CẢNH BÁO TRÙNG: '+NT.fmtSo(tongTrung)+' dòng</b> có mã tấm / part đã tồn tại trong kho của dự án này từ nguồn khác'+(vdAll.length?' — ví dụ: '+E(vdAll.join(' · ')):'')+'. Nếu nạp nhầm, bấm Xoá ở bảng "Các lần đã nạp trên app".</span></p>';}
     toast('Đã lưu '+NT.fmtSo(n)+' dòng hồ sơ của '+dao.ten);hsBang=[];$('#hsFile').value='';$('#hsXem').hidden=true;hsKChon=dao.ten;})
    .catch(function(er){hsGiuLoi=true;hsBaoLoi('Chưa lưu được: '+er.message+(kq.length||daGui?' Bấm Lưu lại để nạp lại từ đầu (bản dở sẽ được thay).':''));})
    .then(function(){hsDangLuu=false;$('#hsTien').hidden=true;if(hsBang.length)hsVeXem();veHsLan();veHsKiem();});});
-function veHsLan(){A.dsLanNapTX().then(function(r){var ql=NT.layVai()==='QUAN_LY';
+function veHsLan(){A.dsLanNapTX().then(function(r){hsLanDS=r.ds;var ql=NT.layVai()==='QUAN_LY';
   $('#hsLanDem').textContent=r.tong.length?r.tong.map(function(g){return g.du_an+': '+NT.fmtSo(g.vt)+' tấm MRIR · '+NT.fmtSo(g.ct)+' dòng truy xuất';}).join(' — '):'';
   $('#tbHsLan').innerHTML='<thead><tr><th scope="col">Lúc nạp</th><th scope="col">Dự án</th><th scope="col">Loại</th><th scope="col">File › tab</th><th scope="col" class="num" style="text-align:right">Số dòng</th><th scope="col">Người nạp</th><th scope="col">Trạng thái</th><th scope="col">Thao tác</th></tr></thead><tbody>'+
-   (r.ds.length?r.ds.map(function(x){return '<tr><td>'+E(x.luc)+'</td><td><b>'+E(x.du_an)+'</b></td><td>'+E(x.loai==='TX_VAT_TU'?'MRIR':'Báo cáo truy xuất')+'</td><td>'+E(x.ten_file)+(x.tab?' › '+E(x.tab):'')+'<div class="nho mono">'+E(x.ma_lan)+'</div></td><td class="num">'+E(NT.fmtSo(Number(x.so_dong)))+(Number(x.so_bo_qua)?'<div class="nho">bỏ '+E(x.so_bo_qua)+' dòng thiếu mã</div>':'')+'</td><td>'+E(x.nguoi)+'</td><td>'+(x.trang_thai==='XONG'?'<span class="pill p-ok">'+ic('check')+'Đã lưu</span>':'<span class="pill p-w">Nạp dở</span>')+'</td><td>'+(ql?'<button type="button" class="nb" data-hs-xoa="'+E(x.ma_lan)+'" data-hs-ten="'+E(x.ten_file+(x.tab?' › '+x.tab:''))+'">Xoá</button>':'—')+'</td></tr>';}).join('')
+   (r.ds.length?r.ds.map(function(x){return '<tr><td>'+E(x.luc)+'</td><td><b>'+E(x.du_an)+'</b></td><td>'+E(x.loai==='TX_VAT_TU'?'MRIR':'Báo cáo truy xuất')+'</td><td>'+E(x.ten_file)+(x.tab?' › '+E(x.tab):'')+'<div class="nho mono">'+E(x.ma_lan)+'</div></td><td class="num">'+E(NT.fmtSo(Number(x.so_dong)))+(Number(x.so_bo_qua)?'<div class="nho">bỏ '+E(x.so_bo_qua)+' dòng thiếu mã</div>':'')+(Number(x.so_trung)?'<div class="nho" style="color:var(--bad);font-weight:700">trùng '+E(NT.fmtSo(Number(x.so_trung)))+' dòng với nguồn khác</div>':'')+'</td><td>'+E(x.nguoi)+'</td><td>'+(x.trang_thai==='XONG'?'<span class="pill p-ok">'+ic('check')+'Đã lưu</span>':'<span class="pill p-w">Nạp dở</span>')+'</td><td>'+(ql?'<button type="button" class="nb" data-hs-xoa="'+E(x.ma_lan)+'" data-hs-ten="'+E(x.ten_file+(x.tab?' › '+x.tab:''))+'">Xoá</button>':'—')+'</td></tr>';}).join('')
     :'<tr><td colspan="8" class="tr-rong">Chưa nạp hồ sơ nào trên app. Chọn dự án và file ở khung trên.</td></tr>')+'</tbody>';}).catch(function(er){$('#tbHsLan').innerHTML='<tbody><tr><td class="tr-rong">Chưa đọc được sổ lần nạp: '+E(er.message)+'</td></tr></tbody>';});}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-hs-xoa]');if(!b)return;var ma=b.getAttribute('data-hs-xoa');
   if(!window.confirm('Xoá toàn bộ dòng của lần nạp "'+b.getAttribute('data-hs-ten')+'" khỏi kho? Không khôi phục được (muốn có lại thì nạp lại file).'))return;
