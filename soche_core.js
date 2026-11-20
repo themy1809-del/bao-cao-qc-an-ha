@@ -1,4 +1,4 @@
-/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 20/11 ban-16 */
+/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 20/11 ban-17 */
 /* nt_core.js — LÕI DÙNG CHUNG app "Nghiệm thu Vật tư & Sơ chế" (giao diện điện thoại + web)
    PHIEN_BAN '17/11 mau-giao-dien' — BẢN MẪU: dữ liệu mẫu, lưu tạm trên trình duyệt.
    NT.API giả lập ĐÚNG TÊN HÀM sẽ viết ở Apps Script. Khi nối thật: thay phần "KHO" bằng google.script.run,
@@ -11,8 +11,8 @@
   var QUA_GAS = typeof window !== 'undefined' && typeof google !== 'undefined' && google.script && google.script.run;
   var NT_URL = typeof window !== 'undefined' && !QUA_GAS && window.NT_API_URL ? String(window.NT_API_URL) : '';
   var CHE_DO = typeof window === 'undefined' ? 'may_chu' : (QUA_GAS || NT_URL ? 'that' : 'mau');
-  var PHIEN_BAN = '20/11 ban-16';
-  var BAN_SO = 2026112010; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
+  var PHIEN_BAN = '20/11 ban-17';
+  var BAN_SO = 2026112011; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
 
   /* ---------- tiện ích ---------- */
   function pad(n, k) { return String(n).padStart(k || 2, '0'); }
@@ -1411,6 +1411,13 @@
   var sanSang = CHE_DO !== 'that' ? Promise.resolve(null) : batDau().then(function (r) { try { kiemGiaoDienMoi(); } catch (e) {} return r; }).then(function (r) {
     vai = r.nguoi.vai; tenND = r.nguoi.ten || r.nguoi.email; datCauHinh(r.cau_hinh); return r;
   });
+  /* BẢN 17 — nạp trước nền: chờ 2,5s cho màn đang mở gọi xong (khoá trùng sẽ ăn đệm, không gọi đôi),
+     rồi mồi đệm các màn chính của vai, mỗi lệnh cách nhau 250ms. Lỗi nạp trước thì im lặng. */
+  if (CHE_DO === 'that') sanSang.then(function () { setTimeout(function () {
+    var th = homNay().slice(0, 7), ds = [['keHoachXuong', [th]], ['hienTruong', [homNay()]], ['dsPunch', []]];
+    ds.push(vai === 'QUAN_LY' ? ['bangDieuHanh', [th]] : vai === 'QC_VT' ? ['dsVatTu', []] : ['dsKeHoach', []]);
+    ds.forEach(function (c, i) { setTimeout(function () { try { goiMayChu(c[0], c[1]).catch(function () {}); } catch (e) {} }, i * 250); });
+  }, 2500); }).catch(function () {});
   /* ---------- khối hiển thị dùng chung ---------- */
   function htmlAnh(ds) {
     if (!ds || !ds.length) return '';
