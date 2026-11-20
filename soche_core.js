@@ -1,4 +1,4 @@
-/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 20/11 ban-15 */
+/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 20/11 ban-16 */
 /* nt_core.js — LÕI DÙNG CHUNG app "Nghiệm thu Vật tư & Sơ chế" (giao diện điện thoại + web)
    PHIEN_BAN '17/11 mau-giao-dien' — BẢN MẪU: dữ liệu mẫu, lưu tạm trên trình duyệt.
    NT.API giả lập ĐÚNG TÊN HÀM sẽ viết ở Apps Script. Khi nối thật: thay phần "KHO" bằng google.script.run,
@@ -11,8 +11,8 @@
   var QUA_GAS = typeof window !== 'undefined' && typeof google !== 'undefined' && google.script && google.script.run;
   var NT_URL = typeof window !== 'undefined' && !QUA_GAS && window.NT_API_URL ? String(window.NT_API_URL) : '';
   var CHE_DO = typeof window === 'undefined' ? 'may_chu' : (QUA_GAS || NT_URL ? 'that' : 'mau');
-  var PHIEN_BAN = '20/11 ban-15';
-  var BAN_SO = 2026112009; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
+  var PHIEN_BAN = '20/11 ban-16';
+  var BAN_SO = 2026112010; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
 
   /* ---------- tiện ích ---------- */
   function pad(n, k) { return String(n).padStart(k || 2, '0'); }
@@ -1133,7 +1133,9 @@
         ph.forEach(function (p) { var k = p.nguoi_qc || '(chưa ghi)'; theoQC[k] = theoQC[k] || { nguoi: k, phieu: 0, dat: 0 }; theoQC[k].phieu++; if (p.trang_thai === 'DAT') theoQC[k].dat++; });
         hn.forEach(function (x) { var k = x.cong_trinh || '(chưa ghi công trình)', g = mCT[k]; if (!g) { g = mCT[k] = { cong_trinh: k, luot: 0, tan: 0, da_kiem: 0 }; ctr.push(g); } g.luot++; g.tan += x.kl; if (x.ma_phieu) g.da_kiem++; });
         var pu = S.punch.map(ganDA).filter(function (u) { return u.trang_thai !== 'DA_DONG' && theoDA(u.du_an); }), xn = (S.xn || []).filter(function (x) { return x.trang_thai !== 'HUY' && x.ngay === ngay; });
-        return sao({ ngay: ngay, tu: tu, ra_bai: { luot: hn.length, tan: hn.reduce(function (s, x) { return s + x.kl; }, 0), da_kiem: hn.filter(function (x) { return x.ma_phieu; }).length },
+        var ganNhat = null;
+        if (!hn.length) { var mN = {}; cat.forEach(function (x) { if (x.ngay < ngay) mN[x.ngay] = (mN[x.ngay] || 0) + 1; }); var ksN = Object.keys(mN).sort(); if (ksN.length) ganNhat = { ngay: ksN[ksN.length - 1], luot: mN[ksN[ksN.length - 1]] }; }
+        return sao({ ngay: ngay, tu: tu, gan_nhat: ganNhat, ra_bai: { luot: hn.length, tan: hn.reduce(function (s, x) { return s + x.kl; }, 0), da_kiem: hn.filter(function (x) { return x.ma_phieu; }).length },
           ton: { so: ton.length, ds: ton.slice(0, 60) }, phieu: { so: ph.length, dat: ph.filter(function (p) { return p.trang_thai === 'DAT'; }).length, cho_punch: ph.filter(function (p) { return p.trang_thai === 'CHO_DONG_PUNCH'; }).length },
           theo_qc: Object.keys(theoQC).map(function (k) { return theoQC[k]; }), theo_ct: ctr.sort(function (a, b) { return b.tan - a.tan; }),
           punch: { mo: pu.length, qua_han: pu.filter(function (u) { return u.han && u.han < homNay(); }).length }, xn: { so: xn.length, tan: xn.reduce(function (s, x) { return s + s0(x.kl_tan); }, 0) },

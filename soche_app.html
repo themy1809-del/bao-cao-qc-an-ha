@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-15 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-16 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2011ban15">
+<link rel="stylesheet" href="soche_core.css?v=2011ban16">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -154,6 +154,8 @@ table.bg tr.gap td{background:var(--badbg)}
         .bd-the .ic,.bd-the svg{width:26px;height:26px;grid-row:1/3}
         .bd-the b{font-size:16px}.bd-the span{grid-column:2;font-size:13px;opacity:.82;line-height:1.45}
         .bd-loi{margin:14px 0 0}
+        .bd-kho{margin:14px 0 0;padding:12px 14px;border:1px dashed var(--vien,rgba(128,128,128,.35));border-radius:10px;font-size:14px}
+        .bd-kho a.nb{text-decoration:none}
         </style>
 <style>
         .dh2{display:grid;gap:14px;grid-template-columns:1fr}.dh3{display:grid;gap:14px;grid-template-columns:1fr}
@@ -263,6 +265,12 @@ button:active,[role=button]:active{filter:brightness(.92)}
           <p class="nho" style="margin:0 0 12px">Bấm vào một thẻ để mở đúng màn. App này ghi <b>nghiệm thu vật tư &amp; sơ chế</b> của xưởng An Hạ: kế hoạch cắt lấy tự động từ sổ xưởng, QC chỉ bấm xác nhận / ghi lỗi / tra hồ sơ.</p>
           <div id="bdThe"></div>
           <p class="nho bd-loi">Muốn quay lại màn này: bấm <b>Bắt đầu</b> trong menu, hoặc nút <b>?</b> ở góc trên của mọi màn. Mỗi màn đều có 1 dòng giải thích ngay dưới tiêu đề.</p>
+          <div class="bd-kho"><b>Kho dữ liệu gốc (Google Sheet)</b> — mọi số trên app đều đọc từ đây, bấm để tự kiểm:
+            <div class="nt-act" style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap">
+              <a class="nb" href="https://docs.google.com/spreadsheets/d/1RjTRlSAwRcSwiLrOrMLcNbw0-U44T-4wTieNTI8M2G8" target="_blank" rel="noopener">Kho chính — DATA NT VAT TU</a>
+              <a class="nb" href="https://docs.google.com/spreadsheets/d/1Qkdi7zlWzNI3jzsh6Tr-4VjseCGOxBY6wJWDDU4yGS0" target="_blank" rel="noopener">Kho truy xuất — MRIR / báo cáo truy xuất</a>
+            </div>
+            <span class="nho">Mở được hay không tuỳ quyền chia sẻ của chủ file (Quản lý QC cấp quyền Người xem).</span></div>
         </div>
       </section>
       <section data-man="dh" hidden>
@@ -468,8 +476,8 @@ button:active,[role=button]:active{filter:brightness(.92)}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2011ban15"></script>
-<script src="soche_core.js?v=2011ban15"></script>
+<script src="soche_api.js?v=2011ban16"></script>
+<script src="soche_core.js?v=2011ban16"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
@@ -1087,12 +1095,14 @@ document.addEventListener('click',function(e){
     A.huyKiemNhanh(h.getAttribute('data-kn-huy'),ld).then(function(){toast('Đã huỷ lượt kiểm');veHT.kn();ve();}).catch(function(er){toast(er.message,true);});return;}});
 /* ---- hiện trường hôm nay ---- */
 var htTon=[];
+function nVN(ng){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ng||''));return m?m[3]+'/'+m[2]:String(ng||'');}
 function veHT(){veHT.kn&&veHT.kn();knNapCT();if(!$('#htNgay').value)$('#htNgay').value=NT.homNay();var ng=$('#htNgay').value;
   A.hienTruong(ng).then(function(r){htTon=r.ton.ds;
     $('#htDem').textContent='Ngày '+NT.hienNgay(r.ngay)+' · tồn tính từ '+NT.hienNgay(r.tu);
     $('#htKpi').innerHTML=[['Xưởng ra bài (lượt)',String(r.ra_bai.luot),f2(r.ra_bai.tan)+' tấn','' ],['Kiểm tại hiện trường (lượt)',String((r.kn||{so:0}).so),((r.kn||{}).dat||0)+' đạt · '+((r.kn||{}).loi||0)+' lỗi'+((r.kn||{}).ngoai_lenh?' · '+r.kn.ngoai_lenh+' ngoài lệnh':''),(r.kn||{}).loi?'vang':'xanh'],['QC đã kiểm trong ngày (phiếu)',String(r.phieu.so),r.phieu.dat+' đạt · '+r.phieu.cho_punch+' chờ đóng punch','xanh'],['Đã ra bài, chưa nghiệm thu',String(r.ton.so),'trong 7 ngày gần nhất',r.ton.so?'vang':''],['Lỗi chưa đóng (punch)',String(r.punch.mo),r.punch.qua_han?r.punch.qua_han+' quá hạn':'không có quá hạn',r.punch.qua_han?'do':''],['QC xác nhận khối lượng (tấn)',f2(r.xn.tan),r.xn.so+' lần xác nhận trong ngày','xanh']]
       .map(function(k){return '<div class="'+k[3]+'"><b>'+E(k[1])+'</b><span>'+E(k[0])+'</span><small>'+E(k[2])+'</small></div>';}).join('');
-    $('#tbHTct').innerHTML='<thead><tr><th scope="col">Dự án (sổ AH1)</th><th scope="col" class="num">Lượt ra bài</th><th scope="col" class="num">Tấn</th><th scope="col" class="num">Đã có phiếu</th><th scope="col" class="num">Chưa kiểm</th></tr></thead><tbody>'+(r.theo_ct.length?r.theo_ct.map(function(g){return '<tr><td><b>'+E(g.cong_trinh)+'</b></td><td class="num">'+g.luot+'</td><td class="num">'+E(f2(g.tan))+'</td><td class="num">'+g.da_kiem+'</td><td class="num"><b>'+(g.luot-g.da_kiem)+'</b></td></tr>';}).join(''):'<tr><td colspan="5" class="tr-rong">Sổ xưởng không ghi lượt ra bài nào trong ngày này.</td></tr>')+'</tbody>';
+    $('#tbHTct').innerHTML='<thead><tr><th scope="col">Dự án (sổ AH1)</th><th scope="col" class="num">Lượt ra bài</th><th scope="col" class="num">Tấn</th><th scope="col" class="num">Đã có phiếu</th><th scope="col" class="num">Chưa kiểm</th></tr></thead><tbody>'+(r.theo_ct.length?r.theo_ct.map(function(g){return '<tr><td><b>'+E(g.cong_trinh)+'</b></td><td class="num">'+g.luot+'</td><td class="num">'+E(f2(g.tan))+'</td><td class="num">'+g.da_kiem+'</td><td class="num"><b>'+(g.luot-g.da_kiem)+'</b></td></tr>';}).join(''):'<tr><td colspan="5" class="tr-rong">Sổ xưởng CHƯA GHI lượt ra bài nào cho ngày này (app chép sổ mỗi giờ'+(r.gan_nhat?' — gần nhất có ra bài: '+E(nVN(r.gan_nhat.ngay))+' · '+r.gan_nhat.luot+' lượt':'')+').'+(r.gan_nhat?' <button type="button" class="nb nb-pri" id="htGanNhat" data-ngay="'+E(r.gan_nhat.ngay)+'">Xem ngày '+E(nVN(r.gan_nhat.ngay))+'</button>':'')+'</td></tr>')+'</tbody>';
+    var nutGN=$('#htGanNhat');if(nutGN)nutGN.addEventListener('click',function(){$('#htNgay').value=this.getAttribute('data-ngay');veHT();});
     $('#tbHTqc').innerHTML='<thead><tr><th scope="col">QC</th><th scope="col" class="num">Phiếu</th><th scope="col" class="num">Đạt</th><th scope="col" class="num">Chờ đóng punch</th></tr></thead><tbody>'+(r.theo_qc.length?r.theo_qc.map(function(g){return '<tr><td>'+E(g.nguoi)+'</td><td class="num">'+g.phieu+'</td><td class="num">'+g.dat+'</td><td class="num">'+(g.phieu-g.dat)+'</td></tr>';}).join(''):'<tr><td colspan="4" class="tr-rong">Chưa có phiếu nghiệm thu nào trong ngày này.</td></tr>')+'</tbody>';
     $('#htTon').innerHTML=r.ton.ds.length?r.ton.ds.map(function(c){return '<article class="nt-kh"><header><b class="mono">'+E(c.ten_chi_tiet)+'</b><span class="pill p-w">'+ic('clock')+'Ra bài '+E(NT.hienNgay(c.ngay))+'</span><span class="nho">lệnh '+E(c.lsx)+'</span></header><p class="nt-nho">'+E([c.cong_trinh,c.may,c.sl_tong?'SL '+c.sl_tong:''].filter(Boolean).join(' · '))+'</p><div class="nt-act"><button type="button" class="nb nb-pri" data-khx="'+E(c.lsx)+'">Mở lệnh cắt</button></div></article>';}).join('')+(r.ton.so>r.ton.ds.length?'<p class="nho">Hiện '+r.ton.ds.length+' / '+r.ton.so+' chi tiết.</p>':'')
       :'<p class="tr-rong">Không còn chi tiết nào đã ra bài mà chưa nghiệm thu trong 7 ngày gần nhất.</p>';})
