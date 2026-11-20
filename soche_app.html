@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-9 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 20/11 ban-10 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2011ban9">
+<link rel="stylesheet" href="soche_core.css?v=2011ban10">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -406,7 +406,7 @@ label[for=selVai],#selVai{display:none!important}
       <section data-man="nap" hidden>
         <div class="hop" id="hsHop"><h2>Nạp hồ sơ dự án vào kho <small>Nghiệm thu vật tư đầu vào (MRIR) + báo cáo truy xuất · nạp 1 lần, cả phòng tra được ngay</small></h2>
           <p class="nho">Chọn dự án, chọn file Excel của dự án. App tự nhận từng tab là <b>MRIR</b> (có cột Code · Material description · Heat no) hay <b>báo cáo truy xuất</b> (có cột Part no · Heat no), bỏ qua tab ẩn và tab không phải 2 loại này. Nạp lại cùng file + tab cho cùng dự án thì <b>thay bản cũ</b>, không nhân đôi. File gốc trên máy không bị sửa.</p>
-          <div class="loc"><div><label for="hsDA">1. Dự án</label><select id="hsDA"></select></div><div class="rong"><label for="hsFile">2. File Excel của dự án (.xlsx, .xls, .csv — chọn được nhiều file)</label><input id="hsFile" type="file" accept=".xlsx,.xls,.xlsm,.csv" multiple></div></div>
+          <div class="loc"><div><label for="hsDA">1. Dự án</label><select id="hsDA"></select><div class="nt-act" style="margin-top:6px"><button type="button" class="nb" id="hsThemDA">Thêm dự án mới</button></div></div><div class="rong"><label for="hsFile">2. File Excel của dự án (.xlsx, .xls, .csv — chọn được nhiều file)</label><input id="hsFile" type="file" accept=".xlsx,.xls,.xlsm,.csv" multiple></div></div>
           <p class="pf-loi" id="hsLoi" role="alert" hidden></p>
           <div id="hsXem" hidden><div class="cuon"><table class="bg" id="tbHsXem"></table></div><div class="nt-act" style="margin-top:10px"><button type="button" class="nb nb-pri nb-lon" id="hsLuu"></button><button type="button" class="nb" id="hsBo">Bỏ, chọn file khác</button></div></div>
           <div id="hsTien" aria-live="polite" hidden><progress id="hsPg" max="100" value="0" aria-label="Tiến độ lưu vào kho" style="width:100%;height:14px"></progress><p class="nho" id="hsTienChu"></p></div>
@@ -447,8 +447,8 @@ label[for=selVai],#selVai{display:none!important}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2011ban9"></script>
-<script src="soche_core.js?v=2011ban9"></script>
+<script src="soche_api.js?v=2011ban10"></script>
+<script src="soche_core.js?v=2011ban10"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
@@ -884,6 +884,8 @@ function hsVeXem(){var ok=hsBang.filter(function(x){return x.ok;}),tong=ok.reduc
   var b=$('#hsLuu');b.disabled=!ok.length||!da||hsDangLuu;b.innerHTML=ic('upload')+(ok.length?'Lưu '+ok.length+' bảng · '+NT.fmtSo(tong)+' dòng vào kho'+(da?' của '+E(da.ten):''):'Không có bảng nào nạp được');
   if(ok.length&&!da)hsBaoLoi('Chọn dự án ở ô 1 rồi bấm Lưu.');else if(!hsGiuLoi)hsBaoLoi('');}
 $('#hsDA').addEventListener('change',function(){hsGiuLoi=false;hsVeXem();});
+$('#hsThemDA').addEventListener('click',function(){if(NT.layVai()!=='QUAN_LY'){toast('Thêm dự án: cần vai Quản lý QC.',true);return;}
+  window.sauLuuDA=function(r){hsSelDA();$('#hsDA').value=r.ma;hsGiuLoi=false;hsVeXem();toast('Đã chọn dự án mới "'+r.ten+'" để nạp hồ sơ');};moFormDA('');});
 $('#hsBo').addEventListener('click',function(){hsBang=[];$('#hsFile').value='';$('#hsXem').hidden=true;hsBaoLoi('');});
 $('#hsFile').addEventListener('change',function(){var fs=[].slice.call(this.files||[]);hsGiuLoi=false;hsBaoLoi('');$('#hsKq').innerHTML='';if(!fs.length)return;
   if(!window.XLSX){hsBaoLoi('Chưa tải được bộ đọc Excel (cần có mạng lúc mở app). Tải lại trang rồi chọn file lần nữa.');return;}
@@ -1190,7 +1192,7 @@ function moFormDA(ma){var d=ma?NT.layDuAn(ma):{ma:'',ten:'',ma_hd:'',khach_hang:
    '<div class="nt-act"><button type="submit" class="nb nb-pri">'+ic('check')+(moi?'Thêm dự án':'Lưu thay đổi')+'</button></div></form><p class="nho">Chỉ vai Quản lý QC được thêm / sửa. Mọi thay đổi ghi NHAT_KY.</p>');
   $('#fDA').addEventListener('submit',function(e){e.preventDefault();
     A.luuDuAn({ma:$('#daMa').value,ten:$('#daTen').value,ma_hd:$('#daHD').value,khach_hang:$('#daKH').value,trang_thai:$('#daTT').value,ghi_chu:$('#daGC').value,ten_ah1:$('#daAH1').value},moi)
-     .then(function(r){toast((moi?'Đã thêm dự án ':'Đã lưu dự án ')+r.ten);dongDK();veSelDA();ve();})
+     .then(function(r){toast((moi?'Đã thêm dự án ':'Đã lưu dự án ')+r.ten);dongDK();veSelDA();ve();if(window.sauLuuDA){var cb=window.sauLuuDA;window.sauLuuDA=null;cb(r);}})
      .catch(function(er){$('#daLoi').textContent=er.message;$('#daLoi').hidden=false;});});}
 /* danh mục */
 function veDM(){$('#dm').innerHTML='<p class="pf-goi">Sửa dung sai trong tab <b>HANG_MUC_KT</b>, xưởng / tổ / quy tắc chặn heat trong tab <b>DANH_MUC</b> của Sheet DATA (cột hoat_dong = CO / KHONG). Mở lại app để áp dụng. Quy tắc chặn heat ngoài sơ đồ cắt: <b>'+(NT.QUY_TAC.chanHeatNgoaiSDC?'ĐANG CHẶN':'chỉ cảnh báo')+'</b>.</p>'+NT.CONG_DOAN.map(function(c){return '<div class="hop"><h2>'+E(c.ten)+' <small>'+c.hm.length+' hạng mục</small></h2><div class="cuon"><table class="bg"><thead><tr><th scope="col">Hạng mục</th><th scope="col">Đơn vị</th><th scope="col">Cho phép</th><th scope="col">Cách nhập</th></tr></thead><tbody>'+
