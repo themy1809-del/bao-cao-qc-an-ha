@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-25 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-26 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2111ban25">
+<link rel="stylesheet" href="soche_core.css?v=2111ban26">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -483,8 +483,8 @@ button:active,[role=button]:active{filter:brightness(.92)}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2111ban25"></script>
-<script src="soche_core.js?v=2111ban25"></script>
+<script src="soche_api.js?v=2111ban26"></script>
+<script src="soche_core.js?v=2111ban26"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
@@ -624,6 +624,26 @@ function moQuet(sau){
    (function vong(){if(dung)return;bd.detect(v).then(function(ds){if(dung)return;if(ds&&ds.length)return raMa(ds[0].rawValue);setTimeout(vong,250);}).catch(function(){if(!dung)setTimeout(vong,450);});})();}
   else duPhong();
  }).catch(function(e){thoat();toast('Không mở được camera: '+String(e&&e.message||e)+'. Nhập tay mã vào ô tìm.',true);});}
+/* ---- BẢN 26: chấm vị trí lỗi lên ảnh ---- */
+function moChamAnh(a,sau){var cu=document.getElementById('chamAnh');if(cu)cu.remove();
+ var o=document.createElement('div');o.id='chamAnh';o.setAttribute('role','dialog');o.setAttribute('aria-label','Chấm vị trí lỗi lên ảnh');
+ o.setAttribute('style','position:fixed;inset:0;z-index:99;background:#000;display:flex;flex-direction:column');
+ o.innerHTML='<div style="flex:1;min-height:0;display:grid;place-items:center;overflow:hidden"><canvas id="chamCv" style="max-width:100%;max-height:100%;touch-action:none;cursor:crosshair"></canvas></div>'+
+  '<div style="padding:12px 14px;display:flex;gap:10px;align-items:center;background:#0b0f16;flex-wrap:wrap"><span style="color:#cbd5e1;flex:1;font-size:14px;min-width:160px">Chạm vào ảnh để chấm vị trí lỗi (tự đánh số)</span>'+
+  '<button type="button" class="nb" id="chamHoan">Hoàn tác</button><button type="button" class="nb" id="chamHuy">Huỷ</button><button type="button" class="nb nb-pri" id="chamLuu">'+ic('check')+'Lưu ảnh đã chấm</button></div>';
+ document.body.appendChild(o);
+ var cv=o.querySelector('#chamCv'),ctx=cv.getContext('2d'),img=new Image(),diem=[];
+ function ve2(){ctx.drawImage(img,0,0,cv.width,cv.height);var r=Math.max(10,Math.round(cv.width/55));
+  diem.forEach(function(d,i){ctx.beginPath();ctx.arc(d.x,d.y,r,0,7);ctx.fillStyle='rgba(226,35,26,.88)';ctx.fill();ctx.lineWidth=Math.max(2,Math.round(r/5));ctx.strokeStyle='#fff';ctx.stroke();
+   ctx.fillStyle='#fff';ctx.font='700 '+Math.round(r*1.1)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(i+1),d.x,d.y);});}
+ img.onload=function(){cv.width=img.naturalWidth||img.width;cv.height=img.naturalHeight||img.height;ve2();};img.src=a.thumb;
+ cv.addEventListener('pointerdown',function(e){var b=cv.getBoundingClientRect();if(!b.width)return;
+  diem.push({x:(e.clientX-b.left)*cv.width/b.width,y:(e.clientY-b.top)*cv.height/b.height});ve2();});
+ o.querySelector('#chamHoan').addEventListener('click',function(){diem.pop();ve2();});
+ o.querySelector('#chamHuy').addEventListener('click',function(){o.remove();});
+ o.querySelector('#chamLuu').addEventListener('click',function(){if(!diem.length){toast('Chưa chấm điểm nào — chạm vào ảnh trước.',true);return;}
+  var dl=cv.toDataURL('image/jpeg',0.82);o.remove();sau({ten:'cham-'+String(a.ten||'anh.jpg'),thumb:dl,luc:a.luc||''});toast('Đã thêm ảnh chấm '+diem.length+' vị trí lỗi (giữ nguyên ảnh gốc).');});}
+window.moChamAnh=moChamAnh;/* cho bộ kiểm */
 function quetRoiTra(ma){if(/^CC-/i.test(ma)){moTab('cc');$('#ccQ').value=ma;try{veCCBang();}catch(e){}return;}moTab('tx');txLS=[];$('#txQ').value=ma;txTim(ma,true);}
 window.qrTachMa=qrTachMa;window.moQuet=moQuet;window.quetRoiTra=quetRoiTra;/* cho bộ kiểm */
 $('#gQR').innerHTML=ic('search')+'QR';$('#txQR').innerHTML=ic('search')+'QR';$('#knQR').innerHTML=ic('search')+'QR';
@@ -1005,7 +1025,7 @@ function moGhiLoi(g){g=g||{};if(NT.layVai()!=='QC'){toast('Ghi lỗi: cần vai 
    '<form id="fGL" novalidate style="display:flex;flex-direction:column;gap:12px"><div class="pf-2"><div><label for="glLSX">Lệnh cắt</label><input id="glLSX" class="mono" value="'+E(g.lsx||'')+'"></div><div><label for="glCT">Chi tiết (part)</label><input id="glCT" class="mono" autocapitalize="characters" value="'+E(g.ma_chi_tiet||'')+'"></div></div>'+
    (g.suaCT?'<div><label for="glCT2">Dự án (công trình)</label><input id="glCT2" list="dlCT" value="'+E(g.cong_trinh||'')+'" placeholder="Chọn hoặc gõ tên dự án"></div>':g.cong_trinh?'<p class="nho">Dự án: <b>'+E(g.cong_trinh)+'</b></p>':'')+
    '<div class="pf-2"><div><label for="glNhom">Nhóm lỗi</label><select id="glNhom"></select></div><div><label for="glLoai">Mã lỗi</label><select id="glLoai"></select></div></div>'+
-   '<div><label for="glAnh">Ảnh lỗi (bắt buộc, chụp được nhiều ảnh)</label><input id="glAnh" type="file" accept="image/*" capture="environment" multiple></div><div class="nt-anh" id="glXem" aria-live="polite"></div>'+
+   '<div><label for="glAnh">Ảnh lỗi (bắt buộc, chụp được nhiều ảnh)</label><input id="glAnh" type="file" accept="image/*" capture="environment" multiple></div><div class="nt-anh" id="glXem" aria-live="polite"></div><button type="button" class="nb" id="glCham" hidden>'+ic('pen')+'Chấm vị trí lỗi lên ảnh</button>'+
    '<div><label for="glMT">Mô tả lỗi</label><textarea id="glMT" rows="3" placeholder="Ví dụ: lỗ Ø22 lệch tâm 3 mm, thiếu đóng số heat"></textarea></div>'+
    '<div class="pf-2"><div><label for="glMuc">Mức độ</label><select id="glMuc">'+Object.keys(NT.MUC).map(function(k){return '<option value="'+k+'"'+(k==='B'?' selected':'')+'>'+E(NT.MUC[k])+'</option>';}).join('')+'</select></div><div><label for="glTo">Tổ chịu trách nhiệm</label><select id="glTo"><option value="">— chọn —</option>'+NT.TO.map(function(x){return '<option>'+E(x)+'</option>';}).join('')+'</select></div></div>'+
    '<div><label for="glHan">Hạn xử lý</label><input id="glHan" type="date" value="'+E(NT.ngayCach(2))+'"></div><p class="pf-loi" id="glLoi" hidden></p><div class="nt-act"><button type="submit" class="nb nb-pri nb-lon" id="glLuu">'+ic('check')+'Lưu lỗi</button></div></form>');
@@ -1020,6 +1040,10 @@ function moGhiLoi(g){g=g||{};if(NT.layVai()!=='QC'){toast('Ghi lỗi: cần vai 
   $('#glAnh').addEventListener('change',function(){var fs=[].slice.call(this.files||[]);if(!fs.length)return;$('#glLuu').disabled=true;
     Promise.all(fs.map(function(f){return NT.nenAnh(f);})).then(function(ds){anh=anh.concat(ds).slice(0,6);$('#glXem').innerHTML=anh.map(function(a){return '<figure><img src="'+E(a.thumb)+'" alt="Ảnh lỗi '+E(a.ten)+'"><figcaption>'+E(a.luc||'')+'</figcaption></figure>';}).join('');$('#glLuu').disabled=false;})
      .catch(function(er){$('#glLuu').disabled=false;$('#glLoi').textContent='Không đọc được ảnh: '+er.message;$('#glLoi').hidden=false;});});
+  $('#glCham').addEventListener('click',function(){if(!anh.length)return;
+    moChamAnh(anh[anh.length-1],function(aMoi){anh.push(aMoi);if(anh.length>6)anh=anh.slice(-6);
+      $('#glXem').innerHTML=anh.map(function(a){return '<figure><img src="'+E(a.thumb)+'" alt="Ảnh lỗi '+E(a.ten)+'"><figcaption>'+E(a.luc||'')+'</figcaption></figure>';}).join('');});});
+  var glChamHen=setInterval(function(){var o=document.getElementById('glCham');if(!o){clearInterval(glChamHen);return;}o.hidden=!anh.length;},500);
   $('#fGL').addEventListener('submit',function(e){e.preventDefault();var b=$('#glLuu');b.disabled=true;
     A.taoPunch({lsx:$('#glLSX').value,ma_chi_tiet:$('#glCT').value,cong_trinh:g.suaCT?$('#glCT2').value:(g.cong_trinh||''),mo_ta:$('#glMT').value,muc:$('#glMuc').value,to:$('#glTo').value,han:$('#glHan').value,anh:anh,loai:$('#glLoai').value,ngoai_lenh:g.ngoai_lenh||''})
      .then(function(u){if(u&&u.xep_hang){toast('Mất mạng — lỗi ĐÃ XẾP HÀNG ('+u.cho+' chờ gửi), có mạng app tự gửi.');dongDK();return;}toast('Đã ghi lỗi '+u.ma_punch+' ('+u.loai_loi+'), giao '+u.to);dongDK();ve();}).catch(function(er){b.disabled=false;$('#glLoi').textContent=er.message;$('#glLoi').hidden=false;});});}
