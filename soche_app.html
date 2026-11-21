@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-21 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-22 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2111ban21">
+<link rel="stylesheet" href="soche_core.css?v=2111ban22">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -254,7 +254,7 @@ button:active,[role=button]:active{filter:brightness(.92)}
   </nav>
   <div class="chinh">
     <header class="tb"><div><h1 id="tieuDe">Tổng quan</h1><span class="tieu-da" id="tieuDA"></span><p class="nho" id="tabMoTa" style="margin:2px 0 0;max-width:72ch"></p></div>
-      <form class="g-tim" id="gTim" role="search"><label for="gQ" class="sr">Truy xuất nhanh</label><input id="gQ" placeholder="Truy xuất: part mark, heat, SDC…" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="submit" class="nb nb-pri" id="gNut" aria-label="Truy xuất"></button></form>
+      <form class="g-tim" id="gTim" role="search"><label for="gQ" class="sr">Truy xuất nhanh</label><input id="gQ" placeholder="Truy xuất: part mark, heat, SDC…" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="button" class="nb" id="gQR" aria-label="Quét QR / mã vạch bằng camera"></button><button type="submit" class="nb nb-pri" id="gNut" aria-label="Truy xuất"></button></form>
       <div class="tb-p"><label for="selDA">Dự án</label><select id="selDA" class="sel-da"></select><label for="selVai">Vai trò (demo)</label><select id="selVai"></select>
         <button type="button" class="nb" id="nutHD" aria-label="Hướng dẫn màn này: các bước dùng"></button><button type="button" class="nb" id="nutTheme" aria-label="Đổi giao diện sáng / tối"></button></div></header>
     <div class="mau that" id="nguoiDung">Đang kết nối…</div>
@@ -338,7 +338,7 @@ button:active,[role=button]:active{filter:brightness(.92)}
       </section>
       <section data-man="ht" hidden>
         <div class="hop" id="knHop"><h2>Kiểm tại hiện trường <small>Gõ số lệnh hoặc mã chi tiết → bấm Đạt hoặc Ghi lỗi · chưa có lệnh vẫn ghi được</small></h2>
-          <div class="loc"><div class="rong"><label for="knQ">Số lệnh hoặc mã chi tiết (part)</label><input id="knQ" type="search" class="mono" autocapitalize="characters" placeholder="VD: 526-196 hoặc PH153" autocomplete="off" enterkeyhint="search"></div><div style="align-self:end"><button type="button" class="nb nb-pri nb-lon" id="knTim"></button></div></div>
+          <div class="loc"><div class="rong"><label for="knQ">Số lệnh hoặc mã chi tiết (part)</label><input id="knQ" type="search" class="mono" autocapitalize="characters" placeholder="VD: 526-196 hoặc PH153" autocomplete="off" enterkeyhint="search"></div><div style="align-self:end;display:flex;gap:8px"><button type="button" class="nb nb-lon" id="knQR" aria-label="Quét QR / mã vạch bằng camera"></button><button type="button" class="nb nb-pri nb-lon" id="knTim"></button></div></div>
           <div id="knKq" aria-live="polite"></div>
           <datalist id="dlCT"></datalist></div>
         <div class="hop"><h2>Hiện trường <small id="htDem">Xưởng ra bài · QC đã kiểm · còn tồn · lỗi chưa đóng</small></h2>
@@ -394,7 +394,7 @@ button:active,[role=button]:active{filter:brightness(.92)}
         <div id="ksN"></div>
       </section>
       <section data-man="tx" hidden>
-        <form class="tim" id="fTx" role="search"><label for="txQ" class="sr">Mã cần truy xuất</label><input id="txQ" placeholder="Heat no, mã chi tiết, phiếu, MIR, punch…" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="search"><button type="submit" class="nb nb-pri" id="txNut"></button></form>
+        <form class="tim" id="fTx" role="search"><label for="txQ" class="sr">Mã cần truy xuất</label><input id="txQ" placeholder="Heat no, mã chi tiết, phiếu, MIR, punch…" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="search"><button type="button" class="nb" id="txQR" aria-label="Quét QR / mã vạch bằng camera"></button><button type="submit" class="nb nb-pri" id="txNut"></button></form>
         <div class="goi" id="txGoi"><span>Thử:</span></div>
         <div id="txMan" aria-live="polite"></div>
       </section>
@@ -476,8 +476,8 @@ button:active,[role=button]:active{filter:brightness(.92)}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2111ban21"></script>
-<script src="soche_core.js?v=2111ban21"></script>
+<script src="soche_api.js?v=2111ban22"></script>
+<script src="soche_core.js?v=2111ban22"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
@@ -541,6 +541,41 @@ function moHD(){var cu=document.getElementById('hopHD');if(cu)cu.remove();
  document.addEventListener('keydown',function tt(e){if(e.key==='Escape'){o.remove();document.removeEventListener('keydown',tt);}});
  o.querySelector('[data-dong-hd]').focus();}
 $('#nutHD').innerHTML=ic('help');$('#nutHD').addEventListener('click',moHD);
+/* ---- BẢN 22: quét QR / mã vạch ---- */
+function qrTachMa(t){t=String(t||'').trim();if(!t)return '';var m=/#([^#?]+)\s*$/.exec(t);if(m)try{return decodeURIComponent(m[1]).trim();}catch(e){return m[1].trim();}
+ if(/^https?:\/\//i.test(t))return '';return t;}
+function moQuet(sau){
+ var cu=document.getElementById('qrQuet');if(cu)cu.remove();
+ var o=document.createElement('div');o.id='qrQuet';o.setAttribute('role','dialog');o.setAttribute('aria-label','Quét QR / mã vạch');
+ o.setAttribute('style','position:fixed;inset:0;z-index:98;background:#000;display:flex;flex-direction:column');
+ o.innerHTML='<div id="qrKhung" style="flex:1;position:relative;min-height:0"><video id="qrV" playsinline muted style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video></div>'+
+  '<div style="padding:12px 14px;display:flex;gap:10px;align-items:center;background:#0b0f16"><span style="color:#cbd5e1;flex:1;font-size:14px">Đưa mã QR / mã vạch trên tấm thép vào giữa màn hình</span><button type="button" class="nb" id="qrDong">Đóng</button></div>';
+ document.body.appendChild(o);
+ var dung=false,stream=null;
+ function thoat(){if(dung)return;dung=true;try{if(stream)stream.getTracks().forEach(function(t){t.stop();});}catch(e){}try{if(moQuet.h5)moQuet.h5.stop().catch(function(){});}catch(e){}o.remove();}
+ o.querySelector('#qrDong').addEventListener('click',thoat);
+ function raMa(t){var ma=qrTachMa(t);if(!ma)return;thoat();sau(ma);}
+ function duPhong(){ /* không có BarcodeDetector: tải html5-qrcode lúc cần */
+  try{if(stream)stream.getTracks().forEach(function(t){t.stop();});}catch(e){}
+  var kh=o.querySelector('#qrKhung');kh.innerHTML='<div id="qrBox" style="width:100%;height:100%"></div>';
+  function chay(){try{moQuet.h5=new Html5Qrcode('qrBox');moQuet.h5.start({facingMode:'environment'},{fps:8,qrbox:250},function(t){raMa(t);},function(){});}catch(e){thoat();toast('Máy không quét được — nhập tay mã vào ô tìm.',true);}}
+  if(window.Html5Qrcode)return chay();
+  var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js';
+  sc.onload=chay;sc.onerror=function(){thoat();toast('Không tải được bộ quét (mạng?). Nhập tay mã vào ô tìm.',true);};document.head.appendChild(sc);}
+ if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){thoat();toast('Trình duyệt không cho dùng camera — nhập tay mã vào ô tìm.',true);return;}
+ navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(st){if(dung){try{st.getTracks().forEach(function(t){t.stop();});}catch(e){}return;}
+  stream=st;var v=o.querySelector('#qrV');v.srcObject=st;var ph=v.play();if(ph&&ph.catch)ph.catch(function(){});
+  if(window.BarcodeDetector){var bd=null;try{bd=new BarcodeDetector({formats:['qr_code','code_128','code_39','ean_13']});}catch(e){}
+   if(!bd)return duPhong();
+   (function vong(){if(dung)return;bd.detect(v).then(function(ds){if(dung)return;if(ds&&ds.length)return raMa(ds[0].rawValue);setTimeout(vong,250);}).catch(function(){if(!dung)setTimeout(vong,450);});})();}
+  else duPhong();
+ }).catch(function(e){thoat();toast('Không mở được camera: '+String(e&&e.message||e)+'. Nhập tay mã vào ô tìm.',true);});}
+function quetRoiTra(ma){moTab('tx');txLS=[];$('#txQ').value=ma;txTim(ma,true);}
+window.qrTachMa=qrTachMa;window.moQuet=moQuet;window.quetRoiTra=quetRoiTra;/* cho bộ kiểm */
+$('#gQR').innerHTML=ic('search')+'QR';$('#txQR').innerHTML=ic('search')+'QR';$('#knQR').innerHTML=ic('search')+'QR';
+$('#gQR').addEventListener('click',function(){moQuet(quetRoiTra);});
+$('#txQR').addEventListener('click',function(){moQuet(quetRoiTra);});
+$('#knQR').addEventListener('click',function(){moQuet(function(ma){$('#knQ').value=ma;$('#knTim').click();});});
 function apDungVaiMenu(){var m=VM[NT.layVai()]||VM.QC,sb=document.querySelector('.sb'),kh=$('#sbKhac');
   var nut={};document.querySelectorAll('.sb [data-tab]').forEach(function(b){nut[b.getAttribute('data-tab')]=b;b.hidden=true;});
   function sbNut(k){var b=document.createElement('button');b.type='button';b.setAttribute('data-tab',k);b.innerHTML=ic(TAB[k][1])+'<span>'+E(TAB[k][0])+'</span>';nut[k]=b;return b;}
