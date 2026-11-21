@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-23 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-24 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2111ban23">
+<link rel="stylesheet" href="soche_core.css?v=2111ban24">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -273,6 +273,13 @@ button:active,[role=button]:active{filter:brightness(.92)}
             <span class="nho">Mở được hay không tuỳ quyền chia sẻ của chủ file (Quản lý QC cấp quyền Người xem).</span></div>
         </div>
       </section>
+      <section data-man="cc" hidden>
+        <div class="loc"><div class="rong"><label for="ccQ">Tìm công cụ (mã, tên, serial, người giữ)</label><input id="ccQ" type="search" autocomplete="off" placeholder="VD: CC-0001, thước cặp…"></div>
+          <div style="align-self:end"><button type="button" class="nb nb-pri" id="ccThem" hidden></button></div></div>
+        <div class="kpi" id="ccKpi" style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin:10px 0"></div>
+        <div class="hop"><div class="cuon"><table class="bg" id="tbCC"></table></div>
+        <p class="nho">Sổ mượn – trả giữ vết từng lần (tab CC_GIAO_DICH trong kho). In QR nội dung <b>CC-xxxx</b> dán lên công cụ — nút QR nào của app quét cũng nhảy thẳng về đây.</p></div>
+      </section>
       <section data-man="dh" hidden>
         
         <div class="hop"><h2>Bảng điều hành <small id="dhDem">Toàn cảnh tháng theo sổ lệnh xưởng AH1 · bấm vào số / thanh / dòng để mở màn chi tiết</small></h2>
@@ -476,14 +483,14 @@ button:active,[role=button]:active{filter:brightness(.92)}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2111ban23"></script>
-<script src="soche_core.js?v=2111ban23"></script>
+<script src="soche_api.js?v=2111ban24"></script>
+<script src="soche_core.js?v=2111ban24"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
 (function(){var b=document.getElementById('nguoiDung');if(!b)return;var demo=NT.DEMO_MO&&NT.tenNguoiDung()==='Khách demo';function veTK(){b.textContent=(demo?'DEMO — chưa bật đăng nhập · vai: ':'Đang dùng: '+NT.tenNguoiDung()+' · ')+NT.VAI[NT.layVai()]+' · phiên bản '+NT.PHIEN_BAN+' ';}veTK();if(demo){var sv=document.getElementById('selVai');if(sv)sv.addEventListener('change',function(){setTimeout(veTK,0);});}else{var x=document.createElement('button');x.type='button';x.className='nb';x.style.marginLeft='8px';x.textContent='Đăng xuất';x.addEventListener('click',NT.dangXuat);b.appendChild(x);}})();
 var A=NT.API,E=NT.esc,ic=NT.ic,$=function(s){return document.querySelector(s);};
-var TAB={bd:['Bắt đầu','star'],dh:['Bảng điều hành','home'],khx:['Kế hoạch cắt của xưởng','layers'],ht:['Hiện trường hôm nay','home'],kl:['Khối lượng QC xác nhận','list'],tv:['Tra vật tư','search'],tx:['Tra nguồn gốc vật tư','link'],sdc:['Sơ đồ cắt','ruler'],ks:['Kiểm soát hồ sơ','alert'],kh:['Kế hoạch nghiệm thu','clock'],bc:['Báo cáo kết quả NT','list'],da:['Dự án','layers'],tq:['Tổng quan hồ sơ','list'],lap:['Lập phiếu sơ chế','plus'],phieu:['Phiếu sơ chế','file'],punch:['Lỗi cần xử lý (punch)','flag'],vt:['Vật tư đã nghiệm thu','box'],nap:['Nạp hồ sơ dự án','upload'],dm:['Danh mục hạng mục','ruler']};
+var TAB={bd:['Bắt đầu','star'],cc:['Công cụ đo','ruler'],dh:['Bảng điều hành','home'],khx:['Kế hoạch cắt của xưởng','layers'],ht:['Hiện trường hôm nay','home'],kl:['Khối lượng QC xác nhận','list'],tv:['Tra vật tư','search'],tx:['Tra nguồn gốc vật tư','link'],sdc:['Sơ đồ cắt','ruler'],ks:['Kiểm soát hồ sơ','alert'],kh:['Kế hoạch nghiệm thu','clock'],bc:['Báo cáo kết quả NT','list'],da:['Dự án','layers'],tq:['Tổng quan hồ sơ','list'],lap:['Lập phiếu sơ chế','plus'],phieu:['Phiếu sơ chế','file'],punch:['Lỗi cần xử lý (punch)','flag'],vt:['Vật tư đã nghiệm thu','box'],nap:['Nạp hồ sơ dự án','upload'],dm:['Danh mục hạng mục','ruler']};
 var tab='tq',form=null,cache={},tt,ptich=null,tenFile='';
 var BN_NHAN={dh:'Điều hành',khx:'Kế hoạch cắt',ht:'Hiện trường',tx:'Nguồn gốc',kh:'Kế hoạch',lap:'Phiếu mới',punch:'Lỗi',kl:'Khối lượng',nap:'Nạp hồ sơ',vt:'Vật tư'};
 document.querySelectorAll('.sb [data-tab],.bn [data-tab]').forEach(function(b){var t=TAB[b.getAttribute('data-tab')];if(b.closest('.bn')){b.innerHTML=ic(t[1])+'<span>'+BN_NHAN[b.getAttribute('data-tab')]+'</span>'+(b.getAttribute('data-tab')==='punch'?'<span class="dem" id="demPunch2" hidden></span>':'');return;}b.innerHTML=ic(t[1])+'<span>'+t[0]+'</span>'+(b.getAttribute('data-tab')==='punch'?'<span class="dem" id="demPunch" hidden></span>':'');});
@@ -491,10 +498,10 @@ document.querySelectorAll('[data-chep]').forEach(function(b){b.innerHTML=ic('cop
 /* BẢN 5 — TINH GỌN: mỗi vai trò chỉ thấy đúng việc của mình. ngay = "Việc hằng ngày", khac = gom trong "Chức năng khác", bn = thanh dưới điện thoại.
    Màn không có trong cả hai danh sách bị ẨN với vai đó (nút vẫn nằm trong trang để không hỏng liên kết cũ). */
 var VM={
- QC:       {bn:['khx','ht','punch','tx'], ngay:['bd','khx','ht','punch','tx'], khac:['lap','phieu','kl','bc','vt','sdc']},
- TO_TRUONG:{bn:['khx','ht','punch','tx'], ngay:['bd','khx','ht','punch','tx'], khac:['phieu']},
- QC_VT:    {bn:['nap','vt','tx','ht'],    ngay:['bd','nap','vt','tx','ks'],    khac:['khx','ht','phieu','kl','bc']},
- QUAN_LY:  {bn:['dh','khx','kl','punch'], ngay:['bd','dh','khx','ht','kl','punch','nap'], khac:['tx','ks','bc','tq','lap','phieu','tv','vt','sdc','kh','da','dm']}};
+ QC:       {bn:['khx','ht','punch','tx'], ngay:['bd','khx','ht','punch','tx'], khac:['lap','phieu','kl','bc','vt','sdc','cc']},
+ TO_TRUONG:{bn:['khx','ht','punch','tx'], ngay:['bd','khx','ht','punch','tx'], khac:['phieu','cc']},
+ QC_VT:    {bn:['nap','vt','tx','ht'],    ngay:['bd','nap','vt','tx','ks','cc'],    khac:['khx','ht','phieu','kl','bc']},
+ QUAN_LY:  {bn:['dh','khx','kl','punch'], ngay:['bd','dh','khx','ht','kl','punch','nap'], khac:['cc','tx','ks','bc','tq','lap','phieu','tv','vt','sdc','kh','da','dm']}};
 var MOTA={bd:'Chọn việc cần làm — mỗi thẻ là một việc thường ngày của QC.',
  dh:'Số tổng tháng này cho quản lý: kế hoạch, đã cắt, lỗi, biểu đồ theo ngày.',
  khx:'Tháng này xưởng cắt những lệnh nào, lệnh nào trễ, còn tồn bao nhiêu tấn.',
@@ -513,7 +520,8 @@ var MOTA={bd:'Chọn việc cần làm — mỗi thẻ là một việc thườn
  punch:'Lỗi sai hỏng phát hiện khi kiểm — ghi lại, giao xử lý, theo dõi đến khi đóng.',
  vt:'Các tấm thép đã nghiệm thu và khai trong app.',
  nap:'Đưa file Excel MRIR / báo cáo truy xuất của dự án vào kho — có cảnh báo nạp trùng.',
- dm:'Danh mục hạng mục kiểm tra và yêu cầu cho phép của từng công đoạn.'};
+ dm:'Danh mục hạng mục kiểm tra và yêu cầu cho phép của từng công đoạn.',
+ cc:'Công cụ đo của phòng: ai đang giữ, hạn hiệu chuẩn, mượn – trả 1 chạm.'};
 var HDAN={khx:['Chọn tháng ở đầu màn (mặc định tháng này).','Nhìn 4 ô số tổng: kế hoạch · đã cắt · tồn · trễ.','Bấm một dự án rồi một lệnh để xem từng chi tiết.','Ô "Dự án" trên cùng lọc cả màn theo 1 dự án.'],
  ht:['Màn tự liệt kê chi tiết xưởng đang cắt hôm nay.','Chi tiết đạt: bấm nút Acc — 1 chạm là ghi nhận xong.','Chi tiết có vấn đề: bấm Ghi lỗi, chọn loại lỗi, chụp ảnh nếu cần.','Lỡ tay Acc nhầm: bấm lại để huỷ trong màn này.'],
  lap:['Chọn dự án (ô Dự án trên cùng) rồi chọn tấm thép.','Nhập số đo từng hạng mục — app tự so với yêu cầu.','Chọn Đạt / Không đạt rồi bấm Lưu.','Xem lại / sửa phiếu ở màn "Phiếu sơ chế".'],
@@ -523,7 +531,49 @@ var HDAN={khx:['Chọn tháng ở đầu màn (mặc định tháng này).','Nh�
  kl:['Chọn ngày hoặc lệnh cần chốt.','Đối chiếu số app đếm với thực tế rồi bấm Xác nhận.','Nhầm thì Huỷ xác nhận — app giữ vết, không mất số.'],
  nap:['Bước 1: chọn dự án (chưa có thì bấm "Thêm dự án mới").','Bước 2: chọn file Excel MRIR / báo cáo truy xuất.','App tự nhận cột; file đã nạp rồi sẽ được CẢNH BÁO TRÙNG.','Xem các lần nạp ở sổ ngay dưới, xoá được từng lần.'],
  dh:['Chọn tháng ở đầu màn.','Hàng ô số: kế hoạch · đã cắt · tồn · phiếu · punch.','Biểu đồ theo ngày: đường đậm là đã cắt, đường nhạt là kế hoạch.','Bấm một dự án trong bảng để sang màn kế hoạch của dự án đó.'],
+ cc:['Mượn: bấm Mượn ở công cụ Sẵn sàng — ghi tên mình, trả thì bấm Trả.','Công cụ QUÁ HẠN hiệu chuẩn tô đỏ — không dùng nghiệm thu, app sẽ chặn khi lập phiếu.','Hiệu chuẩn xong: Quản lý / QC vật tư bấm "HC xong" nhập hạn mới.','Hỏng: bấm Báo hỏng; sửa xong bấm Sửa xong.','Dán QR nội dung CC-xxxx lên công cụ — quét là ra ngay dòng của nó.'],
  bd:['Bấm một thẻ việc để mở đúng màn.','Dưới tiêu đề mỗi màn luôn có 1 dòng giải thích.','Nút "?" góc trên mở hướng dẫn của màn đang xem.']};
+var ccDS=[];
+function veCC(){var vai=NT.layVai(),qlv=vai==='QUAN_LY'||vai==='QC_VT';var nT=$('#ccThem');nT.hidden=!qlv;if(qlv&&!nT.innerHTML)nT.innerHTML=ic('plus')+'Thêm công cụ';
+ A.dsCongCu().then(function(ds){ccDS=ds;var q=NT.chuanTen?'':'';veCCBang();});}
+function veCCBang(){var loc=($('#ccQ').value||'').trim().toLowerCase();var hn=NT.homNay();
+ var ds=ccDS.filter(function(c){if(!loc)return true;return [c.ma_cc,c.ten,c.serial,c.nguoi_giu,c.loai].join(' ').toLowerCase().indexOf(loc)>=0;});
+ var qh=ccDS.filter(function(c){return c.qua_han;}).length,dm=ccDS.filter(function(c){return c.trang_thai==='DANG_MUON';}).length;
+ $('#ccKpi').innerHTML='<div class="hop" style="padding:10px 14px"><b style="font-size:22px">'+ccDS.length+'</b><br><span class="nho">Công cụ</span></div>'+
+  '<div class="hop" style="padding:10px 14px"><b style="font-size:22px">'+dm+'</b><br><span class="nho">Đang mượn</span></div>'+
+  '<div class="hop" style="padding:10px 14px"><b style="font-size:22px;color:'+(qh?'var(--bad,#b91c1c)':'inherit')+'">'+qh+'</b><br><span class="nho">Quá hạn hiệu chuẩn</span></div>';
+ var vai=NT.layVai(),qlv=vai==='QUAN_LY'||vai==='QC_VT';
+ $('#tbCC').innerHTML='<thead><tr><th scope="col">Mã</th><th scope="col">Công cụ</th><th scope="col">Người giữ</th><th scope="col">Hạn hiệu chuẩn</th><th scope="col">Trạng thái</th><th scope="col">Thao tác</th></tr></thead><tbody>'+
+  (ds.length?ds.map(function(c){var nut='';
+    if(c.trang_thai==='SAN_SANG')nut+='<button type="button" class="nb" data-cc-hd="MUON" data-cc-ma="'+E(c.ma_cc)+'">Mượn</button>';
+    if(c.trang_thai==='DANG_MUON')nut+='<button type="button" class="nb" data-cc-hd="TRA" data-cc-ma="'+E(c.ma_cc)+'">Trả</button>';
+    if(qlv){nut+='<button type="button" class="nb" data-cc-hd="HIEU_CHUAN" data-cc-ma="'+E(c.ma_cc)+'">HC xong</button>';
+      nut+=c.trang_thai==='HONG'?'<button type="button" class="nb" data-cc-hd="SUA_XONG" data-cc-ma="'+E(c.ma_cc)+'">Sửa xong</button>':'<button type="button" class="nb" data-cc-hd="HONG" data-cc-ma="'+E(c.ma_cc)+'">Báo hỏng</button>';
+      nut+='<button type="button" class="nb" data-cc-sua="'+E(c.ma_cc)+'">Sửa</button>';}
+    return '<tr'+(c.qua_han?' style="background:var(--badbg,#fee2e2)"':'')+'><td class="mono"><b>'+E(c.ma_cc)+'</b></td><td>'+E(c.ten)+(c.serial?' <span class="nho mono">'+E(c.serial)+'</span>':'')+'</td><td>'+E(c.nguoi_giu||'—')+'</td>'+
+     '<td>'+(c.han_hieu_chuan?E(NT.hienNgay?NT.hienNgay(c.han_hieu_chuan):c.han_hieu_chuan)+(c.qua_han?' <span class="pill p-b">'+ic('alert')+'QUÁ HẠN</span>':''):'—')+'</td>'+
+     '<td>'+NT.pill('CC',c.trang_thai)+'</td><td style="display:flex;gap:6px;flex-wrap:wrap">'+nut+'</td></tr>';}).join('')
+   :'<tr><td colspan="6" class="tr-rong">'+(ccDS.length?'Không có công cụ khớp ô tìm.':'Chưa có công cụ nào. Quản lý / QC vật tư bấm "Thêm công cụ".')+'</td></tr>')+'</tbody>';}
+$('#ccQ').addEventListener('input',function(){veCCBang();});
+$('#ccThem').addEventListener('click',function(){moFormCC(null);});
+function moFormCC(c){c=c||{};moDK(c.ma_cc?('Sửa '+c.ma_cc):'Thêm công cụ đo','<form id="fCCu" style="display:flex;flex-direction:column;gap:12px">'+
+ '<div><label for="cuTen">Tên công cụ *</label><input id="cuTen" value="'+E(c.ten||'')+'" required></div>'+
+ '<div class="pf-2"><div><label for="cuSer">Serial</label><input id="cuSer" class="mono" value="'+E(c.serial||'')+'"></div><div><label for="cuLoai">Loại</label><input id="cuLoai" value="'+E(c.loai||'')+'" placeholder="Thước cặp / máy đo…"></div></div>'+
+ '<div><label for="cuHan">Hạn hiệu chuẩn</label><input id="cuHan" type="date" value="'+E(c.han_hieu_chuan||'')+'"></div>'+
+ '<div><label for="cuGC">Ghi chú</label><input id="cuGC" value="'+E(c.ghi_chu||'')+'"></div>'+
+ '<p class="pf-loi" id="cuLoi" hidden></p><div class="nt-act"><button type="submit" class="nb nb-pri nb-lon">'+ic('check')+'Lưu</button></div></form>');
+ $('#fCCu').addEventListener('submit',function(e){e.preventDefault();
+  A.luuCongCu({ma_cc:c.ma_cc||'',ten:$('#cuTen').value,serial:$('#cuSer').value,loai:$('#cuLoai').value,han_hieu_chuan:$('#cuHan').value,ghi_chu:$('#cuGC').value},!c.ma_cc)
+   .then(function(k){toast('Đã lưu '+k.ma_cc+' — '+k.ten);dongDK();veCC();})
+   .catch(function(er){$('#cuLoi').textContent=er.message;$('#cuLoi').hidden=false;});});}
+document.addEventListener('click',function(e){var b;
+ if((b=e.target.closest('[data-cc-sua]'))){var c=ccDS.filter(function(x){return x.ma_cc===b.getAttribute('data-cc-sua');})[0];if(c)moFormCC(c);return;}
+ if(!(b=e.target.closest('[data-cc-hd]')))return;
+ var ma=b.getAttribute('data-cc-ma');var hd=b.getAttribute('data-cc-hd');
+ if(hd==='HIEU_CHUAN'){moDK('Hiệu chuẩn xong: '+ma,'<form id="fHC" style="display:flex;flex-direction:column;gap:12px"><div><label for="hcHan">Hạn hiệu chuẩn MỚI *</label><input id="hcHan" type="date" required></div><div><label for="hcGC">Ghi chú (nơi hiệu chuẩn, số giấy)</label><input id="hcGC"></div><p class="pf-loi" id="hcLoi" hidden></p><div class="nt-act"><button type="submit" class="nb nb-pri nb-lon">'+ic('check')+'Lưu</button></div></form>');
+  $('#fHC').addEventListener('submit',function(e2){e2.preventDefault();A.ccGiaoDich(ma,'HIEU_CHUAN',{han_moi:$('#hcHan').value,ghi_chu:$('#hcGC').value}).then(function(){toast(ma+': đã ghi hiệu chuẩn mới');dongDK();veCC();}).catch(function(er){$('#hcLoi').textContent=er.message;$('#hcLoi').hidden=false;});});return;}
+ b.disabled=true;
+ A.ccGiaoDich(ma,hd,{}).then(function(c){toast(ma+': '+NT.TT.CC[c.trang_thai][0]);veCC();}).catch(function(er){b.disabled=false;toast(er.message,true);});});
 function veBD(){var m=VM[NT.layVai()]||VM.QC,co={};[].concat(m.bn,m.ngay,m.khac).forEach(function(k){co[k]=1;});
  var THE=[['khx','Xem kế hoạch cắt của xưởng'],['ht','Đi kiểm hiện trường'],['lap','Nghiệm thu — lập phiếu sơ chế'],['tx','Tra một tấm thép từ đâu ra'],['punch','Ghi và theo dõi lỗi (punch)'],['kl','Xác nhận khối lượng đã cắt'],['nap','Nạp hồ sơ dự án vào kho'],['dh','Xem bảng điều hành tháng']];
  $('#bdThe').innerHTML=THE.filter(function(c){return co[c[0]];}).map(function(c){return '<button type="button" class="bd-the" data-tab="'+c[0]+'">'+ic(TAB[c[0]][1])+'<b>'+E(c[1])+'</b><span>'+E(MOTA[c[0]])+'</span></button>';}).join('');}
@@ -570,7 +620,7 @@ function moQuet(sau){
    (function vong(){if(dung)return;bd.detect(v).then(function(ds){if(dung)return;if(ds&&ds.length)return raMa(ds[0].rawValue);setTimeout(vong,250);}).catch(function(){if(!dung)setTimeout(vong,450);});})();}
   else duPhong();
  }).catch(function(e){thoat();toast('Không mở được camera: '+String(e&&e.message||e)+'. Nhập tay mã vào ô tìm.',true);});}
-function quetRoiTra(ma){moTab('tx');txLS=[];$('#txQ').value=ma;txTim(ma,true);}
+function quetRoiTra(ma){if(/^CC-/i.test(ma)){moTab('cc');$('#ccQ').value=ma;try{veCCBang();}catch(e){}return;}moTab('tx');txLS=[];$('#txQ').value=ma;txTim(ma,true);}
 window.qrTachMa=qrTachMa;window.moQuet=moQuet;window.quetRoiTra=quetRoiTra;/* cho bộ kiểm */
 $('#gQR').innerHTML=ic('search')+'QR';$('#txQR').innerHTML=ic('search')+'QR';$('#knQR').innerHTML=ic('search')+'QR';
 $('#gQR').addEventListener('click',function(){moQuet(quetRoiTra);});
@@ -605,7 +655,7 @@ function moTab(t){tab=t;(function(){var l=document.querySelector('label[for="sel
 window.addEventListener('nt-du-lieu-moi',function(){var a=document.activeElement,dangGo=a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.type!=='button';
   if(['lap','nap','tx'].indexOf(tab)>=0||!$('#dk').hidden||dangGo)return;try{ve();}catch(e){}});
 var daBaoMang=0;window.addEventListener('nt-mat-mang',function(){if(Date.now()-daBaoMang<60000)return;daBaoMang=Date.now();toast('Mất kết nối: đang hiện số liệu lưu lần trước.',true);});
-function ve(){veTieuDA();({bd:veBD,dh:veDH,khx:veKHX,ht:veHT,kl:veKL,sdc:veSDC,tv:veTV,ks:veKS,tx:veTX,kh:veKH,bc:veBC,tq:veTQ,lap:veLap,phieu:vePhieu,punch:vePunch,vt:veVT,nap:veLan,dm:veDM,da:veDA})[tab]();demPunch();}
+function ve(){veTieuDA();({bd:veBD,cc:veCC,dh:veDH,khx:veKHX,ht:veHT,kl:veKL,sdc:veSDC,tv:veTV,ks:veKS,tx:veTX,kh:veKH,bc:veBC,tq:veTQ,lap:veLap,phieu:vePhieu,punch:vePunch,vt:veVT,nap:veLan,dm:veDM,da:veDA})[tab]();demPunch();}
 function demPunch(){A.dsPunch().then(function(ds){var n=ds.filter(function(p){return p.trang_thai!=='DA_DONG';}).length;['#demPunch','#demPunch2'].forEach(function(s){var d=$(s);if(d){d.textContent=n;d.hidden=!n;}});});}
 /* ngăn chi tiết */
 var nutTruoc=null;
