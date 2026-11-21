@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-24 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-25 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2111ban24">
+<link rel="stylesheet" href="soche_core.css?v=2111ban25">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -256,7 +256,7 @@ button:active,[role=button]:active{filter:brightness(.92)}
     <header class="tb"><div><h1 id="tieuDe">Tổng quan</h1><span class="tieu-da" id="tieuDA"></span><p class="nho" id="tabMoTa" style="margin:2px 0 0;max-width:72ch"></p></div>
       <form class="g-tim" id="gTim" role="search"><label for="gQ" class="sr">Truy xuất nhanh</label><input id="gQ" placeholder="Truy xuất: part mark, heat, SDC…" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="button" class="nb" id="gQR" aria-label="Quét QR / mã vạch bằng camera"></button><button type="submit" class="nb nb-pri" id="gNut" aria-label="Truy xuất"></button></form>
       <div class="tb-p"><label for="selDA">Dự án</label><select id="selDA" class="sel-da"></select><label for="selVai">Vai trò (demo)</label><select id="selVai"></select>
-        <button type="button" class="nb" id="nutHD" aria-label="Hướng dẫn màn này: các bước dùng"></button><button type="button" class="nb" id="nutTheme" aria-label="Đổi giao diện sáng / tối"></button></div></header>
+        <button type="button" class="nb" id="choGui" hidden aria-label="Thao tác đang chờ mạng để gửi — bấm để gửi ngay"></button><button type="button" class="nb" id="nutHD" aria-label="Hướng dẫn màn này: các bước dùng"></button><button type="button" class="nb" id="nutTheme" aria-label="Đổi giao diện sáng / tối"></button></div></header>
     <div class="mau that" id="nguoiDung">Đang kết nối…</div>
     <main>
       <section data-man="bd" hidden>
@@ -483,8 +483,8 @@ button:active,[role=button]:active{filter:brightness(.92)}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2111ban24"></script>
-<script src="soche_core.js?v=2111ban24"></script>
+<script src="soche_api.js?v=2111ban25"></script>
+<script src="soche_core.js?v=2111ban25"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
@@ -591,6 +591,10 @@ function moHD(){var cu=document.getElementById('hopHD');if(cu)cu.remove();
  document.addEventListener('keydown',function tt(e){if(e.key==='Escape'){o.remove();document.removeEventListener('keydown',tt);}});
  o.querySelector('[data-dong-hd]').focus();}
 $('#nutHD').innerHTML=ic('help');$('#nutHD').addEventListener('click',moHD);
+function veChoGui(n){var o=$('#choGui');if(!o)return;n=n===undefined?(NT.soChoGui?NT.soChoGui():0):n;o.hidden=!n;if(n)o.innerHTML=ic('hourglass')+n+' chờ gửi';}
+try{window.addEventListener('nt-doi',function(e){veChoGui(e.detail);});window.addEventListener('nt-doi-loi',function(e){toast('1 thao tác xếp hàng bị máy chủ từ chối ('+e.detail.ten+'): '+e.detail.loi,true);});}catch(e){}
+$('#choGui').addEventListener('click',function(){toast('Đang gửi các thao tác chờ…');NT.guiChoGui&&NT.guiChoGui();});
+setTimeout(veChoGui,1500);
 /* ---- BẢN 22: quét QR / mã vạch ---- */
 function qrTachMa(t){t=String(t||'').trim();if(!t)return '';var m=/#([^#?]+)\s*$/.exec(t);if(m)try{return decodeURIComponent(m[1]).trim();}catch(e){return m[1].trim();}
  if(/^https?:\/\//i.test(t))return '';return t;}
@@ -1018,7 +1022,7 @@ function moGhiLoi(g){g=g||{};if(NT.layVai()!=='QC'){toast('Ghi lỗi: cần vai 
      .catch(function(er){$('#glLuu').disabled=false;$('#glLoi').textContent='Không đọc được ảnh: '+er.message;$('#glLoi').hidden=false;});});
   $('#fGL').addEventListener('submit',function(e){e.preventDefault();var b=$('#glLuu');b.disabled=true;
     A.taoPunch({lsx:$('#glLSX').value,ma_chi_tiet:$('#glCT').value,cong_trinh:g.suaCT?$('#glCT2').value:(g.cong_trinh||''),mo_ta:$('#glMT').value,muc:$('#glMuc').value,to:$('#glTo').value,han:$('#glHan').value,anh:anh,loai:$('#glLoai').value,ngoai_lenh:g.ngoai_lenh||''})
-     .then(function(u){toast('Đã ghi lỗi '+u.ma_punch+' ('+u.loai_loi+'), giao '+u.to);dongDK();ve();}).catch(function(er){b.disabled=false;$('#glLoi').textContent=er.message;$('#glLoi').hidden=false;});});}
+     .then(function(u){if(u&&u.xep_hang){toast('Mất mạng — lỗi ĐÃ XẾP HÀNG ('+u.cho+' chờ gửi), có mạng app tự gửi.');dongDK();return;}toast('Đã ghi lỗi '+u.ma_punch+' ('+u.loai_loi+'), giao '+u.to);dongDK();ve();}).catch(function(er){b.disabled=false;$('#glLoi').textContent=er.message;$('#glLoi').hidden=false;});});}
 $('#uGhiLoi').addEventListener('click',function(){moGhiLoi({});});
 document.addEventListener('click',function(e){var b=e.target.closest('[data-loi-lsx]');if(!b)return;var x=khxCT[+b.getAttribute('data-loi-lsx')];if(!x)return;moGhiLoi({lsx:x.lsx,ma_chi_tiet:x.ten_chi_tiet,cong_trinh:x.cong_trinh});});
 /* ---- sổ khối lượng QC xác nhận ---- */
@@ -1179,7 +1183,7 @@ function moAccNhanh(g){g=g||{};if(NT.layVai()!=='QC'){toast('Ghi kiểm nhanh: c
      .catch(function(er){$('#kaLuu').disabled=false;$('#kaLoi').textContent='Không đọc được ảnh: '+er.message;$('#kaLoi').hidden=false;});});
   $('#fKN').addEventListener('submit',function(e){e.preventDefault();var b=$('#kaLuu');b.disabled=true;
     A.accNhanh({lsx:$('#kaLSX').value,ma_chi_tiet:$('#kaCT').value,cong_trinh:$('#kaDA').value,sl:$('#kaSL').value,ghi_chu:$('#kaGC').value,anh:anh,ngoai_lenh:g.ngoai_lenh||''})
-     .then(function(k){toast('Đã ghi ĐẠT '+k.ma_chi_tiet+' ('+k.ma_kn+')'+(k.ngoai_lenh==='CO'?' · NGOÀI LỆNH':''));dongDK();ve();if($('#knQ').value)knTim();}).catch(function(er){b.disabled=false;$('#kaLoi').textContent=er.message;$('#kaLoi').hidden=false;});});}
+     .then(function(k){if(k&&k.xep_hang){toast('Mất mạng — ĐÃ XẾP HÀNG ('+k.cho+' chờ gửi), có mạng app tự gửi.');dongDK();return;}toast('Đã ghi ĐẠT '+k.ma_chi_tiet+' ('+k.ma_kn+')'+(k.ngoai_lenh==='CO'?' · NGOÀI LỆNH':''));dongDK();ve();if($('#knQ').value)knTim();}).catch(function(er){b.disabled=false;$('#kaLoi').textContent=er.message;$('#kaLoi').hidden=false;});});}
 document.addEventListener('click',function(e){
   var a=e.target.closest('[data-kn-acc]');if(a){var x1=knDS[+a.getAttribute('data-kn-acc')];if(x1)moAccNhanh({lsx:x1.lsx,ma_chi_tiet:x1.ma_chi_tiet,cong_trinh:x1.cong_trinh});return;}
   var l=e.target.closest('[data-kn-loi]');if(l){var x2=knDS[+l.getAttribute('data-kn-loi')];if(x2)moGhiLoi({lsx:x2.lsx,ma_chi_tiet:x2.ma_chi_tiet,cong_trinh:x2.cong_trinh});return;}

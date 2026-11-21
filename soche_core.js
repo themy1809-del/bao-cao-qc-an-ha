@@ -1,4 +1,4 @@
-/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 21/11 ban-24 */
+/* soche_core.js — SINH TỰ ĐỘNG từ nt_core.js (build_github.py). KHÔNG SỬA TAY. Phiên bản 21/11 ban-25 */
 /* nt_core.js — LÕI DÙNG CHUNG app "Nghiệm thu Vật tư & Sơ chế" (giao diện điện thoại + web)
    PHIEN_BAN '17/11 mau-giao-dien' — BẢN MẪU: dữ liệu mẫu, lưu tạm trên trình duyệt.
    NT.API giả lập ĐÚNG TÊN HÀM sẽ viết ở Apps Script. Khi nối thật: thay phần "KHO" bằng google.script.run,
@@ -11,8 +11,8 @@
   var QUA_GAS = typeof window !== 'undefined' && typeof google !== 'undefined' && google.script && google.script.run;
   var NT_URL = typeof window !== 'undefined' && !QUA_GAS && window.NT_API_URL ? String(window.NT_API_URL) : '';
   var CHE_DO = typeof window === 'undefined' ? 'may_chu' : (QUA_GAS || NT_URL ? 'that' : 'mau');
-  var PHIEN_BAN = '21/11 ban-24';
-  var BAN_SO = 2026112104; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
+  var PHIEN_BAN = '21/11 ban-25';
+  var BAN_SO = 2026112105; /* số bản giao diện, TĂNG mỗi lần phát hành: trang GitHub so số này với máy chủ để tự lấy giao diện mới */
 
   /* ---------- tiện ích ---------- */
   function pad(n, k) { return String(n).padStart(k || 2, '0'); }
@@ -1425,7 +1425,10 @@
     try { window.dispatchEvent(new CustomEvent('nt-mat-mang', { detail: m })); } catch (e3) {}
   }
   function goiMayChu(ten, args) {
-    if (GHI.indexOf(ten) >= 0) return guiMayChu(ten, args).then(function (r) { xoaDem(); return apRaw(r); });
+    if (GHI.indexOf(ten) >= 0) return guiMayChu(ten, args).then(function (r) { xoaDem(); return apRaw(r); })
+      .catch(function (e) { var m = String(e && e.message || e);
+        if (m.indexOf('MAT_MANG') >= 0 && DOI_DUOC[ten] && doiThem(ten, args)) return { xep_hang: true, cho: doiDem() };
+        throw e; });
     if (!DEM_API[ten]) return guiMayChu(ten, args).then(apRaw);
     var k = KHOA_DEM + ten + '|' + daChon + '|' + ((dangNhap() || {}).email || '') + '|' + JSON.stringify(args), c = null;
     try { c = JSON.parse(ls(k) || 'null'); } catch (e) { c = null; }
@@ -1434,6 +1437,26 @@
     if (c) { if (Date.now() - c.t > DEM_TUOI) moi().catch(loiNen); return Promise.resolve(apRaw(JSON.parse(c.j))); }
     return moi().then(apRaw);
   }
+  /* ---- BẢN 25: hàng đợi offline cho thao tác hiện trường ---- */
+  var DOI_K = 'nt_doi_v1', DOI_DUOC = { accNhanh: 1, taoPunch: 1 }, doiDangGui = false;
+  function doiDS() { try { return JSON.parse(ls(DOI_K) || '[]'); } catch (e) { return []; } }
+  function doiLuu(d) { try { ls(DOI_K, JSON.stringify(d)); return true; } catch (e) { return false; } /* đầy bộ nhớ (ảnh lớn) → không xếp được */ }
+  function doiDem() { return doiDS().length; }
+  function baoDoi() { try { window.dispatchEvent(new CustomEvent('nt-doi', { detail: doiDem() })); } catch (e) {} }
+  function doiThem(ten, args) { var d = doiDS(); d.push({ ten: ten, args: args, luc: new Date().toISOString() }); if (!doiLuu(d)) return false; baoDoi(); return true; }
+  function doiGui() {
+    if (doiDangGui || CHE_DO !== 'that' || !doiDem()) return; doiDangGui = true;
+    (function buoc() {
+      var d = doiDS(); if (!d.length) { doiDangGui = false; baoDoi(); return; }
+      guiMayChu(d[0].ten, d[0].args).then(function () { var d2 = doiDS(); d2.shift(); doiLuu(d2); xoaDem(); baoDoi(); buoc(); })
+        .catch(function (e) { var m = String(e && e.message || e);
+          if (m.indexOf('MAT_MANG') >= 0) { doiDangGui = false; return; } /* vẫn mất mạng — giữ hàng, thử lại sau */
+          var d2 = doiDS(), hong = d2.shift(); doiLuu(d2); baoDoi();
+          try { window.dispatchEvent(new CustomEvent('nt-doi-loi', { detail: { ten: hong.ten, loi: m } })); } catch (e2) {}
+          buoc(); });
+    })();
+  }
+  if (CHE_DO === 'that') { try { window.addEventListener('online', function () { setTimeout(doiGui, 800); }); } catch (e) {} setInterval(doiGui, 30000); setTimeout(doiGui, 4000); }
   var API = API_GOC;
   if (CHE_DO === 'that') { API = {}; Object.keys(API_GOC).forEach(function (k) { API[k] = function () { return goiMayChu(k, Array.prototype.slice.call(arguments)); }; }); }
   /* đăng nhập bằng email + PIN khi máy chủ không đọc được email Google */
@@ -1840,7 +1863,7 @@
     CHE_DO: CHE_DO, LOAI_LOI: LOAI_LOI, MA_LOI: MA_LOI, NN_GOC: NN_GOC, TX_COT: TX_COT, TX_TEN_LOAI: TX_TEN_LOAI, TX_LO_TOI_DA: TX_LO_TOI_DA, txNhan: txNhan, txChuyen: txChuyen, txNapMo: txNapMo, txNhanLan: txNhanLan, txMaLanMoi: txMaLanMoi, txCungLan: txCungLan, txTomLan: txTomLan, LOAI_YC: LOAI_YC, BAN_SO: BAN_SO, sanSang: sanSang, API_GOC: API_GOC, GHI: GHI,
     datKho: function (k) { S = k; DU_AN = S.du_an; }, layKho: function () { return S; }, khoRong: khoRong, duLieuMau: duLieuMau,
     datNguCanh: function (c) { vai = c.vai; daChon = c.daChon && layDuAn(c.daChon) ? c.daChon : ''; tenND = c.ten || ''; },
-    DEMO_MO: DEMO_MO, tenNguoiDung: function () { return tenND; }, dangXuat: function () { ls(KHOA_DN, null); xoaDem(true); location.reload(); }, xoaDem: xoaDem, QUA_WEB: !!NT_URL,
+    DEMO_MO: DEMO_MO, soChoGui: function () { return doiDem(); }, guiChoGui: function () { doiGui(); }, tenNguoiDung: function () { return tenND; }, dangXuat: function () { ls(KHOA_DN, null); xoaDem(true); location.reload(); }, xoaDem: xoaDem, QUA_WEB: !!NT_URL,
     PHIEN_BAN: PHIEN_BAN, API: API, PhieuForm: PhieuForm,
     XUONG: XUONG, TO: TO, CONG_DOAN: CONG_DOAN, MUC: MUC, VAI: VAI, TT: TT, COT: COT, TSV_MAU: TSV_MAU,
     congDoan: congDoan, hangMuc: hangMuc, tenDuAn: tenDuAn, moTaYeuCau: moTaYeuCau, danhGia: danhGia,
