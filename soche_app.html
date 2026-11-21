@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-26 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-27 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2111ban26">
+<link rel="stylesheet" href="soche_core.css?v=2111ban27">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -174,6 +174,7 @@ table.bg tr.gap td{background:var(--badbg)}
         .dh-svg{width:100%;height:auto;display:block}
         #dhTip{position:fixed;z-index:80;background:var(--fg);color:var(--bg);font:600 12.5px var(--f-body);padding:6px 9px;border-radius:6px;pointer-events:none;max-width:260px}
         </style>
+<style>.tx-skel div{height:16px;border-radius:6px;margin:10px 0;background:linear-gradient(90deg,var(--panel2),var(--line),var(--panel2));background-size:200% 100%;animation:txsk 1.2s linear infinite}@keyframes txsk{to{background-position:-200% 0}}@media (prefers-reduced-motion:reduce){.tx-skel div{animation:none}}</style>
 <style id="uxpm">
 /* ==== ux-pro-max (02/11/2026): lop chung theo skill ui-ux-pro-max — chi them, khong doi bo cuc ==== */
 :focus-visible{outline:2px solid currentColor;outline-offset:2px}
@@ -483,8 +484,8 @@ button:active,[role=button]:active{filter:brightness(.92)}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2111ban26"></script>
-<script src="soche_core.js?v=2111ban26"></script>
+<script src="soche_api.js?v=2111ban27"></script>
+<script src="soche_core.js?v=2111ban27"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
@@ -1317,6 +1318,12 @@ function veTXTrong(){var r=txKho;if(!r)return;var tong=r.da.reduce(function(a,d)
 ['VIO-PL-1022','BIS-B-2211','H23A1187','SDC-AH1-0103','MIR-BIS-014','SC-AH1-0088'].forEach(function(x){$('#txGoi').insertAdjacentHTML('beforeend','<button type="button" data-goi="'+x+'">'+x+'</button>');});
 function veTX(){if(!txKho)veTXKho();if(txHT)txMo(txHT[0],txHT[1],false);else if(txKho&&(!$('#txMan').innerHTML||$('#txMan').getAttribute('data-rong')==='1'))veTXTrong();else if(!$('#txMan').innerHTML)$('#txMan').innerHTML='<p class="nho">Nhập <b>part mark</b> để biết part cắt từ sơ đồ cắt nào, tấm / heat nào, MTC, MIR, nhà cung cấp, và đã nghiệm thu sơ chế những gì. Cũng tra được heat, SDC, MIR, phiếu, punch. Tìm gần đúng từ 3 ký tự.</p>';}
 function txTim(q,tuMo){q=String(q||'').trim();if(!q)return;txHT=null;
+  var txD0=Date.now();$('#txMan').removeAttribute('data-rong');
+  $('#txMan').innerHTML=''+
+   '<div class="hop"><h2>Đang tra "'+E(q)+'"…</h2><p class="nho" id="txDoi" aria-live="polite">Lần ĐẦU với một mã mới: app quét ~195.000 dòng hồ sơ (10–15 giây). Các lần sau trong 6 giờ: có ngay.</p>'+
+   '<div class="tx-skel" aria-hidden="true"><div style="width:62%"></div><div style="width:88%"></div><div style="width:74%"></div><div style="width:81%"></div></div></div>';
+  var txDH=setInterval(function(){var o=document.getElementById('txDoi');if(!o){clearInterval(txDH);return;}
+    o.textContent='Đã chờ '+Math.round((Date.now()-txD0)/1000)+' giây… Lần đầu với mã mới app quét ~195.000 dòng (10–15 giây); các lần sau trong 6 giờ có ngay.';},1000);
   Promise.all([A.truyXuat(q),A.timAH1(q).catch(function(){return {cat:[],ct:[],lsx:[]};}),A.truyXuatTX(q).catch(function(){return null;})]).then(function(kq){var ds=kq[0];themAH1(ds,kq[1],q);
     var tx=kq[2];if(tx&&(tx.ct.length||tx.vt.length))ds.unshift({loai:'TX',ma:tx.q.trim(),nhan:'Hồ sơ truy xuất "'+tx.q.trim()+'" (khớp '+tx.khop.join(', ')+')',phu:(tx.tom.du_an||[]).join(', ')+' · '+tx.tong_ct+' dòng part · '+tx.tom.heat.length+' heat · '+tx.vt.length+' tấm vật tư'+(tx.canh.length?' · '+tx.canh.length+' cảnh báo':'')});
     if(tuMo&&ds.length===1){txLS=[];txMo(ds[0].loai,ds[0].ma);return;}
