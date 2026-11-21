@@ -65,3 +65,9 @@ Tính năng mới PHẢI kèm bài kiểm mới (máy chủ + giao diện); gặ
 - Dữ liệu mẫu trình duyệt dùng mã `VIO-PL-…`, lệnh `526_196`; bộ kiểm máy chủ dùng dữ liệu Wolf thật trong `_wolf.json`.
 - Heat/lệnh chuẩn hoá: `526-196` ≡ `526_196`; "0012345" phải giữ số 0 đầu (setNumberFormat('@')).
 - Heredoc bash chứa chữ nhạy cảm có thể bị hook chặn → ghi file bằng công cụ Write rồi chạy.
+
+## 6. KHO Ý TƯỞNG TỪ MÃ NGUỒN MỞ
+Trước khi THIẾT KẾ TÍNH NĂNG MỚI (QR, offline, NCR/CAPA, quản công cụ đo, nạp nhiều nguồn,
+ghim lỗi lên bản vẽ…): đọc `HOC_HOI.md` cùng thư mục — bài học đã chưng cất từ Snipe-IT, NocoDB,
+Grist, OpenMES, quality-ms, snagflow, cmsc447-punchlist, dearauditor… kèm mẫu bảng/luồng áp cho
+nền Sheets + Apps Script của app này. CHỈ HỌC CÁCH LÀM, KHÔNG chép code (AGPL tuyệt đối không).
