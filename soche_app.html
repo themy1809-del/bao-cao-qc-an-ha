@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>QC Sơ chế An Hạ</title>
-<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-22 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
+<!-- SINH TỰ ĐỘNG (build_github.py) từ mã app phiên bản 21/11 ban-23 — KHÔNG SỬA TAY. Dữ liệu KHÔNG nằm trong repo: trang gọi Web App Apps Script, đăng nhập email + PIN. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="soche_core.css?v=2111ban22">
+<link rel="stylesheet" href="soche_core.css?v=2111ban23">
 <style>
 /* Bố cục web: thanh bên trái cố định + vùng làm việc; dưới 900px thanh bên thành dải tab cuộn ngang trên đầu. Chi tiết mở ở ngăn kéo bên phải */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--panel)}
@@ -476,8 +476,8 @@ button:active,[role=button]:active{filter:brightness(.92)}
 <aside class="dk" id="dk" hidden aria-labelledby="dkT" role="dialog" aria-modal="true"><div class="dk-t"><h2 id="dkT"></h2><button type="button" class="nb" id="dkDong" aria-label="Đóng ngăn chi tiết"></button></div><div class="dk-n" id="dkN"></div></aside>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="soche_api.js?v=2111ban22"></script>
-<script src="soche_core.js?v=2111ban22"></script>
+<script src="soche_api.js?v=2111ban23"></script>
+<script src="soche_core.js?v=2111ban23"></script>
 <script>
 NT.sanSang.then(function(){
 'use strict';
@@ -760,10 +760,11 @@ document.addEventListener('click',function(e){
   if(b){var card=b.closest('.nt-punch'),viec=b.getAttribute('data-punch'),ma=b.getAttribute('data-ma'),cu=card.querySelector('.pa');if(cu)cu.remove();var id='pa'+ma.replace(/\W/g,'');
     card.insertAdjacentHTML('beforeend','<div class="pa" data-viec="'+viec+'" data-ma="'+E(ma)+'" style="border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:8px"><b>'+({BAO_SUA:'Báo đã sửa',DONG:'Xác nhận đóng punch',MO_LAI:'Kiểm lại chưa đạt'})[viec]+'</b><label for="'+id+'-gc">'+(viec==='MO_LAI'?'Lý do chưa đạt (bắt buộc)':'Ghi chú')+'</label><textarea id="'+id+'-gc" rows="2"></textarea>'+
       (viec==='BAO_SUA'?'<label class="nb pf-chup" for="'+id+'-a">'+ic('camera')+'Ảnh sau khi sửa</label><input class="pf-file" id="'+id+'-a" type="file" accept="image/*" multiple><div class="pf-anh"></div>':'')+
+      (viec==='DONG'?'<div><label for="'+id+'-nn">Nguyên nhân gốc (bắt buộc)</label><select class="pa-nn" id="'+id+'-nn"><option value="">— chọn nhóm —</option>'+NT.NN_GOC.map(function(x){return '<option value="'+E(x[0])+'">'+E(x[0]+' — '+x[1])+'</option>';}).join('')+'</select></div><div><label for="'+id+'-hd">Hành động khắc phục / phòng ngừa (bắt buộc)</label><textarea class="pa-hd" id="'+id+'-hd" rows="2" placeholder="VD: mài lại mép, phổ biến cho tổ; thêm bước kiểm trước khi hàn"></textarea></div>':'')+
       '<p class="pf-loi" hidden></p><div class="nt-act"><button type="button" class="nb nb-pri" data-xn>'+ic('check')+'Xác nhận</button><button type="button" class="nb" data-huy>Huỷ</button></div></div>');card.querySelector('.pa textarea').focus();return;}
   var h=e.target.closest('[data-huy]');if(h){h.closest('.pa').remove();return;}
   var xn=e.target.closest('[data-xn]');if(xn){var pa=xn.closest('.pa'),er=pa.querySelector('.pf-loi');xn.disabled=true;
-    A.capNhatPunch(pa.getAttribute('data-ma'),pa.getAttribute('data-viec'),{ghi_chu:pa.querySelector('textarea').value,anh:pa._anh||[]})
+    A.capNhatPunch(pa.getAttribute('data-ma'),pa.getAttribute('data-viec'),{ghi_chu:pa.querySelector('textarea').value,anh:pa._anh||[],nn_goc:(pa.querySelector('.pa-nn')||{}).value||'',hanh_dong:(pa.querySelector('.pa-hd')||{}).value||''})
      .then(function(p){toast(p.ma_punch+': '+NT.TT.PUNCH[p.trang_thai][0]);if(!$('#dk').hidden){if(/^Phiếu/.test($('#dkT').textContent))xemPhieu(p.ma_phieu);else moPunch(p.ma_punch);}ve();})
      .catch(function(err){xn.disabled=false;er.textContent=err.message;er.hidden=false;});return;}
   var x=e.target.closest('[data-xem]');if(x){xemPhieu(x.getAttribute('data-xem'));return;}
