@@ -9,7 +9,7 @@ const fs=require('fs'),path=require('path'),vm=require('vm'),{execFileSync}=requ
 const ctx={window:{}};vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(ROOT,'phan_bo_qc.js'),'utf8'),ctx);const PB=ctx.window.PHAN_BO_QC||{};
 const ban=fs.readFileSync(path.join(ROOT,'ban_do_qc.html'),'utf8'),qc=fs.readFileSync(path.join(ROOT,'qc.html'),'utf8');
 const khsx=(/KHSX_SHEET='([\w-]+)',KHSX_GID='(\d+)'/.exec(ban)||[]),reg=(/DDC_REG=\{id:'([\w-]+)',gid:'(\d+)'\}/.exec(qc)||[]);
-const DS=[];Object.keys(PB.PB_SHEETS||{}).forEach(x=>DS.push({ten:'Phân bổ '+x,id:PB.PB_SHEETS[x].id,gid:PB.PB_SHEETS[x].gid||'0',sheet:PB.PB_SHEETS[x].sheet||'',ok:t=>/Plan Workshop/i.test(t)||(/TH[AÁ]NG\s*\d{1,2}\s*\/\s*\d{4}/i.test(t)&&/\n[^\n]*\d{5}-\d{3}/.test(t))}));
+const DS=[];Object.keys(PB.PB_SHEETS||{}).forEach(x=>DS.push({ten:'Phân bổ '+x,id:PB.PB_SHEETS[x].id,gid:PB.PB_SHEETS[x].gid||'0',sheet:PB.PB_SHEETS[x].sheet||'',ok:t=>/"thang","to","du_an","tan"/.test(t)||/Plan Workshop/i.test(t)||(/TH[AÁ]NG\s*\d{1,2}\s*\/\s*\d{4}/i.test(t)&&/\n[^\n]*\d{5}-\d{3}/.test(t))}));
 Object.keys(PB.PB_GN_SHEET||{}).forEach(x=>DS.push({ten:'Xưởng tự ghi nhận '+x+' (sheet trung gian)',id:PB.PB_GN_SHEET[x].id,gid:PB.PB_GN_SHEET[x].gid||'0',ok:t=>/KL xuong giao/i.test(t)&&/\d{1,2}\/\d{4}/.test(t)}));
 if(PB.AH1_LENH)DS.push({ten:'AH1 kế hoạch cắt theo lệnh',id:PB.AH1_LENH.id,gid:PB.AH1_LENH.gid,range:PB.AH1_LENH.range||'',ok:t=>/Tổng KL \(T\)/.test(t)&&/Đã cắt \(T\)/.test(t)});
 if(PB.AH1_SHEET){DS.push({ten:'AH1 đã cắt (link chung)',id:PB.AH1_SHEET.id,gid:PB.AH1_SHEET.gidCat,ok:t=>/xuong_nhan/i.test(t)&&/kg/i.test(t)});DS.push({ten:'AH1 kế hoạch (link chung)',id:PB.AH1_SHEET.id,gid:PB.AH1_SHEET.gidKh,ok:t=>/xuong_nhan/i.test(t)&&/kg/i.test(t)});}
@@ -21,6 +21,7 @@ let bad=0,mang=true;
 for(const d of DS){const t=get('https://docs.google.com/spreadsheets/d/'+d.id+'/gviz/tq?tqx=out:csv'+(d.h2?'&headers=2':'')+(d.sheet?'&sheet='+encodeURIComponent(d.sheet):'&gid='+d.gid)+(d.range?'&range='+d.range:''));
   if(t===null){mang=false;console.log('BO QUA '+d.ten+' — không có mạng');continue;}
   if(/^\s*</.test(t)){console.log('CANH BAO '+d.ten+' — sheet chưa chia sẻ công khai (trang dùng số dự phòng)');continue;}
+  if(d.sheet&&/DANH M[ỤU]C T[ẤA]T C[ẢA] LINK/i.test(t.slice(0,400))){console.log('CANH BAO '+d.ten+' — chưa có tab "'+d.sheet+'" trong file (trang dùng số dự phòng)');continue;}
   if(d.ok(t.slice(0,200000)))console.log('OK   '+d.ten+' ('+(d.sheet?'tab '+d.sheet:'gid '+d.gid)+', '+(t.split('\n').length-1)+' dòng)');
   else{bad++;console.log('LOI  '+d.ten+' — gid '+d.gid+' đọc được nhưng SAI TAB / SAI MẪU. Dòng đầu: '+t.split('\n')[0].slice(0,120));}}
 console.log(bad?'NGUON: '+bad+' sheet sai tab/mẫu — sửa link ở file link chung + phan_bo_qc.js':(mang?'NGUON: DAT':'NGUON: bỏ qua (không có mạng)'));

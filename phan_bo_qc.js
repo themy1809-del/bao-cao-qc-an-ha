@@ -151,7 +151,7 @@ window.PHAN_BO_QC = {
            {qc:'Vũ Đại Phong', conlai:1}],
   AH1_SHEET: {id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gidCat:'2006', gidKh:'2007'},
   PB_DANHMUC: {id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gid:'73111327'}, /* 14/11: tab PHAN BO XUONG (tab TAT CA LINK = danh muc moi link, xem kiem_tra/link_chung.csv) */
-  PB_SHEETS: {AH3:{id:'1cTlLxIoPYKZu8T9gYmFV16pVgKQXm6Mxoq0CF5wOq-A', gid:'0'},
+  PB_SHEETS: {AH3:{id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', sheet:'WEB AH3 PHAN BO TO', uutien:1}, /* 26/11 user: AH3 lay link khac — file xuong (tab THONG KE ... PHAN BO) qua LINK CHUNG; file PB cu 1cTlLx... (rieng tu, dung tu 06/11) bo */
               AH4:{id:'1D35_CAD57fFx_JLmEXZhl_DXKpHx2YwvW-4sfCEZPWI', sheet:'DỮ LIỆU CHI TIẾT'}, /* 17/11: xuong AH4 tu XOA / TAO LAI tab nay nhieu lan trong ngay (gid 2103915313 -> 2143844597 -> 1821129928 -> ...) -> doc theo TEN tab */
               AH6:{id:'1mD6Y3kalSDp7uXLHmRQ8ybkOGIEN_ruE7atPm1920BQ', gid:'2003'}} /* 14/11: AH6 = tab WEB AH6 PHAN BO (2003) trong LINK CHUNG, do cong_cu_pc/ah6_xlsx_sang_pb.gs tu chuyen tu file Excel .xlsx cua xuong (mau PB thang theo to) */ /* 14/11: tab cu 2103915313 bi xoa -> tab DU LIEU CHI TIET */ /* AH4 13/11: sheet "BAN HANH GIA CONG" (tung cau kien) — trang tu nhan dang va quy doi */
 };
